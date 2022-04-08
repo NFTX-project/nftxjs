@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "module": "ESNext",
+    "target": "ESNext",
+    "importsNotUsedAsValues": "error",
+    "allowJs": false,
+    "moduleResolution": "node",
+    "strictBindCallApply": true,
+    "declaration": false,
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
+    "sourceMap": true
+  }
+}
