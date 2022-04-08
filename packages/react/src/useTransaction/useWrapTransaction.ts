@@ -1,0 +1,116 @@
+import { ContractTransaction, errors } from 'ethers';
+import { useNftx } from '../NftxProvider';
+import {
+  TransactionCancelledError,
+  TransactionExceptionError,
+  TransactionFailedError,
+} from '../errors';
+import { t } from '../utils';
+import { useAddEvent } from '../EventsProvider';
+
+type Fn = (...args: any) => Promise<ContractTransaction>;
+
+function isDroppedAndReplaced(e: any) {
+  return (
+    e?.code === errors.TRANSACTION_REPLACED &&
+    e?.replacement &&
+    (e?.reason === 'repriced' || e?.cancelled === false)
+  );
+}
+
+/**
+ * Wraps a transaction function and inserts transaction/notification events
+ * @param fn an async function that returns a ContractTransaction
+ * @returns ContractTransaction
+ */
+export default function useWrapTransaction<F extends Fn>(fn: F) {
+  const { network } = useNftx();
+  const addEvent = useAddEvent();
+
+  // wrap the original function, we take the same args and return the transaction
+  const wrapper = async (...args: any[]) => {
+    addEvent({
+      type: 'PendingSignature',
+      network,
+      createdAt: Date.now(),
+    });
+    // call the original fn and intercept the result
+    const [txErr, tx] = await t(fn(...args));
+    if (txErr) {
+      if (txErr.code === 4001) {
+        throw new TransactionCancelledError(txErr, network);
+      }
+      // Exception - we couldn't even trigger the transaction
+      throw new TransactionExceptionError(txErr, network);
+    }
+
+    addEvent({
+      type: 'Mining',
+      network,
+      createdAt: Date.now(),
+      transaction: tx,
+    });
+
+    const transaction: ContractTransaction = {
+      ...tx,
+      chainId: network,
+      // we also want to wrap the wait behaviour
+      wait: async (confirmations?: number) => {
+        const [receiptErr, receipt] = await t(tx.wait(confirmations));
+
+        if (receiptErr) {
+          if (isDroppedAndReplaced(receiptErr)) {
+            const type =
+              receiptErr.receipt.status === 0
+                ? 'transactionFailed'
+                : 'transactionSucceed';
+
+            addEvent({
+              type: type === 'transactionSucceed' ? 'Success' : 'Fail',
+              createdAt: Date.now(),
+              network,
+              receipt: receiptErr.receipt,
+              transaction: receiptErr.replacement,
+              error: receiptErr,
+            });
+
+            if (type === 'transactionSucceed') {
+              return receiptErr.receipt;
+            }
+          } else {
+            addEvent({
+              type: 'Fail',
+              createdAt: Date.now(),
+              network,
+              receipt: receiptErr.receipt,
+              transaction,
+              error: receiptErr,
+            });
+          }
+
+          // Fail
+          throw new TransactionFailedError(
+            receiptErr,
+            network,
+            tx,
+            receiptErr.receipt
+          );
+        }
+
+        addEvent({
+          type: 'Success',
+          createdAt: Date.now(),
+          network,
+          receipt,
+          transaction,
+        });
+
+        return receipt;
+      },
+    };
+
+    return transaction;
+  };
+
+  return wrapper as F;
+}
