@@ -1,6 +1,6 @@
 import { fetchReservesForTokens } from '../../tokens';
 import type { Address } from '../../web3/types';
-import type { Vault, VaultAddress, VaultHolding, VaultId } from '../types';
+import type { Vault, VaultAddress, VaultId } from '../types';
 import { OPENSEA_COLLECTION } from '@nftx/constants';
 import fetchSubgraphVaults from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
@@ -27,6 +27,57 @@ const isVaultEnabled = (vault: Vault) => {
     return false;
   }
   return true;
+};
+
+const fetchMoreHoldings = async ({
+  vault,
+  network,
+}: {
+  network: number;
+  vault: { id: VaultAddress; holdings: Array<{ tokenId: string }> };
+}) => {
+  if (vault.holdings.length === 1000) {
+    const lastId = vault.holdings[vault.holdings.length - 1].tokenId;
+    return fetchVaultHoldings({
+      network,
+      vaultAddress: vault.id,
+      lastId,
+    });
+  }
+
+  return [];
+};
+
+const fetchMoreVaults = async ({
+  vaults,
+  network,
+  finalised,
+  manager,
+  vaultAddresses,
+  vaultIds,
+}: {
+  vaults: Vault[];
+  network: number;
+  finalised: boolean;
+  manager: Address;
+  vaultAddresses: VaultAddress[];
+  vaultIds: VaultId[];
+}) => {
+  if (vaults.length === 1000) {
+    const lastId = Number(vaults[vaults.length - 1].vaultId) + 1;
+
+    return fetchVaults({
+      network,
+      finalised,
+      manager,
+      vaultAddresses,
+      vaultIds,
+      retryCount: 0,
+      lastId,
+    });
+  }
+
+  return [];
 };
 
 const fetchVaults = async ({
@@ -68,39 +119,26 @@ const fetchVaults = async ({
 
   const globalFees = data?.globals?.[0]?.fees;
 
-  let vaults: Vault[] = await Promise.all(
-    data?.vaults?.map(async (x): Promise<Vault> => {
-      let moreHoldings: VaultHolding[];
-      if (x.holdings.length === 1000) {
-        const lastId = x.holdings[x.holdings.length - 1].tokenId;
-        moreHoldings = await fetchVaultHoldings({
-          network,
-          vaultAddress: x.id,
-          lastId,
-        });
-      }
+  const vaultPromises =
+    data?.vaults?.map(async (x) => {
+      const moreHoldings = await fetchMoreHoldings({ network, vault: x });
 
-      return transformVault({
-        globalFees,
-        reserves,
-        vault: x,
-        moreHoldings,
-      });
-    }) ?? []
-  );
+      return transformVault({ globalFees, reserves, vault: x, moreHoldings });
+    }) ?? [];
 
-  if (vaults.length === 1000) {
-    const moreVaults = await fetchVaults({
-      network,
+  let vaults = await Promise.all(vaultPromises);
+
+  vaults = [
+    ...vaults,
+    ...(await fetchMoreVaults({
+      vaults,
       finalised,
       manager,
+      network,
       vaultAddresses,
       vaultIds,
-      retryCount: 0,
-      lastId: Number(vaults[vaults.length - 1].vaultId) + 1,
-    });
-    vaults = [...vaults, ...moreVaults];
-  }
+    })),
+  ];
 
   // We only want to filter/sort once we've got all the vaults fetched
   // if lastId > 0 that means we're recursively fetching _more_ vaults

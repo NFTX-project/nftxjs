@@ -28,8 +28,8 @@
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@ethersproject/units": "^5.6.0",
-    "@nftx/constants": "^1.0.0",
-    "@nftx/subgraph": "^1.0.0",
+    "@nftx/constants": "^0.1.0",
+    "@nftx/subgraph": "^0.1.0",
     "ethers": "^5.6.2"
   },
   "bugs": {

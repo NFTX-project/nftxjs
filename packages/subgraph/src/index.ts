@@ -32,9 +32,7 @@ export const buildWhere = <T extends Record<string, any>>(obj: T) => {
     return [...acc, `${key}: ${value}`];
   }, [] as string[]);
 
-  return `{
-    ${pairs.join(',\n')}
-  }`;
+  return `{ ${pairs.join(', ')} }`;
 };
 
 const interpolateQuery = (query: string, variables: Record<string, any>) => {
@@ -48,6 +46,9 @@ const interpolateQuery = (query: string, variables: Record<string, any>) => {
   }, query);
 };
 
+type Fetch = typeof fetch;
+const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
+
 /** Sends a request to the subgraph
  * Uses the fetch api under the hood so if running in node you'll need to polyfill global.fetch
  */
@@ -55,6 +56,7 @@ export const querySubgraph = async <T>({
   url,
   query,
   variables,
+  fetch = globalFetch,
 }: {
   /** The subgraph url */
   url: string;
@@ -65,6 +67,8 @@ export const querySubgraph = async <T>({
    * For example: (where: { id: $vaultAddress })
    */
   variables?: Record<string, any>;
+  /** The fetch api to use, if you are using a ponyfill, you can manually pass it in here */
+  fetch?: Fetch;
 }) => {
   if (variables) {
     query = interpolateQuery(query, variables);

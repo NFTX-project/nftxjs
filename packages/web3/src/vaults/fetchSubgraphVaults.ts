@@ -226,8 +226,6 @@ const fetchSubgraphVaults = async ({
     throw e;
   }
 
-  // TODO: if there are more than 1000 holdings we need to recursively fetch the rest
-
   return data;
 };
 
