@@ -84,6 +84,7 @@ export type VaultActivity = {
 
 export type VaultFeeReceipt = {
   vaultAddress: VaultAddress;
+  transfers: VaultFeeTransfer[];
   amount: BigNumber;
   date: number;
 };
@@ -97,4 +98,9 @@ export type UserVaultBalance = {
   name: string;
   type: NftxTokenType;
   vaultId: VaultId;
+};
+
+export type VaultFeeTransfer = {
+  amount: BigNumber;
+  to: string;
 };

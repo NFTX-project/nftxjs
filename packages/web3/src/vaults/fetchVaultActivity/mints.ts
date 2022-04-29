@@ -23,7 +23,10 @@ export type Mint = {
   date: string;
   nftIds: string[];
   amounts: string[];
-  feeReceipt: { amount: string; date: string };
+  feeReceipt: {
+    transfers: Array<{ amount: string; to: string }>;
+    date: string;
+  };
 };
 
 export const createMintsQuery = (where: string) => {
@@ -58,7 +61,10 @@ export const createMintsQuery = (where: string) => {
     nftIds
     amounts
     feeReceipt {
-      amount
+      transfers {
+        amount
+        to
+      }
       date
     }
   }`;
@@ -89,11 +95,7 @@ export const processMints = async (
   vaultAddresses: VaultAddress[]
 ) => {
   let mints = response.mints.flatMap((mint): VaultActivity[] => {
-    const receipt = transformFeeReceipt(
-      mint.feeReceipt,
-      mint.vault.id,
-      network
-    );
+    const receipt = transformFeeReceipt(mint.feeReceipt, mint.vault.id);
     const type = isStakeOrMint(mint, network);
 
     return mint.nftIds.map((nftId, i): VaultActivity => {
