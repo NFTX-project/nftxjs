@@ -1,14 +1,6 @@
 import fetchVaults from './fetchVaults';
-import type { Vault, VaultAddress, VaultId } from './types';
+import type { VaultAddress, VaultId } from './types';
 
-async function fetchVault(args: {
-  network: number;
-  vaultAddress: VaultAddress;
-}): Promise<Vault>;
-async function fetchVault(args: {
-  network: number;
-  vaultId: VaultId;
-}): Promise<Vault>;
 async function fetchVault({
   network,
   vaultAddress,

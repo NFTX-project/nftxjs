@@ -1,11 +1,12 @@
 import type { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import type { JsonRpcProvider } from '@ethersproject/providers';
-import { SUSHISWAP_ROUTER, WETH_TOKEN, ZEROX_URL } from '@nftx/constants';
+import { SUSHISWAP_ROUTER, WETH_TOKEN } from '@nftx/constants';
 import routerAbi from '@nftx/constants/abis/UniswapV2Router.json';
 import { getChainConstant } from '../utils';
 import { getContract } from '../web3';
 import type { Address } from '../web3/types';
+import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0XPrice';
 
 const fetchSellPriceFromApi = async ({
@@ -72,7 +73,7 @@ const fetchSellPrice = async ({
   amount?: BigNumberish;
   quote?: 'ETH';
 }) => {
-  const apiSupported = !!getChainConstant(ZEROX_URL, network, null);
+  const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
     try {
       return await fetchSellPriceFromApi({

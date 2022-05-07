@@ -3,23 +3,6 @@ import { formatEther, parseEther } from '@ethersproject/units';
 import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { TokenReserve } from '../../tokens';
 
-function midQuote(
-  amountA: BigNumber,
-  reserveA: BigNumber,
-  reserveB: BigNumber
-) {
-  if (!amountA.gt(0)) {
-    return false;
-  }
-  if (!reserveA.gt(0) || !reserveB.gt(0)) {
-    return false;
-  }
-
-  const amountB = amountA.mul(reserveB).div(reserveA);
-
-  return amountB;
-}
-
 // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
 function getAmountIn(
   amountOut: BigNumber,
@@ -69,18 +52,6 @@ function getAmountOut(
   return numerator.div(denominator);
 }
 
-const calcMidPrice = (reserve: TokenReserve, amount = '1') => {
-  if (amount && reserve.reserveVtoken && reserve.reserveWeth) {
-    return midQuote(
-      parseEther(amount),
-      reserve.reserveVtoken,
-      reserve.reserveWeth
-    );
-  }
-
-  return false;
-};
-
 const calcBuyPrice = (reserve: TokenReserve, amount = '1') =>
   getAmountIn(parseEther(amount), reserve.reserveWeth, reserve.reserveVtoken);
 
@@ -97,7 +68,7 @@ const transformVaultReserves = (reserves: TokenReserve) => {
     };
   }
 
-  const midPrice = calcMidPrice(reserves);
+  const { midPrice } = reserves;
   // use 0.25 vtoken purchase as liqudity check
   const buyPrice = calcBuyPrice(reserves, '0.25');
   const sellPrice = calcSellPrice(reserves, '0.25');
@@ -112,7 +83,7 @@ const transformVaultReserves = (reserves: TokenReserve) => {
           .lte(parseEther('0.1'))
       : false;
 
-  if (midPrice) {
+  if (midPrice?.gt(0)) {
     return {
       derivedETH: enoughLiquidity ? formatEther(midPrice) : '0',
       rawPrice: midPrice,

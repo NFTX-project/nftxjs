@@ -38,6 +38,9 @@ export const getAll = async ({
   const mints = await processMints(response, network, vaultAddresses);
   const redeems = await processRedeems(response, network, vaultAddresses);
   const swaps = await processSwaps(response, network, vaultAddresses);
+  const activity = [...mints, ...redeems, ...swaps].sort(
+    (a, b) => a.date - b.date
+  );
 
-  return { mints, swaps, redeems };
+  return { mints, swaps, redeems, activity };
 };

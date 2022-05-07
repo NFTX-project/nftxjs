@@ -1,5 +1,5 @@
 import type { mintIntoVault } from '@nftx/web3';
-import { useNftx } from '../context';
+import { useNftx } from '../NftxProvider';
 import type { UseTransactionOptions } from '../useTransaction';
 import useTransaction from '../useTransaction';
 

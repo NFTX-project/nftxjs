@@ -5,6 +5,33 @@ import { addressEqual } from '../web3';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Address } from '../web3/types';
 import type { TokenReserve } from './types';
+import type { BigNumber } from '@ethersproject/bignumber';
+import { WeiPerEther, Zero } from '@ethersproject/constants';
+
+function midQuote(
+  amountA: BigNumber,
+  reserveA: BigNumber,
+  reserveB: BigNumber
+) {
+  if (!amountA.gt(0)) {
+    return Zero;
+  }
+  if (!reserveA.gt(0) || !reserveB.gt(0)) {
+    return Zero;
+  }
+
+  const amountB = amountA.mul(reserveB).div(reserveA);
+
+  return amountB;
+}
+
+const calcMidPrice = (reserveVtoken: BigNumber, reserveWeth: BigNumber) => {
+  if (reserveVtoken && reserveWeth) {
+    return midQuote(WeiPerEther, reserveVtoken, reserveWeth);
+  }
+
+  return Zero;
+};
 
 const LIMIT = 1000;
 
@@ -39,7 +66,7 @@ type Response = {
   tokens: TokenPair[];
 };
 
-function formatTokenReserves(token: TokenPair, network: number) {
+function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
   const weth = getChainConstant(WETH_TOKEN, network).toLowerCase();
   // check to see if basePair is vtoken
   // PUNK-ETH
@@ -49,11 +76,16 @@ function formatTokenReserves(token: TokenPair, network: number) {
     );
 
     if (wethPair) {
+      const reserveVtoken = parseEther(wethPair.reserve0 || '0');
+      const reserveWeth = parseEther(wethPair.reserve1 || '0');
+      const midPrice = calcMidPrice(reserveVtoken, reserveWeth);
+
       return {
         tokenId: token.id,
         derivedEth: token.derivedETH || '0',
-        reserveVtoken: parseEther(wethPair.reserve0 || '0'),
-        reserveWeth: parseEther(wethPair.reserve1 || '0'),
+        reserveVtoken,
+        reserveWeth,
+        midPrice,
       };
     }
   }
@@ -66,11 +98,16 @@ function formatTokenReserves(token: TokenPair, network: number) {
     );
 
     if (wethPair) {
+      const reserveVtoken = parseEther(wethPair.reserve0 || '0');
+      const reserveWeth = parseEther(wethPair.reserve1 || '0');
+      const midPrice = calcMidPrice(reserveVtoken, reserveWeth);
+
       return {
         tokenId: token.id,
         derivedEth: token.derivedETH || '0',
-        reserveVtoken: parseEther(wethPair.reserve1 || '0'),
-        reserveWeth: parseEther(wethPair.reserve0 || '0'),
+        reserveVtoken,
+        reserveWeth,
+        midPrice,
       };
     }
   }
@@ -80,6 +117,7 @@ function formatTokenReserves(token: TokenPair, network: number) {
     derivedEth: token?.derivedETH,
     reserveVtoken: null,
     reserveWeth: null,
+    midPrice: Zero,
   };
 }
 

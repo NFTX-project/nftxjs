@@ -1,11 +1,12 @@
 import { ContractTransaction, errors } from 'ethers';
-import { useNftx } from '../context';
+import { useNftx } from '../NftxProvider';
 import {
   TransactionCancelledError,
   TransactionExceptionError,
   TransactionFailedError,
 } from '../errors';
 import { t } from '../utils';
+import { useAddEvent } from '../EventsProvider';
 
 type Fn = (...args: any) => Promise<ContractTransaction>;
 
@@ -24,12 +25,15 @@ function isDroppedAndReplaced(e: any) {
  */
 export default function useWrapTransaction<F extends Fn>(fn: F) {
   const { network } = useNftx();
-  // TODO: implement a notification and transaction tracking system (or integrate an existing system)
-  // const { addTransaction } = useTransactionsContext();
-  // const { addNotification } = useNotificationsContext();
+  const addEvent = useAddEvent();
 
   // wrap the original function, we take the same args and return the transaction
   const wrapper = async (...args: any[]) => {
+    addEvent({
+      type: 'PendingSignature',
+      network,
+      createdAt: Date.now(),
+    });
     // call the original fn and intercept the result
     const [txErr, tx] = await t(fn(...args));
     if (txErr) {
@@ -40,13 +44,12 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
       throw new TransactionExceptionError(txErr, network);
     }
 
-    // addTransaction({
-    //   transaction: {
-    //     ...tx,
-    //     chainId: network,
-    //   },
-    //   submittedAt: Date.now(),
-    // });
+    addEvent({
+      type: 'Mining',
+      network,
+      createdAt: Date.now(),
+      transaction: tx,
+    });
 
     const transaction: ContractTransaction = {
       ...tx,
@@ -62,21 +65,27 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
                 ? 'transactionFailed'
                 : 'transactionSucceed';
 
-            // addNotification({
-            //   notification: {
-            //     type,
-            //     submittedAt: Date.now(),
-            //     transaction: receiptErr.replacement,
-            //     receipt: receiptErr.receipt,
-            //     transactionName: receiptErr.replacement?.transactionName,
-            //     originalTransaction: transaction,
-            //   },
-            //   chainId: network,
-            // });
+            addEvent({
+              type: type === 'transactionSucceed' ? 'Success' : 'Fail',
+              createdAt: Date.now(),
+              network,
+              receipt: receiptErr.receipt,
+              transaction: receiptErr.replacement,
+              error: receiptErr,
+            });
 
             if (type === 'transactionSucceed') {
               return receiptErr.receipt;
             }
+          } else {
+            addEvent({
+              type: 'Fail',
+              createdAt: Date.now(),
+              network,
+              receipt: receiptErr.receipt,
+              transaction,
+              error: receiptErr,
+            });
           }
 
           // Fail
@@ -87,6 +96,14 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
             receiptErr.receipt
           );
         }
+
+        addEvent({
+          type: 'Success',
+          createdAt: Date.now(),
+          network,
+          receipt,
+          transaction,
+        });
 
         return receipt;
       },

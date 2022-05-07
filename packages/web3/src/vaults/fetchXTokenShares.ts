@@ -13,12 +13,17 @@ const fetchXTokenShares = async ({
 }) => {
   const shares = await Promise.all(
     vaultIds.map(async (vaultId) => {
-      const share = await fetchXTokenShare({ network, provider, vaultId });
-      return { vaultId, share };
+      try {
+        const share = await fetchXTokenShare({ network, provider, vaultId });
+        return { vaultId, share };
+      } catch (e) {
+        console.warn(e);
+        return null;
+      }
     })
   );
 
-  return shares;
+  return shares.filter(Boolean);
 };
 
 export default fetchXTokenShares;

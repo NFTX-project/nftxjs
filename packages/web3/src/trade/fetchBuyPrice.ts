@@ -3,11 +3,11 @@ import { WeiPerEther } from '@ethersproject/constants';
 import type { JsonRpcProvider } from '@ethersproject/providers';
 import { WETH_TOKEN } from '@nftx/constants';
 import { SUSHISWAP_ROUTER } from '@nftx/constants';
-import { ZEROX_URL } from '@nftx/constants';
 import routerAbi from '@nftx/constants/abis/UniswapV2Router.json';
 import { getChainConstant } from '../utils';
 import { getContract } from '../web3';
 import type { Address } from '../web3/types';
+import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0XPrice';
 
 const fetchBuyPriceFromApi = async ({
@@ -76,7 +76,7 @@ const fetchBuyPrice = async ({
   amount?: BigNumberish;
   quote?: 'ETH';
 }) => {
-  const apiSupported = getChainConstant(ZEROX_URL, network, null) != null;
+  const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
     try {
       return await fetchBuyPriceFromApi({

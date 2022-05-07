@@ -39,3 +39,12 @@ export const NFTX_SUBGRAPH = {
   [Network.Arbitrum]: `https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v2-arbitrum`,
   [Network.Rinkeby]: `https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v2-rinkeby`,
 };
+
+export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
+  [Network.Mainnet]:
+    'https://api.thegraph.com/subgraphs/name/quantumlyy/nftx-holdings-subgraph-mainnet',
+  [Network.Arbitrum]:
+    'https://api.thegraph.com/subgraphs/name/quantumlyy/nftx-holdings-subgraph-arbitrum',
+  [Network.Rinkeby]:
+    'https://api.thegraph.com/subgraphs/name/quantumlyy/nftx-holdings-subgraph-rinkeby',
+};

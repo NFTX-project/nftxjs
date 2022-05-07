@@ -1,16 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import type { JsonRpcProvider } from '@ethersproject/providers';
-import {
-  Network,
-  UNISWAP_QUOTER,
-  USDC,
-  WETH_TOKEN,
-  ZEROX_URL,
-} from '@nftx/constants';
+import { Network, UNISWAP_QUOTER, USDC, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/UniswapQuoter.json';
 import { getChainConstant } from '../utils';
 import { getContract } from '../web3';
+import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0xPrice';
 
 const fetchEthPriceFromApi = async ({ network }: { network: number }) => {
@@ -59,7 +54,7 @@ const fetchEthPrice = async ({
   network: number;
   provider: JsonRpcProvider;
 }) => {
-  const apiSupported = getChainConstant(ZEROX_URL, network, null) != null;
+  const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
     try {
       return await fetchEthPriceFromApi({ network });

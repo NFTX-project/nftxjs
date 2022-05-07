@@ -1,6 +1,6 @@
 import type { ContractTransaction } from 'ethers';
 import { useCallback, useState } from 'react';
-import type { TransactionState } from '../constants';
+import type { TransactionState } from '../types';
 import {
   TransactionCancelledError,
   TransactionExceptionError,

@@ -12,4 +12,5 @@ export type TokenReserve = {
   derivedEth: string;
   reserveVtoken: BigNumber;
   reserveWeth: BigNumber;
+  midPrice: BigNumber;
 };

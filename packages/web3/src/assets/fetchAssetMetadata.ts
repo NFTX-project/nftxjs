@@ -27,7 +27,12 @@ export type Response = {
 /** Fetches metadata for a given asset meta url
  * You can get the meta url from asset.metaUrl (where asset was fetched from fetchUserAssets)
  */
-const fetchAssetMetadata = async ({ metaUrl }: Pick<Asset, 'metaUrl'>) => {
+const fetchAssetMetadata = async ({
+  assetAddress,
+  tokenId,
+  network,
+}: Pick<Asset, 'assetAddress' | 'tokenId'> & { network: number }) => {
+  const metaUrl = `https://api.nftx.xyz/asset/${assetAddress}/${tokenId}?chainId=${network}`;
   const response = await fetch(metaUrl);
   if (!response.ok) {
     throw new Error(`${response.status}: ${response.statusText}`);

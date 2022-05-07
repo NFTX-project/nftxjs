@@ -1,9 +1,10 @@
 export { default as fetchVaultActivity } from './fetchVaultActivity';
 export { default as fetchVaults } from './fetchVaults';
 export { default as fetchSubgraphVaults } from './fetchSubgraphVaults';
+export { default as fetchUserVaultBalances } from './fetchUserVaultBalances';
 export { default as fetchVault } from './fetchVault';
-export { default as fetchVaultApy } from './fetchVaultApy';
-export { default as fetchVaultApys } from './fetchVaultApys';
+export { default as fetchVaultApr } from './fetchVaultApr';
+export { default as fetchVaultAprs } from './fetchVaultAprs';
 export { default as fetchVaultFees } from './fetchVaultFees';
 export { default as fetchVaultHoldings } from './fetchVaultHoldings';
 export { default as fetchXTokenShare } from './fetchXTokenShare';

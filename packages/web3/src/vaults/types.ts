@@ -63,11 +63,11 @@ export type Vault = {
   };
 };
 
-export type VaultApy = {
+export type VaultApr = {
   vaultId: VaultId;
   vaultAddress: VaultAddress;
-  inventoryApy: number;
-  liquidityApy: number;
+  inventoryApr: number;
+  liquidityApr: number;
 };
 
 export type VaultActivity = {
@@ -87,4 +87,15 @@ export type VaultFeeReceipt = {
   vaultAddress: VaultAddress;
   amount: BigNumber;
   date: number;
+};
+
+export type NftxTokenType = 'xTokenWETH' | 'xToken' | 'vToken' | 'vTokenWETH';
+
+export type UserVaultBalance = {
+  balance: BigNumber;
+  symbol: string;
+  address: VaultAddress;
+  name: string;
+  type: NftxTokenType;
+  vaultId: VaultId;
 };

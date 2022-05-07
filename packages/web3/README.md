@@ -50,6 +50,46 @@
 
 ### doesVAutHaveRandomSwapFee
 
+### prices
+
+### fetch0xQuote
+
+### fetchBuyPrice
+
+### fetchEthPrice
+
+### fetchSellPrice
+
+### fetchSpotPrice
+
+### fetchVaultBuyPrice
+
+### fetchVaultSellPrice
+
+### fetchVaultSwapPrice
+
+### doesNetworkSupport0x
+
+## trade
+
+### approve
+
+### buyFromVault
+
+### estimateGasAndFees
+
+### increaseGasLimit
+
+### isApproved
+
+### mintIntoVault
+
+### redeemFromVault
+
+### sellIntoVault
+
+### swapWithVault
+
 ## web3
 
 ### addressEqual
