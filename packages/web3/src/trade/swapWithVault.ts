@@ -1,6 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
 import abi from '@nftx/constants/abis/NFTXMarketplaceZap.json';
 import vaultAbi from '@nftx/constants/abis/NFTXVaultUpgradeable.json';
 import type { VaultAddress, VaultId } from '../vaults/types';
@@ -17,10 +16,11 @@ import { getChainConstant, omitNil } from '../utils';
 import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import estimateGasAndFees from './estimateGasAndFees';
 import increaseGasLimit from './increaseGasLimit';
+import type { Signer } from 'ethers';
 
 const swapErc721WithFee = async ({
   network,
-  provider,
+  signer,
   vaultId,
   userAddress,
   vaultAddress,
@@ -29,7 +29,7 @@ const swapErc721WithFee = async ({
   redeemTokenIds,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   vaultId: VaultId;
   vaultAddress: VaultAddress;
   userAddress: Address;
@@ -42,10 +42,9 @@ const swapErc721WithFee = async ({
 
   const contract = getContract({
     network,
-    provider,
+    signer,
     abi,
     address: getChainConstant(NFTX_MARKETPLACE_ZAP, network),
-    type: 'write',
   });
 
   const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
@@ -86,13 +85,13 @@ const swapErc721WithFee = async ({
 
 const swapErc721NoFee = async ({
   network,
-  provider,
+  signer,
   vaultAddress,
   mintTokenIds,
   redeemTokenIds,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   vaultAddress: VaultAddress;
   mintTokenIds: string[] | [string, number][];
   redeemTokenIds: string[] | [string, number][];
@@ -103,9 +102,8 @@ const swapErc721NoFee = async ({
 
   const contract = getContract({
     network,
-    provider,
+    signer,
     address: vaultAddress,
-    type: 'write',
     abi: vaultAbi,
   });
   return contract.swap(mintIds, amounts, redeemIds);
@@ -113,7 +111,7 @@ const swapErc721NoFee = async ({
 
 const swapErc1155WithFee = async ({
   network,
-  provider,
+  signer,
   vaultId,
   userAddress,
   vaultAddress,
@@ -122,7 +120,7 @@ const swapErc1155WithFee = async ({
   redeemTokenIds,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   vaultId: VaultId;
   vaultAddress: VaultAddress;
   userAddress: Address;
@@ -135,10 +133,9 @@ const swapErc1155WithFee = async ({
   const redeemIds = getExactTokenIds(redeemTokenIds);
   const contract = getContract({
     network,
-    provider,
+    signer,
     abi,
     address: getChainConstant(NFTX_MARKETPLACE_ZAP, network),
-    type: 'write',
   });
   const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
   const args = [vaultId, mintIds, amounts, redeemIds, path, userAddress];
@@ -175,13 +172,13 @@ const swapErc1155WithFee = async ({
 
 const swapErc1155NoFee = async ({
   network,
-  provider,
+  signer,
   vaultAddress,
   mintTokenIds,
   redeemTokenIds,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   vaultAddress: VaultAddress;
   mintTokenIds: string[] | [string, number][];
   redeemTokenIds: string[] | [string, number][];
@@ -192,9 +189,8 @@ const swapErc1155NoFee = async ({
 
   const contract = getContract({
     network,
-    provider,
+    signer,
     address: vaultAddress,
-    type: 'write',
     abi: vaultAbi,
   });
   return contract.swap(mintIds, amounts, redeemIds);
@@ -204,7 +200,7 @@ const swapWithVault = async ({
   vault,
   mintTokenIds,
   network,
-  provider,
+  signer,
   redeemTokenIds,
   userAddress,
   vaultAddress,
@@ -214,7 +210,7 @@ const swapWithVault = async ({
   standard,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   userAddress: Address;
   vaultId: VaultId;
   vaultAddress: VaultAddress;
@@ -239,7 +235,7 @@ const swapWithVault = async ({
           maxPrice,
           mintTokenIds,
           network,
-          provider,
+          signer,
           redeemTokenIds,
           userAddress,
           vaultAddress,
@@ -249,7 +245,7 @@ const swapWithVault = async ({
       return swapErc721NoFee({
         mintTokenIds,
         network,
-        provider,
+        signer,
         redeemTokenIds,
         vaultAddress,
       });
@@ -260,7 +256,7 @@ const swapWithVault = async ({
           maxPrice,
           mintTokenIds,
           network,
-          provider,
+          signer,
           redeemTokenIds,
           userAddress,
           vaultAddress,
@@ -270,7 +266,7 @@ const swapWithVault = async ({
       return swapErc1155NoFee({
         mintTokenIds,
         network,
-        provider,
+        signer,
         redeemTokenIds,
         vaultAddress,
       });

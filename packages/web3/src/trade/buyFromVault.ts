@@ -1,6 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
 import type { VaultId } from '../vaults/types';
 import { getContract } from '../web3';
 import type { Address } from '../web3/types';
@@ -10,10 +9,11 @@ import { getExactTokenIds, getTotalTokenIds } from './utils';
 import estimateGasAndFees from './estimateGasAndFees';
 import { getChainConstant, omitNil } from '../utils';
 import increaseGasLimit from './increaseGasLimit';
+import type { Signer } from 'ethers';
 
 const buyErc721 = async ({
   network,
-  provider,
+  signer,
   userAddress,
   vaultAddress,
   vaultId,
@@ -22,7 +22,7 @@ const buyErc721 = async ({
   tokenIds,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   userAddress: Address;
   vaultId: VaultId;
   vaultAddress: Address;
@@ -34,10 +34,9 @@ const buyErc721 = async ({
   const amount = getTotalTokenIds(tokenIds) + randomBuys;
   const contract = getContract({
     network,
-    provider,
+    signer,
     abi,
     address: getChainConstant(NFTX_MARKETPLACE_ZAP, network),
-    type: 'write',
   });
   const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
 
@@ -71,7 +70,7 @@ const buyErc1155 = buyErc721;
 /** Buy one or more NFTs from an NFTX vault */
 const buyFromVault = async ({
   network,
-  provider,
+  signer,
   userAddress,
   vaultAddress,
   vaultId,
@@ -82,7 +81,7 @@ const buyFromVault = async ({
   quote = 'ETH',
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   userAddress: Address;
   vaultId: VaultId;
   vaultAddress: Address;
@@ -103,7 +102,7 @@ const buyFromVault = async ({
       return buyErc721({
         maxPrice,
         network,
-        provider,
+        signer,
         randomBuys,
         tokenIds,
         userAddress,
@@ -115,7 +114,7 @@ const buyFromVault = async ({
       return buyErc1155({
         maxPrice,
         network,
-        provider,
+        signer,
         randomBuys,
         tokenIds,
         userAddress,

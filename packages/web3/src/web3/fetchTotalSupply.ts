@@ -1,4 +1,4 @@
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { BaseProvider } from '@ethersproject/providers';
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Address } from './types';
 import getContract from './getContract';
@@ -11,7 +11,7 @@ const fetchTotalSupply = async ({
   tokenAddress,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
   tokenAddress: Address;
 }) => {
   const contract = getContract({

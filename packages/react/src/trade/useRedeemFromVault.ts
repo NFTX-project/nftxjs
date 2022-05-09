@@ -8,12 +8,12 @@ type Args = Omit<Parameters<typeof redeemFromVault>[0], 'network' | 'provider'>;
 const useRedeemFromVault = (opts: UseTransactionOptions) => {
   const {
     network,
-    provider,
+    signer,
     web3: { redeemFromVault },
   } = useNftx();
 
   return useTransaction(
-    (args: Args) => redeemFromVault({ ...args, network, provider }),
+    (args: Args) => redeemFromVault({ ...args, network, signer }),
     opts
   );
 };

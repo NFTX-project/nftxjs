@@ -8,12 +8,12 @@ type Args = Omit<Parameters<typeof swapWithVault>[0], 'network' | 'provider'>;
 const useSwapWithVault = (opts: UseTransactionOptions) => {
   const {
     network,
-    provider,
+    signer,
     web3: { swapWithVault },
   } = useNftx();
 
   return useTransaction(
-    (args: Args) => swapWithVault({ ...args, network, provider }),
+    (args: Args) => swapWithVault({ ...args, network, signer }),
     opts
   );
 };

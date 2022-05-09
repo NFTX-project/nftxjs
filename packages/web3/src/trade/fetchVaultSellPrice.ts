@@ -1,5 +1,5 @@
 import { WeiPerEther } from '@ethersproject/constants';
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { BaseProvider } from '@ethersproject/providers';
 import type { Vault } from '../vaults';
 import fetchSellPrice from './FetchSellPrice';
 
@@ -12,7 +12,7 @@ const fetchVaultSellPrice = async ({
 }: {
   vault: Pick<Vault, 'id' | 'fees'>;
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
   sells?: number;
 }) => {
   /** When you sell an NFT there's a mint fee that's deducted from the final price

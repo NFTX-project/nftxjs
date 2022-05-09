@@ -1,5 +1,5 @@
 import { WeiPerEther, Zero } from '@ethersproject/constants';
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { BaseProvider } from '@ethersproject/providers';
 import type { Vault } from '../vaults';
 import fetchBuyPrice from './fetchBuyPrice';
 
@@ -15,7 +15,7 @@ const fetchVaultBuyPrice = async ({
 }: {
   vault: Pick<Vault, 'id' | 'fees' | 'features' | 'reserveVtoken'>;
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
   /** The number of target buys we are doing */
   targetBuys?: number;
   /** The number of random buys we are doing */

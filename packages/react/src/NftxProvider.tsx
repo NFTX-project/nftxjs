@@ -1,32 +1,38 @@
 import React, { createContext, ReactNode, useContext, useMemo } from 'react';
 import * as web3 from '@nftx/web3';
 import { Network } from '@nftx/constants';
-import { JsonRpcProvider, getDefaultProvider } from '@ethersproject/providers';
+import { getDefaultProvider } from '@ethersproject/providers';
+import type { BaseProvider } from '@ethersproject/providers';
 import { EventsProvider } from './EventsProvider';
+import type { Signer } from 'ethers';
 
 type INftxContext = {
   web3: typeof web3;
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
+  signer: Signer;
 };
 
 export const NftxContext = createContext<INftxContext>({
   web3,
   network: Network.Mainnet,
-  provider: getDefaultProvider(Network.Mainnet) as JsonRpcProvider,
+  provider: getDefaultProvider(Network.Mainnet),
+  signer: null,
 });
 
 export const NftxProvider = ({
   children,
   network,
   provider,
+  signer,
 }: {
   children: ReactNode;
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
+  signer: Signer;
 }) => {
   const value = useMemo(
-    () => ({ network, provider, web3 }),
+    () => ({ network, provider, signer, web3 }),
     [network, provider]
   );
   return (

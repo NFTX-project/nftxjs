@@ -1,4 +1,4 @@
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { BaseProvider } from '@ethersproject/providers';
 import fetchXTokenShare from './fetchXTokenShare';
 import type { VaultId } from './types';
 
@@ -8,7 +8,7 @@ const fetchXTokenShares = async ({
   vaultIds,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
   vaultIds: VaultId[];
 }) => {
   const shares = await Promise.all(

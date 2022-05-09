@@ -1,5 +1,5 @@
 import { Zero } from '@ethersproject/constants';
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { BaseProvider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 import { fetchReservesForToken } from '../tokens';
 import type { Address } from '../web3/types';
@@ -31,7 +31,7 @@ const fetchSpotPriceFromSubgraph = async ({
   tokenAddress,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
   tokenAddress: Address;
   quote: 'ETH';
 }) => {
@@ -50,7 +50,7 @@ const fetchSpotPrice = async ({
   quote = 'ETH',
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: BaseProvider;
   tokenAddress: Address;
   quote?: 'ETH';
 }) => {
