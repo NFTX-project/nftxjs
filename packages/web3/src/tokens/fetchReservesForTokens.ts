@@ -98,8 +98,8 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
     );
 
     if (wethPair) {
-      const reserveVtoken = parseEther(wethPair.reserve0 || '0');
-      const reserveWeth = parseEther(wethPair.reserve1 || '0');
+      const reserveVtoken = parseEther(wethPair.reserve1 || '0');
+      const reserveWeth = parseEther(wethPair.reserve0 || '0');
       const midPrice = calcMidPrice(reserveVtoken, reserveWeth);
 
       return {
