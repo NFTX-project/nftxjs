@@ -11,8 +11,8 @@ type Response = Array<{
 const fetchVaultAprs = async ({
   vaultAddresses,
 }: {
-  vaultAddresses: VaultAddress[];
-}): Promise<VaultApr[]> => {
+  vaultAddresses?: VaultAddress[];
+} = {}): Promise<VaultApr[]> => {
   const response = await fetch(NFTX_APR_URL);
   let data: Response;
   try {
@@ -21,15 +21,32 @@ const fetchVaultAprs = async ({
     data = [];
   }
 
-  return vaultAddresses.map((vaultAddress): VaultApr => {
-    const x = data.find(({ vault_id }) => addressEqual(vault_id, vaultAddress));
+  const aprs = data?.map(
+    ({ inventoryApr, liquidityApr, vault_id }): VaultApr => {
+      return {
+        vaultAddress: vault_id,
+        inventoryApr: Number(Object.values(inventoryApr ?? {})[0] ?? '0'),
+        liquidityApr: Number(Object.values(liquidityApr ?? {})[0] ?? '0'),
+      };
+    }
+  );
 
-    return {
-      vaultAddress,
-      liquidityApr: Number(Object.values(x?.liquidityApr ?? {})[0] ?? '0'),
-      inventoryApr: Number(Object.values(x?.inventoryApr ?? {})[0] ?? '0'),
-    };
-  });
+  if (vaultAddresses) {
+    return vaultAddresses.map((vaultAddress) => {
+      const apr = aprs.find((apr) =>
+        addressEqual(apr.vaultAddress, vaultAddress)
+      );
+      return (
+        apr ?? {
+          vaultAddress,
+          inventoryApr: 0,
+          liquidityApr: 0,
+        }
+      );
+    });
+  }
+
+  return aprs;
 };
 
 export default fetchVaultAprs;

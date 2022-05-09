@@ -1,8 +1,8 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Contract, ContractTransaction } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
 import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/NFTXMarketplaceZap.json';
+import type { Signer } from 'ethers';
 import { getChainConstant, omitNil } from '../utils';
 import type { VaultAddress, VaultId } from '../vaults/types';
 import { getContract } from '../web3';
@@ -91,7 +91,7 @@ const sellErc1155 = async ({
 const sellIntoVault = async ({
   minPrice,
   network,
-  provider,
+  signer,
   tokenIds,
   userAddress,
   vaultAddress,
@@ -100,7 +100,7 @@ const sellIntoVault = async ({
   standard = Array.isArray(tokenIds?.[0]) ? 'ERC1155' : 'ERC721',
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   userAddress: Address;
   vaultId: VaultId;
   vaultAddress: VaultAddress;
@@ -123,10 +123,9 @@ const sellIntoVault = async ({
 
   const contract = getContract({
     network,
-    provider,
+    signer,
     abi,
     address: getChainConstant(NFTX_MARKETPLACE_ZAP, network),
-    type: 'write',
   });
 
   if (quote === 'ETH') {

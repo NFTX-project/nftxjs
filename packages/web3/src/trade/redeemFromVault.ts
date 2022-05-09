@@ -1,7 +1,7 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
 import abi from '@nftx/constants/abis/NFTXVaultUpgradeable.json';
+import type { Signer } from 'ethers';
 import type { VaultAddress, VaultId } from '../vaults/types';
 import { getContract } from '../web3';
 import type { Address } from '../web3/types';
@@ -12,13 +12,13 @@ import { getExactTokenIds } from './utils';
  */
 const redeemFromVault = async ({
   network,
-  provider,
+  signer,
   targetIds,
   vaultAddress,
   randomRedeems,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   userAddress: Address;
   vaultId: VaultId;
   vaultAddress: VaultAddress;
@@ -32,10 +32,9 @@ const redeemFromVault = async ({
 }): Promise<ContractTransaction> => {
   const contract = getContract({
     network,
-    provider,
+    signer,
     abi,
     address: vaultAddress,
-    type: 'write',
   });
 
   const specificIds: string[] = getExactTokenIds(targetIds);

@@ -1,5 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import erc721Abi from '@nftx/constants/abis/ERC721.json';
 import erc20Abi from '@nftx/constants/abis/ERC20.json';
 import punkAbi from '@nftx/constants/abis/CryptoPunks.json';
@@ -17,7 +17,7 @@ const isPunkApproved = async ({
   spenderAddress,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
   tokenAddress: Address;
   tokenId: string;
   userAddress: Address;
@@ -60,7 +60,7 @@ const arePunksApproved = async ({
 }: {
   tokenIds: string[];
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
   spenderAddress: Address;
   tokenAddress: Address;
   userAddress: Address;
@@ -89,7 +89,7 @@ const isErc721Approved = async ({
   spenderAddress,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
   tokenAddress: Address;
   userAddress: Address;
   spenderAddress: Address;
@@ -118,7 +118,7 @@ const isErc20Approved = async ({
   amount,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
   tokenAddress: Address;
   userAddress: Address;
   spenderAddress: Address;
@@ -153,7 +153,7 @@ const isApproved = async ({
   standard = tokenId || tokenIds ? 'ERC721' : 'ERC20',
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
   tokenAddress: Address;
   spenderAddress: Address;
   userAddress: Address;

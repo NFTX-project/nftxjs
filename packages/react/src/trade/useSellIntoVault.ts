@@ -8,12 +8,12 @@ type Args = Omit<Parameters<typeof sellIntoVault>[0], 'network' | 'provider'>;
 const useSellIntoVault = (opts: UseTransactionOptions) => {
   const {
     network,
-    provider,
+    signer,
     web3: { sellIntoVault },
   } = useNftx();
 
   return useTransaction(
-    (args: Args) => sellIntoVault({ ...args, network, provider }),
+    (args: Args) => sellIntoVault({ ...args, network, signer }),
     opts
   );
 };
