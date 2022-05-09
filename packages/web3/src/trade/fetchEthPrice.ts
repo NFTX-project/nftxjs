@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import { Network, UNISWAP_QUOTER, USDC, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/UniswapQuoter.json';
 import { getChainConstant } from '../utils';
@@ -22,7 +22,7 @@ const fetchEthPriceFromWeb3 = async ({
   provider,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
 }) => {
   const contract = getContract({
     network,
@@ -52,7 +52,7 @@ const fetchEthPrice = async ({
   provider,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
 }) => {
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {

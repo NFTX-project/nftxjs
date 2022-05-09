@@ -1,8 +1,8 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Contract } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 
-const get1559GasFees = async ({ provider }: { provider: JsonRpcProvider }) => {
+const get1559GasFees = async ({ provider }: { provider: Provider }) => {
   try {
     const feeData = await provider.getFeeData();
     const { maxFeePerGas, maxPriorityFeePerGas } = feeData;
@@ -32,7 +32,7 @@ const estimateGasAndFees = async ({
 
   try {
     const fees = await get1559GasFees({
-      provider: contract.provider as JsonRpcProvider,
+      provider: contract.provider as Provider,
     });
     maxFeePerGas = fees.maxFeePerGas;
     maxPriorityFeePerGas = fees.maxPriorityFeePerGas;

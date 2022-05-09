@@ -1,4 +1,4 @@
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import type { BigNumber } from '@ethersproject/bignumber';
 import abi from '@nftx/constants/abis/ERC20.json';
 import type { Address } from './types';
@@ -12,7 +12,7 @@ const fetchTokenBalance = async ({
   tokenAddress,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider: Provider;
   /** The token address */
   tokenAddress: Address;
   /** The owner (i.e. the user) whose balance we're fetching */

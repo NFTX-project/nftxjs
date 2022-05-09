@@ -1,6 +1,6 @@
 import type { ContractTransaction } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
 import abi from '@nftx/constants/abis/NFTXVaultUpgradeable.json';
+import type { Signer } from 'ethers';
 import type { VaultAddress, VaultId } from '../vaults/types';
 import { getContract } from '../web3';
 import type { Address } from '../web3/types';
@@ -11,12 +11,12 @@ import { getTokenIdAmounts, getUniqueTokenIds } from './utils';
  */
 const mintIntoVault = async ({
   network,
-  provider,
+  signer,
   tokenIds,
   vaultAddress,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  signer: Signer;
   userAddress: Address;
   vaultAddress: VaultAddress;
   vaultId: VaultId;
@@ -31,10 +31,9 @@ const mintIntoVault = async ({
 
   const contract = getContract({
     network,
-    provider,
+    signer,
     abi,
     address: vaultAddress,
-    type: 'write',
   });
 
   return contract.mint(ids, amounts);

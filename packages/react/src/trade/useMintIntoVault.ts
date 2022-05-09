@@ -8,12 +8,12 @@ type Args = Omit<Parameters<typeof mintIntoVault>[0], 'network' | 'provider'>;
 const useMintIntoVault = (opts?: UseTransactionOptions) => {
   const {
     network,
-    provider,
+    signer,
     web3: { mintIntoVault },
   } = useNftx();
 
   return useTransaction(
-    (args: Args) => mintIntoVault({ ...args, network, provider }),
+    (args: Args) => mintIntoVault({ ...args, network, signer }),
     opts
   );
 };

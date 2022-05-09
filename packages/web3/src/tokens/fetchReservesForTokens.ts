@@ -127,7 +127,7 @@ const fetchReservesForTokens = async ({
   tokenAddresses,
 }: {
   network: number;
-  tokenAddresses: Address[];
+  tokenAddresses?: Address[];
 }) => {
   const query = gql`{
     tokens(
@@ -165,14 +165,17 @@ const fetchReservesForTokens = async ({
   const response = await querySubgraph<Response>({
     url: getChainConstant(SUSHI_SUBGRAPH, network),
     query,
-    variables: {
-      tokenAddresses: tokenAddresses.map(toLowerCase),
-    },
+    variables: { tokenAddresses },
   });
 
-  return response?.tokens?.map(
-    (token): TokenReserve => formatTokenReserves(token, network)
-  );
+  const reserves =
+    response?.tokens?.map(
+      (token): TokenReserve => formatTokenReserves(token, network)
+    ) ?? [];
+
+  // TODO: handle cases where more than 1000 tokens are found
+
+  return reserves;
 };
 
 export default fetchReservesForTokens;

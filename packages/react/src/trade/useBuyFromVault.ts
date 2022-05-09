@@ -7,12 +7,12 @@ type Args = Omit<Parameters<typeof buyFromVault>[0], 'network' | 'provider'>;
 const useBuyFromVault = (opts?: UseTransactionOptions) => {
   const {
     network,
-    provider,
+    signer,
     web3: { buyFromVault },
   } = useNftx();
 
   return useTransaction(
-    (args: Args) => buyFromVault({ ...args, network, provider }),
+    (args: Args) => buyFromVault({ ...args, network, signer }),
     opts
   );
 };

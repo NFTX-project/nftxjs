@@ -2,7 +2,7 @@ import {
   Contract as EthersContract,
   ContractInterface,
 } from '@ethersproject/contracts';
-import type { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import { MULTICALL } from '@nftx/constants';
 import { getChainConstant } from '../utils';
 
@@ -202,7 +202,7 @@ interface IMulticallContractClass {
     network: number,
     addressOrName: string,
     contractInterface: ContractInterface,
-    signerOrProvider: JsonRpcSigner | JsonRpcProvider
+    provider: Provider
   ): IMulticallContract<T>;
 }
 type IMulticallContract<T extends Record<string, any>> = EthersContract & T;

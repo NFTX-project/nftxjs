@@ -1,5 +1,6 @@
 import { ContractInterface, Contract } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
+import type { Signer } from 'ethers';
 import MulticallContract from './MulticallContract';
 import type { Address } from './types';
 
@@ -12,20 +13,20 @@ const MULTICALL_ENABLED =
 const getContract = <T>({
   network,
   provider,
+  signer,
   address,
   abi,
-  type = 'read',
   multicall = true,
 }: {
   network: number;
-  provider: JsonRpcProvider;
+  provider?: Provider;
+  signer?: Signer;
   address: Address;
   abi: ContractInterface;
-  type?: 'read' | 'write';
   multicall?: boolean;
 }): Contract & T => {
-  if (type === 'write') {
-    return new Contract(address, abi, provider.getSigner()) as Contract & T;
+  if (signer) {
+    return new Contract(address, abi, signer) as Contract & T;
   }
   if (multicall && MULTICALL_ENABLED) {
     return new MulticallContract<T>(network, address, abi, provider);

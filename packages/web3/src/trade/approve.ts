@@ -1,6 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
-import type { JsonRpcProvider } from '@ethersproject/providers';
 import erc721Abi from '@nftx/constants/abis/ERC721.json';
 import punkAbi from '@nftx/constants/abis/CryptoPunks.json';
 import erc20Abi from '@nftx/constants/abis/ERC20.json';
@@ -8,20 +7,21 @@ import { MaxUint256 } from '@ethersproject/constants';
 import { isCryptoPunk } from '../assets';
 import { getContract } from '../web3';
 import type { Address } from '../web3/types';
+import type { Signer } from 'ethers';
 
 function approvePunk({
   tokenId,
   tokenIds,
   network,
   tokenAddress,
-  provider,
+  signer,
   spenderAddress,
 }: {
   tokenId: string;
   tokenIds: string[];
   network: number;
   tokenAddress: string;
-  provider: JsonRpcProvider;
+  signer: Signer;
   spenderAddress: string;
 }) {
   if (!tokenId && !tokenIds?.[0]) {
@@ -30,8 +30,7 @@ function approvePunk({
   const contract = getContract({
     network,
     address: tokenAddress,
-    type: 'write',
-    provider,
+    signer,
     abi: punkAbi,
   });
   return contract.offerPunkForSaleToAddress(
@@ -44,19 +43,18 @@ function approvePunk({
 function approveErc721({
   network,
   tokenAddress,
-  provider,
+  signer,
   spenderAddress,
 }: {
   network: number;
   tokenAddress: string;
-  provider: JsonRpcProvider;
+  signer: Signer;
   spenderAddress: string;
 }) {
   const contract = getContract({
     network,
     address: tokenAddress,
-    type: 'write',
-    provider,
+    signer,
     abi: erc721Abi,
   });
   return contract.setApprovalForAll(spenderAddress, true);
@@ -67,21 +65,20 @@ const approveErc1155 = approveErc721;
 function approveErc20({
   network,
   tokenAddress,
-  provider,
+  signer,
   spenderAddress,
   amount,
 }: {
   network: number;
   tokenAddress: string;
-  provider: JsonRpcProvider;
+  signer: Signer;
   spenderAddress: string;
   amount: BigNumber;
 }) {
   const contract = getContract({
     network,
     address: tokenAddress,
-    provider,
-    type: 'write',
+    signer,
     abi: erc20Abi,
   });
   return contract.approve(spenderAddress, amount ?? MaxUint256);
@@ -94,7 +91,7 @@ async function approve({
   spenderAddress,
   tokenId,
   tokenIds,
-  provider,
+  signer,
   amount,
   standard = tokenId || tokenIds ? 'ERC721' : amount ? 'ERC20' : null,
 }: {
@@ -103,7 +100,7 @@ async function approve({
   tokenAddress: Address;
   /** The smart contract address that will be spending the token */
   spenderAddress: Address;
-  provider: JsonRpcProvider;
+  signer: Signer;
   tokenId?: string;
   /** For ERC721/ERC1155, provide the token id or tokenIds */
   tokenIds?: string[];
@@ -119,20 +116,20 @@ async function approve({
         tokenIds,
         network,
         tokenAddress,
-        provider,
+        signer,
         spenderAddress,
       });
     }
-    return approveErc721({ network, tokenAddress, provider, spenderAddress });
+    return approveErc721({ network, tokenAddress, signer, spenderAddress });
   }
   if (standard === 'ERC1155') {
-    return approveErc1155({ network, provider, spenderAddress, tokenAddress });
+    return approveErc1155({ network, signer, spenderAddress, tokenAddress });
   }
   if (standard === 'ERC20') {
     return approveErc20({
       network,
       tokenAddress,
-      provider,
+      signer,
       spenderAddress,
       amount,
     });
