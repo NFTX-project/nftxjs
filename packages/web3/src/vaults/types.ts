@@ -64,7 +64,6 @@ export type Vault = {
 };
 
 export type VaultApr = {
-  vaultId: VaultId;
   vaultAddress: VaultAddress;
   inventoryApr: number;
   liquidityApr: number;
