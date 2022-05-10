@@ -1,5 +1,5 @@
 import { Zero } from '@ethersproject/constants';
-import type { BaseProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import {
   doesVaultHaveRandomSwapFee,
   doesVaultHaveTargetSwapFee,
@@ -15,7 +15,7 @@ const fetchVaultSwapPrice = async ({
   randomSwaps,
 }: {
   network: number;
-  provider: BaseProvider;
+  provider: Provider;
   vault: Pick<Vault, 'fees' | 'id'>;
   targetSwaps?: number;
   randomSwaps?: number;

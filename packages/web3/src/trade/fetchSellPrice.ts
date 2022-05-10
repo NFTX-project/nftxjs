@@ -1,6 +1,6 @@
 import type { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
-import type { BaseProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import { SUSHISWAP_ROUTER, WETH_TOKEN } from '@nftx/constants';
 import routerAbi from '@nftx/constants/abis/UniswapV2Router.json';
 import { getChainConstant } from '../utils';
@@ -35,7 +35,7 @@ const fetchSellPriceFromWeb3 = async ({
   amount,
 }: {
   network: number;
-  provider: BaseProvider;
+  provider: Provider;
   tokenAddress: Address;
   amount: BigNumberish;
   quote: 'ETH';
@@ -68,7 +68,7 @@ const fetchSellPrice = async ({
   quote = 'ETH',
 }: {
   network: number;
-  provider: BaseProvider;
+  provider: Provider;
   tokenAddress: Address;
   amount?: BigNumberish;
   quote?: 'ETH';

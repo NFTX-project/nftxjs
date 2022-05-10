@@ -1,4 +1,4 @@
-import type { BaseProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Address } from './types';
 import getContract from './getContract';
@@ -11,7 +11,7 @@ const fetchTotalSupply = async ({
   tokenAddress,
 }: {
   network: number;
-  provider: BaseProvider;
+  provider: Provider;
   tokenAddress: Address;
 }) => {
   const contract = getContract({

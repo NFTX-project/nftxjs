@@ -132,6 +132,9 @@ const fetchReservesForTokens = async ({
   const query = gql`{
     tokens(
       first: ${LIMIT},
+      where: {
+        id_in: $tokenAddresses
+      }
     ) {
       id
       derivedETH
@@ -162,22 +165,17 @@ const fetchReservesForTokens = async ({
   const response = await querySubgraph<Response>({
     url: getChainConstant(SUSHI_SUBGRAPH, network),
     query,
+    variables: { tokenAddresses },
   });
 
-  const allReserves = response?.tokens?.map(
-    (token): TokenReserve => formatTokenReserves(token, network)
-  );
+  const reserves =
+    response?.tokens?.map(
+      (token): TokenReserve => formatTokenReserves(token, network)
+    ) ?? [];
 
   // TODO: handle cases where more than 1000 tokens are found
 
-  if (tokenAddresses) {
-    const addresses = tokenAddresses.map(toLowerCase);
-    return allReserves.filter((reserves) =>
-      addresses.includes(reserves.tokenId.toLowerCase())
-    );
-  }
-
-  return allReserves;
+  return reserves;
 };
 
 export default fetchReservesForTokens;

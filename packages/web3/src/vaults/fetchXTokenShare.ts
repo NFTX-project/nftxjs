@@ -1,4 +1,4 @@
-import type { BaseProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import type { BigNumber } from '@ethersproject/bignumber';
 import abi from '@nftx/constants/abis/NFTXInventoryStaking.json';
 import { NFTX_INVENTORY_STAKING } from '@nftx/constants';
@@ -12,7 +12,7 @@ const fetchXTokenShare = async ({
   vaultId,
 }: {
   network: number;
-  provider: BaseProvider;
+  provider: Provider;
   vaultId: VaultId;
 }) => {
   const address = getChainConstant(NFTX_INVENTORY_STAKING, network);

@@ -1,5 +1,5 @@
 import { ContractInterface, Contract } from '@ethersproject/contracts';
-import type { BaseProvider } from '@ethersproject/providers';
+import type { Provider } from '@ethersproject/providers';
 import type { Signer } from 'ethers';
 import MulticallContract from './MulticallContract';
 import type { Address } from './types';
@@ -19,7 +19,7 @@ const getContract = <T>({
   multicall = true,
 }: {
   network: number;
-  provider?: BaseProvider;
+  provider?: Provider;
   signer?: Signer;
   address: Address;
   abi: ContractInterface;
