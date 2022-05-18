@@ -24,7 +24,10 @@ export type Swap = {
   specificIds: string[];
   randomCount: string;
   targetCount: string;
-  feeReceipt: { amount: string; date: string };
+  feeReceipt: {
+    transfers: Array<{ amount: string; to: string }>;
+    date: string;
+  };
 };
 
 export const createSwapsQuery = (where: string) => {
@@ -59,7 +62,10 @@ export const createSwapsQuery = (where: string) => {
     randomCount
     targetCount
     feeReceipt {
-      amount
+      transfers {
+        amount
+        to
+      }
       date
     }
   }`;
@@ -71,11 +77,7 @@ export const processSwaps = async (
   vaultAddresses: VaultAddress[]
 ) => {
   let swaps = response.swaps.flatMap((swap): VaultActivity[] => {
-    const receipt = transformFeeReceipt(
-      swap.feeReceipt,
-      swap.vault.id,
-      network
-    );
+    const receipt = transformFeeReceipt(swap.feeReceipt, swap.vault.id);
 
     return swap.redeemedIds.map((nftId, i): VaultActivity => {
       return {
