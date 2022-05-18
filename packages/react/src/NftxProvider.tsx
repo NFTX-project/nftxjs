@@ -13,23 +13,25 @@ type INftxContext = {
   signer: Signer;
 };
 
-export const NftxContext = createContext<INftxContext>({
+const defaultContext = {
   web3,
   network: Network.Mainnet,
   provider: getDefaultProvider(Network.Mainnet),
   signer: null,
-});
+};
+
+export const NftxContext = createContext<INftxContext>(defaultContext);
 
 export const NftxProvider = ({
   children,
-  network,
-  provider,
-  signer,
+  network = defaultContext.network,
+  provider = defaultContext.provider,
+  signer = defaultContext.signer,
 }: {
   children: ReactNode;
-  network: number;
-  provider: Provider;
-  signer: Signer;
+  network?: number;
+  provider?: Provider;
+  signer?: Signer;
 }) => {
   const value = useMemo(
     () => ({ network, provider, signer, web3 }),
