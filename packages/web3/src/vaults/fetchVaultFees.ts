@@ -24,7 +24,10 @@ const fetchSingleVaultFees = async ({
           orderBy: date
           orderDirection: asc
         ) {
-          amount
+          transfers {
+            amount
+            to
+          }
           date
         }
       }
@@ -33,7 +36,12 @@ const fetchSingleVaultFees = async ({
 
   try {
     const data = await querySubgraph<{
-      vault: { feeReceipts: Array<{ amount: string; date: string }> };
+      vault: {
+        feeReceipts: Array<{
+          transfers: Array<{ amount: string; to: string }>;
+          date: string;
+        }>;
+      };
     }>({
       url: getChainConstant(NFTX_SUBGRAPH, network),
       query,
@@ -42,7 +50,7 @@ const fetchSingleVaultFees = async ({
 
     let receipts =
       data?.vault?.feeReceipts?.map((receipt) => {
-        return transformFeeReceipt(receipt, vaultAddress, network);
+        return transformFeeReceipt(receipt, vaultAddress);
       }) ?? [];
 
     if (receipts.length === 1000) {
@@ -96,7 +104,10 @@ const fetchMultiVaultFees = async ({
           orderBy: date
           orderDirection: asc
         ) {
-          amount
+          transfers {
+            amount
+            to
+          }
           date
         }
       }
@@ -108,7 +119,10 @@ const fetchMultiVaultFees = async ({
       vaults: Array<{
         id: string;
         vaultId: string;
-        feeReceipts: Array<{ amount: string; date: string }>;
+        feeReceipts: Array<{
+          transfers: Array<{ amount: string; to: string }>;
+          date: string;
+        }>;
       }>;
     }>({
       url: getChainConstant(NFTX_SUBGRAPH, network),
@@ -123,7 +137,7 @@ const fetchMultiVaultFees = async ({
     const feeReceipts = await Promise.all(
       data?.vaults?.map(async (vault) => {
         let receipts = vault.feeReceipts.map((receipt) => {
-          return transformFeeReceipt(receipt, vault.id, network);
+          return transformFeeReceipt(receipt, vault.id);
         });
         if (receipts.length === 1000) {
           const moreReceipts = await fetchSingleVaultFees({
@@ -182,7 +196,14 @@ async function fetchVaultFees({
       network,
     });
   }
-  if (vaultAddresses?.length) {
+  if (vaultAddresses?.length === 1) {
+    return fetchSingleVaultFees({
+      vaultAddress: vaultAddresses[0],
+      fromTimestamp,
+      network,
+    });
+  }
+  if (vaultAddresses?.length > 1) {
     return fetchMultiVaultFees({
       vaultAddresses,
       fromTimestamp,

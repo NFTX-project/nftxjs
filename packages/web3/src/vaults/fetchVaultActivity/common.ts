@@ -1,19 +1,21 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { Network } from '@nftx/constants';
+import { Zero } from '@ethersproject/constants';
 import type { VaultAddress, VaultFeeReceipt } from '../types';
 
 export const transformFeeReceipt = (
-  receipt: { amount: string; date: string },
-  vaultAddress: VaultAddress,
-  network: number
+  receipt: { transfers: Array<{ amount: string; to: string }>; date: string },
+  vaultAddress: VaultAddress
 ): VaultFeeReceipt => {
-  const unsafeFeeCalcTime = network === Network.Mainnet ? 1642684642 : 0;
   const date = Number(receipt.date);
-  let amount = BigNumber.from(receipt.amount);
+  const transfers = receipt.transfers.map((transfer) => {
+    const amount = BigNumber.from(transfer.amount);
+    const to = transfer.to;
+    return { amount, to };
+  });
+  const amount = transfers.reduce(
+    (total, { amount }) => total.add(amount),
+    Zero
+  );
 
-  if (date > unsafeFeeCalcTime) {
-    amount = amount.mul(5);
-  }
-
-  return { vaultAddress, date, amount };
+  return { vaultAddress, date, transfers, amount };
 };

@@ -20,7 +20,10 @@ export type Redeem = {
   specificIds: string[];
   randomCount: string;
   feeReceipt: {
-    amount: string;
+    transfers: Array<{
+      amount: string;
+      to: string;
+    }>;
     date: string;
   };
 };
@@ -56,7 +59,10 @@ export const createRedeemsQuery = (where: string) => {
     randomCount
     targetCount
     feeReceipt {
-      amount
+      transfers {
+        amount
+        to
+      }
       date
     }
   }`;
@@ -68,11 +74,7 @@ export const processRedeems = async (
   vaultAddresses: VaultAddress[]
 ) => {
   let redeems = response.redeems.flatMap((redeem) => {
-    const receipt = transformFeeReceipt(
-      redeem.feeReceipt,
-      redeem.vault.id,
-      network
-    );
+    const receipt = transformFeeReceipt(redeem.feeReceipt, redeem.vault.id);
     return redeem.nftIds.map((nftId): VaultActivity => {
       const target = redeem.specificIds?.includes(nftId);
       // TOOD: figure out a way to get msg.sender so we know if it's gem etc.
