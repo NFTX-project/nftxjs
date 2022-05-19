@@ -189,24 +189,28 @@ async function fetchVaultFees({
   vaultAddresses?: VaultAddress[];
   fromTimestamp?: number;
 }) {
+  const roundedTimestamp = fromTimestamp
+    ? Math.floor(Math.round(fromTimestamp / 30) * 30)
+    : undefined;
+
   if (vaultAddress) {
     return fetchSingleVaultFees({
       vaultAddress,
-      fromTimestamp,
+      fromTimestamp: roundedTimestamp,
       network,
     });
   }
   if (vaultAddresses?.length === 1) {
     return fetchSingleVaultFees({
       vaultAddress: vaultAddresses[0],
-      fromTimestamp,
+      fromTimestamp: roundedTimestamp,
       network,
     });
   }
   if (vaultAddresses?.length > 1) {
     return fetchMultiVaultFees({
       vaultAddresses,
-      fromTimestamp,
+      fromTimestamp: roundedTimestamp,
       network,
     });
   }
