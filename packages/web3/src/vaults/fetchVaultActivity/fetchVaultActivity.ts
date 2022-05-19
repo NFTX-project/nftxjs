@@ -12,7 +12,10 @@ function fetchVaultActivity({
   vaultAddresses?: VaultAddress[];
   fromTimestamp?: number;
 }) {
-  return getAll({ network, vaultAddresses, fromTimestamp });
+  const roundedTimestamp = fromTimestamp
+    ? Math.floor(Math.round(fromTimestamp / 30) * 30)
+    : undefined;
+  return getAll({ network, vaultAddresses, fromTimestamp: roundedTimestamp });
 }
 
 export default fetchVaultActivity;
