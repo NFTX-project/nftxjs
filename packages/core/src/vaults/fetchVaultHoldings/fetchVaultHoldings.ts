@@ -29,6 +29,7 @@ const fetchVaultHoldings = async ({
         id
         tokenId
         dateAdded
+        amount
       }
     }
   }`;

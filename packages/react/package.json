@@ -28,7 +28,7 @@
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.4",
     "@nftx/constants": "^0.1.0",
-    "@nftx/web3": "^0.1.0",
+    "@nftx/core": "^0.1.0",
     "ethers": "^5.6.4"
   },
   "devDependencies": {

@@ -1,11 +1,11 @@
 {
-  "name": "@nftx/web3",
+  "name": "@nftx/core",
   "version": "0.1.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
-  "main": "dist/cjs/web3.js",
-  "module": "dist/es/web3.js",
+  "main": "dist/cjs/core.js",
+  "module": "dist/es/core.js",
   "types": "dist/ts/index.d.ts",
   "publishConfig": {
     "registry": "https://registry.yarnpkg.com",

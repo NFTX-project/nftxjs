@@ -22,7 +22,7 @@ If you don't wrap your app in the provider, it will default to mainnet ethers' d
 () => NftxContext;
 ```
 
-Returns the Nftx context, this contains the network, provider, and a `web3` property which is the entirety of `@nftx/web3`.
+Returns the Nftx context, this contains the network, provider, and a `web3` property which is the entirety of `@nftx/core`.
 
 ## useTransaction
 
