@@ -1,4 +1,4 @@
-# @nftx/web3
+# @nftx/core
 
 ## assets
 

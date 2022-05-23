@@ -103,7 +103,7 @@ describe('querySubgraph', () => {
         id
       }
     }`;
-    const result = await querySubgraph({
+    await querySubgraph({
       url: 'https://nftx.io',
       query,
       fetch,
