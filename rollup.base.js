@@ -6,7 +6,7 @@ const pkg = require(path.resolve('./package.json'));
 const external = Object.keys(pkg.dependencies || {}).concat(
   Object.keys(pkg.peerDependencies || {})
 );
-const name = pkg.name.split('/')[1];
+const name = pkg.name.split('/').pop().replace(/\.js/, '');
 
 export default {
   input: 'src/index.ts',
