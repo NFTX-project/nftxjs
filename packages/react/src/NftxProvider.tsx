@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useMemo } from 'react';
-import * as web3 from '@nftx/web3';
+import * as web3 from '@nftx/core';
 import { Network } from '@nftx/constants';
 import { getDefaultProvider } from '@ethersproject/providers';
 import type { Provider } from '@ethersproject/providers';

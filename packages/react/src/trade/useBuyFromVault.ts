@@ -1,4 +1,4 @@
-import type { buyFromVault } from '@nftx/web3';
+import type { buyFromVault } from '@nftx/core';
 import { useNftx } from '../NftxProvider';
 import useTransaction, { UseTransactionOptions } from '../useTransaction';
 

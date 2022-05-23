@@ -13,7 +13,7 @@ All of these constants are grouped by network:
 const usdcAddress = USDC[network];
 ```
 
-we advise on using `getChainConstant` from `@nftx/web3`:
+we advise on using `getChainConstant` from `@nftx/core`:
 
 ```ts
 const usdcAddress = getChainConstant(USDC, network);
