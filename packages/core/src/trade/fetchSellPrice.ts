@@ -50,7 +50,7 @@ const fetchSellPriceFromWeb3 = async ({
   const tokenIn = tokenAddress;
   const tokenOut = getChainConstant(WETH_TOKEN, network);
 
-  const [quotePrice] =
+  const [, quotePrice] =
     ((await contract.getAmountsOut(amount, [
       tokenIn,
       tokenOut,

@@ -50,6 +50,10 @@
 
 ### doesVAutHaveRandomSwapFee
 
+### searchVaults
+
+### matchVault
+
 ### prices
 
 ### fetch0xQuote

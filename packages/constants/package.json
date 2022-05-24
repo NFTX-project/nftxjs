@@ -24,7 +24,10 @@
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
-  "dependencies": {
+  "devDependencies": {
+    "ethereum-abi-types-generator": "^1.3.2"
+  },
+  "peeDependencies": {
     "ethereum-abi-types-generator": "^1.3.2"
   }
 }
