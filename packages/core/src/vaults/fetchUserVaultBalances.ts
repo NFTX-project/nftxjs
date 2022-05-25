@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { NFTX_TOKEN_BALANCE_SUBGRAPH } from '@nftx/constants';
-import { getChainConstant } from '../utils';
 import type { NftxTokenType, UserVaultBalance } from './types';
+import { getChainConstant } from '../web3';
 
 type Response = {
   account: {

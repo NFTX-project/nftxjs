@@ -11,8 +11,8 @@ import {
   getTotalTokenIds,
   getUniqueTokenIds,
 } from './utils';
-import { getContract } from '../web3';
-import { getChainConstant, omitNil } from '../utils';
+import { getChainConstant, getContract } from '../web3';
+import { omitNil } from '../utils';
 import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import estimateGasAndFees from './estimateGasAndFees';
 import increaseGasLimit from './increaseGasLimit';

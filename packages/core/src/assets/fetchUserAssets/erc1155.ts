@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { parseEther } from '@ethersproject/units';
 import { Network, ERC1155_SUBGRAPH } from '@nftx/constants';
-import { getChainConstant } from '../../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
+import { getChainConstant } from '../../web3';
 import type { Address } from '../../web3/types';
 import type { Asset } from '../types';
 

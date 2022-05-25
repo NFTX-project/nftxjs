@@ -2,9 +2,9 @@ import type { Provider } from '@ethersproject/providers';
 import type { BigNumber } from '@ethersproject/bignumber';
 import abi from '@nftx/constants/abis/NFTXInventoryStaking.json';
 import { NFTX_INVENTORY_STAKING } from '@nftx/constants';
-import { getChainConstant } from '../utils';
 import type { VaultId } from './types';
 import getContract from '../web3/getContract';
+import { getChainConstant } from '../web3';
 
 const fetchXTokenShare = async ({
   network,
