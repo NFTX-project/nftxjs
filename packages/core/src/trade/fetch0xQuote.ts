@@ -1,8 +1,7 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import { ZEROX_URL } from '@nftx/constants';
-import { getChainConstant } from '../utils';
-import type { Address } from '../web3';
+import { Address, getChainConstant } from '../web3';
 
 type Response = {
   price: string;

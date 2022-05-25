@@ -4,7 +4,7 @@ import {
 } from '@ethersproject/contracts';
 import type { Provider } from '@ethersproject/providers';
 import { MULTICALL } from '@nftx/constants';
-import { getChainConstant } from '../utils';
+import getChainConstant from './getChainConstant';
 
 const ABI = [
   'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',

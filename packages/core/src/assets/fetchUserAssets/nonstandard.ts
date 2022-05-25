@@ -1,9 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { NON_STANDARD_SUBGRAPH } from '@nftx/constants';
-import { getChainConstant, toLowerCase } from '../../utils';
+import { toLowerCase } from '../../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Address } from '../../web3/types';
 import type { Asset } from '../types';
+import { getChainConstant } from '../../web3';
 
 const LIMIT = 1000;
 

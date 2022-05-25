@@ -1,13 +1,13 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
 import type { VaultId } from '../vaults/types';
-import { getContract } from '../web3';
+import { getChainConstant, getContract } from '../web3';
 import type { Address } from '../web3/types';
 import abi from '@nftx/constants/abis/NFTXMarketplaceZap.json';
 import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import { getExactTokenIds, getTotalTokenIds } from './utils';
 import estimateGasAndFees from './estimateGasAndFees';
-import { getChainConstant, omitNil } from '../utils';
+import { omitNil } from '../utils';
 import increaseGasLimit from './increaseGasLimit';
 import type { Signer } from 'ethers';
 

@@ -1,6 +1,6 @@
 import { NFTX_SUBGRAPH } from '@nftx/constants';
-import { getChainConstant } from '../../utils';
 import { buildWhere, querySubgraph } from '@nftx/subgraph';
+import { getChainConstant } from '../../web3';
 import type { VaultAddress } from '../types';
 import { createMintsQuery, Mint, processMints } from './mints';
 import { createRedeemsQuery, processRedeems, Redeem } from './redeems';

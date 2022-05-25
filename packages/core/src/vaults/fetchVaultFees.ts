@@ -1,8 +1,9 @@
 import { NFTX_SUBGRAPH } from '@nftx/constants';
-import { getChainConstant, toLowerCase } from '../utils';
+import { toLowerCase } from '../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './fetchVaultActivity/common';
 import type { VaultAddress, VaultFeeReceipt } from './types';
+import { getChainConstant } from '../web3';
 
 const fetchSingleVaultFees = async ({
   vaultAddress,

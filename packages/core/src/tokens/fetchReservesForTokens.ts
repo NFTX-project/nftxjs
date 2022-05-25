@@ -1,7 +1,6 @@
 import { parseEther } from '@ethersproject/units';
 import { SUSHI_SUBGRAPH, WETH_TOKEN } from '@nftx/constants';
-import { getChainConstant } from '../utils';
-import { addressEqual } from '../web3';
+import { addressEqual, getChainConstant } from '../web3';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Address } from '../web3/types';
 import type { TokenReserve } from './types';

@@ -1,9 +1,9 @@
 import { NFTX_SUBGRAPH, Network } from '@nftx/constants';
 import type { Token } from '../tokens/types';
-import { getChainConstant } from '../utils';
 import type { Vault, VaultAddress } from '../vaults/types';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import type { LiquidityPool } from './types';
+import { getChainConstant } from '../web3';
 
 type Response = {
   pools: Array<{

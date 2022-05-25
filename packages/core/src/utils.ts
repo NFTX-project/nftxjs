@@ -1,13 +1,3 @@
-import { Network } from '@nftx/constants';
-
-export const getChainConstant = <T>(
-  obj: Record<number, T>,
-  network: number,
-  fallback = obj[Network.Mainnet]
-): T => {
-  return obj[network] ?? fallback;
-};
-
 export const reduceObj = <T extends Record<string, any>>(
   obj: T,
   fn: (

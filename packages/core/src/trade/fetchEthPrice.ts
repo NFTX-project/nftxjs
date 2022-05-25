@@ -3,8 +3,7 @@ import { WeiPerEther } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import { Network, UNISWAP_QUOTER, USDC, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/UniswapQuoter.json';
-import { getChainConstant } from '../utils';
-import { getContract } from '../web3';
+import { getChainConstant, getContract } from '../web3';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0xPrice';
 
