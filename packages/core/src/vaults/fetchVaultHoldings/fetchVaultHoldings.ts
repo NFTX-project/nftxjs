@@ -1,6 +1,6 @@
 import { NFTX_SUBGRAPH } from '@nftx/constants';
-import { getChainConstant } from '../../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
+import { getChainConstant } from '../../web3';
 import type { VaultAddress, VaultHolding } from '../types';
 import transformVaultHolding from './transformVaultHolding';
 

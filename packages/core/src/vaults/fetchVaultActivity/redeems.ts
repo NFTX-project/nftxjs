@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { NFTX_SUBGRAPH } from '@nftx/constants';
-import { getChainConstant } from '../../utils';
 import { buildWhere, querySubgraph } from '@nftx/subgraph';
+import { getChainConstant } from '../../web3';
 import type { VaultActivity, VaultAddress } from '../types';
 import { transformFeeReceipt } from './common';
 
