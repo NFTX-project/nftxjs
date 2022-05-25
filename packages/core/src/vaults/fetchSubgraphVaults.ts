@@ -101,7 +101,7 @@ const fetchSubgraphVaults = async ({
 }): Promise<Response> => {
   const where = buildWhere({
     isFinalized: finalised,
-    totalHoldings_gt: minimumHoldings,
+    totalHoldings_gte: minimumHoldings,
     vaultId: vaultIds != null && vaultIds.length === 1 ? vaultIds[0] : null,
     vaultId_in: vaultIds != null && vaultIds.length > 1 ? vaultIds : null,
     id:
