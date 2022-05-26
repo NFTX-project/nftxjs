@@ -1,11 +1,6 @@
 import fetchVaultAprs from './fetchVaultAprs';
-import type { VaultAddress, VaultApr } from './types';
 
-const fetchVaultArs = async ({
-  vaultAddress,
-}: {
-  vaultAddress: VaultAddress;
-}): Promise<VaultApr> => {
+const fetchVaultArs = async ({ vaultAddress }: { vaultAddress: string }) => {
   const [vaultApy] = await fetchVaultAprs({ vaultAddresses: [vaultAddress] });
   return vaultApy;
 };

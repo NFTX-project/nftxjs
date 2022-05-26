@@ -1,7 +1,6 @@
 {
   "name": "nftx.js",
-  "version": "0.1.0",
-  "description": "> TODO: description",
+  "version": "0.0.0",
   "author": "Jack Ellis <jack.m.ellis@hotmail.co.uk>",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -31,16 +30,13 @@
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.4",
     "@ethersproject/units": "^5.6.0",
-    "@nftx/constants": "^0.1.0",
-    "@nftx/core": "^0.1.0",
-    "@nftx/react": "^0.1.0",
-    "@nftx/subgraph": "^0.1.0",
+    "@nftx/api": "<1.0.0",
+    "@nftx/config": "<1.0.0",
+    "@nftx/constants": "<1.0.0",
+    "@nftx/subgraph": "<1.0.0",
+    "@nftx/trade": "<1.0.0",
+    "@nftx/types": "<1.0.0",
+    "@nftx/utils": "<1.0.0",
     "ethers": "^5.6.4"
-  },
-  "devDependencies": {
-    "react": "^18.0.0"
-  },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0"
   }
 }

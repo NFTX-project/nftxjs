@@ -1,19 +1,28 @@
-import { NFTX_APR_URL } from '@nftx/constants';
-import { addressEqual } from '../web3';
-import type { VaultAddress, VaultApr } from './types';
+import config from '@nftx/config';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 
 type Response = Array<{
   vault_id: string;
-  inventoryApr: Record<string, string>;
-  liquidityApr: Record<string, string>;
+  inventoryApr: number;
+  liquidityApr: number;
 }>;
 
+type VaultApr = {
+  vaultAddress: string;
+  inventoryApr: number;
+  liquidityApr: number;
+};
+
 const fetchVaultAprs = async ({
+  network = config.network,
   vaultAddresses,
 }: {
-  vaultAddresses?: VaultAddress[];
+  network?: number;
+  vaultAddresses?: string[];
 } = {}): Promise<VaultApr[]> => {
-  const response = await fetch(NFTX_APR_URL);
+  const response = await fetch(
+    getChainConstant(config.urls.NFTX_APR_URL, network)
+  );
   let data: Response;
   try {
     data = await response.json();
@@ -25,8 +34,8 @@ const fetchVaultAprs = async ({
     ({ inventoryApr, liquidityApr, vault_id }): VaultApr => {
       return {
         vaultAddress: vault_id,
-        inventoryApr: Number(Object.values(inventoryApr ?? {})[0] ?? '0'),
-        liquidityApr: Number(Object.values(liquidityApr ?? {})[0] ?? '0'),
+        inventoryApr: Number(inventoryApr ?? 0),
+        liquidityApr: Number(liquidityApr ?? 0),
       };
     }
   );

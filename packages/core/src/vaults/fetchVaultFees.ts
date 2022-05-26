@@ -1,9 +1,9 @@
-import { NFTX_SUBGRAPH } from '@nftx/constants';
-import { toLowerCase } from '../utils';
+import { compareByAlpha, toLowerCase } from '../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './fetchVaultActivity/common';
-import type { VaultAddress, VaultFeeReceipt } from './types';
-import { getChainConstant } from '../web3';
+import config from '@nftx/config';
+import type { VaultFeeReceipt } from '@nftx/types';
+import { getChainConstant } from '@nftx/utils';
 
 const fetchSingleVaultFees = async ({
   vaultAddress,
@@ -16,9 +16,18 @@ const fetchSingleVaultFees = async ({
   network: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]> => {
-  const query = gql`
+  const query = gql<{
+    vault: {
+      vaultId: string;
+      feeReceipts: Array<{
+        transfers: Array<{ amount: string; to: string }>;
+        date: string;
+      }>;
+    };
+  }>`
     {
       vault(id: $vaultAddress) {
+        vaultId
         feeReceipts(
           first: 1000
           where: { date_gt: $fromTimestamp }
@@ -36,22 +45,15 @@ const fetchSingleVaultFees = async ({
   `;
 
   try {
-    const data = await querySubgraph<{
-      vault: {
-        feeReceipts: Array<{
-          transfers: Array<{ amount: string; to: string }>;
-          date: string;
-        }>;
-      };
-    }>({
-      url: getChainConstant(NFTX_SUBGRAPH, network),
+    const data = await querySubgraph({
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
       variables: { vaultAddress, fromTimestamp },
     });
 
     let receipts =
       data?.vault?.feeReceipts?.map((receipt) => {
-        return transformFeeReceipt(receipt, vaultAddress);
+        return transformFeeReceipt(receipt, vaultAddress, data.vault.vaultId);
       }) ?? [];
 
     if (receipts.length === 1000) {
@@ -86,12 +88,26 @@ const fetchMultiVaultFees = async ({
   retryCount = 0,
 }: {
   network: number;
-  vaultAddresses: VaultAddress[];
+  vaultAddresses: string[];
   fromTimestamp: number;
   lastId?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]> => {
-  const query = gql`
+  type Response = {
+    vaults: Array<{
+      id: string;
+      vaultId: string;
+      feeReceipts: Array<{
+        transfers: Array<{
+          amount: string;
+          to: string;
+        }>;
+        date: string;
+      }>;
+    }>;
+  };
+
+  const query = gql<Response>`
     {
       vaults(
         first: 1000
@@ -116,20 +132,13 @@ const fetchMultiVaultFees = async ({
   `;
 
   try {
-    const data = await querySubgraph<{
-      vaults: Array<{
-        id: string;
-        vaultId: string;
-        feeReceipts: Array<{
-          transfers: Array<{ amount: string; to: string }>;
-          date: string;
-        }>;
-      }>;
-    }>({
-      url: getChainConstant(NFTX_SUBGRAPH, network),
+    const data = await querySubgraph({
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
       variables: {
-        vaultAddresses: vaultAddresses.map(toLowerCase),
+        vaultAddresses: vaultAddresses
+          .map(toLowerCase)
+          .sort((a, b) => compareByAlpha(a, b)),
         lastId,
         fromTimestamp,
       },
@@ -138,7 +147,7 @@ const fetchMultiVaultFees = async ({
     const feeReceipts = await Promise.all(
       data?.vaults?.map(async (vault) => {
         let receipts = vault.feeReceipts.map((receipt) => {
-          return transformFeeReceipt(receipt, vault.id);
+          return transformFeeReceipt(receipt, vault.id, vault.vaultId);
         });
         if (receipts.length === 1000) {
           const moreReceipts = await fetchSingleVaultFees({
@@ -168,30 +177,30 @@ const fetchMultiVaultFees = async ({
 };
 
 function fetchVaultFees(args: {
-  network: number;
-  vaultAddress: VaultAddress;
+  network?: number;
+  vaultAddress: string;
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
 function fetchVaultFees(args: {
-  network: number;
-  vaultAddresses: VaultAddress[];
+  network?: number;
+  vaultAddresses: string[];
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
 async function fetchVaultFees({
-  network,
+  network = config.network,
   vaultAddress,
   vaultAddresses,
   fromTimestamp = 0,
 }: {
-  network: number;
-  vaultAddress?: VaultAddress;
-  vaultAddresses?: VaultAddress[];
+  network?: number;
+  vaultAddress?: string;
+  vaultAddresses?: string[];
   fromTimestamp?: number;
 }) {
   const roundedTimestamp = fromTimestamp
-    ? Math.floor(Math.round(fromTimestamp / 30) * 30)
+    ? Math.floor(Math.round(fromTimestamp / 3600) * 3600)
     : undefined;
 
   if (vaultAddress) {

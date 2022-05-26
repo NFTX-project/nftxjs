@@ -1,22 +1,26 @@
-import { NFTX_SUBGRAPH } from '@nftx/constants';
+import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
-import { getChainConstant } from '../../web3';
-import type { VaultAddress, VaultHolding } from '../types';
+import type { VaultHolding } from '@nftx/types';
+import { getChainConstant } from '@nftx/utils';
 import transformVaultHolding from './transformVaultHolding';
 
 const LIMIT = 1000;
 
 /** Returns all holdings for a given vault */
 const fetchVaultHoldings = async ({
-  network,
+  network = config.network,
   vaultAddress,
   lastId = '0',
 }: {
-  network: number;
-  vaultAddress: VaultAddress;
+  network?: number;
+  vaultAddress: string;
   lastId?: string;
 }): Promise<VaultHolding[]> => {
-  const query = gql`{
+  const query = gql<{
+    vault: {
+      holdings: Array<{ id: string; tokenId: string; dateAdded: string }>;
+    };
+  }>`{
     vault(id: $vaultAddress) {
       holdings(
         first: ${LIMIT},
@@ -34,13 +38,9 @@ const fetchVaultHoldings = async ({
     }
   }`;
 
-  const url = getChainConstant(NFTX_SUBGRAPH, network);
+  const url = getChainConstant(config.subgraph.NFTX_SUBGRAPH, network);
 
-  const data = await querySubgraph<{
-    vault: {
-      holdings: Array<{ id: string; tokenId: string; dateAdded: string }>;
-    };
-  }>({
+  const data = await querySubgraph({
     url,
     query,
     variables: { vaultAddress, lastId },

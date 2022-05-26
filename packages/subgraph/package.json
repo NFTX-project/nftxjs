@@ -1,6 +1,6 @@
 {
   "name": "@nftx/subgraph",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -17,12 +17,20 @@
   },
   "scripts": {
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
-    "test": "jest --config ../../jest.config.js",
+    "test": "echo \"no tests\" #jest --config ../../jest.config.js",
     "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "peerDependencies": {
+    "@nftx/config": "<1.0.0",
+    "@nftx/constants": "<1.0.0"
+  },
+  "devDependencies": {
+    "@nftx/config": "*",
+    "@nftx/constants": "*"
+  }
 }

@@ -1,19 +1,17 @@
 {
   "packages": ["packages/*"],
-  "version": "0.1.0",
+  "version": "0.0.0",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "command": {
     "publish": {
-      "allowBranch": "main",
+      "allowBranch": "develop",
       "conventionalCommits": true,
-      "yes": true,
       "registry": "https://registry.npmjs.org/"
     },
     "version": {
-      "allowBranch": "main",
-      "conventionalCommits": true,
-      "yes": true
+      "allowBranch": "develop",
+      "conventionalCommits": true
     }
   }
 }

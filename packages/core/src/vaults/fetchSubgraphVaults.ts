@@ -1,8 +1,6 @@
-import { NFTX_SUBGRAPH } from '@nftx/constants';
+import config from '@nftx/config';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import { getChainConstant } from '../web3';
-import type { Address } from '../web3/types';
-import type { VaultAddress, VaultId } from './types';
+import { getChainConstant } from '@nftx/utils';
 
 export type Response = {
   globals: Array<{
@@ -55,6 +53,7 @@ export type Response = {
     };
     eligibilityModule: {
       id: string;
+      name: string;
       eligibleIds: string[];
       eligibleRange: [string, string];
     };
@@ -68,6 +67,8 @@ export type Response = {
     inventoryStakingPool: {
       id: string;
       dividendToken: {
+        id: string;
+        name: string;
         symbol: string;
       };
     };
@@ -75,33 +76,40 @@ export type Response = {
       id: string;
       stakingToken: {
         id: string;
+        name: string;
+        symbol: string;
+      };
+      dividendToken: {
+        id: string;
+        name: string;
+        symbol: string;
       };
     };
   }>;
 };
 
 const fetchSubgraphVaults = async ({
-  network,
+  network = config.network,
   vaultAddresses,
   vaultIds,
   manager,
-  finalised,
-  minimumHoldings,
+  finalisedOnly = true,
+  includeEmptyVaults = false,
   lastId = 0,
   retryCount = 0,
 }: {
-  network: number;
-  vaultAddresses?: VaultAddress[];
-  vaultIds?: VaultId[];
-  minimumHoldings?: number;
-  finalised?: boolean;
-  manager?: Address;
+  network?: number;
+  vaultAddresses?: string[];
+  vaultIds?: string[];
+  includeEmptyVaults?: boolean;
+  finalisedOnly?: boolean;
+  manager?: string;
   lastId?: number;
   retryCount?: number;
 }): Promise<Response> => {
   const where = buildWhere({
-    isFinalized: finalised,
-    totalHoldings_gte: minimumHoldings,
+    isFinalized: finalisedOnly || null,
+    totalHoldings_gte: includeEmptyVaults ? null : 1,
     vaultId: vaultIds != null && vaultIds.length === 1 ? vaultIds[0] : null,
     vaultId_in: vaultIds != null && vaultIds.length > 1 ? vaultIds : null,
     id:
@@ -116,7 +124,7 @@ const fetchSubgraphVaults = async ({
     vaultId_gte: lastId,
   });
 
-  const query = gql`{
+  const query = gql<Response>`{
     globals {
       fees {
         mintFee
@@ -174,6 +182,7 @@ const fetchSubgraphVaults = async ({
       }
       eligibilityModule {
         id
+        name
         eligibleIds
         eligibleRange
       }
@@ -199,6 +208,11 @@ const fetchSubgraphVaults = async ({
           name
           symbol
         }
+        dividendToken {
+          id
+          name
+          symbol
+        }
       }
     }
   }`;
@@ -206,16 +220,37 @@ const fetchSubgraphVaults = async ({
   let data: Response;
 
   try {
-    data = await querySubgraph<Response>({
-      url: getChainConstant(NFTX_SUBGRAPH, network),
+    data = await querySubgraph({
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
     });
+
+    if (data?.vaults?.length === 1000) {
+      const lastVault = data.vaults[data.vaults.length - 1];
+      const lastId = Number(lastVault.vaultId) + 1;
+      const moreVaults = await fetchSubgraphVaults({
+        finalisedOnly,
+        includeEmptyVaults,
+        manager,
+        network,
+        vaultAddresses,
+        vaultIds,
+        retryCount: 0,
+        lastId,
+      });
+
+      data = {
+        ...data,
+        vaults: [...data.vaults, ...(moreVaults?.vaults ?? [])],
+      };
+    }
   } catch (e) {
     console.error(e);
     if (retryCount < 3) {
       return fetchSubgraphVaults({
         network,
-        finalised,
+        finalisedOnly,
+        includeEmptyVaults,
         lastId,
         manager,
         vaultAddresses,

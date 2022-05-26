@@ -1,12 +1,12 @@
 import { ContractTransaction, errors } from 'ethers';
-import { useNftx } from '../NftxProvider';
+import { useNftx } from '../contexts/nftx';
 import {
   TransactionCancelledError,
   TransactionExceptionError,
   TransactionFailedError,
 } from '../errors';
 import { t } from '../utils';
-import { useAddEvent } from '../EventsProvider';
+import { useAddEvent } from '../contexts/events';
 
 type Fn = (...args: any) => Promise<ContractTransaction>;
 
@@ -23,19 +23,23 @@ function isDroppedAndReplaced(e: any) {
  * @param fn an async function that returns a ContractTransaction
  * @returns ContractTransaction
  */
-export default function useWrapTransaction<F extends Fn>(fn: F) {
+export default function useWrapTransaction<F extends Fn>(
+  fn: F,
+  description = ''
+) {
   const { network } = useNftx();
   const addEvent = useAddEvent();
 
   // wrap the original function, we take the same args and return the transaction
-  const wrapper = async (...args: any[]) => {
+  const wrapper = async (args: any) => {
     addEvent({
       type: 'PendingSignature',
       network,
       createdAt: Date.now(),
+      description,
     });
     // call the original fn and intercept the result
-    const [txErr, tx] = await t(fn(...args));
+    const [txErr, tx] = await t(fn(args));
     if (txErr) {
       if (txErr.code === 4001) {
         throw new TransactionCancelledError(txErr, network);
@@ -49,6 +53,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
       network,
       createdAt: Date.now(),
       transaction: tx,
+      description,
     });
 
     const transaction: ContractTransaction = {
@@ -72,6 +77,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
               receipt: receiptErr.receipt,
               transaction: receiptErr.replacement,
               error: receiptErr,
+              description,
             });
 
             if (type === 'transactionSucceed') {
@@ -85,6 +91,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
               receipt: receiptErr.receipt,
               transaction,
               error: receiptErr,
+              description,
             });
           }
 
@@ -103,6 +110,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
           network,
           receipt,
           transaction,
+          description,
         });
 
         return receipt;

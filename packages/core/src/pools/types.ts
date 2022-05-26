@@ -1,6 +1,4 @@
-import type { Token } from '../tokens/types';
-import type { VaultAddress, VaultId } from '../vaults/types';
-import type { Address } from '../web3/types';
+import type { Token } from '@nftx/types';
 
 export type LiquidityPool = {
   id: string;
@@ -11,14 +9,14 @@ export type LiquidityPool = {
   /** The token rewarded for staking i.e. PUNK */
   rewardToken: Token;
   deployBlock: string;
-  vaultAddress: VaultAddress;
-  vaultId: VaultId;
+  vaultAddress: string;
+  vaultId: string;
 };
 
 export type InventoryPool = {
   /** the xToken address */
-  id: Address;
+  id: string;
   dividendToken: Token;
-  vaultAddress: VaultAddress;
-  vaultId: VaultId;
+  vaultAddress: string;
+  vaultId: string;
 };

@@ -1,5 +1,5 @@
-import type { ContractTransaction } from 'ethers';
-import { useCallback, useState } from 'react';
+import type { ContractReceipt, ContractTransaction } from 'ethers';
+import { useCallback, useReducer } from 'react';
 import type { TransactionState } from '../types';
 import {
   TransactionCancelledError,
@@ -11,7 +11,11 @@ import useWrapTransaction from './useWrapTransaction';
 type Fn = (args: any) => Promise<ContractTransaction>;
 
 export type UseTransactionOptions<A = Record<string, any>> = {
-  onSuccess?: (data: ContractTransaction, args: A) => void;
+  description?: string;
+  onSuccess?: (
+    data: { transaction: ContractTransaction; receipt: ContractReceipt },
+    args: A
+  ) => void | Promise<any>;
   onError?: (error: any) => void;
 };
 
@@ -27,41 +31,131 @@ const useTransaction = <F extends Fn>(
   fn: F,
   opts?: UseTransactionOptions<Parameters<F>[0]>
 ) => {
-  const wrappedFn = useWrapTransaction(fn);
-  const [status, setStatus] = useState<TransactionState>('None');
+  const wrappedFn = useWrapTransaction(fn, opts?.description);
+  type State = {
+    status: TransactionState;
+    error: any;
+    data: {
+      transaction?: ContractTransaction;
+      receipt?: ContractReceipt;
+    };
+  };
+  const [{ status, data, error }, dispatch] = useReducer(
+    (
+      state: State,
+      action:
+        | { status: 'None' }
+        | { status: 'PendingSignature' }
+        | { status: 'Mining'; transaction: ContractTransaction }
+        | { status: 'Success'; receipt: ContractReceipt }
+        | { status: 'Exception' | 'Fail'; error: any }
+    ) => {
+      switch (action?.status) {
+        case 'None':
+          return {
+            status: 'None' as TransactionState,
+            data: {},
+            error: undefined,
+          };
+        case 'PendingSignature':
+          return {
+            status: 'PendingSignature' as TransactionState,
+            data: {},
+            error: undefined,
+          };
+        case 'Mining':
+          return {
+            status: 'Mining' as TransactionState,
+            data: {
+              transaction: action.transaction,
+            },
+            error: undefined,
+          };
+        case 'Success':
+          return {
+            status: 'Success' as TransactionState,
+            data: {
+              transaction: state.data.transaction,
+              receipt: action.receipt,
+            },
+            error: undefined,
+          };
+        case 'Exception':
+        case 'Fail':
+          if (action.error instanceof TransactionExceptionError) {
+            return {
+              status: 'Exception' as TransactionState,
+              data: state.data,
+              error: action.error.error,
+            };
+          } else if (action.error instanceof TransactionFailedError) {
+            return {
+              status: 'Fail' as TransactionState,
+              data: state.data,
+              error: action.error.error,
+            };
+          } else if (action.error instanceof TransactionCancelledError) {
+            return {
+              status: 'None' as TransactionState,
+              data: state.data,
+              error: action.error,
+            };
+          } else {
+            return {
+              status: action.status,
+              data: state.data,
+              error: action.error,
+            };
+          }
+        default:
+          return state;
+      }
+    },
+    {
+      status: 'None',
+      error: undefined,
+      data: {},
+    } as State
+  );
+
   const mutate = async (args: Parameters<F>[0]) => {
     try {
-      setStatus('PendingSignature');
+      dispatch({ status: 'PendingSignature' });
       const transaction = await wrappedFn(args);
-      setStatus('Mining');
+      dispatch({ status: 'Mining', transaction });
 
       const receipt = await transaction.wait();
 
-      setStatus('Success');
-      opts?.onSuccess?.(transaction, args);
+      dispatch({ status: 'Success', receipt });
+      const maybePromise = opts?.onSuccess?.({ transaction, receipt }, args);
+      if (maybePromise && maybePromise.then) {
+        await maybePromise;
+      }
       return receipt;
     } catch (e) {
-      opts?.onError?.(e);
-      if (e instanceof TransactionExceptionError) {
-        setStatus('Exception');
-        throw e.error;
-      } else if (e instanceof TransactionFailedError) {
-        setStatus('Fail');
-        throw e;
-      } else if (e instanceof TransactionCancelledError) {
-        setStatus('None');
-        throw e;
+      let error = e;
+
+      if (opts?.onError) {
+        try {
+          opts.onError(error);
+        } catch (newError) {
+          error = newError;
+        }
       }
+
+      dispatch({ status: 'Exception', error });
     }
   };
 
   const reset = useCallback(() => {
-    setStatus('None');
+    dispatch({ status: 'None' });
   }, []);
 
   const meta = {
     status,
+    error,
     reset,
+    data,
     isIdle: status === 'None',
     isPending: status === 'PendingSignature',
     isException: status === 'Exception',
