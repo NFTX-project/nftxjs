@@ -23,7 +23,7 @@ export const ERC1155_SUBGRAPH = {
 };
 
 export const SUSHI_SUBGRAPH = {
-  [Network.Mainnet]: `${PROXY_ROOT}/${GRAPH_API_KEY}/subgraphs/id/D7azkFFPFT5H8i32ApXLr34UQyBfxDAfKoCEK4M832M6`,
+  [Network.Mainnet]: `${CACHE_PROXY_ROOT}/${GRAPH_API_KEY}/subgraphs/id/D7azkFFPFT5H8i32ApXLr34UQyBfxDAfKoCEK4M832M6`,
   [Network.Arbitrum]: `${SHARED_ROOT}/subgraphs/name/sushiswap/arbitrum-exchange`,
   [Network.Rinkeby]: `${SHARED_ROOT}/subgraphs/name/bilalmir135/sushi-swap-exchange`,
 };
