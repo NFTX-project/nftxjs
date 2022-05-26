@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { NFTX_SUBGRAPH } from '@nftx/constants';
-import { buildWhere, querySubgraph } from '@nftx/subgraph';
-import { getChainConstant } from '../../web3';
-import type { VaultActivity, VaultAddress } from '../types';
+import config from '@nftx/config';
+import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
+import type { VaultActivity } from '@nftx/types';
+import { getChainConstant } from '@nftx/utils';
 import { transformFeeReceipt } from './common';
 
 export type Swap = {
@@ -74,13 +74,19 @@ export const createSwapsQuery = (where: string) => {
 export const processSwaps = async (
   response: { swaps: Swap[] },
   network: number,
-  vaultAddresses: VaultAddress[]
+  vaultAddresses: string[],
+  toTimestamp: number
 ) => {
   let swaps = response.swaps.flatMap((swap): VaultActivity[] => {
-    const receipt = transformFeeReceipt(swap.feeReceipt, swap.vault.id);
+    const receipt = transformFeeReceipt(
+      swap.feeReceipt,
+      swap.vault.id,
+      swap.vault.vaultId
+    );
 
     return swap.redeemedIds.map((nftId, i): VaultActivity => {
       return {
+        vaultId: swap.vault.vaultId,
         vaultAddress: swap.vault.id,
         date: Number(swap.date),
         tokenId: nftId,
@@ -94,13 +100,14 @@ export const processSwaps = async (
     });
   });
 
-  if (swaps.length === 1000) {
+  if (response.swaps.length === 1000) {
     const lastSwap = swaps[swaps.length - 1];
     const nextTimestamp = lastSwap.date;
     const moreSwaps = await getSwaps({
       network,
       vaultAddresses,
       fromTimestamp: Number(nextTimestamp),
+      toTimestamp,
     });
     swaps = [...swaps, ...moreSwaps];
   }
@@ -111,25 +118,33 @@ export const processSwaps = async (
 export const getSwaps = async ({
   network,
   fromTimestamp,
+  toTimestamp,
   vaultAddresses,
 }: {
   network: number;
   fromTimestamp: number;
-  vaultAddresses: VaultAddress[];
+  toTimestamp: number;
+  vaultAddresses: string[];
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
-    vault: vaultAddresses.length === 1 ? vaultAddresses[0] : null,
-    vault_in: vaultAddresses.length === 1 ? null : vaultAddresses,
+    date_lte: toTimestamp,
+    vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
+    vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
   });
-  const query = `{ ${createSwapsQuery(where)} }`;
+  const query = gql<{ swaps: Swap[] }>`{ ${createSwapsQuery(where)} }`;
 
-  const response = await querySubgraph<{ swaps: Swap[] }>({
-    url: getChainConstant(NFTX_SUBGRAPH, network),
+  const response = await querySubgraph({
+    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });
 
-  const swaps = await processSwaps(response, network, vaultAddresses);
+  const swaps = await processSwaps(
+    response,
+    network,
+    vaultAddresses,
+    toTimestamp
+  );
 
   return swaps;
 };

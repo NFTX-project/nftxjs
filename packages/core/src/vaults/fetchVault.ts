@@ -1,19 +1,26 @@
+import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import fetchVaults from './fetchVaults';
-import type { VaultAddress, VaultId } from './types';
 
 async function fetchVault({
-  network,
+  network = config.network,
+  provider,
   vaultAddress,
   vaultId,
 }: {
-  network: number;
-  vaultAddress?: VaultAddress;
-  vaultId?: VaultId;
+  network?: number;
+  provider: Provider;
+  vaultAddress?: string;
+  vaultId?: string;
 }) {
   const vaults = await fetchVaults({
     network,
+    provider,
     vaultIds: vaultId == null ? null : [vaultId],
     vaultAddresses: vaultAddress == null ? null : [vaultAddress],
+    enabledOnly: false,
+    finalisedOnly: false,
+    includeEmptyVaults: true,
   });
 
   return vaults?.[0];

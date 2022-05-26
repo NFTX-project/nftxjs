@@ -1,6 +1,6 @@
 {
   "name": "@nftx/core",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -17,34 +17,38 @@
   },
   "scripts": {
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
-    "test": "jest --config ../../jest.config.js",
+    "test": "echo \"no tests\" #jest --config ../../jest.config.js",
     "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build"
   },
   "peerDependencies": {
-    "@nftx/constants": "^0.1.0",
-    "@nftx/subgraph": "^0.1.0",
-    "@ethersproject/abi": "^5.6.0",
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/constants": "^5.6.0",
-    "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@ethersproject/units": "^5.6.0",
+    "@nftx/config": "<1.0.0",
+    "@nftx/constants": "<1.0.0",
+    "@nftx/subgraph": "<1.0.0",
+    "@nftx/types": "<1.0.0",
+    "@nftx/utils": "<1.0.0",
     "ethers": "^5.6.2"
   },
   "devDependencies": {
-    "@nftx/constants": "^0.1.0",
-    "@nftx/subgraph": "^0.1.0",
     "@ethersproject/abi": "^5.6.0",
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/constants": "^5.6.0",
-    "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@ethersproject/units": "^5.6.0",
+    "@nftx/config": "*",
+    "@nftx/constants": "*",
+    "@nftx/subgraph": "*",
+    "@nftx/types": "*",
+    "@nftx/utils": "*",
     "ethers": "^5.6.2"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {}
 }

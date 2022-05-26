@@ -1,9 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { NFTX_SUBGRAPH, NFTX_STAKING_ZAP } from '@nftx/constants';
-import { addressEqual, getChainConstant } from '../../web3';
-import { buildWhere, querySubgraph } from '@nftx/subgraph';
-import type { VaultActivity, VaultAddress } from '../types';
+import { NFTX_MARKETPLACE_0X_ZAP, NFTX_STAKING_ZAP } from '@nftx/constants';
+import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './common';
+import config from '@nftx/config';
+import type { VaultActivity } from '@nftx/types';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 
 export type Mint = {
   id: string;
@@ -69,36 +70,51 @@ export const createMintsQuery = (where: string) => {
   }`;
 };
 
-const isStakeOrMint = (mint: Mint, network: number) => {
+const isStakeOrMint = (
+  mint: Mint,
+  network: number
+): [VaultActivity['type'], VaultActivity['stakeType']] => {
   if (
     addressEqual(mint.user?.id, getChainConstant(NFTX_STAKING_ZAP, network))
   ) {
     // LP Stake
-    return 'stake';
+    return ['stake', 'liquidity'];
   }
   if (addressEqual(mint.user?.id, mint.vault.inventoryStakingPool?.id)) {
     // Inventory Stake
-    return 'stake';
+    return ['stake', 'inventory'];
   }
 
-  if (mint.zapAction) {
-    return 'sell';
+  if (
+    mint.zapAction ||
+    addressEqual(
+      mint.user?.id,
+      getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network)
+    )
+  ) {
+    return ['sell', undefined];
   }
 
-  return 'mint';
+  return ['mint', undefined];
 };
 
 export const processMints = async (
   response: { mints: Mint[] },
   network: number,
-  vaultAddresses: VaultAddress[]
+  vaultAddresses: string[],
+  toTimestamp: number
 ) => {
   let mints = response.mints.flatMap((mint): VaultActivity[] => {
-    const receipt = transformFeeReceipt(mint.feeReceipt, mint.vault.id);
-    const type = isStakeOrMint(mint, network);
+    const receipt = transformFeeReceipt(
+      mint.feeReceipt,
+      mint.vault.id,
+      mint.vault.vaultId
+    );
+    const [type, stakeType] = isStakeOrMint(mint, network);
 
     return mint.nftIds.map((nftId, i): VaultActivity => {
       return {
+        vaultId: mint.vault.vaultId,
         vaultAddress: mint.vault.id,
         date: Number(mint.date),
         tokenId: nftId,
@@ -107,17 +123,19 @@ export const processMints = async (
         ethAmount: BigNumber.from(mint?.zapAction?.ethAmount ?? 0),
         feeAmount: receipt.amount.div(mint.nftIds.length),
         type,
+        stakeType,
       };
     });
   });
 
-  if (mints.length === 1000) {
+  if (response.mints.length === 1000) {
     const lastMint = mints[mints.length - 1];
     const nextTimestamp = lastMint.date;
     const moreMints = await getMints({
       network,
       vaultAddresses,
       fromTimestamp: Number(nextTimestamp),
+      toTimestamp,
     });
     mints = [...mints, ...moreMints];
   }
@@ -128,25 +146,33 @@ export const processMints = async (
 export const getMints = async ({
   network,
   fromTimestamp,
+  toTimestamp,
   vaultAddresses,
 }: {
   network: number;
   fromTimestamp: number;
-  vaultAddresses: VaultAddress[];
+  toTimestamp: number;
+  vaultAddresses: string[];
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
-    vault: vaultAddresses.length === 1 ? vaultAddresses[0] : null,
-    vault_in: vaultAddresses.length === 1 ? null : vaultAddresses,
+    date_lte: toTimestamp,
+    vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
+    vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
   });
-  const query = `{ ${createMintsQuery(where)} }`;
+  const query = gql<{ mints: Mint[] }>`{ ${createMintsQuery(where)} }`;
 
-  const response = await querySubgraph<{ mints: Mint[] }>({
-    url: getChainConstant(NFTX_SUBGRAPH, network),
+  const response = await querySubgraph({
+    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });
 
-  const mints = await processMints(response, network, vaultAddresses);
+  const mints = await processMints(
+    response,
+    network,
+    vaultAddresses,
+    toTimestamp
+  );
 
   return mints;
 };

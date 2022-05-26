@@ -1,20 +1,21 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import type { TokenReserve } from '../../tokens';
 import { mapObj } from '../../utils';
-import type { Vault, VaultHolding } from '../types';
 import type { Response } from '../fetchSubgraphVaults';
 import transformVaultReserves from './transformVaultReserves';
 import transformVaultHolding from '../fetchVaultHoldings/transformVaultHolding';
+import type { TokenReserve, Vault, VaultHolding } from '@nftx/types';
 
 const transformVault = ({
   reserves,
   vault: x,
   globalFees,
+  merkleReference,
   moreHoldings = [],
 }: {
   reserves: TokenReserve[];
   vault: Response['vaults'][0];
   globalFees: Response['globals'][0]['fees'];
+  merkleReference: string;
   moreHoldings?: VaultHolding[];
 }) => {
   const reserve = reserves.find(({ tokenId }) => tokenId === x.id);
@@ -43,6 +44,12 @@ const transformVault = ({
     rawPrice,
     reserveVtoken,
     reserveWeth,
+    eligibilityModule: x.eligibilityModule
+      ? {
+          ...x.eligibilityModule,
+          merkleReference,
+        }
+      : undefined,
   };
 
   return vault;

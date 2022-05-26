@@ -1,3 +1,3 @@
-export { default as fetchPool } from "./fetchPool";
-export { default as fetchPools } from "./fetchPools";
-export * from "./types";
+export { default as fetchLiquidityPool } from './fetchLiquidityPool';
+export { default as fetchLiquidityPools } from './fetchLiquidityPools';
+export * from './types';

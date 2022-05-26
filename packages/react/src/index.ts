@@ -1,5 +1,9 @@
 export * from './errors';
-export * from './NftxProvider';
-export * from './EventsProvider';
+export * from './contexts';
+export * from './staking';
 export * from './trade';
-export { default as useTransaction } from './useTransaction';
+export * from './types';
+export {
+  default as useTransaction,
+  type UseTransactionOptions,
+} from './useTransaction';

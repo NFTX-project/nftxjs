@@ -1,13 +1,18 @@
-import { fetchReservesForTokens } from '../../tokens';
-import type { Address } from '../../web3/types';
-import type { Vault, VaultAddress, VaultId } from '../types';
 import { OPENSEA_COLLECTION } from '@nftx/constants';
-import fetchSubgraphVaults from '../fetchSubgraphVaults';
+import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
-import { addressEqual } from '../../web3';
 import fetchVaultHoldings from '../fetchVaultHoldings';
+import config from '@nftx/config';
+import type { Provider } from '@ethersproject/providers';
+import {
+  addressEqual,
+  fetchMerkleReference,
+  fetchReservesForTokens,
+  isMerkleVault,
+} from '@nftx/utils';
+import type { Vault } from '@nftx/types';
 
-const isVaultEnabled = (vault: Vault) => {
+const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
   if (!vault.isFinalized) {
     return false;
@@ -34,7 +39,7 @@ const fetchMoreHoldings = async ({
   network,
 }: {
   network: number;
-  vault: { id: VaultAddress; holdings: Array<{ tokenId: string }> };
+  vault: { id: string; holdings: Array<{ tokenId: string }> };
 }) => {
   if (vault.holdings.length === 1000) {
     const lastId = vault.holdings[vault.holdings.length - 1].tokenId;
@@ -48,107 +53,75 @@ const fetchMoreHoldings = async ({
   return [];
 };
 
-const fetchMoreVaults = async ({
-  vaults,
-  network,
-  finalised,
-  manager,
-  vaultAddresses,
-  vaultIds,
-}: {
-  vaults: Vault[];
-  network: number;
-  finalised: boolean;
-  manager: Address;
-  vaultAddresses: VaultAddress[];
-  vaultIds: VaultId[];
-}) => {
-  if (vaults.length === 1000) {
-    const lastId = Number(vaults[vaults.length - 1].vaultId) + 1;
-
-    return fetchVaults({
-      network,
-      finalised,
-      manager,
-      vaultAddresses,
-      vaultIds,
-      retryCount: 0,
-      lastId,
-    });
-  }
-
-  return [];
-};
-
 const fetchVaults = async ({
-  network,
+  network = config.network,
+  provider,
   vaultAddresses,
   vaultIds,
   manager,
-  finalised,
-  enabled,
-  minimumHoldings,
+  finalisedOnly = true,
+  enabledOnly = true,
+  includeEmptyVaults = false,
   lastId = 0,
   retryCount = 0,
 }: {
-  network: number;
-  vaultAddresses?: VaultAddress[];
-  vaultIds?: VaultId[];
-  minimumHoldings?: number;
-  finalised?: boolean;
-  enabled?: boolean;
-  manager?: Address;
+  network?: number;
+  provider: Provider;
+  vaultAddresses?: string[];
+  vaultIds?: string[];
+  includeEmptyVaults?: boolean;
+  finalisedOnly?: boolean;
+  enabledOnly?: boolean;
+  manager?: string;
   lastId?: number;
   retryCount?: number;
 }): Promise<Vault[]> => {
   const data = await fetchSubgraphVaults({
     network,
-    finalised,
+    finalisedOnly,
     lastId,
     manager,
-    minimumHoldings,
+    includeEmptyVaults,
     retryCount,
     vaultAddresses,
     vaultIds,
   });
 
-  const reserves = await fetchReservesForTokens({
-    network,
-    tokenAddresses: data?.vaults?.map(({ id }) => id) ?? [],
-  });
-
+  let vaultData = data?.vaults ?? [];
   const globalFees = data?.globals?.[0]?.fees;
 
-  const vaultPromises =
-    data?.vaults?.map(async (x) => {
-      const moreHoldings = await fetchMoreHoldings({ network, vault: x });
+  // Filter out any vaults that aren't set up for use
+  if (enabledOnly) {
+    vaultData = vaultData.filter(isVaultEnabled);
+  }
 
-      return transformVault({ globalFees, reserves, vault: x, moreHoldings });
+  const reserves = await fetchReservesForTokens({
+    network,
+    tokenAddresses: vaultData.map(({ id }) => id),
+  });
+
+  const vaultPromises =
+    vaultData.map(async (x) => {
+      const moreHoldings = await fetchMoreHoldings({ network, vault: x });
+      const merkleReference = isMerkleVault(x)
+        ? await fetchMerkleReference({ network, provider, vault: x })
+        : null;
+
+      return transformVault({
+        globalFees,
+        reserves,
+        vault: x,
+        moreHoldings,
+        merkleReference,
+      });
     }) ?? [];
 
-  let vaults = await Promise.all(vaultPromises);
-
-  vaults = [
-    ...vaults,
-    ...(await fetchMoreVaults({
-      vaults,
-      finalised,
-      manager,
-      network,
-      vaultAddresses,
-      vaultIds,
-    })),
-  ];
+  const vaults = await Promise.all(vaultPromises);
 
   // We only want to filter/sort once we've got all the vaults fetched
   // if lastId > 0 that means we're recursively fetching _more_ vaults
   if (lastId > 0) {
     return vaults;
-  }
-
-  // Filter out any vaults that aren't set up for use
-  if (enabled) {
-    vaults = vaults.filter(isVaultEnabled);
   }
 
   vaults.sort((a, b) => {

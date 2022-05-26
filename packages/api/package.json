@@ -1,0 +1,39 @@
+{
+  "name": "@nftx/api",
+  "version": "0.0.0",
+  "description": "",
+  "homepage": "https://github.com/NFTX-project/nftxjs",
+  "license": "MIT",
+  "main": "dist/cjs/api.js",
+  "module": "dist/es/api.js",
+  "types": "dist/ts/index.d.ts",
+  "publishConfig": {
+    "registry": "https://registry.yarnpkg.com",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NFTX-project/nftxjs.git"
+  },
+  "scripts": {
+    "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
+    "test": "echo \"no tests\" #jest --config ../../jest.config.js",
+    "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
+    "prepublishOnly": "yarn build"
+  },
+  "peerDependencies": {
+    "@ethersproject/bignumber": "^5.6.0",
+    "@nftx/config": "<1.0.0",
+    "@nftx/types": "<1.0.0"
+  },
+  "devDependencies": {
+    "@ethersproject/bignumber": "^5.6.0",
+    "@nftx/config": "*",
+    "@nftx/types": "*"
+  },
+  "bugs": {
+    "url": "https://github.com/NFTX-project/nftxjs/issues"
+  },
+  "sideEffects": false,
+  "dependencies": {}
+}
