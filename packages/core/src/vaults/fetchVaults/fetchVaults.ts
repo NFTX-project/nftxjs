@@ -2,12 +2,12 @@ import { fetchReservesForTokens } from '../../tokens';
 import type { Address } from '../../web3/types';
 import type { Vault, VaultAddress, VaultId } from '../types';
 import { OPENSEA_COLLECTION } from '@nftx/constants';
-import fetchSubgraphVaults from '../fetchSubgraphVaults';
+import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
 import { addressEqual } from '../../web3';
 import fetchVaultHoldings from '../fetchVaultHoldings';
 
-const isVaultEnabled = (vault: Vault) => {
+const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
   if (!vault.isFinalized) {
     return false;
@@ -112,15 +112,21 @@ const fetchVaults = async ({
     vaultIds,
   });
 
-  const reserves = await fetchReservesForTokens({
-    network,
-    tokenAddresses: data?.vaults?.map(({ id }) => id) ?? [],
-  });
-
+  let vaultData = data?.vaults ?? [];
   const globalFees = data?.globals?.[0]?.fees;
 
+  // Filter out any vaults that aren't set up for use
+  if (enabled) {
+    vaultData = vaultData.filter(isVaultEnabled);
+  }
+
+  const reserves = await fetchReservesForTokens({
+    network,
+    tokenAddresses: vaultData.map(({ id }) => id),
+  });
+
   const vaultPromises =
-    data?.vaults?.map(async (x) => {
+    vaultData.map(async (x) => {
       const moreHoldings = await fetchMoreHoldings({ network, vault: x });
 
       return transformVault({ globalFees, reserves, vault: x, moreHoldings });
@@ -144,11 +150,6 @@ const fetchVaults = async ({
   // if lastId > 0 that means we're recursively fetching _more_ vaults
   if (lastId > 0) {
     return vaults;
-  }
-
-  // Filter out any vaults that aren't set up for use
-  if (enabled) {
-    vaults = vaults.filter(isVaultEnabled);
   }
 
   vaults.sort((a, b) => {

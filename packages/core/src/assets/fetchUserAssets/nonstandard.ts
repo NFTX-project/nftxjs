@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { NON_STANDARD_SUBGRAPH } from '@nftx/constants';
-import { toLowerCase } from '../../utils';
+import { compareByAlpha, toLowerCase } from '../../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Address } from '../../web3/types';
 import type { Asset } from '../types';
@@ -78,7 +78,9 @@ const nonstandard = async ({
       variables: {
         userAddress,
         lastId,
-        assetAddresses: assetAddresses.map(toLowerCase),
+        assetAddresses: assetAddresses
+          .map(toLowerCase)
+          .sort((a, b) => compareByAlpha(a, b)),
       },
     });
   } catch (e) {

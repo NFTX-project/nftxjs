@@ -1,5 +1,5 @@
 import { Network, ERC721_SUBGRAPH } from '@nftx/constants';
-import { toLowerCase } from '../../utils';
+import { compareByAlpha, toLowerCase } from '../../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Address } from '../../web3/types';
 import type { Asset } from '../types';
@@ -56,7 +56,9 @@ const erc721 = async ({
         variables: {
           userAddress,
           lastId,
-          assetAddresses: assetAddresses.map(toLowerCase),
+          assetAddresses: assetAddresses
+            .map(toLowerCase)
+            .sort((a, b) => compareByAlpha(a, b)),
         },
       });
       assets = data?.account?.tokens?.map(({ id, identifier }) => {
@@ -98,7 +100,9 @@ const erc721 = async ({
         variables: {
           userAddress,
           lastId,
-          assetAddresses: assetAddresses.map(toLowerCase),
+          assetAddresses: assetAddresses
+            .map(toLowerCase)
+            .sort((a, b) => compareByAlpha(a, b)),
         },
       });
       assets = data?.owner?.tokens?.map(({ id, tokenID }) => {
@@ -143,7 +147,9 @@ const erc721 = async ({
         variables: {
           userAddress,
           lastId,
-          assetAddresses: assetAddresses.map(toLowerCase),
+          assetAddresses: assetAddresses
+            .map(toLowerCase)
+            .sort((a, b) => compareByAlpha(a, b)),
         },
       });
       assets = data?.account?.tokens?.map(({ id, identifier }) => {

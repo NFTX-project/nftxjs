@@ -1,5 +1,5 @@
 import { NFTX_SUBGRAPH } from '@nftx/constants';
-import { toLowerCase } from '../utils';
+import { compareByAlpha, toLowerCase } from '../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './fetchVaultActivity/common';
 import type { VaultAddress, VaultFeeReceipt } from './types';
@@ -129,7 +129,9 @@ const fetchMultiVaultFees = async ({
       url: getChainConstant(NFTX_SUBGRAPH, network),
       query,
       variables: {
-        vaultAddresses: vaultAddresses.map(toLowerCase),
+        vaultAddresses: vaultAddresses
+          .map(toLowerCase)
+          .sort((a, b) => compareByAlpha(a, b)),
         lastId,
         fromTimestamp,
       },

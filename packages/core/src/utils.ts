@@ -37,3 +37,13 @@ export const omitNil = <T extends Record<string, any>>(obj: T) => {
 };
 
 export const toLowerCase = (s: string) => s.toLowerCase();
+
+export const compareByAlpha = (a: string, b: string) => {
+  if (a > b) {
+    return 1;
+  }
+  if (b > a) {
+    return -1;
+  }
+  return 0;
+};

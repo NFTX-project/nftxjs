@@ -6,6 +6,7 @@ import type { Address } from '../web3/types';
 import type { TokenReserve } from './types';
 import type { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther, Zero } from '@ethersproject/constants';
+import { compareByAlpha, toLowerCase } from '../utils';
 
 function midQuote(
   amountA: BigNumber,
@@ -164,7 +165,11 @@ const fetchReservesForTokens = async ({
   const response = await querySubgraph<Response>({
     url: getChainConstant(SUSHI_SUBGRAPH, network),
     query,
-    variables: { tokenAddresses },
+    variables: {
+      tokenAddresses: tokenAddresses
+        .map(toLowerCase)
+        .sort((a, b) => compareByAlpha(a, b)),
+    },
   });
 
   const reserves =
