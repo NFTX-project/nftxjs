@@ -51,14 +51,18 @@ const fetchMoreHoldings = async ({
 const fetchMoreVaults = async ({
   vaults,
   network,
-  finalised,
+  finalisedOnly,
+  enabledOnly,
+  includeEmptyVaults,
   manager,
   vaultAddresses,
   vaultIds,
 }: {
   vaults: Vault[];
   network: number;
-  finalised: boolean;
+  finalisedOnly: boolean;
+  enabledOnly: boolean;
+  includeEmptyVaults: boolean;
   manager: Address;
   vaultAddresses: VaultAddress[];
   vaultIds: VaultId[];
@@ -68,12 +72,14 @@ const fetchMoreVaults = async ({
 
     return fetchVaults({
       network,
-      finalised,
+      finalisedOnly,
       manager,
       vaultAddresses,
       vaultIds,
       retryCount: 0,
       lastId,
+      enabledOnly,
+      includeEmptyVaults,
     });
   }
 
@@ -85,28 +91,28 @@ const fetchVaults = async ({
   vaultAddresses,
   vaultIds,
   manager,
-  finalised,
-  enabled,
-  minimumHoldings,
+  finalisedOnly = true,
+  enabledOnly = true,
+  includeEmptyVaults = false,
   lastId = 0,
   retryCount = 0,
 }: {
   network: number;
   vaultAddresses?: VaultAddress[];
   vaultIds?: VaultId[];
-  minimumHoldings?: number;
-  finalised?: boolean;
-  enabled?: boolean;
+  includeEmptyVaults?: boolean;
+  finalisedOnly?: boolean;
+  enabledOnly?: boolean;
   manager?: Address;
   lastId?: number;
   retryCount?: number;
 }): Promise<Vault[]> => {
   const data = await fetchSubgraphVaults({
     network,
-    finalised,
+    finalisedOnly,
     lastId,
     manager,
-    minimumHoldings,
+    includeEmptyVaults,
     retryCount,
     vaultAddresses,
     vaultIds,
@@ -116,7 +122,7 @@ const fetchVaults = async ({
   const globalFees = data?.globals?.[0]?.fees;
 
   // Filter out any vaults that aren't set up for use
-  if (enabled) {
+  if (enabledOnly) {
     vaultData = vaultData.filter(isVaultEnabled);
   }
 
@@ -138,11 +144,13 @@ const fetchVaults = async ({
     ...vaults,
     ...(await fetchMoreVaults({
       vaults,
-      finalised,
+      finalisedOnly,
       manager,
       network,
       vaultAddresses,
       vaultIds,
+      enabledOnly,
+      includeEmptyVaults,
     })),
   ];
 

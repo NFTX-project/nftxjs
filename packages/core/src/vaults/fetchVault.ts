@@ -14,6 +14,9 @@ async function fetchVault({
     network,
     vaultIds: vaultId == null ? null : [vaultId],
     vaultAddresses: vaultAddress == null ? null : [vaultAddress],
+    enabledOnly: false,
+    finalisedOnly: false,
+    includeEmptyVaults: true,
   });
 
   return vaults?.[0];

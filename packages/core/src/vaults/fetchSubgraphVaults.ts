@@ -85,23 +85,23 @@ const fetchSubgraphVaults = async ({
   vaultAddresses,
   vaultIds,
   manager,
-  finalised,
-  minimumHoldings,
+  finalisedOnly = true,
+  includeEmptyVaults = false,
   lastId = 0,
   retryCount = 0,
 }: {
   network: number;
   vaultAddresses?: VaultAddress[];
   vaultIds?: VaultId[];
-  minimumHoldings?: number;
-  finalised?: boolean;
+  includeEmptyVaults?: boolean;
+  finalisedOnly?: boolean;
   manager?: Address;
   lastId?: number;
   retryCount?: number;
 }): Promise<Response> => {
   const where = buildWhere({
-    isFinalized: finalised,
-    totalHoldings_gte: minimumHoldings,
+    isFinalized: finalisedOnly,
+    totalHoldings_gte: includeEmptyVaults ? null : 1,
     vaultId: vaultIds != null && vaultIds.length === 1 ? vaultIds[0] : null,
     vaultId_in: vaultIds != null && vaultIds.length > 1 ? vaultIds : null,
     id:
@@ -215,7 +215,8 @@ const fetchSubgraphVaults = async ({
     if (retryCount < 3) {
       return fetchSubgraphVaults({
         network,
-        finalised,
+        finalisedOnly,
+        includeEmptyVaults,
         lastId,
         manager,
         vaultAddresses,

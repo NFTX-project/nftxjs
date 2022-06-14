@@ -9,5 +9,6 @@ export { default as fetchVaultFees } from './fetchVaultFees';
 export { default as fetchVaultHoldings } from './fetchVaultHoldings';
 export { default as fetchXTokenShare } from './fetchXTokenShare';
 export { default as fetchXTokenShares } from './fetchXTokenShares';
+export { default as filterMintableAssets } from './filterMintableAssets';
 export * from './utils';
 export * from './types';
