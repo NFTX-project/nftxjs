@@ -32,7 +32,7 @@ const filterMintableAssets = async ({
       // If there's no eligibility module, all assets are eligible
       if (!vault.eligibilityModule?.id) {
         vaultAssets.forEach((asset) => {
-          result.push(asset);
+          result.push({ ...asset, vaultId: vault.vaultId });
         });
         return;
       }
@@ -48,13 +48,13 @@ const filterMintableAssets = async ({
       );
       eligible.forEach((eligible: boolean, i: number) => {
         if (eligible) {
-          result.push(vaultAssets[i]);
+          result.push({ ...vaultAssets[i], vaultId: vault.vaultId });
         }
       });
     })
   );
 
-  return result.filter((x, i, arr) => arr.indexOf(x) === i);
+  return result;
 };
 
 export default filterMintableAssets;

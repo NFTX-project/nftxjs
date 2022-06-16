@@ -1,4 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
+import type { VaultId } from '../vaults';
 import type { Address } from '../web3/types';
 
 export type Asset = {
@@ -7,6 +8,7 @@ export type Asset = {
   assetAddress: Address;
   metaUrl: string;
   quantity?: BigNumber;
+  vaultId?: VaultId;
 };
 
 export type AssetMetadata = {
