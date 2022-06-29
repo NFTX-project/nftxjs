@@ -23,7 +23,10 @@ function isDroppedAndReplaced(e: any) {
  * @param fn an async function that returns a ContractTransaction
  * @returns ContractTransaction
  */
-export default function useWrapTransaction<F extends Fn>(fn: F) {
+export default function useWrapTransaction<F extends Fn>(
+  fn: F,
+  description = ''
+) {
   const { network } = useNftx();
   const addEvent = useAddEvent();
 
@@ -33,6 +36,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
       type: 'PendingSignature',
       network,
       createdAt: Date.now(),
+      description,
     });
     // call the original fn and intercept the result
     const [txErr, tx] = await t(fn(...args));
@@ -49,6 +53,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
       network,
       createdAt: Date.now(),
       transaction: tx,
+      description,
     });
 
     const transaction: ContractTransaction = {
@@ -72,6 +77,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
               receipt: receiptErr.receipt,
               transaction: receiptErr.replacement,
               error: receiptErr,
+              description,
             });
 
             if (type === 'transactionSucceed') {
@@ -85,6 +91,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
               receipt: receiptErr.receipt,
               transaction,
               error: receiptErr,
+              description,
             });
           }
 
@@ -103,6 +110,7 @@ export default function useWrapTransaction<F extends Fn>(fn: F) {
           network,
           receipt,
           transaction,
+          description,
         });
 
         return receipt;

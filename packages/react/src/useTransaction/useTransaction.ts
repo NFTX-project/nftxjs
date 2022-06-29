@@ -1,4 +1,4 @@
-import type { ContractTransaction } from 'ethers';
+import type { ContractReceipt, ContractTransaction } from 'ethers';
 import { useCallback, useState } from 'react';
 import type { TransactionState } from '../types';
 import {
@@ -11,7 +11,11 @@ import useWrapTransaction from './useWrapTransaction';
 type Fn = (args: any) => Promise<ContractTransaction>;
 
 export type UseTransactionOptions<A = Record<string, any>> = {
-  onSuccess?: (data: ContractTransaction, args: A) => void;
+  description?: string;
+  onSuccess?: (
+    data: { transaction: ContractTransaction; receipt: ContractReceipt },
+    args: A
+  ) => void;
   onError?: (error: any) => void;
 };
 
@@ -27,10 +31,12 @@ const useTransaction = <F extends Fn>(
   fn: F,
   opts?: UseTransactionOptions<Parameters<F>[0]>
 ) => {
-  const wrappedFn = useWrapTransaction(fn);
+  const wrappedFn = useWrapTransaction(fn, opts?.description);
   const [status, setStatus] = useState<TransactionState>('None');
+  const [error, setError] = useState<any>(undefined);
   const mutate = async (args: Parameters<F>[0]) => {
     try {
+      setError(undefined);
       setStatus('PendingSignature');
       const transaction = await wrappedFn(args);
       setStatus('Mining');
@@ -38,29 +44,39 @@ const useTransaction = <F extends Fn>(
       const receipt = await transaction.wait();
 
       setStatus('Success');
-      opts?.onSuccess?.(transaction, args);
+      opts?.onSuccess?.({ transaction, receipt }, args);
       return receipt;
     } catch (e) {
+      let error = e;
       opts?.onError?.(e);
       if (e instanceof TransactionExceptionError) {
         setStatus('Exception');
-        throw e.error;
+        error = e.error;
       } else if (e instanceof TransactionFailedError) {
         setStatus('Fail');
-        throw e;
       } else if (e instanceof TransactionCancelledError) {
         setStatus('None');
-        throw e;
       }
+      if (opts?.onError) {
+        try {
+          opts.onError(error);
+        } catch (newError) {
+          error = newError;
+        }
+      }
+
+      setError(error);
     }
   };
 
   const reset = useCallback(() => {
     setStatus('None');
+    setError(undefined);
   }, []);
 
   const meta = {
     status,
+    error,
     reset,
     isIdle: status === 'None',
     isPending: status === 'PendingSignature',

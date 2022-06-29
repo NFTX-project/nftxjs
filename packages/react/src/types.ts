@@ -10,6 +10,7 @@ export type TransactionState =
 
 export type TransactionEvent = {
   type: TransactionState;
+  description: string;
   createdAt: number;
   network: number;
   transaction?: ContractTransaction;

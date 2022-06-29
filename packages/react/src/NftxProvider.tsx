@@ -35,7 +35,7 @@ export const NftxProvider = ({
 }) => {
   const value = useMemo(
     () => ({ network, provider, signer, web3 }),
-    [network, provider]
+    [network, provider, signer]
   );
   return (
     <NftxContext.Provider value={value}>
