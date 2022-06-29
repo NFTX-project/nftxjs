@@ -43,7 +43,7 @@ export const NFTX_INVENTORY_STAKING = {
 };
 
 export const NFTX_STAKING_ZAP = {
-  [Network.Mainnet]: '0x7a5e0B4069709cF4D02423b8cafDc608f4436791',
+  [Network.Mainnet]: '0xdc774d5260ec66e5dd4627e1dd800eff3911345c',
   [Network.Arbitrum]: '0xa12d30440D75aC533f781a2dd5fcF7EABB4C695E',
   [Network.Rinkeby]: '0xeF5F5491EF04Df94638162Cb8f7CBAd64760e797',
 };
