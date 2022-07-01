@@ -14,7 +14,7 @@ const useSellIntoVault = (opts: UseTransactionOptions) => {
 
   return useTransaction(
     (args: Args) => sellIntoVault({ ...args, network, signer }),
-    opts
+    { description: 'Sell', ...opts }
   );
 };
 

@@ -14,7 +14,7 @@ const useRedeemFromVault = (opts: UseTransactionOptions) => {
 
   return useTransaction(
     (args: Args) => redeemFromVault({ ...args, network, signer }),
-    opts
+    { description: 'Redeem', ...opts }
   );
 };
 

@@ -14,7 +14,7 @@ const useSwapWithVault = (opts: UseTransactionOptions) => {
 
   return useTransaction(
     (args: Args) => swapWithVault({ ...args, network, signer }),
-    opts
+    { description: 'Swap', ...opts }
   );
 };
 

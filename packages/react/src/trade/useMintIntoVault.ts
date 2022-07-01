@@ -14,7 +14,7 @@ const useMintIntoVault = (opts?: UseTransactionOptions) => {
 
   return useTransaction(
     (args: Args) => mintIntoVault({ ...args, network, signer }),
-    opts
+    { description: 'Mint', ...opts }
   );
 };
 

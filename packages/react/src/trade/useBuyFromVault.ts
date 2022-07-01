@@ -13,7 +13,7 @@ const useBuyFromVault = (opts?: UseTransactionOptions) => {
 
   return useTransaction(
     (args: Args) => buyFromVault({ ...args, network, signer }),
-    opts
+    { description: 'Buy', ...opts }
   );
 };
 

@@ -2,7 +2,7 @@ import type { approve } from '@nftx/core';
 import { useNftx } from '../NftxProvider';
 import useTransaction, { UseTransactionOptions } from '../useTransaction';
 
-type Args = Omit<Parameters<typeof approve>[0], 'network' | 'provider'>;
+type Args = Omit<Parameters<typeof approve>[0], 'network' | 'signer'>;
 
 const useApprove = (opts?: UseTransactionOptions) => {
   const {
@@ -11,10 +11,10 @@ const useApprove = (opts?: UseTransactionOptions) => {
     web3: { approve },
   } = useNftx();
 
-  return useTransaction(
-    (args: Args) => approve({ ...args, network, signer }),
-    opts
-  );
+  return useTransaction((args: Args) => approve({ ...args, network, signer }), {
+    description: 'Approve',
+    ...opts,
+  });
 };
 
 export default useApprove;
