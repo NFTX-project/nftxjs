@@ -17,3 +17,9 @@ export { default as mintIntoVault } from './mintIntoVault';
 export { default as redeemFromVault } from './redeemFromVault';
 export { default as sellIntoVault } from './sellIntoVault';
 export { default as swapWithVault } from './swapWithVault';
+export {
+  getExactTokenIds,
+  getTokenIdAmounts,
+  getTotalTokenIds,
+  getUniqueTokenIds,
+} from './utils';
