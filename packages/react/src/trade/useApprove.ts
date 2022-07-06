@@ -1,14 +1,15 @@
 import type { approve } from '@nftx/core';
-import { useNftx } from '../NftxProvider';
+import { useNftx } from '../contexts/nftx';
+import type { TxnArgsOnly } from '../types';
 import useTransaction, { UseTransactionOptions } from '../useTransaction';
 
-type Args = Omit<Parameters<typeof approve>[0], 'network' | 'signer'>;
+type Args = TxnArgsOnly<typeof approve>;
 
 const useApprove = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    web3: { approve },
+    core: { approve },
   } = useNftx();
 
   return useTransaction((args: Args) => approve({ ...args, network, signer }), {

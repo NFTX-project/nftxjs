@@ -1,16 +1,16 @@
-import type { redeemFromVault } from '@nftx/core';
-import { useNftx } from '../NftxProvider';
+import { useNftx } from '../contexts/nftx';
+import type { TxnArgsOnly } from '../types';
 import type { UseTransactionOptions } from '../useTransaction';
 import useTransaction from '../useTransaction';
-
-type Args = Omit<Parameters<typeof redeemFromVault>[0], 'network' | 'provider'>;
 
 const useRedeemFromVault = (opts: UseTransactionOptions) => {
   const {
     network,
     signer,
-    web3: { redeemFromVault },
+    core: { redeemFromVault },
   } = useNftx();
+
+  type Args = TxnArgsOnly<typeof redeemFromVault>;
 
   return useTransaction(
     (args: Args) => redeemFromVault({ ...args, network, signer }),

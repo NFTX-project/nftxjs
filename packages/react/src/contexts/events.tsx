@@ -3,10 +3,11 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
 } from 'react';
-import type { TransactionEvent } from './types';
+import type { TransactionEvent, TransactionState } from '../types';
 
 type IEventsContext = {
   events: TransactionEvent[];
@@ -33,6 +34,7 @@ export const EventsProvider = ({ children }: { children: ReactNode }) => {
     },
     []
   );
+
   const pushEvent = useCallback((e: TransactionEvent) => {
     dispatch({ type: 'push', event: e });
   }, []);
@@ -48,7 +50,7 @@ export const useEvents = () => {
   return events;
 };
 
-export const useLatesEvent = () => {
+export const useLatestEvent = () => {
   const events = useEvents();
   return events[events.length - 1];
 };
@@ -57,3 +59,25 @@ export const useAddEvent = () => {
   const { pushEvent } = useContext(EventsContext);
   return pushEvent;
 };
+
+function useOnEvent(
+  type: TransactionState,
+  callback: (e: TransactionEvent) => any
+): void;
+function useOnEvent(callback: (e: TransactionEvent) => any): void;
+function useOnEvent(...args: any[]) {
+  const type = typeof args[0] === 'string' ? args[0] : null;
+  const callback: (e: TransactionEvent) => any = args[args.length - 1];
+
+  const event = useLatestEvent();
+
+  useEffect(() => {
+    if (event) {
+      if (type == null || type === event.type) {
+        callback(event);
+      }
+    }
+  }, [event]);
+}
+
+export { useOnEvent };

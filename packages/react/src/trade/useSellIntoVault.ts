@@ -1,16 +1,16 @@
-import type { sellIntoVault } from '@nftx/core';
-import { useNftx } from '../NftxProvider';
+import { useNftx } from '../contexts/nftx';
+import type { TxnArgsOnly } from '../types';
 import type { UseTransactionOptions } from '../useTransaction';
 import useTransaction from '../useTransaction';
-
-type Args = Omit<Parameters<typeof sellIntoVault>[0], 'network' | 'provider'>;
 
 const useSellIntoVault = (opts: UseTransactionOptions) => {
   const {
     network,
     signer,
-    web3: { sellIntoVault },
+    core: { sellIntoVault },
   } = useNftx();
+
+  type Args = TxnArgsOnly<typeof sellIntoVault>;
 
   return useTransaction(
     (args: Args) => sellIntoVault({ ...args, network, signer }),

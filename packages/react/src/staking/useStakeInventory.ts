@@ -3,19 +3,19 @@ import type { TxnArgsOnly } from '../types';
 import type { UseTransactionOptions } from '../useTransaction';
 import useTransaction from '../useTransaction';
 
-const useSwapWithVault = (opts: UseTransactionOptions) => {
+const useStakeInventory = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { swapWithVault },
+    core: { stakeInventory },
   } = useNftx();
 
-  type Args = TxnArgsOnly<typeof swapWithVault>;
+  type Args = TxnArgsOnly<typeof stakeInventory>;
 
   return useTransaction(
-    (args: Args) => swapWithVault({ ...args, network, signer }),
-    { description: 'Swap', ...opts }
+    (args: Args) => stakeInventory({ network, signer, ...args }),
+    { description: 'Stake Inventory', ...opts }
   );
 };
 
-export default useSwapWithVault;
+export default useStakeInventory;

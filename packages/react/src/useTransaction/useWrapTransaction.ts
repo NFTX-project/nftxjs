@@ -1,12 +1,12 @@
 import { ContractTransaction, errors } from 'ethers';
-import { useNftx } from '../NftxProvider';
+import { useNftx } from '../contexts/nftx';
 import {
   TransactionCancelledError,
   TransactionExceptionError,
   TransactionFailedError,
 } from '../errors';
 import { t } from '../utils';
-import { useAddEvent } from '../EventsProvider';
+import { useAddEvent } from '../contexts/events';
 
 type Fn = (...args: any) => Promise<ContractTransaction>;
 
