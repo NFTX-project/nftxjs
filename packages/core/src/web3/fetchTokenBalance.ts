@@ -3,15 +3,16 @@ import type { BigNumber } from '@ethersproject/bignumber';
 import abi from '@nftx/constants/abis/ERC20.json';
 import type { Address } from './types';
 import getContract from './getContract';
+import config from '@nftx/config';
 
 /** Return the user's balance of a given token */
 const fetchTokenBalance = async ({
-  network,
+  network = config.network,
   ownerAddress,
   provider,
   tokenAddress,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   /** The token address */
   tokenAddress: Address;

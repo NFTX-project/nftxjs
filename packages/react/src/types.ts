@@ -18,7 +18,7 @@ export type TransactionEvent = {
   error?: any;
 };
 
-type TxnFn = (args: { network: number; signer: Signer }) => any;
+type TxnFn = (args: { network?: number; signer: Signer }) => any;
 /** Takes a transaction function, removes the network and signer, and returns the remaining args */
 export type TxnArgsOnly<T extends TxnFn> = Omit<
   Parameters<T>[0],

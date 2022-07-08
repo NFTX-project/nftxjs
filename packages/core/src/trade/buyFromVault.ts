@@ -10,6 +10,7 @@ import estimateGasAndFees from './estimateGasAndFees';
 import { omitNil } from '../utils';
 import increaseGasLimit from './increaseGasLimit';
 import type { Signer } from 'ethers';
+import config from '@nftx/config';
 
 const buyErc721 = async ({
   network,
@@ -69,7 +70,7 @@ const buyErc1155 = buyErc721;
 
 /** Buy one or more NFTs from an NFTX vault */
 const buyFromVault = async ({
-  network,
+  network = config.network,
   signer,
   userAddress,
   vaultAddress,
@@ -80,7 +81,7 @@ const buyFromVault = async ({
   standard = 'ERC721',
   quote = 'ETH',
 }: {
-  network: number;
+  network?: number;
   signer: Signer;
   userAddress: Address;
   vaultId: VaultId;

@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
-import { ZEROX_URL } from '@nftx/constants';
+import config from '@nftx/config';
 import { Address, getChainConstant } from '../web3';
 
 type Response = {
@@ -30,13 +30,13 @@ type Response = {
 
 /** Fetch a quote price from the 0x api */
 const fetch0xQuote = async ({
-  network,
+  network = config.network,
   buyToken,
   sellToken,
   amount = WeiPerEther,
   type = 'quote',
 }: {
-  network: number;
+  network?: number;
   buyToken: Address;
   sellToken: Address;
   amount?: BigNumberish;
@@ -48,7 +48,7 @@ const fetch0xQuote = async ({
   searchParams.append('sellToken', sellToken);
   searchParams.append('buyAmount', BigNumber.from(amount).toString());
   const query = searchParams.toString();
-  const zeroUrl = getChainConstant(ZEROX_URL, network, null);
+  const zeroUrl = getChainConstant(config.urls.ZEROX_URL, network, null);
   if (!zeroUrl) {
     throw new Error(`${network} is not a supported network for the 0x API`);
   }

@@ -3,17 +3,18 @@ import abi from '@nftx/constants/abis/NFTXInventoryStaking.json';
 import { getChainConstant, getContract } from '../web3';
 import type { VaultId } from '../vaults';
 import { NFTX_INVENTORY_STAKING } from '@nftx/constants';
+import config from '@nftx/config';
 
 type GetContract = typeof getContract;
 
 export default ({ getContract }: { getContract: GetContract }) =>
   function stakeVToken({
-    network,
+    network = config.network,
     signer,
     vaultId,
     amount,
   }: {
-    network: number;
+    network?: number;
     signer: Signer;
     vaultId: VaultId;
     amount: BigNumber;

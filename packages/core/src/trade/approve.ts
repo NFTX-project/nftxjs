@@ -8,6 +8,7 @@ import { isCryptoPunk } from '../assets';
 import { getContract } from '../web3';
 import type { Address } from '../web3/types';
 import type { Signer } from 'ethers';
+import config from '@nftx/config';
 
 function approvePunk({
   tokenId,
@@ -86,7 +87,7 @@ function approveErc20({
 
 /** Approves a spender to spend a specific token address */
 async function approve({
-  network,
+  network = config.network,
   tokenAddress,
   spenderAddress,
   tokenId,
@@ -95,7 +96,7 @@ async function approve({
   amount,
   standard = tokenId || tokenIds ? 'ERC721' : amount ? 'ERC20' : null,
 }: {
-  network: number;
+  network?: number;
   /** The token we want to spend */
   tokenAddress: Address;
   /** The smart contract address that will be spending the token */

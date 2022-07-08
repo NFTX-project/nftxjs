@@ -1,3 +1,6 @@
+import config from '@nftx/config';
+import { PUBLIC_GRAPH_API_KEY } from '@nftx/constants';
+
 /** Processes a graphql string
  * (in actuality this does absolutely nothing and is just a useful way of denoting a graphql query and enables editor syntax highlighting)
  */
@@ -53,7 +56,7 @@ const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
  * Uses the fetch api under the hood so if running in node you'll need to polyfill global.fetch
  */
 export const querySubgraph = async <T>({
-  url,
+  url: baseUrl,
   query,
   variables,
   fetch = globalFetch,
@@ -72,6 +75,16 @@ export const querySubgraph = async <T>({
 }) => {
   if (variables) {
     query = interpolateQuery(query, variables);
+  }
+
+  // Override the default api key with a custom one if set
+  let url = baseUrl;
+  if (
+    config.subgraph.API_KEY &&
+    url.includes(PUBLIC_GRAPH_API_KEY) &&
+    config.subgraph.API_KEY !== PUBLIC_GRAPH_API_KEY
+  ) {
+    url = url.replace(PUBLIC_GRAPH_API_KEY, config.subgraph.API_KEY);
   }
 
   const response = await fetch(url, {

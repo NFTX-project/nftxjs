@@ -1,3 +1,4 @@
+import config from '@nftx/config';
 import type { Address } from '../../web3/types';
 import { isNonstandard721 } from '../utils';
 import erc1155 from './erc1155';
@@ -40,10 +41,10 @@ const collectAddresses = (
 /** Fetch all assets owned by a user */
 const fetchUserAssets = async ({
   assetAddresses,
-  network,
+  network = config.network,
   userAddress,
 }: {
-  network: number;
+  network?: number;
   userAddress: Address;
   /** A list of NFTX vault addresses to check
    * If you are searching 1155 addresses, include an is1155 boolean flag

@@ -1,6 +1,7 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import { NFTX_LP_STAKING } from '@nftx/constants';
 import ERC20Interface from '@nftx/constants/abis/ERC20.json';
 import { fetchReservesForToken, TokenReserve } from '../tokens';
@@ -70,12 +71,12 @@ export const calculatePoolSize = ({
 const fetchRewardPoolReserves = async ({
   stakingToken,
   vault,
-  network,
+  network = config.network,
   provider,
 }: {
   stakingToken: LiquidityPool['stakingToken'];
   vault: Pick<Vault, 'id'>;
-  network: number;
+  network?: number;
   provider: Provider;
 }): Promise<TokenReserve> => {
   const stakingAddress = stakingToken.id;

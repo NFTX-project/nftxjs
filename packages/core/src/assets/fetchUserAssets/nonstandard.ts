@@ -1,10 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { NON_STANDARD_SUBGRAPH } from '@nftx/constants';
 import { compareByAlpha, toLowerCase } from '../../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Address } from '../../web3/types';
 import type { Asset } from '../types';
 import { getChainConstant } from '../../web3';
+import config from '@nftx/config';
 
 const LIMIT = 1000;
 
@@ -68,7 +68,7 @@ const nonstandard = async ({
     }
   }`;
 
-  const url = getChainConstant(NON_STANDARD_SUBGRAPH, network);
+  const url = getChainConstant(config.subgraph.NON_STANDARD_SUBGRAPH, network);
   let data: Response;
 
   try {

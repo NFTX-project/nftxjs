@@ -1,9 +1,9 @@
-import { NFTX_SUBGRAPH } from '@nftx/constants';
 import { compareByAlpha, toLowerCase } from '../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './fetchVaultActivity/common';
 import type { VaultAddress, VaultFeeReceipt } from './types';
 import { getChainConstant } from '../web3';
+import config from '@nftx/config';
 
 const fetchSingleVaultFees = async ({
   vaultAddress,
@@ -44,7 +44,7 @@ const fetchSingleVaultFees = async ({
         }>;
       };
     }>({
-      url: getChainConstant(NFTX_SUBGRAPH, network),
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
       variables: { vaultAddress, fromTimestamp },
     });
@@ -126,7 +126,7 @@ const fetchMultiVaultFees = async ({
         }>;
       }>;
     }>({
-      url: getChainConstant(NFTX_SUBGRAPH, network),
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
       variables: {
         vaultAddresses: vaultAddresses
@@ -170,24 +170,24 @@ const fetchMultiVaultFees = async ({
 };
 
 function fetchVaultFees(args: {
-  network: number;
+  network?: number;
   vaultAddress: VaultAddress;
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
 function fetchVaultFees(args: {
-  network: number;
+  network?: number;
   vaultAddresses: VaultAddress[];
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
 async function fetchVaultFees({
-  network,
+  network = config.network,
   vaultAddress,
   vaultAddresses,
   fromTimestamp = 0,
 }: {
-  network: number;
+  network?: number;
   vaultAddress?: VaultAddress;
   vaultAddresses?: VaultAddress[];
   fromTimestamp?: number;

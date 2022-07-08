@@ -1,3 +1,4 @@
+import config from '@nftx/config';
 import { NFTX_STAKING_ZAP } from '@nftx/constants';
 import NftxStakingAbi from '@nftx/constants/abis/NFTXStakingZap.json';
 import type { Signer } from 'ethers';
@@ -60,13 +61,13 @@ const stake1155 = ({
 
 export default ({ getContract }: { getContract: GetContract }) =>
   function stakeInventory({
-    network,
+    network = config.network,
     signer,
     vaultId,
     tokenIds,
     standard = 'ERC721',
   }: {
-    network: number;
+    network?: number;
     signer: Signer;
     vaultId: VaultId;
     tokenIds: string[] | [string, number][];

@@ -1,4 +1,4 @@
-import { NFTX_SUBGRAPH } from '@nftx/constants';
+import config from '@nftx/config';
 import { buildWhere, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '../../web3';
 import type { VaultAddress } from '../types';
@@ -31,7 +31,7 @@ export const getAll = async ({
     redeems: Redeem[];
     swaps: Swap[];
   }>({
-    url: getChainConstant(NFTX_SUBGRAPH, network),
+    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });
 

@@ -1,3 +1,4 @@
+import config from '@nftx/config';
 import type { Address } from '../web3/types';
 import type { Asset, AssetMetadata } from './types';
 
@@ -30,8 +31,8 @@ export type Response = {
 const fetchAssetMetadata = async ({
   assetAddress,
   tokenId,
-  network,
-}: Pick<Asset, 'assetAddress' | 'tokenId'> & { network: number }) => {
+  network = config.network,
+}: Pick<Asset, 'assetAddress' | 'tokenId'> & { network?: number }) => {
   const metaUrl = `https://api.nftx.xyz/asset/${assetAddress}/${tokenId}?chainId=${network}`;
   const response = await fetch(metaUrl);
   if (!response.ok) {

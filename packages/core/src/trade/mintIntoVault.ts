@@ -1,4 +1,5 @@
 import type { ContractTransaction } from '@ethersproject/contracts';
+import config from '@nftx/config';
 import abi from '@nftx/constants/abis/NFTXVaultUpgradeable.json';
 import type { Signer } from 'ethers';
 import type { VaultAddress, VaultId } from '../vaults/types';
@@ -10,12 +11,12 @@ import { getTokenIdAmounts, getUniqueTokenIds } from './utils';
  * For example, minting a punk NFT would return 0.95 PUNK
  */
 const mintIntoVault = async ({
-  network,
+  network = config.network,
   signer,
   tokenIds,
   vaultAddress,
 }: {
-  network: number;
+  network?: number;
   signer: Signer;
   userAddress: Address;
   vaultAddress: VaultAddress;

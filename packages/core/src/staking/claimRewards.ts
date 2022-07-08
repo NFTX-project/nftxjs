@@ -1,3 +1,4 @@
+import config from '@nftx/config';
 import { NFTX_LP_STAKING } from '@nftx/constants';
 import abi from '@nftx/constants/abis/NFTXLpStaking.json';
 import type { Signer } from 'ethers';
@@ -10,11 +11,11 @@ export default ({ getContract }: { getContract: GetContract }) =>
   /** Claim any liquidity-providing rewards the user may have for the given vaults */
   function claimRewards({
     vaultIds,
-    network,
+    network = config.network,
     signer,
   }: {
     vaultIds: VaultId[];
-    network: number;
+    network?: number;
     signer: Signer;
   }) {
     const contract = getContract({

@@ -4,6 +4,7 @@ import type { Provider } from '@ethersproject/providers';
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { getContract } from '../web3';
 import type { LiquidityPool } from '../pools';
+import config from '@nftx/config';
 
 type GetContract = typeof getContract;
 
@@ -11,12 +12,12 @@ export default ({ getContract }: { getContract: GetContract }) =>
   /** Returns the amount of tokens the user is able to claim for a liquidity pool */
   async function fetchClaimableTokens({
     pool,
-    network,
+    network = config.network,
     provider,
     userAddress,
   }: {
     pool: { dividendToken?: { id: LiquidityPool['dividendToken']['id'] } };
-    network: number;
+    network?: number;
     provider: Provider;
     userAddress: string;
   }) {

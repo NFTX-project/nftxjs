@@ -1,4 +1,4 @@
-import { NFTX_SUBGRAPH } from '@nftx/constants';
+import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '../../web3';
 import type { VaultAddress, VaultHolding } from '../types';
@@ -8,11 +8,11 @@ const LIMIT = 1000;
 
 /** Returns all holdings for a given vault */
 const fetchVaultHoldings = async ({
-  network,
+  network = config.network,
   vaultAddress,
   lastId = '0',
 }: {
-  network: number;
+  network?: number;
   vaultAddress: VaultAddress;
   lastId?: string;
 }): Promise<VaultHolding[]> => {
@@ -34,7 +34,7 @@ const fetchVaultHoldings = async ({
     }
   }`;
 
-  const url = getChainConstant(NFTX_SUBGRAPH, network);
+  const url = getChainConstant(config.subgraph.NFTX_SUBGRAPH, network);
 
   const data = await querySubgraph<{
     vault: {

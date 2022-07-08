@@ -5,13 +5,14 @@ import { NFTX_INVENTORY_STAKING } from '@nftx/constants';
 import type { VaultId } from './types';
 import getContract from '../web3/getContract';
 import { getChainConstant } from '../web3';
+import config from '@nftx/config';
 
 const fetchXTokenShare = async ({
-  network,
+  network = config.network,
   provider,
   vaultId,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   vaultId: VaultId;
 }) => {

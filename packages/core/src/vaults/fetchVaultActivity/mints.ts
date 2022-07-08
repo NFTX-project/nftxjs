@@ -1,9 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { NFTX_SUBGRAPH, NFTX_STAKING_ZAP } from '@nftx/constants';
+import { NFTX_STAKING_ZAP } from '@nftx/constants';
 import { addressEqual, getChainConstant } from '../../web3';
 import { buildWhere, querySubgraph } from '@nftx/subgraph';
 import type { VaultActivity, VaultAddress } from '../types';
 import { transformFeeReceipt } from './common';
+import config from '@nftx/config';
 
 export type Mint = {
   id: string;
@@ -142,7 +143,7 @@ export const getMints = async ({
   const query = `{ ${createMintsQuery(where)} }`;
 
   const response = await querySubgraph<{ mints: Mint[] }>({
-    url: getChainConstant(NFTX_SUBGRAPH, network),
+    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });
 

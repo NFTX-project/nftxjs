@@ -1,9 +1,10 @@
-import { NFTX_SUBGRAPH, Network } from '@nftx/constants';
+import { Network } from '@nftx/constants';
 import type { Token } from '../tokens/types';
 import type { Vault, VaultAddress } from '../vaults/types';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import type { LiquidityPool } from './types';
 import { getChainConstant } from '../web3';
+import config from '@nftx/config';
 
 type Response = {
   pools: Array<{
@@ -31,10 +32,10 @@ const ARBITRUM_EXCEPTION_POOL_ID = '0xc5d592305a8ac4cce16485ab46b6b8bf593f5bce';
 
 /** Fetches all NFTX pools */
 const fetchPools = async ({
-  network,
+  network = config.network,
   vaultAddress,
 }: {
-  network: number;
+  network?: number;
   /** Only return pools for a specific vault */
   vaultAddress?: VaultAddress;
 }) => {
@@ -75,7 +76,7 @@ const fetchPools = async ({
     }
   }`;
   const data = await querySubgraph<Response>({
-    url: getChainConstant(NFTX_SUBGRAPH, network),
+    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });
 

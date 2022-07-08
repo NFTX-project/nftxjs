@@ -1,6 +1,7 @@
-import { Network, ERC721_SUBGRAPH } from '@nftx/constants';
+import { Network } from '@nftx/constants';
 import { compareByAlpha, toLowerCase } from '../../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
+import config from '@nftx/config';
 import type { Address } from '../../web3/types';
 import type { Asset } from '../types';
 import { getChainConstant } from '../../web3';
@@ -51,7 +52,7 @@ const erc721 = async ({
           tokens: Array<{ id: string; identifier: string }>;
         };
       }>({
-        url: getChainConstant(ERC721_SUBGRAPH, network),
+        url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
         query,
         variables: {
           userAddress,
@@ -95,7 +96,7 @@ const erc721 = async ({
       const data = await querySubgraph<{
         owner: { id: string; tokens: Array<{ id: string; tokenID: string }> };
       }>({
-        url: getChainConstant(ERC721_SUBGRAPH, network),
+        url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
         query,
         variables: {
           userAddress,
@@ -142,7 +143,7 @@ const erc721 = async ({
           tokens: Array<{ id: string; identifier: string }>;
         };
       }>({
-        url: getChainConstant(ERC721_SUBGRAPH, network),
+        url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
         query,
         variables: {
           userAddress,

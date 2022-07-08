@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import { Network, UNISWAP_QUOTER, USDC, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/UniswapQuoter.json';
 import { getChainConstant, getContract } from '../web3';
@@ -47,10 +48,10 @@ const fetchEthPriceFromWeb3 = async ({
 };
 
 const fetchEthPrice = async ({
-  network,
+  network = config.network,
   provider,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
 }) => {
   const apiSupported = doesNetworkSupport0x(network);

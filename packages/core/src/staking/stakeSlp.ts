@@ -1,4 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
+import config from '@nftx/config';
 import { NFTX_LP_STAKING } from '@nftx/constants';
 import abi from '@nftx/constants/abis/NFTXLpStaking.json';
 import type { Signer } from 'ethers';
@@ -11,12 +12,12 @@ export default ({ getContract }: { getContract: GetContract }) =>
   function stakeSlp({
     vaultId,
     amount,
-    network,
+    network = config.network,
     signer,
   }: {
     vaultId: VaultId;
     amount: BigNumber;
-    network: number;
+    network?: number;
     signer: Signer;
   }) {
     const contract = getContract({

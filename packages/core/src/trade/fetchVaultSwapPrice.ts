@@ -1,5 +1,6 @@
 import { Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import {
   doesVaultHaveRandomSwapFee,
   doesVaultHaveTargetSwapFee,
@@ -8,13 +9,13 @@ import {
 import fetchBuyPrice from './fetchBuyPrice';
 
 const fetchVaultSwapPrice = async ({
-  network,
+  network = config.network,
   provider,
   vault,
   targetSwaps,
   randomSwaps,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   vault: Pick<Vault, 'fees' | 'id'>;
   targetSwaps?: number;

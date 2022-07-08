@@ -1,12 +1,13 @@
+import config from '@nftx/config';
 import type { VaultAddress } from '../vaults/types';
 import fetchPools from './fetchPools';
 
 /** Fetches a single pool */
 const fetchPool = async ({
-  network,
+  network = config.network,
   vaultAddress,
 }: {
-  network: number;
+  network?: number;
   vaultAddress: VaultAddress;
 }) => {
   const pools = await fetchPools({ network, vaultAddress });

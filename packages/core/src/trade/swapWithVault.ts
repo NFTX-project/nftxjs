@@ -17,6 +17,7 @@ import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import estimateGasAndFees from './estimateGasAndFees';
 import increaseGasLimit from './increaseGasLimit';
 import type { Signer } from 'ethers';
+import config from '@nftx/config';
 
 const swapErc721WithFee = async ({
   network,
@@ -199,7 +200,7 @@ const swapErc1155NoFee = async ({
 const swapWithVault = async ({
   vault,
   mintTokenIds,
-  network,
+  network = config.network,
   signer,
   redeemTokenIds,
   userAddress,
@@ -209,7 +210,7 @@ const swapWithVault = async ({
   quote,
   standard,
 }: {
-  network: number;
+  network?: number;
   signer: Signer;
   userAddress: Address;
   vaultId: VaultId;

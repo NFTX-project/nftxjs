@@ -1,5 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import { NFTX_INVENTORY_STAKING, NFTX_LP_STAKING } from '@nftx/constants';
 import NftxInventoryStakingAbi from '@nftx/constants/abis/NFTXInventoryStaking.json';
 import NftxLpStakingAbi from '@nftx/constants/abis/NFTXLpStaking.json';
@@ -10,12 +11,12 @@ import { Address, getChainConstant, getContract } from '../web3';
  * For a given vault, returns the date that the user is locked in for staking
  */
 const fetchUserTimelock = async ({
-  network,
+  network = config.network,
   provider,
   userAddress,
   vaultId,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   userAddress: Address;
   vaultId: VaultId;

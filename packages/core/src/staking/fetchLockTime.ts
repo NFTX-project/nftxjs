@@ -1,4 +1,5 @@
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import { NFTX_STAKING_ZAP } from '@nftx/constants';
 import abi from '@nftx/constants/abis/NFTXStakingZap.json';
 import type { BigNumber } from 'ethers';
@@ -6,10 +7,10 @@ import { getChainConstant, getContract } from '../web3';
 
 /** Returns the standard time that a position is locked in when you stake inventory or liquidity */
 const fetchLockTime = async ({
-  network,
+  network = config.network,
   provider,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
 }) => {
   const address = getChainConstant(NFTX_STAKING_ZAP, network);

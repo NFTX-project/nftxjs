@@ -1,17 +1,18 @@
 import { WeiPerEther } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import type { Vault } from '../vaults';
 import fetchSellPrice from './FetchSellPrice';
 
 /** Fetches the sell price for a given vault */
 const fetchVaultSellPrice = async ({
   vault,
-  network,
+  network = config.network,
   provider,
   sells = 1,
 }: {
   vault: Pick<Vault, 'id' | 'fees'>;
-  network: number;
+  network?: number;
   provider: Provider;
   sells?: number;
 }) => {

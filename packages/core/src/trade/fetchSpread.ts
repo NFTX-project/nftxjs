@@ -1,16 +1,17 @@
 import { Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import type { Address } from '../web3';
 import fetchBuyPrice from './fetchBuyPrice';
 import fetchSellPrice from './fetchSellPrice';
 
 const fetchSpread = async ({
-  network,
+  network = config.network,
   provider,
   tokenAddress,
   quote,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   tokenAddress: Address;
   quote?: 'ETH';

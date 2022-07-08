@@ -7,6 +7,7 @@ import { isCryptoPunk } from '../assets';
 import { addressEqual, getContract } from '../web3';
 import type { Address } from '../web3/types';
 import { MaxUint256 } from '@ethersproject/constants';
+import config from '@nftx/config';
 
 const isPunkApproved = async ({
   network,
@@ -142,7 +143,7 @@ const isErc20Approved = async ({
 };
 
 const isApproved = async ({
-  network,
+  network = config.network,
   provider,
   spenderAddress,
   tokenAddress,
@@ -152,7 +153,7 @@ const isApproved = async ({
   tokenIds,
   standard = tokenId || tokenIds ? 'ERC721' : 'ERC20',
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   tokenAddress: Address;
   spenderAddress: Address;

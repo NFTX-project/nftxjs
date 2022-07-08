@@ -1,4 +1,4 @@
-import { NFTX_SUBGRAPH } from '@nftx/constants';
+import config from '@nftx/config';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '../web3';
 import type { Address } from '../web3/types';
@@ -81,7 +81,7 @@ export type Response = {
 };
 
 const fetchSubgraphVaults = async ({
-  network,
+  network = config.network,
   vaultAddresses,
   vaultIds,
   manager,
@@ -90,7 +90,7 @@ const fetchSubgraphVaults = async ({
   lastId = 0,
   retryCount = 0,
 }: {
-  network: number;
+  network?: number;
   vaultAddresses?: VaultAddress[];
   vaultIds?: VaultId[];
   includeEmptyVaults?: boolean;
@@ -207,7 +207,7 @@ const fetchSubgraphVaults = async ({
 
   try {
     data = await querySubgraph<Response>({
-      url: getChainConstant(NFTX_SUBGRAPH, network),
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
     });
   } catch (e) {

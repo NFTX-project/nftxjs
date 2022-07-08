@@ -6,6 +6,7 @@ import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
 import { addressEqual } from '../../web3';
 import fetchVaultHoldings from '../fetchVaultHoldings';
+import config from '@nftx/config';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
@@ -87,7 +88,7 @@ const fetchMoreVaults = async ({
 };
 
 const fetchVaults = async ({
-  network,
+  network = config.network,
   vaultAddresses,
   vaultIds,
   manager,
@@ -97,7 +98,7 @@ const fetchVaults = async ({
   lastId = 0,
   retryCount = 0,
 }: {
-  network: number;
+  network?: number;
   vaultAddresses?: VaultAddress[];
   vaultIds?: VaultId[];
   includeEmptyVaults?: boolean;

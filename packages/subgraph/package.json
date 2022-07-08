@@ -24,5 +24,13 @@
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "peerDependencies": {
+    "@nftx/config": "^0.1.0",
+    "@nftx/constants": "^0.1.0"
+  },
+  "devDependencies": {
+    "@nftx/config": "^0.1.0",
+    "@nftx/constants": "^0.1.0"
+  }
 }

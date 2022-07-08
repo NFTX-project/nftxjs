@@ -3,14 +3,15 @@ import { addressEqual, getContract } from '../web3';
 import type { Vault } from './types';
 import Abi from '@nftx/constants/abis/NFTXEligibility.json';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 
 const filterMintableAssets = async ({
-  network,
+  network = config.network,
   provider,
   vaults,
   assets,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   vaults: Vault[];
   assets: Asset[];

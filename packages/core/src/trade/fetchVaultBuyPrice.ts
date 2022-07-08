@@ -1,5 +1,6 @@
 import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import type { Vault } from '../vaults';
 import fetchBuyPrice from './fetchBuyPrice';
 
@@ -8,13 +9,13 @@ import fetchBuyPrice from './fetchBuyPrice';
  */
 const fetchVaultBuyPrice = async ({
   vault,
-  network,
+  network = config.network,
   provider,
   targetBuys,
   randomBuys,
 }: {
   vault: Pick<Vault, 'id' | 'fees' | 'features' | 'reserveVtoken'>;
-  network: number;
+  network?: number;
   provider: Provider;
   /** The number of target buys we are doing */
   targetBuys?: number;

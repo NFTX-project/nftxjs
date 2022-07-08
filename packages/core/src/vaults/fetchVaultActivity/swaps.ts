@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { NFTX_SUBGRAPH } from '@nftx/constants';
+import config from '@nftx/config';
 import { buildWhere, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '../../web3';
 import type { VaultActivity, VaultAddress } from '../types';
@@ -125,7 +125,7 @@ export const getSwaps = async ({
   const query = `{ ${createSwapsQuery(where)} }`;
 
   const response = await querySubgraph<{ swaps: Swap[] }>({
-    url: getChainConstant(NFTX_SUBGRAPH, network),
+    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });
 

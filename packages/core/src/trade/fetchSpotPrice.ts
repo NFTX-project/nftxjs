@@ -1,6 +1,7 @@
 import { Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
+import config from '@nftx/config';
 import { fetchReservesForToken } from '../tokens';
 import type { Address } from '../web3/types';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
@@ -44,12 +45,12 @@ const fetchSpotPriceFromSubgraph = async ({
  * If possible, the price is fetched from the 0x service, otherwise it uses pool reserves
  */
 const fetchSpotPrice = async ({
-  network,
+  network = config.network,
   provider,
   tokenAddress,
   quote = 'ETH',
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   tokenAddress: Address;
   quote?: 'ETH';

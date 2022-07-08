@@ -1,13 +1,14 @@
 import type { Provider } from '@ethersproject/providers';
+import config from '@nftx/config';
 import fetchXTokenShare from './fetchXTokenShare';
 import type { VaultId } from './types';
 
 const fetchXTokenShares = async ({
-  network,
+  network = config.network,
   provider,
   vaultIds,
 }: {
-  network: number;
+  network?: number;
   provider: Provider;
   vaultIds: VaultId[];
 }) => {

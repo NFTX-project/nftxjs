@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { gql, querySubgraph } from '@nftx/subgraph';
-import { NFTX_TOKEN_BALANCE_SUBGRAPH } from '@nftx/constants';
 import type { NftxTokenType, UserVaultBalance } from './types';
 import { getChainConstant } from '../web3';
+import config from '@nftx/config';
 
 type Response = {
   account: {
@@ -23,10 +23,10 @@ type Response = {
 
 const fetchUserVaultBalances = async ({
   userAddress,
-  network,
+  network = config.network,
 }: {
   userAddress: string;
-  network: number;
+  network?: number;
 }) => {
   const query = gql`
     {
@@ -47,7 +47,7 @@ const fetchUserVaultBalances = async ({
     }
   `;
   const data = await querySubgraph<Response>({
-    url: getChainConstant(NFTX_TOKEN_BALANCE_SUBGRAPH, network),
+    url: getChainConstant(config.subgraph.NFTX_TOKEN_BALANCE_SUBGRAPH, network),
     query,
     variables: { userAddress },
   });

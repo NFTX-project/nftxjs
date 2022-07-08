@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { parseEther } from '@ethersproject/units';
-import { Network, ERC1155_SUBGRAPH } from '@nftx/constants';
+import config from '@nftx/config';
+import { Network } from '@nftx/constants';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '../../web3';
 import type { Address } from '../../web3/types';
@@ -59,7 +60,7 @@ const erc1155 = async ({
 
   try {
     data = await querySubgraph<Response>({
-      url: getChainConstant(ERC1155_SUBGRAPH, network),
+      url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
       query,
       variables: { userAddress, lastId, assetAddress },
     });

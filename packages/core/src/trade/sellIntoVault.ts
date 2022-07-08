@@ -1,5 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Contract, ContractTransaction } from '@ethersproject/contracts';
+import config from '@nftx/config';
 import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/NFTXMarketplaceZap.json';
 import type { Signer } from 'ethers';
@@ -90,7 +91,7 @@ const sellErc1155 = async ({
 
 const sellIntoVault = async ({
   minPrice,
-  network,
+  network = config.network,
   signer,
   tokenIds,
   userAddress,
@@ -99,7 +100,7 @@ const sellIntoVault = async ({
   quote = 'ETH',
   standard = Array.isArray(tokenIds?.[0]) ? 'ERC1155' : 'ERC721',
 }: {
-  network: number;
+  network?: number;
   signer: Signer;
   userAddress: Address;
   vaultId: VaultId;

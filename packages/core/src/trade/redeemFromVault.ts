@@ -1,5 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
+import config from '@nftx/config';
 import abi from '@nftx/constants/abis/NFTXVaultUpgradeable.json';
 import type { Signer } from 'ethers';
 import type { VaultAddress, VaultId } from '../vaults/types';
@@ -11,13 +12,13 @@ import { getExactTokenIds } from './utils';
  * Exchanges, for example, 1.05 PUNK for a punk nft
  */
 const redeemFromVault = async ({
-  network,
+  network = config.network,
   signer,
   targetIds,
   vaultAddress,
   randomRedeems,
 }: {
-  network: number;
+  network?: number;
   signer: Signer;
   userAddress: Address;
   vaultId: VaultId;

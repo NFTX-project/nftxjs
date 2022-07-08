@@ -1,12 +1,13 @@
+import config from '@nftx/config';
 import fetchVaults from './fetchVaults';
 import type { VaultAddress, VaultId } from './types';
 
 async function fetchVault({
-  network,
+  network = config.network,
   vaultAddress,
   vaultId,
 }: {
-  network: number;
+  network?: number;
   vaultAddress?: VaultAddress;
   vaultId?: VaultId;
 }) {

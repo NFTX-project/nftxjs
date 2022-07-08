@@ -1,5 +1,5 @@
 import { parseEther } from '@ethersproject/units';
-import { SUSHI_SUBGRAPH, WETH_TOKEN } from '@nftx/constants';
+import { WETH_TOKEN } from '@nftx/constants';
 import { addressEqual, getChainConstant } from '../web3';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Address } from '../web3/types';
@@ -7,6 +7,7 @@ import type { TokenReserve } from './types';
 import type { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther, Zero } from '@ethersproject/constants';
 import { compareByAlpha, toLowerCase } from '../utils';
+import config from '@nftx/config';
 
 function midQuote(
   amountA: BigNumber,
@@ -123,10 +124,10 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
 
 /** Fetch token/weth reserves for the given addresses */
 const fetchReservesForTokens = async ({
-  network,
+  network = config.network,
   tokenAddresses,
 }: {
-  network: number;
+  network?: number;
   tokenAddresses?: Address[];
 }) => {
   const query = gql`{
@@ -163,7 +164,7 @@ const fetchReservesForTokens = async ({
     }
   }`;
   const response = await querySubgraph<Response>({
-    url: getChainConstant(SUSHI_SUBGRAPH, network),
+    url: getChainConstant(config.subgraph.SUSHI_SUBGRAPH, network),
     query,
     variables: {
       tokenAddresses: tokenAddresses

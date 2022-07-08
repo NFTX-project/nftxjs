@@ -2,6 +2,7 @@ import type { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import type { Contract } from '@ethersproject/contracts';
 import { parseEther } from '@ethersproject/units';
+import config from '@nftx/config';
 import { NFTX_STAKING_ZAP } from '@nftx/constants';
 import abi from '@nftx/constants/abis/NFTXStakingZap.json';
 import type { Signer } from 'ethers';
@@ -146,7 +147,7 @@ export default ({
   };
 
   return function stakeLiquidity({
-    network,
+    network = config.network,
     signer,
     vaultId,
     pairedEth,
@@ -156,7 +157,7 @@ export default ({
     gasPrice,
     standard = 'ERC721',
   }: {
-    network: number;
+    network?: number;
     signer: Signer;
     pairedEth: BigNumber;
     slippage: number;

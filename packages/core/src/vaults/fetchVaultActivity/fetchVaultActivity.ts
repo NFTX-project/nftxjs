@@ -1,13 +1,14 @@
+import config from '@nftx/config';
 import type { VaultAddress } from '../types';
 import { getAll } from './getAll';
 
 function fetchVaultActivity({
-  network,
+  network = config.network,
   fromTimestamp,
   vaultAddress,
   vaultAddresses = [vaultAddress],
 }: {
-  network: number;
+  network?: number;
   vaultAddress?: VaultAddress;
   vaultAddresses?: VaultAddress[];
   fromTimestamp?: number;
