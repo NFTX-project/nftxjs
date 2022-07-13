@@ -31,7 +31,7 @@ export default function useWrapTransaction<F extends Fn>(
   const addEvent = useAddEvent();
 
   // wrap the original function, we take the same args and return the transaction
-  const wrapper = async (...args: any[]) => {
+  const wrapper = async (args: any) => {
     addEvent({
       type: 'PendingSignature',
       network,
@@ -39,7 +39,7 @@ export default function useWrapTransaction<F extends Fn>(
       description,
     });
     // call the original fn and intercept the result
-    const [txErr, tx] = await t(fn(...args));
+    const [txErr, tx] = await t(fn(args));
     if (txErr) {
       if (txErr.code === 4001) {
         throw new TransactionCancelledError(txErr, network);

@@ -100,7 +100,7 @@ const fetchSubgraphVaults = async ({
   retryCount?: number;
 }): Promise<Response> => {
   const where = buildWhere({
-    isFinalized: finalisedOnly,
+    isFinalized: finalisedOnly || null,
     totalHoldings_gte: includeEmptyVaults ? null : 1,
     vaultId: vaultIds != null && vaultIds.length === 1 ? vaultIds[0] : null,
     vaultId_in: vaultIds != null && vaultIds.length > 1 ? vaultIds : null,

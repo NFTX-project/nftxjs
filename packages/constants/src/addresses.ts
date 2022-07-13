@@ -48,6 +48,12 @@ export const NFTX_STAKING_ZAP = {
   [Network.Rinkeby]: '0xeF5F5491EF04Df94638162Cb8f7CBAd64760e797',
 };
 
+export const NFTX_UNSTAKING_INVENTORY_ZAP = {
+  [Network.Mainnet]: '0x51d660Ba5c218b2Cf33FBAcA5e3aBb8aEff3543B',
+  [Network.Arbitrum]: '0x009e4110Fd68c603DD1F9189C4BaC3D12Cde8c70',
+  [Network.Rinkeby]: '0x608F0D84657BB876DDEDD8d8d5aB9D12639d5798',
+};
+
 export const NFTX_MARKETPLACE_ZAP = {
   [Network.Mainnet]: '0x0fc584529a2AEfA997697FAfAcbA5831faC0c22d',
   [Network.Arbitrum]: '0x95Eaddd888c0063B392B771d11Db9704843df8bE',
