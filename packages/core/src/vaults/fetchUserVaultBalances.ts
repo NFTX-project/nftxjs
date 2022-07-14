@@ -1,97 +1,123 @@
-import { BigNumber } from '@ethersproject/bignumber';
-import { gql, querySubgraph } from '@nftx/subgraph';
-import type { NftxTokenType, UserVaultBalance } from './types';
-import { getChainConstant } from '../web3';
+import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
+import { gql, type querySubgraph } from '@nftx/subgraph';
+import { Address, type fetchTokenBalance, getChainConstant } from '../web3';
+import type { NftxTokenType, UserVaultBalance } from './types';
 
-type Response = {
-  account: {
-    ERC20balances: Array<{
-      contract: {
-        id: string;
-        name: string;
-        symbol: string;
-        asVaultAsset: {
-          type: NftxTokenType;
-          vaultId: string;
-        };
-      };
-      valueExact: string;
-    }>;
-  };
-};
+type QuerySubgraph = typeof querySubgraph;
+type FetchTokenBalance = typeof fetchTokenBalance;
 
-const fetchUserVaultBalances = async ({
-  userAddress,
-  network = config.network,
+export default ({
+  fetchTokenBalance,
+  querySubgraph,
 }: {
-  userAddress: string;
-  network?: number;
-}) => {
-  const query = gql`
-    {
-      account(id: $userAddress) {
-        ERC20balances(first: 1000) {
-          contract {
-            id
-            name
-            symbol
-            asVaultAsset {
-              type
-              vaultId
+  fetchTokenBalance: FetchTokenBalance;
+  querySubgraph: QuerySubgraph;
+}) =>
+  async function fetchUserVaultBalances({
+    userAddress,
+    network = config.network,
+    provider,
+  }: {
+    userAddress: Address;
+    network: number;
+    provider: Provider;
+  }) {
+    type Response = {
+      account: {
+        ERC20balances: Array<{
+          contract: {
+            id: string;
+            name: string;
+            symbol: string;
+            asVaultAsset: {
+              type: NftxTokenType;
+              vaultId: string;
+            };
+          };
+          valueExact: string;
+        }>;
+      };
+    };
+
+    const query = gql`
+      {
+        account(id: $userAddress) {
+          ERC20balances(first: 1000) {
+            contract {
+              id
+              name
+              symbol
+              asVaultAsset {
+                type
+                vaultId
+              }
             }
+            valueExact
           }
-          valueExact
         }
       }
-    }
-  `;
-  const data = await querySubgraph<Response>({
-    url: getChainConstant(config.subgraph.NFTX_TOKEN_BALANCE_SUBGRAPH, network),
-    query,
-    variables: { userAddress },
-  });
+    `;
 
-  const balances: UserVaultBalance[] =
-    data?.account?.ERC20balances?.map((balance) => {
-      if (balance.valueExact === '0') {
-        return null;
+    const data = await querySubgraph<Response>({
+      url: getChainConstant(
+        config.subgraph.NFTX_TOKEN_BALANCE_SUBGRAPH,
+        network
+      ),
+      query,
+      variables: { userAddress },
+    });
+
+    const erc20Balances = data?.account?.ERC20balances ?? [];
+
+    const balances: UserVaultBalance[] = await Promise.all(
+      erc20Balances.map(async ({ valueExact, contract }) => {
+        if (valueExact === '0') {
+          return null;
+        }
+
+        // Get accurate balance amount
+        const balance = await fetchTokenBalance({
+          network,
+          provider,
+          ownerAddress: userAddress,
+          tokenAddress: contract.id,
+        });
+
+        return {
+          type: contract.asVaultAsset.type,
+          vaultId: contract.asVaultAsset.vaultId,
+          address: contract.id,
+          name: contract.name,
+          symbol: contract.symbol,
+          balance,
+        };
+      })
+    );
+
+    const vTokens: UserVaultBalance[] = [];
+    const xTokens: UserVaultBalance[] = [];
+    const slp: UserVaultBalance[] = [];
+    const xSlp: UserVaultBalance[] = [];
+
+    balances.forEach((balance) => {
+      switch (balance?.type) {
+        case 'vToken':
+          vTokens.push(balance);
+          break;
+        case 'vTokenWETH':
+          slp.push(balance);
+          break;
+        case 'xToken':
+          xTokens.push(balance);
+          break;
+        case 'xTokenWETH':
+          xSlp.push(balance);
+          break;
+        default:
+          break;
       }
-      return {
-        type: balance.contract.asVaultAsset.type,
-        vaultId: balance.contract.asVaultAsset.vaultId,
-        address: balance.contract.id,
-        name: balance.contract.name,
-        symbol: balance.contract.symbol,
-        balance: BigNumber.from(balance.valueExact),
-      };
-    }).filter(Boolean) ?? [];
+    });
 
-  const vTokens: UserVaultBalance[] = [];
-  const xTokens: UserVaultBalance[] = [];
-  const slp: UserVaultBalance[] = [];
-  const xSlp: UserVaultBalance[] = [];
-
-  balances.forEach((balance) => {
-    switch (balance.type) {
-      case 'vToken':
-        vTokens.push(balance);
-        break;
-      case 'vTokenWETH':
-        slp.push(balance);
-        break;
-      case 'xToken':
-        xTokens.push(balance);
-        break;
-      case 'xTokenWETH':
-        xSlp.push(balance);
-        break;
-      default:
-        break;
-    }
-  });
-
-  return { vTokens, xTokens, slp, xSlp };
-};
-
-export default fetchUserVaultBalances;
+    return { vTokens, xTokens, slp, xSlp };
+  };

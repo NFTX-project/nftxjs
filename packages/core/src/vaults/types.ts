@@ -77,7 +77,7 @@ export type VaultActivity = {
   feeAmount: BigNumber;
   tokenId: string;
   txId: string;
-  type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'stake';
+  type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'stake' | 'unstake';
   swapTokenId?: string;
   random?: boolean;
 };

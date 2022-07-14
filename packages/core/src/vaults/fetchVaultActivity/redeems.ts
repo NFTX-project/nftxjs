@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 import { buildWhere, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '../../web3';
-import type { VaultActivity, VaultAddress } from '../types';
+import type { VaultActivity, VaultAddress, VaultFeeReceipt } from '../types';
 import { transformFeeReceipt } from './common';
 
 export type Redeem = {
@@ -68,6 +68,16 @@ export const createRedeemsQuery = (where: string) => {
   }`;
 };
 
+const isRedeemOrUnstake = (redeem: Redeem, receipt: VaultFeeReceipt) => {
+  if (redeem.zapAction != null) {
+    return 'buy';
+  }
+  if (receipt.amount.eq(0)) {
+    return 'unstake';
+  }
+  return 'redeem';
+};
+
 export const processRedeems = async (
   response: { redeems: Redeem[] },
   network: number,
@@ -77,8 +87,7 @@ export const processRedeems = async (
     const receipt = transformFeeReceipt(redeem.feeReceipt, redeem.vault.id);
     return redeem.nftIds.map((nftId): VaultActivity => {
       const target = redeem.specificIds?.includes(nftId);
-      // TOOD: figure out a way to get msg.sender so we know if it's gem etc.
-      const isBuy = redeem.zapAction != null;
+      // TODO: figure out a way to get msg.sender so we know if it's gem etc.
 
       return {
         tokenId: nftId,
@@ -86,7 +95,7 @@ export const processRedeems = async (
         date: Number(redeem.date),
         txId: redeem.id,
         random: !target,
-        type: isBuy ? 'buy' : 'redeem',
+        type: isRedeemOrUnstake(redeem, receipt),
         amount: 1,
         ethAmount: redeem?.zapAction?.ethAmount
           ? BigNumber.from(redeem.zapAction.ethAmount)
