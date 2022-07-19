@@ -6,7 +6,7 @@ function fetchVaultActivity({
   network = config.network,
   fromTimestamp,
   vaultAddress,
-  vaultAddresses = [vaultAddress],
+  vaultAddresses = vaultAddress ? [vaultAddress] : undefined,
 }: {
   network?: number;
   vaultAddress?: VaultAddress;

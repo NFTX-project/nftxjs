@@ -1,6 +1,7 @@
 import { estimateGasAndFees } from '../trade';
 import { getContract } from '../web3';
 import makeFetchClaimableTokens from './fetchClaimableTokens';
+import makeFetchLifetimeFees from './fetchLifetimeFees';
 export { default as fetchLockTime } from './fetchLockTime';
 export { default as fetchUserTimelock } from './fetchUserTimelock';
 import makeFetchMaxInventoryWithdraw from './fetchMaxInventoryWithdraw';
@@ -11,6 +12,7 @@ import makeStakeSlp from './stakeSlp';
 import makeStakeVToken from './stakeVToken';
 import makeStakeInventory from './stakeInventory';
 import makeClaimRewards from './claimRewards';
+import { querySubgraph } from '@nftx/subgraph';
 
 export const fetchClaimableTokens = makeFetchClaimableTokens({ getContract });
 export const stakeVToken = makeStakeVToken({ getContract });
@@ -29,3 +31,4 @@ export const unstakeInventory = makeUnstakeInventory({
 export const fetchMaxInventoryWithdraw = makeFetchMaxInventoryWithdraw({
   getContract,
 });
+export const fetchLifetimeFees = makeFetchLifetimeFees({ querySubgraph });

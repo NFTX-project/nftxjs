@@ -78,6 +78,7 @@ export type VaultActivity = {
   tokenId: string;
   txId: string;
   type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'stake' | 'unstake';
+  stakeType?: 'liquidity' | 'inventory';
   swapTokenId?: string;
   random?: boolean;
 };

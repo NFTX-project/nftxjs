@@ -34,16 +34,23 @@ const useTransaction = <F extends Fn>(
   const wrappedFn = useWrapTransaction(fn, opts?.description);
   const [status, setStatus] = useState<TransactionState>('None');
   const [error, setError] = useState<any>(undefined);
+  const [data, setData] = useState<{
+    transaction?: ContractTransaction;
+    receipt?: ContractReceipt;
+  }>({});
   const mutate = async (args: Parameters<F>[0]) => {
     try {
       setError(undefined);
+      setData({});
       setStatus('PendingSignature');
       const transaction = await wrappedFn(args);
       setStatus('Mining');
+      setData((data) => ({ ...data, transaction }));
 
       const receipt = await transaction.wait();
 
       setStatus('Success');
+      setData((data) => ({ ...data, receipt }));
       opts?.onSuccess?.({ transaction, receipt }, args);
       return receipt;
     } catch (e) {
@@ -72,12 +79,14 @@ const useTransaction = <F extends Fn>(
   const reset = useCallback(() => {
     setStatus('None');
     setError(undefined);
+    setData({});
   }, []);
 
   const meta = {
     status,
     error,
     reset,
+    data,
     isIdle: status === 'None',
     isPending: status === 'PendingSignature',
     isException: status === 'Exception',

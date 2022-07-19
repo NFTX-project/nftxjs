@@ -70,23 +70,26 @@ export const createMintsQuery = (where: string) => {
   }`;
 };
 
-const isStakeOrMint = (mint: Mint, network: number) => {
+const isStakeOrMint = (
+  mint: Mint,
+  network: number
+): [VaultActivity['type'], VaultActivity['stakeType']] => {
   if (
     addressEqual(mint.user?.id, getChainConstant(NFTX_STAKING_ZAP, network))
   ) {
     // LP Stake
-    return 'stake';
+    return ['stake', 'liquidity'];
   }
   if (addressEqual(mint.user?.id, mint.vault.inventoryStakingPool?.id)) {
     // Inventory Stake
-    return 'stake';
+    return ['stake', 'inventory'];
   }
 
   if (mint.zapAction) {
-    return 'sell';
+    return ['sell', undefined];
   }
 
-  return 'mint';
+  return ['mint', undefined];
 };
 
 export const processMints = async (
@@ -96,7 +99,7 @@ export const processMints = async (
 ) => {
   let mints = response.mints.flatMap((mint): VaultActivity[] => {
     const receipt = transformFeeReceipt(mint.feeReceipt, mint.vault.id);
-    const type = isStakeOrMint(mint, network);
+    const [type, stakeType] = isStakeOrMint(mint, network);
 
     return mint.nftIds.map((nftId, i): VaultActivity => {
       return {
@@ -108,6 +111,7 @@ export const processMints = async (
         ethAmount: BigNumber.from(mint?.zapAction?.ethAmount ?? 0),
         feeAmount: receipt.amount.div(mint.nftIds.length),
         type,
+        stakeType,
       };
     });
   });
@@ -137,8 +141,8 @@ export const getMints = async ({
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
-    vault: vaultAddresses.length === 1 ? vaultAddresses[0] : null,
-    vault_in: vaultAddresses.length === 1 ? null : vaultAddresses,
+    vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
+    vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
   });
   const query = `{ ${createMintsQuery(where)} }`;
 

@@ -9,6 +9,7 @@ import {
   ZEROX_URL,
   NFTX_APR_URL,
   Network,
+  NFTX_FEE_TRACKER_SUBGRAPH,
 } from '@nftx/constants';
 import merge from 'deepmerge';
 
@@ -22,6 +23,7 @@ interface Config {
     SUSHI_SUBGRAPH: Record<string, string>;
     NON_STANDARD_SUBGRAPH: Record<string, string>;
     NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string>;
+    NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string>;
   };
   urls: {
     ZEROX_URL: Record<string, string>;
@@ -42,6 +44,7 @@ const defaultConfig: Config = {
     NFTX_TOKEN_BALANCE_SUBGRAPH,
     NON_STANDARD_SUBGRAPH,
     SUSHI_SUBGRAPH,
+    NFTX_FEE_TRACKER_SUBGRAPH,
   },
   urls: {
     ZEROX_URL,

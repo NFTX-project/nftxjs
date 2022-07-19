@@ -11,4 +11,5 @@ export const NFTX_APR_URL = {
   [Network.Mainnet]: 'https://data.nftx.xyz/vaultaprs',
   [Network.Rinkeby]: 'https://data.nftx.xyz/vaultaprs',
   [Network.Arbitrum]: 'https://data.nftx.xyz/vaultaprs',
+  [Network.Goerli]: 'https://data.nftx.xyz/vaultaprs',
 };

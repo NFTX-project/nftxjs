@@ -12,13 +12,13 @@ export const getAll = async ({
   network,
 }: {
   network: number;
-  vaultAddresses: VaultAddress[];
+  vaultAddresses?: VaultAddress[];
   fromTimestamp?: number;
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
-    vault: vaultAddresses.length === 1 ? vaultAddresses[0] : null,
-    vault_in: vaultAddresses.length === 1 ? null : vaultAddresses,
+    vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
+    vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
   });
   const query = `{
     ${createMintsQuery(where)}
