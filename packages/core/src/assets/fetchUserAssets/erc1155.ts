@@ -35,7 +35,7 @@ const erc1155 = async ({
   lastId?: number;
   retryCount?: number;
 }): Promise<Asset[]> => {
-  const query = gql`{
+  const query = gql<Response>`{
     account(id: $userAddress) {
       id
       balances: ERC1155balances(
@@ -59,7 +59,7 @@ const erc1155 = async ({
   let data: Response;
 
   try {
-    data = await querySubgraph<Response>({
+    data = await querySubgraph({
       url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
       query,
       variables: { userAddress, lastId, assetAddress },

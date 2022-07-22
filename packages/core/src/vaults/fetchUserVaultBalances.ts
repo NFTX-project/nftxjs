@@ -40,7 +40,7 @@ export default ({
       };
     };
 
-    const query = gql`
+    const query = gql<Response>`
       {
         account(id: $userAddress) {
           ERC20balances(first: 1000) {
@@ -59,7 +59,7 @@ export default ({
       }
     `;
 
-    const data = await querySubgraph<Response>({
+    const data = await querySubgraph({
       url: getChainConstant(
         config.subgraph.NFTX_TOKEN_BALANCE_SUBGRAPH,
         network

@@ -16,7 +16,14 @@ const fetchSingleVaultFees = async ({
   network: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]> => {
-  const query = gql`
+  const query = gql<{
+    vault: {
+      feeReceipts: Array<{
+        transfers: Array<{ amount: string; to: string }>;
+        date: string;
+      }>;
+    };
+  }>`
     {
       vault(id: $vaultAddress) {
         feeReceipts(
@@ -36,14 +43,7 @@ const fetchSingleVaultFees = async ({
   `;
 
   try {
-    const data = await querySubgraph<{
-      vault: {
-        feeReceipts: Array<{
-          transfers: Array<{ amount: string; to: string }>;
-          date: string;
-        }>;
-      };
-    }>({
+    const data = await querySubgraph({
       url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
       variables: { vaultAddress, fromTimestamp },
@@ -91,7 +91,21 @@ const fetchMultiVaultFees = async ({
   lastId?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]> => {
-  const query = gql`
+  type Response = {
+    vaults: Array<{
+      id: string;
+      vaultId: string;
+      feeReceipts: Array<{
+        transfers: Array<{
+          amount: string;
+          to: string;
+        }>;
+        date: string;
+      }>;
+    }>;
+  };
+
+  const query = gql<Response>`
     {
       vaults(
         first: 1000
@@ -116,16 +130,7 @@ const fetchMultiVaultFees = async ({
   `;
 
   try {
-    const data = await querySubgraph<{
-      vaults: Array<{
-        id: string;
-        vaultId: string;
-        feeReceipts: Array<{
-          transfers: Array<{ amount: string; to: string }>;
-          date: string;
-        }>;
-      }>;
-    }>({
+    const data = await querySubgraph({
       url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
       variables: {

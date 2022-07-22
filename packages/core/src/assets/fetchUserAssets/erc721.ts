@@ -29,7 +29,12 @@ const erc721 = async ({
 
   try {
     if (network === Network.Mainnet) {
-      const query = gql`{
+      const query = gql<{
+        account: {
+          id: string;
+          tokens: Array<{ id: string; identifier: string }>;
+        };
+      }>`{
       account(id: $userAddress) {
         id
         tokens: ERC721tokens(
@@ -46,12 +51,7 @@ const erc721 = async ({
         }
       }
     }`;
-      const data = await querySubgraph<{
-        account: {
-          id: string;
-          tokens: Array<{ id: string; identifier: string }>;
-        };
-      }>({
+      const data = await querySubgraph({
         url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
         query,
         variables: {
@@ -76,7 +76,10 @@ const erc721 = async ({
         return asset;
       });
     } else if (network === Network.Rinkeby) {
-      const query = gql`{
+      type Response = {
+        owner: { id: string; tokens: Array<{ id: string; tokenID: string }> };
+      };
+      const query = gql<Response>`{
       owner(id: $userAddress) {
         id
         tokens(
@@ -93,9 +96,7 @@ const erc721 = async ({
         }
       }
     }`;
-      const data = await querySubgraph<{
-        owner: { id: string; tokens: Array<{ id: string; tokenID: string }> };
-      }>({
+      const data = await querySubgraph({
         url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
         query,
         variables: {
@@ -120,7 +121,17 @@ const erc721 = async ({
         return asset;
       });
     } else if (network === Network.Arbitrum) {
-      const query = gql`{
+      type Response = {
+        account: {
+          id: string;
+          tokens: Array<{
+            id: string;
+            identifier: string;
+          }>;
+        };
+      };
+
+      const query = gql<Response>`{
       account(id: $userAddress) {
         id
         tokens: ERC721tokens(
@@ -137,12 +148,7 @@ const erc721 = async ({
         }
       }
     }`;
-      const data = await querySubgraph<{
-        account: {
-          id: string;
-          tokens: Array<{ id: string; identifier: string }>;
-        };
-      }>({
+      const data = await querySubgraph({
         url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
         query,
         variables: {

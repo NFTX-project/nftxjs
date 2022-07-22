@@ -1,10 +1,24 @@
 import config from '@nftx/config';
 import { PUBLIC_GRAPH_API_KEY } from '@nftx/constants';
 
+export type GraphQueryString<R, V> = string & { __r: R; __v: V };
+
 /** Processes a graphql string
  * (in actuality this does absolutely nothing and is just a useful way of denoting a graphql query and enables editor syntax highlighting)
  */
-export const gql = (s: TemplateStringsArray, ...variables: any[]) => {
+function gql(
+  s: TemplateStringsArray,
+  ...variables: any[]
+): GraphQueryString<any, any>;
+function gql<R>(
+  s: TemplateStringsArray,
+  ...variables: any[]
+): GraphQueryString<R, any>;
+function gql<R, V>(
+  s: TemplateStringsArray,
+  ...variables: any[]
+): GraphQueryString<R, V>;
+function gql(s: TemplateStringsArray, ...variables: any[]) {
   return s
     .map((s, i) => {
       if (i === 0) {
@@ -12,8 +26,10 @@ export const gql = (s: TemplateStringsArray, ...variables: any[]) => {
       }
       return variables[i - 1] + s;
     })
-    .join('');
-};
+    .join('') as GraphQueryString<any, any>;
+}
+
+export { gql };
 
 const normalizeIfAddress = <T>(t: T): T => {
   if (typeof t === 'string' && t.toLowerCase().startsWith('0x')) {
@@ -55,24 +71,43 @@ const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
 /** Sends a request to the subgraph
  * Uses the fetch api under the hood so if running in node you'll need to polyfill global.fetch
  */
-export const querySubgraph = async <T>({
+async function querySubgraph<Q extends GraphQueryString<any, any>>(args: {
+  /** The subgraph url */
+  url: string;
+  /** A stringified graphql query */
+  query: Q;
+  /** An object containing variables to inject into the query
+   * To use variables in your query, prefix them with $
+   * For example: (where: { id: $vaultAddress })
+   */
+  variables?: Q['__v'];
+  /** The fetch api to use, if you are using a ponyfill, you can manually pass it in here */
+  fetch?: Fetch;
+}): Promise<Q['__r']>;
+// async function querySubgraph<T>(args: {
+//   /** The subgraph url */
+//   url: string;
+//   /** A stringified graphql query */
+//   query: string;
+//   /** An object containing variables to inject into the query
+//    * To use variables in your query, prefix them with $
+//    * For example: (where: { id: $vaultAddress })
+//    */
+//   variables?: Record<string, any>;
+//   /** The fetch api to use, if you are using a ponyfill, you can manually pass it in here */
+//   fetch?: Fetch;
+// }): Promise<T>;
+async function querySubgraph({
   url: baseUrl,
   query,
   variables,
   fetch = globalFetch,
 }: {
-  /** The subgraph url */
   url: string;
-  /** A stringified graphql query */
   query: string;
-  /** An object containing variables to inject into the query
-   * To use variables in your query, prefix them with $
-   * For example: (where: { id: $vaultAddress })
-   */
   variables?: Record<string, any>;
-  /** The fetch api to use, if you are using a ponyfill, you can manually pass it in here */
   fetch?: Fetch;
-}) => {
+}) {
   if (variables) {
     query = interpolateQuery(query, variables);
   }
@@ -102,7 +137,13 @@ export const querySubgraph = async <T>({
     throw new Error(`Failed to fetch ${url} with query ${query}`);
   }
 
-  const { data } = await response.json();
+  const { data, errors } = await response.json();
 
-  return data as T;
-};
+  if (errors?.[0]?.message) {
+    throw new Error(errors[0].message);
+  }
+
+  return data;
+}
+
+export { querySubgraph };

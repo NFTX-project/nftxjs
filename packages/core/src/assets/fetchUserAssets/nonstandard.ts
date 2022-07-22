@@ -50,7 +50,7 @@ const nonstandard = async ({
     return [];
   }
 
-  const query = gql`{
+  const query = gql<Response>`{
     account(id: $userAddress) {
       id
       tokens(
@@ -72,7 +72,7 @@ const nonstandard = async ({
   let data: Response;
 
   try {
-    data = await querySubgraph<Response>({
+    data = await querySubgraph({
       url,
       query,
       variables: {

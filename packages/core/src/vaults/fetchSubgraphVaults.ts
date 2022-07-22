@@ -116,7 +116,7 @@ const fetchSubgraphVaults = async ({
     vaultId_gte: lastId,
   });
 
-  const query = gql`{
+  const query = gql<Response>`{
     globals {
       fees {
         mintFee
@@ -206,10 +206,30 @@ const fetchSubgraphVaults = async ({
   let data: Response;
 
   try {
-    data = await querySubgraph<Response>({
+    data = await querySubgraph({
       url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
     });
+
+    if (data?.vaults?.length === 1000) {
+      const lastVault = data.vaults[data.vaults.length - 1];
+      const lastId = Number(lastVault.vaultId) + 1;
+      const moreVaults = await fetchSubgraphVaults({
+        finalisedOnly,
+        includeEmptyVaults,
+        manager,
+        network,
+        vaultAddresses,
+        vaultIds,
+        retryCount: 0,
+        lastId,
+      });
+
+      data = {
+        ...data,
+        vaults: [...data.vaults, ...(moreVaults?.vaults ?? [])],
+      };
+    }
   } catch (e) {
     console.error(e);
     if (retryCount < 3) {

@@ -49,44 +49,6 @@ const fetchMoreHoldings = async ({
   return [];
 };
 
-const fetchMoreVaults = async ({
-  vaults,
-  network,
-  finalisedOnly,
-  enabledOnly,
-  includeEmptyVaults,
-  manager,
-  vaultAddresses,
-  vaultIds,
-}: {
-  vaults: Vault[];
-  network: number;
-  finalisedOnly: boolean;
-  enabledOnly: boolean;
-  includeEmptyVaults: boolean;
-  manager: Address;
-  vaultAddresses: VaultAddress[];
-  vaultIds: VaultId[];
-}) => {
-  if (vaults.length === 1000) {
-    const lastId = Number(vaults[vaults.length - 1].vaultId) + 1;
-
-    return fetchVaults({
-      network,
-      finalisedOnly,
-      manager,
-      vaultAddresses,
-      vaultIds,
-      retryCount: 0,
-      lastId,
-      enabledOnly,
-      includeEmptyVaults,
-    });
-  }
-
-  return [];
-};
-
 const fetchVaults = async ({
   network = config.network,
   vaultAddresses,
@@ -139,21 +101,7 @@ const fetchVaults = async ({
       return transformVault({ globalFees, reserves, vault: x, moreHoldings });
     }) ?? [];
 
-  let vaults = await Promise.all(vaultPromises);
-
-  vaults = [
-    ...vaults,
-    ...(await fetchMoreVaults({
-      vaults,
-      finalisedOnly,
-      manager,
-      network,
-      vaultAddresses,
-      vaultIds,
-      enabledOnly,
-      includeEmptyVaults,
-    })),
-  ];
+  const vaults = await Promise.all(vaultPromises);
 
   // We only want to filter/sort once we've got all the vaults fetched
   // if lastId > 0 that means we're recursively fetching _more_ vaults

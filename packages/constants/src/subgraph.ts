@@ -44,10 +44,10 @@ export const NFTX_SUBGRAPH = {
 };
 
 export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
-  [Network.Mainnet]: `${SHARED_ROOT}/subgraphs/name/quantumlyy/nftx-holdings-subgraph-mainnet`,
-  [Network.Arbitrum]: `${GRAPH_HOST}/nftx-arbitrum/subgraphs/name/nftx-hosted/nftx-vault-token-holdings-arbitrum`,
+  [Network.Mainnet]: `${PROXY_ROOT}/${PUBLIC_GRAPH_API_KEY}/subgraphs/id/FiFs5im99VCUNevp1XaF642uCcsYkbN6eoN3GMErE7wL?nocache`,
+  [Network.Arbitrum]: `${GRAPH_HOST}/nftx-arbitrum/subgraphs/name/nftx-hosted/nftx-vault-token-holdings-arbitrum?nocache`,
   [Network.Rinkeby]: `${SHARED_ROOT}/subgraphs/name/quantumlyy/nftx-holdings-subgraph-rinkeby`,
-  [Network.Goerli]: `${SHARED_ROOT}/subgraphs/name/nftx-project/nftx-vault-token-holdings-goerli`,
+  [Network.Goerli]: `${SHARED_ROOT}/subgraphs/name/nftx-project/nftx-vault-token-holdings-goerli?nocache`,
 };
 
 export const NFTX_FEE_TRACKER_SUBGRAPH = {

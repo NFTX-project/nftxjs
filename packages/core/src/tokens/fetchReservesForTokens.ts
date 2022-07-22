@@ -130,7 +130,7 @@ const fetchReservesForTokens = async ({
   network?: number;
   tokenAddresses?: Address[];
 }) => {
-  const query = gql`{
+  const query = gql<Response>`{
     tokens(
       first: ${LIMIT},
       where: {
@@ -163,7 +163,7 @@ const fetchReservesForTokens = async ({
       }
     }
   }`;
-  const response = await querySubgraph<Response>({
+  const response = await querySubgraph({
     url: getChainConstant(config.subgraph.SUSHI_SUBGRAPH, network),
     query,
     variables: {

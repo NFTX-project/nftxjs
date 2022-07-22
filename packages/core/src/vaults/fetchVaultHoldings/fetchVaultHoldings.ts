@@ -16,7 +16,11 @@ const fetchVaultHoldings = async ({
   vaultAddress: VaultAddress;
   lastId?: string;
 }): Promise<VaultHolding[]> => {
-  const query = gql`{
+  const query = gql<{
+    vault: {
+      holdings: Array<{ id: string; tokenId: string; dateAdded: string }>;
+    };
+  }>`{
     vault(id: $vaultAddress) {
       holdings(
         first: ${LIMIT},
@@ -36,11 +40,7 @@ const fetchVaultHoldings = async ({
 
   const url = getChainConstant(config.subgraph.NFTX_SUBGRAPH, network);
 
-  const data = await querySubgraph<{
-    vault: {
-      holdings: Array<{ id: string; tokenId: string; dateAdded: string }>;
-    };
-  }>({
+  const data = await querySubgraph({
     url,
     query,
     variables: { vaultAddress, lastId },

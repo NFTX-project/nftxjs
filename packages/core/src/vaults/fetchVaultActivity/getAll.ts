@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import { buildWhere, querySubgraph } from '@nftx/subgraph';
+import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '../../web3';
 import type { VaultAddress } from '../types';
 import { createMintsQuery, Mint, processMints } from './mints';
@@ -20,17 +20,17 @@ export const getAll = async ({
     vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
     vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
   });
-  const query = `{
+  const query = gql<{
+    mints: Mint[];
+    redeems: Redeem[];
+    swaps: Swap[];
+  }>`{
     ${createMintsQuery(where)}
     ${createRedeemsQuery(where)}
     ${createSwapsQuery(where)}
   }`;
 
-  const response = await querySubgraph<{
-    mints: Mint[];
-    redeems: Redeem[];
-    swaps: Swap[];
-  }>({
+  const response = await querySubgraph({
     url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });

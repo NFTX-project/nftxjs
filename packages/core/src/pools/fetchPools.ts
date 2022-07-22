@@ -47,7 +47,7 @@ const fetchPools = async ({
     id_not: ARBITRUM_EXCEPTION_POOL_ID,
   });
 
-  const query = gql`{
+  const query = gql<Response>`{
     pools(
       first: 1000,
       where: ${where}
@@ -75,7 +75,7 @@ const fetchPools = async ({
       }
     }
   }`;
-  const data = await querySubgraph<Response>({
+  const data = await querySubgraph({
     url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
     query,
   });
