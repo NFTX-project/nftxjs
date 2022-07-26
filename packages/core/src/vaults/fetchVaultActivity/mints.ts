@@ -116,7 +116,7 @@ export const processMints = async (
     });
   });
 
-  if (mints.length === 1000) {
+  if (response.mints.length === 1000) {
     const lastMint = mints[mints.length - 1];
     const nextTimestamp = lastMint.date;
     const moreMints = await getMints({

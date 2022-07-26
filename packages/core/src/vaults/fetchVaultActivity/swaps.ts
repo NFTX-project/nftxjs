@@ -94,7 +94,7 @@ export const processSwaps = async (
     });
   });
 
-  if (swaps.length === 1000) {
+  if (response.swaps.length === 1000) {
     const lastSwap = swaps[swaps.length - 1];
     const nextTimestamp = lastSwap.date;
     const moreSwaps = await getSwaps({

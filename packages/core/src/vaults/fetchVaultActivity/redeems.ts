@@ -105,7 +105,7 @@ export const processRedeems = async (
     });
   });
 
-  if (redeems.length === 1000) {
+  if (response.redeems.length === 1000) {
     const lastRedeem = redeems[redeems.length - 1];
     const nextTimestamp = lastRedeem.date;
     const moreRedeems = await getRedeems({
