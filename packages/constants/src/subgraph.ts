@@ -19,7 +19,7 @@ export const ERC721_SUBGRAPH = {
   [Network.Mainnet]: `${PROXY_ROOT}/${PUBLIC_GRAPH_API_KEY}/subgraphs/id/AVZ1dGwmRGKsbDAbwvxNmXzeEkD48voB3LfGqj5w7FUS`,
   [Network.Arbitrum]: `${SHARED_ROOT}/subgraphs/name/quantumlyy/eip721-subgraph-arbitrum`,
   [Network.Rinkeby]: `${SHARED_ROOT}/subgraphs/name/0xorg/eip721-subgraph-rinkeby`,
-  [Network.Goerli]: `${SHARED_ROOT}/subgraphs/name/yellow-heart/goerlisubgraph`,
+  [Network.Goerli]: `${SHARED_ROOT}/subgraphs/name/nftx-project/eip721-goerli`,
 };
 
 export const ERC1155_SUBGRAPH = {

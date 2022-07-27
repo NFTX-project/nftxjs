@@ -28,7 +28,7 @@ const erc721 = async ({
   }
 
   try {
-    if (network === Network.Mainnet) {
+    if (network === Network.Mainnet || network === Network.Goerli) {
       const query = gql<{
         account: {
           id: string;
