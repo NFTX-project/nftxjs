@@ -130,7 +130,8 @@ const adjustPosition = (
     });
 
     xSlp = increaseByPercentage(xSlp, balanceChange);
-    xSlpSupply = xSlpSupply.add(xSlp);
+    const xSlpDiff = xSlp.sub(position.xSlp);
+    xSlpSupply = xSlpSupply.add(xSlpDiff);
 
     const supplyChange = calculatePercentageDifference(
       position.xSlpSupply,
