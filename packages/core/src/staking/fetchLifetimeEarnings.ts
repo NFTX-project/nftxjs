@@ -1,4 +1,5 @@
 import { WeiPerEther, Zero } from '@ethersproject/constants';
+import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
 import type { fetchVaults, Vault } from '../vaults';
@@ -78,7 +79,7 @@ export default ({
   };
 
   /** Fetch the lifetime fees a user has earned in ETH */
-  return async function fetchLifetimeFees({
+  return async function fetchLifetimeEarnings({
     userAddress,
     vaults,
     network = config.network,
@@ -99,6 +100,10 @@ export default ({
       if (vault == null) {
         return total;
       }
+      if (vault.reserveWeth.lt(WeiPerEther)) {
+        return total;
+      }
+
       const spotPrice = vault.rawPrice;
       const amount = parseAggregatedFee(fee.aggregatedVaultFees);
       const value = amount.mul(spotPrice).div(WeiPerEther);

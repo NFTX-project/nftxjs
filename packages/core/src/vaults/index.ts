@@ -3,6 +3,7 @@ import { fetchTokenBalance } from '../web3';
 import makeFetchUserVaultBalances from './fetchUserVaultBalances';
 import makeFetchUserVaultBalance from './fetchUserVaultBalance';
 
+export { default as calculateVaultApr } from './calculateVaultApr';
 export { default as fetchVaultActivity } from './fetchVaultActivity';
 export { default as fetchVaults } from './fetchVaults';
 export { default as fetchSubgraphVaults } from './fetchSubgraphVaults';

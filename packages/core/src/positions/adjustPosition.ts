@@ -1,5 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
+import { calculateVaultApr } from '../vaults';
 import type { Position } from './types';
 import {
   calculateInventoryEth,
@@ -44,10 +45,20 @@ const adjustPosition = (
     xSlp,
     xSlpSupply,
     poolReserves,
+    slpBalance,
+    slpSupply,
+    inventoryApr,
+    liquidityApr,
   } = position;
-  // TODO: adjust the APR as well
+  const adjustVToken = vToken?.gt(0) || vToken?.lt(0);
+  const adjustSlp = slp?.gt(0) || slp?.lt(0);
+  const adjustLp =
+    lpNft &&
+    lpEth &&
+    (lpNft.gt(0) || lpNft.lt(0) || lpEth.gt(0) || lpEth.lt(0));
+  const hasAdjustments = adjustLp || adjustSlp || adjustVToken;
 
-  if (vToken?.gt(0) || vToken?.lt(0)) {
+  if (adjustVToken) {
     inventoryTokens = inventoryTokens.add(vToken);
 
     const newXTokens = vToken.mul(position.xTokenShare).div(WeiPerEther);
@@ -67,15 +78,14 @@ const adjustPosition = (
       inventoryBalance: inventoryTokens,
       reserves: position.poolReserves,
     });
-
-    valueStaked = liquidityValue.add(inventoryValue);
-    totalValue = valueStaked.add(position.claimableValue);
   }
 
-  if (slp?.gt(0) || slp?.lt(0)) {
+  if (adjustSlp) {
     const newXSlp = slp;
     xSlp = xSlp.add(newXSlp);
     xSlpSupply = xSlpSupply.add(newXSlp);
+    slpBalance = slpBalance.add(slp);
+    slpSupply = slpSupply.add(slp);
     liquidityShare = calculateLiquidityShare({ xSlp, xSlpSupply });
 
     const balanceChange = calculatePercentageDifference(position.xSlp, xSlp);
@@ -106,16 +116,9 @@ const adjustPosition = (
     );
 
     liquidityValue = liquidityEth.mul(2);
-
-    valueStaked = liquidityValue.add(inventoryValue);
-    totalValue = valueStaked.add(position.claimableValue);
   }
 
-  if (
-    lpNft &&
-    lpEth &&
-    (lpNft.gt(0) || lpNft.lt(0) || lpEth.gt(0) || lpEth.lt(0))
-  ) {
+  if (adjustLp) {
     liquidityTokens = liquidityTokens.add(lpNft);
     liquidityEth = liquidityEth.add(lpEth);
 
@@ -132,6 +135,8 @@ const adjustPosition = (
     xSlp = increaseByPercentage(xSlp, balanceChange);
     const xSlpDiff = xSlp.sub(position.xSlp);
     xSlpSupply = xSlpSupply.add(xSlpDiff);
+    slpSupply = slpSupply.add(xSlpDiff);
+    slpBalance = slpBalance.add(xSlpDiff);
 
     const supplyChange = calculatePercentageDifference(
       position.xSlpSupply,
@@ -154,9 +159,26 @@ const adjustPosition = (
     );
 
     liquidityValue = liquidityEth.mul(2);
+  }
 
+  if (hasAdjustments) {
     valueStaked = liquidityValue.add(inventoryValue);
     totalValue = valueStaked.add(position.claimableValue);
+
+    const newApr = calculateVaultApr({
+      feeReceipts: position.feeReceipts,
+      slpBalance,
+      slpSupply,
+      xTokenShare: position.xTokenShare,
+      xTokenSupply,
+      vault: {
+        reserveVtoken: poolReserves.reserveVtoken,
+        createdAt: position.createdAt,
+      },
+    });
+
+    inventoryApr = newApr.inventoryApr;
+    liquidityApr = newApr.liquidityApr;
   }
 
   return {
@@ -174,6 +196,10 @@ const adjustPosition = (
     valueStaked,
     xToken,
     xTokenSupply,
+    slpBalance,
+    slpSupply,
+    inventoryApr,
+    liquidityApr,
   };
 };
 

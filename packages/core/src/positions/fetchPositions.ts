@@ -3,18 +3,21 @@ import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import type { fetchPools, LiquidityPool } from '../pools';
 import type { fetchReservesForTokens, TokenReserve } from '../tokens';
-import type {
+import {
   fetchUserVaultBalances,
   fetchVaultAprs,
+  fetchVaultFees,
   fetchVaults,
   fetchXTokenShares,
   UserVaultBalance,
   Vault,
   VaultApr,
+  VaultFeeReceipt,
   VaultId,
 } from '../vaults';
 import type fetchPosition from './fetchPosition';
 import { Address, addressEqual } from '../web3';
+import { Zero } from '@ethersproject/constants';
 
 type FetchPools = typeof fetchPools;
 type FetchReservesForTokens = typeof fetchReservesForTokens;
@@ -46,6 +49,7 @@ export default ({
     provider,
     userAddress,
     network = config.network,
+    minimumBalance = Zero,
     ...args
   }: {
     userAddress: Address;
@@ -60,6 +64,8 @@ export default ({
       xTokens: UserVaultBalance[];
     };
     xTokenShares?: { share: BigNumber; vaultId: VaultId }[];
+    feeReceipts?: VaultFeeReceipt[];
+    minimumBalance?: BigNumber;
   }) {
     const allVaults = args.vaults ?? (await fetchVaults({ network }));
     const balances =
@@ -67,7 +73,9 @@ export default ({
       (await fetchUserVaultBalances({ userAddress, network, provider }));
     const userVaultIds = [
       ...new Set(
-        [...balances.xTokens, ...balances.xSlp].map(({ vaultId }) => vaultId)
+        [...balances.xTokens, ...balances.xSlp]
+          .filter(({ balance }) => balance.gte(minimumBalance))
+          .map(({ vaultId }) => vaultId)
       ),
     ];
     const stakedVaults = allVaults.filter((vault) =>
@@ -86,6 +94,12 @@ export default ({
       args.xTokenShares ??
       (await fetchXTokenShares({ provider, vaultIds, network }));
     const aprs = args.aprs ?? (await fetchVaultAprs({ network }));
+    const allFeeReceipts =
+      args.feeReceipts ??
+      (await fetchVaultFees({
+        vaultAddresses,
+        fromTimestamp: Date.now() / 1000 - 2592000,
+      }));
 
     const positions = await Promise.all(
       stakedVaults.map((vault) => {
@@ -104,6 +118,9 @@ export default ({
         const xTokenShare = xTokenShares.find(
           ({ vaultId }) => vaultId === vault.vaultId
         )?.share;
+        const feeReceipts = allFeeReceipts?.filter((x) =>
+          addressEqual(x.vaultAddress, vault.id)
+        );
 
         return fetchPosition({
           provider,
@@ -118,6 +135,7 @@ export default ({
           xSlpBalance,
           xTokenBalance,
           xTokenShare,
+          feeReceipts,
         });
       })
     );

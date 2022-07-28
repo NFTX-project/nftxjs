@@ -1,6 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { TokenReserve } from '../tokens';
-import type { VaultAddress, VaultId } from '../vaults';
+import type { VaultAddress, VaultFeeReceipt, VaultId } from '../vaults';
 
 export type Position = {
   vaultId: VaultId;
@@ -27,4 +27,8 @@ export type Position = {
   xTokenShare: BigNumber;
   xSlp: BigNumber;
   xSlpSupply: BigNumber;
+  slpBalance: BigNumber;
+  slpSupply: BigNumber;
+  feeReceipts: VaultFeeReceipt[];
+  createdAt: number;
 };

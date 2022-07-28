@@ -17,7 +17,10 @@ export const doesVaultHaveRandomSwapFee = (vault: Pick<Vault, 'fees'>) => {
   return (vault?.fees?.randomSwapFee ?? Zero).isZero() === false;
 };
 
-export const matchVault = (vault: Vault, search: string) => {
+export const matchVault = (
+  vault: Pick<Vault, 'token' | 'asset'>,
+  search: string
+) => {
   if (!vault || !search) {
     return false;
   }

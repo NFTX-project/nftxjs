@@ -1,19 +1,29 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import { Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import { formatEther } from '@ethersproject/units';
 import config from '@nftx/config';
+import { NFTX_LP_STAKING } from '@nftx/constants';
 import type { fetchPool, LiquidityPool } from '../pools';
 import type { fetchClaimableTokens } from '../staking';
 import type { fetchReservesForToken, TokenReserve } from '../tokens';
-import type {
+import {
   fetchUserVaultBalance,
   fetchVault,
   fetchVaultAprs,
+  fetchVaultFees,
   fetchXTokenShare,
   Vault,
   VaultAddress,
+  VaultFeeReceipt,
 } from '../vaults';
-import { Address, addressEqual, type fetchTotalSupply } from '../web3';
+import {
+  Address,
+  addressEqual,
+  fetchTokenBalance,
+  getChainConstant,
+  type fetchTotalSupply,
+} from '../web3';
 import type { Position } from './types';
 import {
   calculateClaimableEth,
@@ -71,6 +81,7 @@ export default ({
       inventoryStakingPool?: {
         id: Vault['inventoryStakingPool']['id'];
       };
+      createdAt: Vault['createdAt'];
     };
     pool?: LiquidityPool;
     reserves?: TokenReserve;
@@ -80,13 +91,17 @@ export default ({
     network?: number;
     inventoryApr?: number;
     liquidityApr?: number;
+    slpSupply?: BigNumber;
+    slpBalance?: BigNumber;
+    feeReceipts?: VaultFeeReceipt[];
   }) {
     const vault = args.vault ?? (await fetchVault({ network, vaultAddress }));
     const pool = args.pool ?? (await fetchPool({ network, vaultAddress }));
     const reserves =
       args.reserves ??
       (await fetchReservesForToken({ network, tokenAddress: vaultAddress }));
-    const needsBalance = args.xSlpBalance == null || args.xTokenBalance == null;
+    const needsBalance =
+      args.xSlpBalance === undefined && args.xTokenBalance == undefined;
     const balance = needsBalance
       ? await fetchUserVaultBalance({
           userAddress,
@@ -95,8 +110,9 @@ export default ({
           vaultId: vault.vaultId,
         })
       : null;
-    const xTokenBalance = args.xTokenBalance ?? balance.xToken?.balance ?? Zero;
-    const xSlpBalance = args.xSlpBalance ?? balance.xSlp?.balance ?? Zero;
+    const xTokenBalance =
+      args.xTokenBalance ?? balance?.xToken?.balance ?? Zero;
+    const xSlpBalance = args.xSlpBalance ?? balance?.xSlp?.balance ?? Zero;
     let xTokenShare = args.xTokenShare;
     if (xTokenShare == null && vault.inventoryStakingPool?.id != null) {
       xTokenShare = await fetchXTokenShare({
@@ -114,6 +130,25 @@ export default ({
     const inventoryApr = args.inventoryApr ?? apr?.inventoryApr ?? 0;
     const liquidityApr = args.liquidityApr ?? apr?.liquidityApr ?? 0;
 
+    const slpBalance =
+      args.slpBalance ?? pool?.stakingToken?.id
+        ? await fetchTokenBalance({
+            network,
+            provider,
+            ownerAddress: getChainConstant(NFTX_LP_STAKING, network),
+            tokenAddress: pool.stakingToken.id,
+          })
+        : null;
+
+    const slpSupply =
+      args.slpSupply ?? pool?.stakingToken?.id
+        ? await fetchTotalSupply({
+            network,
+            provider,
+            tokenAddress: pool.stakingToken.id,
+          })
+        : null;
+
     const xTokenAddress = vault.inventoryStakingPool?.id;
     const xSlpAddress = pool?.dividendToken?.id;
 
@@ -127,6 +162,14 @@ export default ({
     const xSlpSupply = xSlpAddress
       ? await fetchTotalSupply({ network, provider, tokenAddress: xSlpAddress })
       : Zero;
+
+    const feeReceipts =
+      args.feeReceipts ??
+      (await fetchVaultFees({
+        network,
+        fromTimestamp: Date.now() / 1000 - 2592000,
+        vaultAddress,
+      }));
 
     // INVENTORY
     // The % of all staked inventory owned by the user
@@ -218,6 +261,11 @@ export default ({
       xToken: xTokenBalance,
       xTokenShare,
       xTokenSupply,
+      slpBalance,
+      slpSupply,
+
+      feeReceipts,
+      createdAt: vault.createdAt,
     };
 
     return position;
