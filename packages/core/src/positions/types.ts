@@ -1,0 +1,34 @@
+import type { BigNumber } from '@ethersproject/bignumber';
+import type { TokenReserve } from '../tokens';
+import type { VaultAddress, VaultFeeReceipt, VaultId } from '../vaults';
+
+export type Position = {
+  vaultId: VaultId;
+  vaultAddress: VaultAddress;
+  poolId: string;
+  liquidityEth: BigNumber;
+  inventoryValue: BigNumber;
+  liquidityValue: BigNumber;
+  inventoryTokens: BigNumber;
+  liquidityTokens: BigNumber;
+  inventoryShare: BigNumber;
+  liquidityShare: BigNumber;
+  inventoryApr: number;
+  liquidityApr: number;
+  inventorySplit: number;
+  liquiditySplit: number;
+  claimableAmount: BigNumber;
+  valueStaked: BigNumber;
+  claimableValue: BigNumber;
+  totalValue: BigNumber;
+  poolReserves: TokenReserve;
+  xToken: BigNumber;
+  xTokenSupply: BigNumber;
+  xTokenShare: BigNumber;
+  xSlp: BigNumber;
+  xSlpSupply: BigNumber;
+  slpBalance: BigNumber;
+  slpSupply: BigNumber;
+  feeReceipts: VaultFeeReceipt[];
+  createdAt: number;
+};
