@@ -22,6 +22,7 @@ export default ({
     signer,
     vaultId,
     nftsToRedeem,
+    withdrawRemaining,
     xTokenAmount,
     overrides,
   }: {
@@ -32,10 +33,10 @@ export default ({
      * This must be a whole number and must not be greater than your inventory balance
      */
     nftsToRedeem?: number;
+    /** If there is any remaining balance after redeeming NFTs, withdraw it as vToken */
+    withdrawRemaining?: boolean;
     /** The amount of xToken to unstake into vToken
      * This must not be more than your balance but can be a fractional amount.
-     * If you're also redeeming NFTs, this value should be no more than the remaining amount
-     * e.g. if you have 4.5 PUNK, and you're redeeming 3 NFTs, xTokenAmount can be between 0 and 1.5
      */
     xTokenAmount?: BigNumber;
     overrides?: Record<string, any>;
@@ -45,7 +46,7 @@ export default ({
         network,
         signer,
         vaultId,
-        xTokenAmount,
+        withdrawRemaining,
         nftsToRedeem,
         overrides,
       });

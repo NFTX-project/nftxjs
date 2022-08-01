@@ -1,5 +1,5 @@
 import abi from '@nftx/constants/abis/NFTXUnstakingInventoryZap.json';
-import { Zero } from '@ethersproject/constants';
+import { WeiPerEther, Zero } from '@ethersproject/constants';
 import { estimateGasAndFees, increaseGasLimit } from '../../trade';
 import { getChainConstant, getContract } from '../../web3';
 import type { Signer } from 'ethers';
@@ -23,13 +23,13 @@ export default ({
     vaultId,
     overrides,
     nftsToRedeem,
-    xTokenAmount = Zero,
+    withdrawRemaining,
   }: {
     network: number;
     signer: Signer;
     vaultId: VaultId;
     nftsToRedeem: number;
-    xTokenAmount?: BigNumber;
+    withdrawRemaining: boolean;
     overrides?: Record<string, any>;
   }) {
     const contract = getContract({
@@ -39,7 +39,11 @@ export default ({
       address: getChainConstant(NFTX_UNSTAKING_INVENTORY_ZAP, network),
     });
     const method = 'unstakeInventory' as const;
-    const args = [vaultId, nftsToRedeem, xTokenAmount];
+    const args = [
+      vaultId,
+      nftsToRedeem,
+      withdrawRemaining ? WeiPerEther : Zero,
+    ];
 
     const { gasEstimate } = await estimateGasAndFees({
       contract,
