@@ -122,17 +122,24 @@ const adjustPosition = (
     liquidityTokens = liquidityTokens.add(lpNft);
     liquidityEth = liquidityEth.add(lpEth);
 
-    const balanceChange = calculatePercentageDifference(
-      position.liquidityTokens,
-      liquidityTokens
-    );
+    // I think we can massively reduce complexity by using the slp token balance method to calc stuff?
+    let balanceChange: BigNumber;
 
-    [inventorySplit, liquiditySplit] = calculateStakeSplit({
-      inventoryBalance: inventoryTokens,
-      liquidityBalance: liquidityTokens.mul(2),
-    });
+    if (position.liquidityTokens.isZero()) {
+      const slpToken = lpNft.mul(slpSupply).div(poolReserves.reserveVtoken);
+      const slpWeth = lpEth.mul(slpSupply).div(poolReserves.reserveWeth);
+      const slpAdded = slpToken.lt(slpWeth) ? slpToken : slpWeth;
 
-    xSlp = increaseByPercentage(xSlp, balanceChange);
+      balanceChange = slpAdded.mul(WeiPerEther).div(xSlpSupply);
+      xSlp = slpAdded;
+    } else {
+      balanceChange = calculatePercentageDifference(
+        position.liquidityTokens,
+        liquidityTokens
+      );
+      xSlp = increaseByPercentage(xSlp, balanceChange);
+    }
+
     const xSlpDiff = xSlp.sub(position.xSlp);
     xSlpSupply = xSlpSupply.add(xSlpDiff);
     slpSupply = slpSupply.add(xSlpDiff);
@@ -159,6 +166,11 @@ const adjustPosition = (
     );
 
     liquidityValue = liquidityEth.mul(2);
+
+    [inventorySplit, liquiditySplit] = calculateStakeSplit({
+      inventoryBalance: inventoryTokens,
+      liquidityBalance: liquidityTokens.mul(2),
+    });
   }
 
   if (hasAdjustments) {
