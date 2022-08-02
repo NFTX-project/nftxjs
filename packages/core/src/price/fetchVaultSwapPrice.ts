@@ -21,7 +21,7 @@ const fetchVaultSwapPrice = async ({
   targetSwaps?: number;
   randomSwaps?: number;
 }) => {
-  /** For waps the price is purely for the swap fee
+  /** For swaps the price is purely for the swap fee
    * so we just have to work out the total fees for the intended target/random counts
    */
   let amount = Zero;

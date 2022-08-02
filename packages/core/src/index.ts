@@ -1,6 +1,7 @@
 export * from './assets';
 export * from './pools';
 export * from './positions';
+export * from './price';
 export * from './staking';
 export * from './tokens';
 export * from './trade';

@@ -1,5 +1,4 @@
 import { WeiPerEther, Zero } from '@ethersproject/constants';
-import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
 import type { fetchVaults, Vault } from '../vaults';
