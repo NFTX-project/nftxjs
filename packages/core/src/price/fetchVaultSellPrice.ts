@@ -9,15 +9,15 @@ const fetchVaultSellPrice = async ({
   vault,
   network = config.network,
   provider,
-  sells = 1,
+  amount: sells = 1,
 }: {
   vault: Pick<Vault, 'id' | 'fees'>;
   network?: number;
   provider: Provider;
-  sells?: number;
+  amount?: number;
 }) => {
   /** When you sell an NFT there's a mint fee that's deducted from the final price
-   * so if you sell one punk NFT, we mint 1 PUNK, give 0.5 PUNKs to the stakers
+   * so if you sell one punk NFT, we mint 1 PUNK, give 0.05 PUNKs to the stakers
    * and trade 0.95 PUNKs for ETH
    */
   const fee = vault.fees.mintFee.mul(sells);

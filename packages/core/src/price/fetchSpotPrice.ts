@@ -1,4 +1,4 @@
-import { Zero } from '@ethersproject/constants';
+import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
@@ -22,9 +22,7 @@ const fetchSpotPriceFromApi = async ({
     buyToken: tokenAddress,
   });
 
-  const price = 1 / Number(buyTokenToEthRate);
-
-  return parseEther(`${price}`.slice(0, 18));
+  return WeiPerEther.mul(WeiPerEther).div(parseEther(buyTokenToEthRate));
 };
 
 const fetchSpotPriceFromSubgraph = async ({
@@ -44,7 +42,7 @@ const fetchSpotPriceFromSubgraph = async ({
 /** Fetches a spot price for a given token
  * If possible, the price is fetched from the 0x service, otherwise it uses pool reserves
  */
-const fetchSpotPrice = async ({
+const fetchSpotPrice = ({
   network = config.network,
   provider,
   tokenAddress,
@@ -57,16 +55,11 @@ const fetchSpotPrice = async ({
 }) => {
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
-    try {
-      return await fetchSpotPriceFromApi({
-        network,
-        tokenAddress,
-        quote,
-      });
-    } catch (e) {
-      console.error(e);
-      // fall back to the web3 call route
-    }
+    return fetchSpotPriceFromApi({
+      network,
+      tokenAddress,
+      quote,
+    });
   }
   return fetchSpotPriceFromSubgraph({
     network,

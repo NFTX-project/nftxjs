@@ -33,20 +33,29 @@ const fetch0xQuote = async ({
   network = config.network,
   buyToken,
   sellToken,
-  amount = WeiPerEther,
+  buyAmount,
+  sellAmount,
   type = 'quote',
 }: {
   network?: number;
   buyToken: Address;
+  buyAmount?: BigNumberish;
   sellToken: Address;
-  amount?: BigNumberish;
+  sellAmount?: BigNumberish;
   /** Whether to fetch an actual quote that can be directly submitted as a transaction, or just a readonly price */
   type?: 'quote' | 'price';
 }) => {
   const searchParams = new URLSearchParams();
   searchParams.append('buyToken', buyToken);
   searchParams.append('sellToken', sellToken);
-  searchParams.append('buyAmount', BigNumber.from(amount).toString());
+  if (buyAmount) {
+    searchParams.append('buyAmount', BigNumber.from(buyAmount).toString());
+  } else if (sellAmount) {
+    searchParams.append('sellAmount', BigNumber.from(sellAmount).toString());
+  } else {
+    // Default to just buying 1
+    searchParams.append('buyAmount', WeiPerEther.toString());
+  }
   const query = searchParams.toString();
   const zeroUrl = getChainConstant(config.urls.ZEROX_URL, network, null);
   if (!zeroUrl) {

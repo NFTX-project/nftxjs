@@ -1,7 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import { Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
-import { formatEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import { NFTX_LP_STAKING } from '@nftx/constants';
 import type { fetchPool, LiquidityPool } from '../pools';

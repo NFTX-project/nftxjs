@@ -10,7 +10,7 @@ import { getTokenIdAmounts, getUniqueTokenIds } from './utils';
 /** Mints an NFT into the NFTX vault in exchange for an ERC20 token
  * For example, minting a punk NFT would return 0.95 PUNK
  */
-const mintIntoVault = async ({
+const mint = async ({
   network = config.network,
   signer,
   tokenIds,
@@ -40,4 +40,4 @@ const mintIntoVault = async ({
   return contract.mint(ids, amounts);
 };
 
-export default mintIntoVault;
+export default mint;

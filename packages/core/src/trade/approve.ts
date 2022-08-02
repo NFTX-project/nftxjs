@@ -9,6 +9,7 @@ import { getContract } from '../web3';
 import type { Address } from '../web3/types';
 import type { Signer } from 'ethers';
 import config from '@nftx/config';
+import { getUniqueTokenIds } from './utils';
 
 function approvePunk({
   tokenId,
@@ -104,7 +105,7 @@ async function approve({
   signer: Signer;
   tokenId?: string;
   /** For ERC721/ERC1155, provide the token id or tokenIds */
-  tokenIds?: string[];
+  tokenIds?: string[] | [string, number][];
   /** For ERC20, provide the amount the spender can spend - if omitted it defaults to the max amount */
   amount?: BigNumber;
   /** If the standard is omitted, we will infer either ERC721 or ERC20 based on amount/tokenId/tokenIds parameters */
@@ -114,7 +115,7 @@ async function approve({
     if (isCryptoPunk(tokenAddress)) {
       return approvePunk({
         tokenId,
-        tokenIds,
+        tokenIds: getUniqueTokenIds(tokenIds),
         network,
         tokenAddress,
         signer,
