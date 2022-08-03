@@ -8,6 +8,10 @@ const abis = readdirSync('../constants/abis')
 const config = {
   ...base,
   external: [...base.external, ...abis],
+  output: base.output.map((o) => ({
+    ...o,
+    exports: 'default',
+  })),
 };
 
 export default config;

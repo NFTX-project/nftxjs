@@ -1,10 +1,10 @@
-import type { BigNumber, Signer } from 'ethers';
+import type { Signer } from 'ethers';
 import abi from '@nftx/constants/abis/NFTXInventoryStaking.json';
 import { getChainConstant, getContract } from '../web3';
 import type { VaultId } from '../vaults';
 import { NFTX_INVENTORY_STAKING } from '@nftx/constants';
 import config from '@nftx/config';
-
+import type { BigNumber } from '@ethersproject/bignumber';
 type GetContract = typeof getContract;
 
 export default ({ getContract }: { getContract: GetContract }) =>
