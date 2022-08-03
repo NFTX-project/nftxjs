@@ -2,19 +2,21 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import { Network, UNISWAP_QUOTER, USDC, WETH_TOKEN } from '@nftx/constants';
+import { UNISWAP_QUOTER, USDC, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/UniswapQuoter.json';
 import { getChainConstant, getContract } from '../web3';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0xPrice';
 
 const fetchEthPriceFromApi = async ({ network }: { network: number }) => {
-  return fetch0xPrice({
+  const { sellAmount } = await fetch0xPrice({
     network,
     buyToken: 'ETH',
     sellToken: 'USDC',
-    amount: WeiPerEther,
+    buyAmount: WeiPerEther,
   });
+
+  return BigNumber.from(sellAmount);
 };
 
 const fetchEthPriceFromWeb3 = async ({
@@ -31,11 +33,6 @@ const fetchEthPriceFromWeb3 = async ({
     address: getChainConstant(UNISWAP_QUOTER, network),
   });
 
-  if (network === Network.Rinkeby) {
-    // $22500 eth on rinkeby
-    return BigNumber.from('2500000000');
-  }
-
   const quote: BigNumber = await contract.quoteExactOutputSingle(
     getChainConstant(USDC, network),
     getChainConstant(WETH_TOKEN, network),
@@ -47,21 +44,25 @@ const fetchEthPriceFromWeb3 = async ({
   return quote;
 };
 
-const fetchEthPrice = async ({
+const fetchEthPrice = ({
   network = config.network,
   provider,
 }: {
   network?: number;
   provider: Provider;
 }) => {
+  const hardcodedPrice = getChainConstant(
+    config.contracts.ethPrice,
+    network,
+    null
+  );
+  if (hardcodedPrice != null) {
+    return BigNumber.from(hardcodedPrice);
+  }
+
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
-    try {
-      return await fetchEthPriceFromApi({ network });
-    } catch (e) {
-      console.error(e);
-      // fall back to uniswap
-    }
+    return fetchEthPriceFromApi({ network });
   }
   return fetchEthPriceFromWeb3({ network, provider });
 };

@@ -11,7 +11,7 @@ import { getExactTokenIds } from './utils';
 /** Redeems an item from the vault
  * Exchanges, for example, 1.05 PUNK for a punk nft
  */
-const redeemFromVault = async ({
+const redeem = async ({
   network = config.network,
   signer,
   targetIds,
@@ -60,4 +60,4 @@ const redeemFromVault = async ({
   );
 };
 
-export default redeemFromVault;
+export default redeem;

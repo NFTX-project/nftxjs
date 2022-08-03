@@ -1,34 +1,37 @@
-import type { BigNumber, BigNumberish } from '@ethersproject/bignumber';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import { SUSHISWAP_ROUTER, WETH_TOKEN } from '@nftx/constants';
+import { WETH_TOKEN } from '@nftx/constants';
+import { SUSHISWAP_ROUTER } from '@nftx/constants';
 import routerAbi from '@nftx/constants/abis/UniswapV2Router.json';
 import { getChainConstant, getContract } from '../web3';
 import type { Address } from '../web3/types';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0XPrice';
 
-const fetchSellPriceFromApi = async ({
+const fetchBuyPriceFromApi = async ({
   network,
   tokenAddress,
-  amount,
   quote,
+  amount,
 }: {
   network: number;
   tokenAddress: Address;
   amount: BigNumberish;
   quote: 'ETH';
 }) => {
-  return fetch0xPrice({
+  const { sellAmount } = await fetch0xPrice({
     network,
-    amount,
-    sellToken: tokenAddress,
-    buyToken: quote,
+    buyAmount: amount,
+    sellToken: quote,
+    buyToken: tokenAddress,
   });
+
+  return BigNumber.from(sellAmount);
 };
 
-const fetchSellPriceFromWeb3 = async ({
+const fetchBuyPriceFromWeb3 = async ({
   network,
   provider,
   tokenAddress,
@@ -47,11 +50,11 @@ const fetchSellPriceFromWeb3 = async ({
     provider,
   });
 
-  const tokenIn = tokenAddress;
-  const tokenOut = getChainConstant(WETH_TOKEN, network);
+  const tokenIn = getChainConstant(WETH_TOKEN, network);
+  const tokenOut = tokenAddress;
 
-  const [, quotePrice] =
-    ((await contract.getAmountsOut(amount, [
+  const [quotePrice] =
+    ((await contract.getAmountsIn(amount, [
       tokenIn,
       tokenOut,
     ])) as BigNumber[]) || [];
@@ -59,13 +62,15 @@ const fetchSellPriceFromWeb3 = async ({
   return quotePrice;
 };
 
-/** Fetches a sell price for a given token */
-const fetchSellPrice = async ({
+/** Fetches a buy price for a given token
+ * If possible, the price is fetched from the 0x service, otherwise it uses sushiswap
+ */
+const fetchBuyPrice = ({
   network = config.network,
   provider,
   tokenAddress,
-  amount = WeiPerEther,
   quote = 'ETH',
+  amount = WeiPerEther,
 }: {
   network?: number;
   provider: Provider;
@@ -75,19 +80,14 @@ const fetchSellPrice = async ({
 }) => {
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
-    try {
-      return await fetchSellPriceFromApi({
-        network,
-        tokenAddress,
-        amount,
-        quote,
-      });
-    } catch (e) {
-      console.error(e);
-      // fall back to the web3 call route
-    }
+    return fetchBuyPriceFromApi({
+      network,
+      tokenAddress,
+      amount,
+      quote,
+    });
   }
-  return fetchSellPriceFromWeb3({
+  return fetchBuyPriceFromWeb3({
     network,
     tokenAddress,
     amount,
@@ -96,4 +96,4 @@ const fetchSellPrice = async ({
   });
 };
 
-export default fetchSellPrice;
+export default fetchBuyPrice;

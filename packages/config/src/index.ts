@@ -31,6 +31,8 @@ interface Config {
   };
   contracts: {
     multicall: boolean;
+    use0xApi: Record<string, boolean>;
+    ethPrice: Record<string, string>;
   };
 }
 
@@ -51,7 +53,18 @@ const defaultConfig: Config = {
     NFTX_APR_URL,
   },
   contracts: {
+    // Whether to batch read calls together to reduce the number of network requests
     multicall: true,
+    // Disabled for now until we're ready to use 0x for transactions
+    use0xApi: {
+      [Network.Mainnet]: false,
+      [Network.Goerli]: false,
+      [Network.Arbitrum]: false,
+    },
+    // It's necessary to hardcode the price of ETH on some test networks
+    ethPrice: {
+      [Network.Rinkeby]: '2500000000', // $2.5k
+    },
   },
 };
 
