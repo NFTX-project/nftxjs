@@ -91,3 +91,11 @@ export const UNISWAP_QUOTER = {
   [Network.Rinkeby]: '0xb27308f9f90d607463bb33ea1bebb41c27ce5ab6',
   [Network.Goerli]: '0xb27308f9f90d607463bb33ea1bebb41c27ce5ab6',
 };
+
+/** ENS Address */
+export const ENS_REGISTRAR = {
+  [Network.Mainnet]: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+  [Network.Arbitrum]: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+  [Network.Rinkeby]: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+  [Network.Goerli]: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+};

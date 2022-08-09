@@ -94,7 +94,8 @@ export default ({
     slpBalance?: BigNumber;
     feeReceipts?: VaultFeeReceipt[];
   }) {
-    const vault = args.vault ?? (await fetchVault({ network, vaultAddress }));
+    const vault =
+      args.vault ?? (await fetchVault({ network, vaultAddress, provider }));
     const pool = args.pool ?? (await fetchPool({ network, vaultAddress }));
     const reserves =
       args.reserves ??

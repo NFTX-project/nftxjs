@@ -3,4 +3,7 @@ export * from './contexts';
 export * from './staking';
 export * from './trade';
 export * from './types';
-export { default as useTransaction } from './useTransaction';
+export {
+  default as useTransaction,
+  type UseTransactionOptions,
+} from './useTransaction';

@@ -22,31 +22,36 @@
     "prepublishOnly": "yarn build"
   },
   "peerDependencies": {
-    "@nftx/config": "^0.1.0",
-    "@nftx/constants": "^0.1.0",
-    "@nftx/subgraph": "^0.1.0",
     "@ethersproject/abi": "^5.6.0",
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/constants": "^5.6.0",
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@ethersproject/units": "^5.6.0",
+    "@nftx/config": "^0.1.0",
+    "@nftx/constants": "^0.1.0",
+    "@nftx/subgraph": "^0.1.0",
     "ethers": "^5.6.2"
   },
   "devDependencies": {
-    "@nftx/config": "^0.1.0",
-    "@nftx/constants": "^0.1.0",
-    "@nftx/subgraph": "^0.1.0",
     "@ethersproject/abi": "^5.6.0",
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/constants": "^5.6.0",
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@ethersproject/units": "^5.6.0",
+    "@nftx/config": "^0.1.0",
+    "@nftx/constants": "^0.1.0",
+    "@nftx/subgraph": "^0.1.0",
     "ethers": "^5.6.2"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {
+    "@ethersproject/hash": "^5.6.1",
+    "keccak256": "^1.0.6",
+    "merkletreejs": "^0.2.32"
+  }
 }

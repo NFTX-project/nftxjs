@@ -67,7 +67,7 @@ export default ({
     feeReceipts?: VaultFeeReceipt[];
     minimumBalance?: BigNumber;
   }) {
-    const allVaults = args.vaults ?? (await fetchVaults({ network }));
+    const allVaults = args.vaults ?? (await fetchVaults({ network, provider }));
     const balances =
       args.balances ??
       (await fetchUserVaultBalances({ userAddress, network, provider }));
