@@ -6,6 +6,7 @@ import { NFTX_LP_STAKING } from '@nftx/constants';
 import type { fetchPool, LiquidityPool } from '../pools';
 import type { fetchClaimableTokens } from '../staking';
 import type { fetchReservesForToken, TokenReserve } from '../tokens';
+import { t } from '../utils';
 import {
   fetchUserVaultBalance,
   fetchVault,
@@ -132,44 +133,54 @@ export default ({
 
     const slpBalance =
       args.slpBalance ?? pool?.stakingToken?.id
-        ? await fetchTokenBalance({
-            network,
-            provider,
-            ownerAddress: getChainConstant(NFTX_LP_STAKING, network),
-            tokenAddress: pool.stakingToken.id,
-          })
+        ? await t(
+            fetchTokenBalance({
+              network,
+              provider,
+              ownerAddress: getChainConstant(NFTX_LP_STAKING, network),
+              tokenAddress: pool.stakingToken.id,
+            })
+          )[1]
         : null;
 
     const slpSupply =
       args.slpSupply ?? pool?.stakingToken?.id
-        ? await fetchTotalSupply({
-            network,
-            provider,
-            tokenAddress: pool.stakingToken.id,
-          })
+        ? await t(
+            fetchTotalSupply({
+              network,
+              provider,
+              tokenAddress: pool.stakingToken.id,
+            })
+          )[1]
         : null;
 
     const xTokenAddress = vault.inventoryStakingPool?.id;
     const xSlpAddress = pool?.dividendToken?.id;
 
     const xTokenSupply = xTokenAddress
-      ? await fetchTotalSupply({
-          provider,
-          network,
-          tokenAddress: xTokenAddress,
-        })
+      ? (await t(
+          fetchTotalSupply({
+            provider,
+            network,
+            tokenAddress: xTokenAddress,
+          })
+        )[1]) ?? Zero
       : Zero;
     const xSlpSupply = xSlpAddress
-      ? await fetchTotalSupply({ network, provider, tokenAddress: xSlpAddress })
+      ? (await t(
+          fetchTotalSupply({ network, provider, tokenAddress: xSlpAddress })
+        )[1]) ?? Zero
       : Zero;
 
     const feeReceipts =
       args.feeReceipts ??
-      (await fetchVaultFees({
-        network,
-        fromTimestamp: Date.now() / 1000 - 2592000,
-        vaultAddress,
-      }));
+      (await t(
+        fetchVaultFees({
+          network,
+          fromTimestamp: Date.now() / 1000 - 2592000,
+          vaultAddress,
+        })
+      )[1]);
 
     // INVENTORY
     // The % of all staked inventory owned by the user
@@ -208,12 +219,14 @@ export default ({
 
     // CLAIMABLE
     // The amount of LP rewards that are claimable
-    const claimableAmount = await fetchClaimableTokens({
-      pool,
-      provider,
-      userAddress,
-      network,
-    });
+    const [, claimableAmount = Zero] = await t(
+      fetchClaimableTokens({
+        pool,
+        provider,
+        userAddress,
+        network,
+      })
+    );
     // The eth value of the amount
     const claimableValue = calculateClaimableEth({
       stakedEth: liquidityEth,
