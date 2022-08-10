@@ -3,7 +3,7 @@ import abi from '@nftx/constants/abis/NFTXENSMerkleEligibility.json';
 import config from '@nftx/config';
 import type { Vault } from '../vaults';
 import { getContract } from '../web3';
-import { LEAVES, TRANSFORMERS } from './constants';
+import { TRANSFORMERS } from './constants';
 
 export default () =>
   async function fetchMerkleLeaves({
@@ -30,22 +30,18 @@ export default () =>
 
     let leaves: string[] = [];
 
-    if (LEAVES[reference]) {
-      leaves = LEAVES[reference];
-    } else {
-      try {
-        const contract = getContract({
-          network,
-          provider,
-          abi,
-          address: vault.eligibilityModule.id,
-        });
+    try {
+      const contract = getContract({
+        network,
+        provider,
+        abi,
+        address: vault.eligibilityModule.id,
+      });
 
-        const uri: string = await contract.merkleLeavesURI();
-        leaves = await (await fetch(uri)).json();
-      } catch (e) {
-        console.error(e);
-      }
+      const uri: string = await contract.merkleLeavesURI();
+      leaves = await (await fetch(uri)).json();
+    } catch (e) {
+      console.error(e);
     }
 
     const transformer: (leaf: string) => string = TRANSFORMERS[reference];

@@ -17,7 +17,7 @@ const merkleTests = {
   DEFAULT: async ({ asset, leaves }: Props) => {
     return leaves.includes(asset.tokenId);
   },
-  [Rules.Merkle__5LetterWordENS]: async ({
+  [Rules.Merkle__10kClubENS]: async ({
     asset,
     leaves,
     network,
