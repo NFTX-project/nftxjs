@@ -8,7 +8,6 @@ import {
   fetchMerkleLeaves,
   isMerkleVault,
 } from '../eligibility';
-import merkleTests from '../eligibility/merkleTests';
 
 const filterMintableAssets = async ({
   network = config.network,
@@ -44,14 +43,9 @@ const filterMintableAssets = async ({
       }
       if (isMerkleVault(vault)) {
         const leaves = await fetchMerkleLeaves({ provider, network, vault });
-        const test =
-          merkleTests[
-            vault.eligibilityModule.merkleReference as keyof typeof merkleTests
-          ] ?? merkleTests.DEFAULT;
-        const testResults = await Promise.all(
-          vaultAssets.map((asset) => test({ asset, leaves, network, provider }))
+        vaultAssets = vaultAssets.filter((asset) =>
+          leaves.includes(asset.tokenId)
         );
-        vaultAssets = vaultAssets.filter((_, i) => testResults[i]);
       } else {
         const eligible = await checkEligible({
           provider,
