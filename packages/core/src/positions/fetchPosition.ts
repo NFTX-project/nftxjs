@@ -131,56 +131,59 @@ export default ({
     const inventoryApr = args.inventoryApr ?? apr?.inventoryApr ?? 0;
     const liquidityApr = args.liquidityApr ?? apr?.liquidityApr ?? 0;
 
-    const slpBalance =
-      args.slpBalance ?? pool?.stakingToken?.id
-        ? await t(
-            fetchTokenBalance({
-              network,
-              provider,
-              ownerAddress: getChainConstant(NFTX_LP_STAKING, network),
-              tokenAddress: pool.stakingToken.id,
-            })
-          )[1]
-        : null;
+    let slpBalance = args.slpBalance;
+    if (!slpBalance && pool?.stakingToken?.id) {
+      [, slpBalance] = await t(
+        fetchTokenBalance({
+          network,
+          provider,
+          ownerAddress: getChainConstant(NFTX_LP_STAKING, network),
+          tokenAddress: pool.stakingToken.id,
+        })
+      );
+    }
 
-    const slpSupply =
-      args.slpSupply ?? pool?.stakingToken?.id
-        ? await t(
-            fetchTotalSupply({
-              network,
-              provider,
-              tokenAddress: pool.stakingToken.id,
-            })
-          )[1]
-        : null;
+    let slpSupply = args.slpSupply;
+    if (!slpSupply && pool?.stakingToken?.id) {
+      [, slpSupply] = await t(
+        fetchTotalSupply({
+          network,
+          provider,
+          tokenAddress: pool.stakingToken.id,
+        })
+      );
+    }
 
     const xTokenAddress = vault.inventoryStakingPool?.id;
+
+    let xTokenSupply = Zero;
+    if (xTokenAddress) {
+      [, xTokenSupply] = await t(
+        fetchTotalSupply({
+          provider,
+          network,
+          tokenAddress: xTokenAddress,
+        })
+      );
+    }
     const xSlpAddress = pool?.dividendToken?.id;
+    let xSlpSupply = Zero;
+    if (xSlpAddress) {
+      [, xSlpSupply] = await t(
+        fetchTotalSupply({ network, provider, tokenAddress: xSlpAddress })
+      );
+    }
 
-    const xTokenSupply = xTokenAddress
-      ? (await t(
-          fetchTotalSupply({
-            provider,
-            network,
-            tokenAddress: xTokenAddress,
-          })
-        )[1]) ?? Zero
-      : Zero;
-    const xSlpSupply = xSlpAddress
-      ? (await t(
-          fetchTotalSupply({ network, provider, tokenAddress: xSlpAddress })
-        )[1]) ?? Zero
-      : Zero;
-
-    const feeReceipts =
-      args.feeReceipts ??
-      (await t(
+    let feeReceipts = args.feeReceipts;
+    if (!feeReceipts) {
+      [, feeReceipts] = await t(
         fetchVaultFees({
           network,
           fromTimestamp: Date.now() / 1000 - 2592000,
           vaultAddress,
         })
-      )[1]);
+      );
+    }
 
     // INVENTORY
     // The % of all staked inventory owned by the user
