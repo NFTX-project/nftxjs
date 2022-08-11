@@ -1,4 +1,5 @@
 import { WeiPerEther, Zero } from '@ethersproject/constants';
+import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
 import type { fetchVaults, Vault } from '../vaults';
@@ -82,16 +83,18 @@ export default ({
     userAddress,
     vaults,
     network = config.network,
+    provider,
   }: {
     userAddress: Address;
     vaults?: Vault[];
     network?: number;
+    provider: Provider;
   }) {
     const fees = await fetchFeesFromSubgraph({ network, userAddress });
 
     if (vaults == null) {
       const vaultAddresses = fees.map((fee) => fee.vault.address);
-      vaults = await fetchVaults({ network, vaultAddresses });
+      vaults = await fetchVaults({ network, vaultAddresses, provider });
     }
 
     return fees.reduce((total, fee) => {

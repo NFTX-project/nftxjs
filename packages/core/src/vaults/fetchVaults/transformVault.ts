@@ -10,11 +10,13 @@ const transformVault = ({
   reserves,
   vault: x,
   globalFees,
+  merkleReference,
   moreHoldings = [],
 }: {
   reserves: TokenReserve[];
   vault: Response['vaults'][0];
   globalFees: Response['globals'][0]['fees'];
+  merkleReference: string;
   moreHoldings?: VaultHolding[];
 }) => {
   const reserve = reserves.find(({ tokenId }) => tokenId === x.id);
@@ -43,6 +45,12 @@ const transformVault = ({
     rawPrice,
     reserveVtoken,
     reserveWeth,
+    eligibilityModule: x.eligibilityModule
+      ? {
+          ...x.eligibilityModule,
+          merkleReference,
+        }
+      : undefined,
   };
 
   return vault;

@@ -55,6 +55,7 @@ export type Response = {
     };
     eligibilityModule: {
       id: string;
+      name: string;
       eligibleIds: string[];
       eligibleRange: [string, string];
     };
@@ -174,6 +175,7 @@ const fetchSubgraphVaults = async ({
       }
       eligibilityModule {
         id
+        name
         eligibleIds
         eligibleRange
       }

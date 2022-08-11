@@ -1,9 +1,13 @@
 import type { Asset } from '../assets';
-import { addressEqual, getContract } from '../web3';
+import { addressEqual } from '../web3';
 import type { Vault } from './types';
-import Abi from '@nftx/constants/abis/NFTXEligibility.json';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
+import {
+  checkEligible,
+  fetchMerkleLeaves,
+  isMerkleVault,
+} from '../eligibility';
 
 const filterMintableAssets = async ({
   network = config.network,
@@ -20,7 +24,7 @@ const filterMintableAssets = async ({
 
   await Promise.all(
     vaults.map(async (vault) => {
-      const vaultAssets = assets.filter((asset) =>
+      let vaultAssets = assets.filter((asset) =>
         addressEqual(asset.assetAddress, vault.asset.id)
       );
       if (!vaultAssets.length) {
@@ -37,20 +41,26 @@ const filterMintableAssets = async ({
         });
         return;
       }
-      // Check if each asset is eligible
-      const contract = getContract({
-        network,
-        provider,
-        address: vault.eligibilityModule.id,
-        abi: Abi,
-      });
-      const eligible = await contract.checkEligible(
-        vaultAssets.map((x) => x.tokenId)
-      );
-      eligible.forEach((eligible: boolean, i: number) => {
-        if (eligible) {
-          result.push({ ...vaultAssets[i], vaultId: vault.vaultId });
-        }
+      if (isMerkleVault(vault)) {
+        const leaves = await fetchMerkleLeaves({ provider, network, vault });
+        vaultAssets = vaultAssets.filter((asset) =>
+          leaves.includes(asset.tokenId)
+        );
+      } else {
+        const eligible = await checkEligible({
+          provider,
+          tokenIds: vaultAssets.map((x) => x.tokenId),
+          vault,
+          network,
+        });
+        vaultAssets = vaultAssets.filter((_, i) => eligible[i].eligible);
+      }
+
+      vaultAssets.forEach((asset) => {
+        result.push({
+          ...asset,
+          vaultId: vault.vaultId,
+        });
       });
     })
   );

@@ -52,8 +52,10 @@ export type Vault = {
   token: Token;
   eligibilityModule: {
     id: string;
+    name: string;
     eligibleIds: string[];
     eligibleRange: [string, string];
+    merkleReference: string;
   };
   lpStakingPool: Pick<LiquidityPool, 'id'> & {
     stakingToken: Pick<LiquidityPool['stakingToken'], 'id'>;

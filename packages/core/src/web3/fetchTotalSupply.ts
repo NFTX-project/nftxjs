@@ -17,7 +17,7 @@ const fetchTotalSupply = async ({
 }) => {
   const contract = getContract({
     network,
-    address: tokenAddress,
+    address: tokenAddress.toLowerCase(),
     provider,
     abi,
   });

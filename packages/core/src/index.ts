@@ -1,4 +1,5 @@
 export * from './assets';
+export * from './eligibility';
 export * from './pools';
 export * from './positions';
 export * from './price';

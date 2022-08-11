@@ -7,6 +7,8 @@ import transformVault from './transformVault';
 import { addressEqual } from '../../web3';
 import fetchVaultHoldings from '../fetchVaultHoldings';
 import config from '@nftx/config';
+import { fetchMerkleReference, isMerkleVault } from '../../eligibility';
+import type { Provider } from '@ethersproject/providers';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
@@ -51,6 +53,7 @@ const fetchMoreHoldings = async ({
 
 const fetchVaults = async ({
   network = config.network,
+  provider,
   vaultAddresses,
   vaultIds,
   manager,
@@ -61,6 +64,7 @@ const fetchVaults = async ({
   retryCount = 0,
 }: {
   network?: number;
+  provider: Provider;
   vaultAddresses?: VaultAddress[];
   vaultIds?: VaultId[];
   includeEmptyVaults?: boolean;
@@ -97,8 +101,17 @@ const fetchVaults = async ({
   const vaultPromises =
     vaultData.map(async (x) => {
       const moreHoldings = await fetchMoreHoldings({ network, vault: x });
+      const merkleReference = isMerkleVault(x)
+        ? await fetchMerkleReference({ network, provider, vault: x })
+        : null;
 
-      return transformVault({ globalFees, reserves, vault: x, moreHoldings });
+      return transformVault({
+        globalFees,
+        reserves,
+        vault: x,
+        moreHoldings,
+        merkleReference,
+      });
     }) ?? [];
 
   const vaults = await Promise.all(vaultPromises);
