@@ -1,5 +1,5 @@
 import type { Log } from '@ethersproject/providers';
-import { Interface } from '@ethersproject/abi';
+import parseLogEvents from './parseLogEvents';
 
 /** Searches an array of transaction logs, parses the found log, and returns its args */
 const parseLogEvent = <T>({
@@ -18,25 +18,21 @@ const parseLogEvent = <T>({
   filter?: (log: Log) => boolean;
 }): T => {
   try {
-    const parser = new Interface([iface]);
-    const event = logs
-      ?.slice()
-      // we want the find the _last_ log that matches
-      .reverse()
-      .find((log) => {
-        if (!log.topics[0].startsWith(signature)) {
-          return false;
-        }
-        if (filter != null && !filter(log)) {
-          return false;
-        }
-        return true;
-      });
+    const events = parseLogEvents<T[]>({
+      interface: iface,
+      logs,
+      signature,
+      filter,
+    });
+
+    // we want the find the _last_ log that matches
+    const event = events[events.length - 1];
 
     if (!event) {
       return null;
     }
-    return parser.parseLog(event).args as unknown as T;
+
+    return event;
   } catch (e) {
     console.error(e);
     return null;
