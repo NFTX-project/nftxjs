@@ -8,6 +8,7 @@ export { default as fromEthersNumber } from './fromEthersNumber';
 export { default as getContract } from './getContract';
 export { default as MulticallContract } from './MulticallContract';
 export { default as parseLogEvent } from './parseLogEvent';
+export { default as parseLogEvents } from './parseLogEvents';
 export * from './types';
 export { default as toEthersNumber } from './toEthersNumber';
 
