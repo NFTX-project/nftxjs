@@ -142,6 +142,9 @@ export default ({
         })
       );
     }
+    if (!slpBalance) {
+      slpBalance = Zero;
+    }
 
     let slpSupply = args.slpSupply;
     if (!slpSupply && pool?.stakingToken?.id) {
@@ -152,6 +155,9 @@ export default ({
           tokenAddress: pool.stakingToken.id,
         })
       );
+    }
+    if (!slpSupply) {
+      slpSupply = Zero;
     }
 
     const xTokenAddress = vault.inventoryStakingPool?.id;

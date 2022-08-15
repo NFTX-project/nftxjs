@@ -14,7 +14,7 @@ import {
 import merge from 'deepmerge';
 
 interface Config {
-  network: Network;
+  network: number;
   subgraph: {
     API_KEY: string;
     ERC1155_SUBGRAPH: Record<string, string>;

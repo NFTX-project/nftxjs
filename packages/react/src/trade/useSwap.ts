@@ -3,7 +3,7 @@ import type { TxnArgsOnly } from '../types';
 import type { UseTransactionOptions } from '../useTransaction';
 import useTransaction from '../useTransaction';
 
-const useSwap = (opts: UseTransactionOptions) => {
+const useSwap = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,

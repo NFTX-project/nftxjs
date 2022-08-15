@@ -1,5 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
-import { WeiPerEther } from '@ethersproject/constants';
+import { WeiPerEther, Zero } from '@ethersproject/constants';
 import { calculateVaultApr } from '../vaults';
 import type { Position } from './types';
 import {
@@ -89,12 +89,11 @@ const adjustPosition = (
     liquidityShare = calculateLiquidityShare({ xSlp, xSlpSupply });
 
     if (position.xSlp.isZero()) {
-      liquidityTokens = poolReserves.reserveVtoken
-        .mul(liquidityShare)
-        .div(WeiPerEther);
-      liquidityEth = poolReserves.reserveWeth
-        .mul(liquidityShare)
-        .div(WeiPerEther);
+      liquidityTokens =
+        poolReserves?.reserveVtoken.mul(liquidityShare).div(WeiPerEther) ??
+        Zero;
+      liquidityEth =
+        poolReserves?.reserveWeth.mul(liquidityShare).div(WeiPerEther) ?? Zero;
     } else {
       const balanceChange = calculatePercentageDifference(position.xSlp, xSlp);
       liquidityTokens = increaseByPercentage(liquidityTokens, balanceChange);
@@ -114,15 +113,22 @@ const adjustPosition = (
     poolReserves = {
       ...poolReserves,
       reserveVtoken: increaseByPercentage(
-        poolReserves.reserveVtoken,
+        poolReserves?.reserveVtoken ?? Zero,
         supplyChange
       ),
-      reserveWeth: increaseByPercentage(poolReserves.reserveWeth, supplyChange),
+      reserveWeth: increaseByPercentage(
+        poolReserves?.reserveWeth ?? Zero,
+        supplyChange
+      ),
     };
+    const hasLiquidity =
+      poolReserves.reserveVtoken.gt(0) && poolReserves.reserveWeth.gt(0);
     // Recalculate the mid price: amount * reserveB / reserveA
-    poolReserves.midPrice = WeiPerEther.mul(poolReserves.reserveWeth).div(
-      poolReserves.reserveVtoken
-    );
+    poolReserves.midPrice = hasLiquidity
+      ? WeiPerEther.mul(poolReserves.reserveWeth).div(
+          poolReserves.reserveVtoken
+        )
+      : Zero;
 
     liquidityValue = liquidityEth.mul(2);
   }
@@ -132,8 +138,12 @@ const adjustPosition = (
     liquidityEth = liquidityEth.add(lpEth);
 
     if (position.liquidityTokens.isZero()) {
-      const slpToken = lpNft.mul(slpSupply).div(poolReserves.reserveVtoken);
-      const slpWeth = lpEth.mul(slpSupply).div(poolReserves.reserveWeth);
+      const slpToken = poolReserves?.reserveVtoken?.gt(0)
+        ? lpNft.mul(slpSupply).div(poolReserves.reserveVtoken)
+        : lpNft;
+      const slpWeth = poolReserves?.reserveWeth?.gt(0)
+        ? lpEth.mul(slpSupply).div(poolReserves.reserveWeth)
+        : lpEth;
       const slpAdded = slpToken.lt(slpWeth) ? slpToken : slpWeth;
 
       xSlp = slpAdded;
@@ -160,15 +170,22 @@ const adjustPosition = (
     poolReserves = {
       ...poolReserves,
       reserveVtoken: increaseByPercentage(
-        poolReserves.reserveVtoken,
+        poolReserves?.reserveVtoken ?? Zero,
         supplyChange
       ),
-      reserveWeth: increaseByPercentage(poolReserves.reserveWeth, supplyChange),
+      reserveWeth: increaseByPercentage(
+        poolReserves?.reserveWeth ?? Zero,
+        supplyChange
+      ),
     };
+    const hasLiquidity =
+      poolReserves.reserveVtoken.gt(0) && poolReserves.reserveWeth.gt(0);
     // Recalculate the mid price: amount * reserveB / reserveA
-    poolReserves.midPrice = WeiPerEther.mul(poolReserves.reserveWeth).div(
-      poolReserves.reserveVtoken
-    );
+    poolReserves.midPrice = hasLiquidity
+      ? WeiPerEther.mul(poolReserves.reserveWeth).div(
+          poolReserves.reserveVtoken
+        )
+      : Zero;
 
     liquidityValue = liquidityEth.mul(2);
 
@@ -189,7 +206,7 @@ const adjustPosition = (
       xTokenShare: position.xTokenShare,
       xTokenSupply,
       vault: {
-        reserveVtoken: poolReserves.reserveVtoken,
+        reserveVtoken: poolReserves?.reserveVtoken ?? Zero,
         createdAt: position.createdAt,
       },
     });
