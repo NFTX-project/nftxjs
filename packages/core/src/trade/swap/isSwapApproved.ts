@@ -1,18 +1,17 @@
 import config from '@nftx/config';
 import { NFTX_MARKETPLACE_0X_ZAP, NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
 import { doesNetworkSupport0x } from '../../price';
-import type { VaultAddress } from '../../vaults';
-import { getChainConstant } from '../../web3';
+import { Address, getChainConstant } from '../../web3';
 import isApproved from '../isApproved';
 
 type Args = Omit<
   Parameters<typeof isApproved>[0],
   'spenderAddress' | 'tokenAddress' | 'amount'
-> & { vaultAddress: VaultAddress };
+> & { assetAddress: Address };
 
 const isSwapApproved = ({
   network = config.network,
-  vaultAddress,
+  assetAddress,
   ...args
 }: Args) => {
   const supports0x = doesNetworkSupport0x(network);
@@ -23,7 +22,7 @@ const isSwapApproved = ({
     ...args,
     network,
     spenderAddress,
-    tokenAddress: vaultAddress,
+    tokenAddress: assetAddress,
   });
 };
 

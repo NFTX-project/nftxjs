@@ -1,5 +1,4 @@
 export { default as useApprove } from './useApprove';
-export { default as useApproveBuy } from './useApproveBuy';
 export { default as useApproveSell } from './useApproveSell';
 export { default as useApproveSwap } from './useApproveSwap';
 export { default as useBuy } from './useBuy';

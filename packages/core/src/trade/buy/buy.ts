@@ -17,6 +17,7 @@ import increaseGasLimit from '../increaseGasLimit';
 import type { Signer } from 'ethers';
 import config from '@nftx/config';
 import { doesNetworkSupport0x, fetch0xQuote } from '../../price';
+import { parseEther } from '@ethersproject/units';
 
 const buyErc721 = async ({
   network,
@@ -95,7 +96,7 @@ const buy0xErc721 = async ({
   } = await fetch0xQuote({
     network,
     buyToken: vaultAddress,
-    buyAmount: amount,
+    buyAmount: parseEther(`${amount}`),
     sellToken,
   });
 

@@ -21,6 +21,7 @@ import {
   getTotalTokenIds,
 } from '../utils';
 import { doesNetworkSupport0x, fetch0xQuote } from '../../price';
+import { parseEther } from '@ethersproject/units';
 
 const sell0xErc721 = async ({
   vaultId,
@@ -45,7 +46,7 @@ const sell0xErc721 = async ({
   const quote = await fetch0xQuote({
     network,
     sellToken: vaultAddress,
-    sellAmount,
+    sellAmount: parseEther(`${sellAmount}`),
     buyToken,
   });
   const contract = getContract({
@@ -182,7 +183,7 @@ const sell0xErc1155 = async ({
   const quote = await fetch0xQuote({
     network,
     sellToken: vaultAddress,
-    sellAmount,
+    sellAmount: parseEther(`${sellAmount}`),
     buyToken,
   });
 
