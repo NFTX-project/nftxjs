@@ -1,8 +1,11 @@
 import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
+import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import type { Vault } from '../vaults';
+import calculateBuyFee from './calculateBuyFee';
 import fetchBuyPrice from './fetchBuyPrice';
+import type { Price } from './types';
 
 /** Fetches the buy price for a vault
  * Accounts for vault fees and buying multiple targets/randoms
@@ -13,51 +16,43 @@ const fetchVaultBuyPrice = async ({
   provider,
   targetBuys,
   randomBuys,
+  critical,
 }: {
-  vault: Pick<Vault, 'id' | 'fees' | 'features' | 'reserveVtoken'>;
+  vault: Pick<Vault, 'id' | 'reserveVtoken'> & {
+    fees: Pick<Vault['fees'], 'randomRedeemFee' | 'targetRedeemFee'>;
+    features: Pick<
+      Vault['features'],
+      'enableRandomRedeem' | 'enableTargetRedeem'
+    >;
+  };
   network?: number;
   provider: Provider;
   /** The number of target buys we are doing */
   targetBuys?: number;
   /** The number of random buys we are doing */
   randomBuys?: number;
-}) => {
-  const targetPrice = vault.fees.targetRedeemFee;
-  const randomPrice = vault.fees.randomRedeemFee;
+  critical?: boolean;
+}): Promise<Price> => {
+  const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
 
-  let amount = Zero;
-  /** Vault buys come with a per-vault fee
-   * so to buy 1 punk nft you have to redeem 1.05 PUNK
-   * and to complicate things further, random buys have different fees to target buys
-   */
-  if (targetBuys != null || randomBuys != null) {
+  let amount = fee;
+
+  if (targetBuys || randomBuys) {
     if (targetBuys) {
-      const quantity = WeiPerEther.mul(targetBuys);
-      const fee = targetPrice.mul(targetBuys);
-      amount = amount.add(quantity).add(fee);
+      amount = amount.add(parseEther(`${targetBuys}`));
     }
     if (randomBuys) {
-      const quantity = WeiPerEther.mul(randomBuys);
-      const fee = randomPrice.mul(randomBuys);
-      amount = amount.add(quantity).add(fee);
+      amount = amount.add(parseEther(`${randomBuys}`));
     }
-    /** if we haven't specified target/random buys,
-     * we assume we're either getting the price for 1 random or 1 target redeem
-     */
-  } else if (
-    vault.features.enableRandomRedeem &&
-    !vault.features.enableTargetRedeem
-  ) {
-    amount = amount.add(WeiPerEther).add(randomPrice);
   } else {
-    amount = amount.add(WeiPerEther).add(targetPrice);
+    amount = amount.add(WeiPerEther);
   }
 
   const hasLiquidity = vault.reserveVtoken.gt(amount);
 
   // You can't buy anything if there isn't enough liquidity in the pool
   if (!hasLiquidity) {
-    return Zero;
+    return { price: Zero };
   }
 
   return fetchBuyPrice({
@@ -66,6 +61,7 @@ const fetchVaultBuyPrice = async ({
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,
+    critical,
   });
 };
 

@@ -12,12 +12,14 @@ const fetch0xPrice = async ({
   buyAmount,
   sellAmount,
   network,
+  critical,
 }: {
   network: number;
   buyToken: Address;
   sellToken: Address;
   buyAmount?: BigNumberish;
   sellAmount?: BigNumberish;
+  critical?: boolean;
 }) => {
   return fetch0xQuote({
     network,
@@ -26,6 +28,7 @@ const fetch0xPrice = async ({
     buyAmount,
     sellAmount,
     type: 'price',
+    critical,
   });
 };
 

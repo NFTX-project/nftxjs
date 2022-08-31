@@ -35,13 +35,18 @@ const fetch0xQuote = async ({
   sellToken,
   buyAmount,
   sellAmount,
+  slippagePercentage,
   type = 'quote',
+  critical = type === 'quote',
 }: {
   network?: number;
   buyToken: Address;
   buyAmount?: BigNumberish;
   sellToken: Address;
   sellAmount?: BigNumberish;
+  slippagePercentage?: number;
+  /** Whether to fetch the quote from 0x or from our fork */
+  critical?: boolean;
   /** Whether to fetch an actual quote that can be directly submitted as a transaction, or just a readonly price */
   type?: 'quote' | 'price';
 }) => {
@@ -56,8 +61,15 @@ const fetch0xQuote = async ({
     // Default to just buying 1
     searchParams.append('buyAmount', WeiPerEther.toString());
   }
+  if (slippagePercentage) {
+    searchParams.append('slippagePercentage', `${slippagePercentage}`);
+  }
   const query = searchParams.toString();
-  const zeroUrl = getChainConstant(config.urls.ZEROX_URL, network, null);
+  const zeroUrl = getChainConstant(
+    critical ? config.urls.ZEROX_QUOTE_URL : config.urls.ZEROX_PRICE_URL,
+    network,
+    null
+  );
   if (!zeroUrl) {
     throw new Error(`${network} is not a supported network for the 0x API`);
   }
@@ -68,7 +80,10 @@ const fetch0xQuote = async ({
   }
   const data: Response = await response.json();
 
-  return data;
+  return {
+    ...data,
+    sources: data.sources.filter((source) => source.proportion !== '0'),
+  };
 };
 
 export default fetch0xQuote;

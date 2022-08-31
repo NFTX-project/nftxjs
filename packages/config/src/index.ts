@@ -6,7 +6,8 @@ import {
   NON_STANDARD_SUBGRAPH,
   NFTX_TOKEN_BALANCE_SUBGRAPH,
   PUBLIC_GRAPH_API_KEY,
-  ZEROX_URL,
+  ZEROX_PRICE_URL,
+  ZEROX_QUOTE_URL,
   NFTX_APR_URL,
   Network,
   NFTX_FEE_TRACKER_SUBGRAPH,
@@ -26,7 +27,8 @@ interface Config {
     NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string>;
   };
   urls: {
-    ZEROX_URL: Record<string, string>;
+    ZEROX_PRICE_URL: Record<string, string>;
+    ZEROX_QUOTE_URL: Record<string, string>;
     NFTX_APR_URL: Record<string, string>;
   };
   contracts: {
@@ -49,16 +51,16 @@ const defaultConfig: Config = {
     NFTX_FEE_TRACKER_SUBGRAPH,
   },
   urls: {
-    ZEROX_URL,
+    ZEROX_PRICE_URL,
+    ZEROX_QUOTE_URL,
     NFTX_APR_URL,
   },
   contracts: {
     // Whether to batch read calls together to reduce the number of network requests
     multicall: true,
-    // Disabled for now until we're ready to use 0x for transactions
     use0xApi: {
-      [Network.Mainnet]: false,
-      [Network.Goerli]: false,
+      [Network.Mainnet]: true,
+      [Network.Goerli]: true,
       [Network.Arbitrum]: false,
     },
     // It's necessary to hardcode the price of ETH on some test networks

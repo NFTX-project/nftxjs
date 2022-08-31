@@ -4,7 +4,6 @@ import { estimateGasAndFees, increaseGasLimit } from '../../trade';
 import { getChainConstant, getContract } from '../../web3';
 import type { Signer } from 'ethers';
 import type { VaultId } from '../../vaults';
-import type { BigNumber } from '@ethersproject/bignumber';
 import { NFTX_UNSTAKING_INVENTORY_ZAP } from '@nftx/constants';
 
 type EstimateGasAndFees = typeof estimateGasAndFees;

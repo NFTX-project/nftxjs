@@ -1,6 +1,11 @@
 import { Network } from './networks';
 
-export const ZEROX_URL = {
+export const ZEROX_PRICE_URL = {
+  [Network.Mainnet]: 'https://0x.nftx.xyz',
+  [Network.Goerli]: 'https://goerli.api.0x.org',
+};
+
+export const ZEROX_QUOTE_URL = {
   [Network.Mainnet]: 'https://api.0x.org',
   [Network.Goerli]: 'https://goerli.api.0x.org',
 };

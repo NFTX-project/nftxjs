@@ -2,27 +2,43 @@ import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
+import { BigNumber } from 'ethers';
 import { fetchReservesForToken } from '../tokens';
 import type { Address } from '../web3/types';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
-import fetch0xQuote from './fetch0xQuote';
+import fetch0xPrice from './fetch0XPrice';
+import type { Price } from './types';
 
 const fetchSpotPriceFromApi = async ({
   network,
   tokenAddress,
   quote,
+  critical,
 }: {
   network: number;
   tokenAddress: Address;
   quote: 'ETH';
+  critical: boolean;
 }) => {
-  const { buyTokenToEthRate } = await fetch0xQuote({
-    network,
-    sellToken: quote,
-    buyToken: tokenAddress,
-  });
+  const { buyTokenToEthRate, sources, estimatedGas, gasPrice } =
+    await fetch0xPrice({
+      network,
+      sellToken: quote,
+      buyToken: tokenAddress,
+      critical,
+    });
 
-  return WeiPerEther.mul(WeiPerEther).div(parseEther(buyTokenToEthRate));
+  const spotPrice = WeiPerEther.mul(WeiPerEther).div(
+    parseEther(buyTokenToEthRate)
+  );
+
+  const price: Price = {
+    estimatedGas: BigNumber.from(estimatedGas),
+    gasPrice: BigNumber.from(gasPrice),
+    price: spotPrice,
+    sources,
+  };
+  return price;
 };
 
 const fetchSpotPriceFromSubgraph = async ({
@@ -36,7 +52,12 @@ const fetchSpotPriceFromSubgraph = async ({
 }) => {
   const reserves = await fetchReservesForToken({ network, tokenAddress });
 
-  return reserves?.midPrice ?? Zero;
+  const spotPrice = reserves?.midPrice ?? Zero;
+
+  const price: Price = {
+    price: spotPrice,
+  };
+  return price;
 };
 
 /** Fetches a spot price for a given token
@@ -47,11 +68,13 @@ const fetchSpotPrice = ({
   provider,
   tokenAddress,
   quote = 'ETH',
+  critical,
 }: {
   network?: number;
   provider: Provider;
   tokenAddress: Address;
   quote?: 'ETH';
+  critical?: boolean;
 }) => {
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
@@ -59,6 +82,7 @@ const fetchSpotPrice = ({
       network,
       tokenAddress,
       quote,
+      critical,
     });
   }
   return fetchSpotPriceFromSubgraph({

@@ -1,12 +1,9 @@
-import { Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import {
-  doesVaultHaveRandomSwapFee,
-  doesVaultHaveTargetSwapFee,
-  Vault,
-} from '../vaults';
+import type { Vault } from '../vaults';
+import calculateSwapFee from './calculateSwapFee';
 import fetchBuyPrice from './fetchBuyPrice';
+import type { Price } from './types';
 
 const fetchVaultSwapPrice = async ({
   network = config.network,
@@ -14,39 +11,25 @@ const fetchVaultSwapPrice = async ({
   vault,
   targetSwaps,
   randomSwaps,
+  critical,
 }: {
   network?: number;
   provider: Provider;
-  vault: Pick<Vault, 'fees' | 'id'>;
+  vault: Pick<Vault, 'id'> & {
+    fees: Pick<Vault['fees'], 'randomSwapFee' | 'targetSwapFee'>;
+  };
   targetSwaps?: number;
   randomSwaps?: number;
-}) => {
+  critical?: boolean;
+}): Promise<Price> => {
   /** For swaps the price is purely for the swap fee
    * so we just have to work out the total fees for the intended target/random counts
    */
-  let amount = Zero;
+  const amount = calculateSwapFee({ vault, randomSwaps, targetSwaps });
 
-  if (targetSwaps != null || randomSwaps != null) {
-    if (targetSwaps) {
-      amount = amount.add(vault.fees.targetSwapFee.mul(targetSwaps));
-    }
-    if (randomSwaps) {
-      amount = amount.add(vault.fees.randomSwapFee.mul(randomSwaps));
-    }
-    /** If you don't specificy a number of swaps, we assume you want to know the price of
-     * 1 random or 1 target swap (dependent on the vault)
-     */
-  } else if (
-    doesVaultHaveRandomSwapFee(vault) &&
-    !doesVaultHaveTargetSwapFee(vault)
-  ) {
-    amount = amount.add(vault.fees.randomSwapFee);
-  } else if (doesVaultHaveTargetSwapFee(vault)) {
-    amount = amount.add(vault.fees.targetSwapFee);
-  }
-
+  // No fees for this vault
   if (amount.isZero()) {
-    return amount;
+    return { price: amount };
   }
 
   return fetchBuyPrice({
@@ -55,6 +38,7 @@ const fetchVaultSwapPrice = async ({
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,
+    critical,
   });
 };
 

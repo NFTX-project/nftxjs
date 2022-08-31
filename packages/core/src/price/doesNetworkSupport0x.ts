@@ -7,7 +7,8 @@ const doesNetworkSupport0x = (network: number) => {
     // If 0x isn't explicitly disabled for a network, assume it's enabled
     // (unless the api and zaps don't exist)
     getChainConstant(config.contracts.use0xApi, network, true) === true &&
-    getChainConstant(config.urls.ZEROX_URL, network, null) != null &&
+    getChainConstant(config.urls.ZEROX_PRICE_URL, network, null) != null &&
+    getChainConstant(config.urls.ZEROX_QUOTE_URL, network, null) != null &&
     getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network, null) != null
   );
 };
