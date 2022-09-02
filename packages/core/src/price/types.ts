@@ -5,4 +5,5 @@ export type Price = {
   estimatedGas?: BigNumber;
   gasPrice?: BigNumber;
   sources?: Array<{ name: string; proportion: string }>;
+  priceImpact?: number;
 };

@@ -24,19 +24,21 @@ const fetchBuyPriceFromApi = async ({
   quote: 'ETH';
   critical: boolean;
 }) => {
-  const { sellAmount, estimatedGas, gasPrice, sources } = await fetch0xPrice({
-    network,
-    buyAmount: amount,
-    sellToken: quote,
-    buyToken: tokenAddress,
-    critical,
-  });
+  const { sellAmount, estimatedGas, gasPrice, sources, estimatedPriceImpact } =
+    await fetch0xPrice({
+      network,
+      buyAmount: amount,
+      sellToken: quote,
+      buyToken: tokenAddress,
+      critical,
+    });
 
   const price: Price = {
     price: BigNumber.from(sellAmount),
     estimatedGas: BigNumber.from(estimatedGas),
     gasPrice: BigNumber.from(gasPrice),
     sources,
+    priceImpact: Number(estimatedPriceImpact) / 100,
   };
 
   return price;

@@ -128,33 +128,51 @@ const buy0xErc721 = async ({
   const amount = targetBuys + randomBuys;
   const buyAmount = fee.add(WeiPerEther.mul(amount));
 
-  const { to, data } = await fetch0xQuote({
-    type: 'quote',
-    network,
-    buyToken: vaultAddress,
-    buyAmount,
-    sellToken: getChainConstant(WETH_TOKEN, network),
-    slippagePercentage: slippage,
-  });
-  const { value } = await fetch0xQuote({
-    network,
-    buyToken: vaultAddress,
-    buyAmount,
-    sellToken: 'ETH',
-    slippagePercentage: slippage,
-    type: 'price',
-  });
+  const { to, data, estimatedPriceImpact, guaranteedPrice } =
+    await fetch0xQuote({
+      type: 'quote',
+      network,
+      buyToken: vaultAddress,
+      buyAmount,
+      sellToken: getChainConstant(WETH_TOKEN, network),
+      slippagePercentage: slippage,
+    });
+  const value = parseEther(guaranteedPrice).mul(buyAmount).div(WeiPerEther);
 
-  return contract.buyAndRedeem(
+  console.debug(
+    'buyAndRedeem',
     vaultId,
-    amount,
+    `${amount}`,
     specificIds,
     userAddress,
     to,
     data,
     userAddress,
-    { value }
+    { value: `${value}` }
   );
+
+  try {
+    const result = await contract.buyAndRedeem(
+      vaultId,
+      amount,
+      specificIds,
+      userAddress,
+      to,
+      data,
+      userAddress,
+      { value }
+    );
+    return result;
+  } catch (e) {
+    if (Number(estimatedPriceImpact) > 20) {
+      // This most likely means there's not enough liquidity and we need a higher slippage rate
+      console.error(e);
+      throw new Error(
+        'Price impact was too high, you may need to increase your slippage tolerance to complete the transaction'
+      );
+    }
+    throw e;
+  }
 };
 
 const buyErc1155 = buyErc721;

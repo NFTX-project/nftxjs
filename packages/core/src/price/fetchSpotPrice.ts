@@ -20,13 +20,18 @@ const fetchSpotPriceFromApi = async ({
   quote: 'ETH';
   critical: boolean;
 }) => {
-  const { buyTokenToEthRate, sources, estimatedGas, gasPrice } =
-    await fetch0xPrice({
-      network,
-      sellToken: quote,
-      buyToken: tokenAddress,
-      critical,
-    });
+  const {
+    buyTokenToEthRate,
+    sources,
+    estimatedGas,
+    gasPrice,
+    estimatedPriceImpact,
+  } = await fetch0xPrice({
+    network,
+    sellToken: quote,
+    buyToken: tokenAddress,
+    critical,
+  });
 
   const spotPrice = WeiPerEther.mul(WeiPerEther).div(
     parseEther(buyTokenToEthRate)
@@ -37,6 +42,7 @@ const fetchSpotPriceFromApi = async ({
     gasPrice: BigNumber.from(gasPrice),
     price: spotPrice,
     sources,
+    priceImpact: Number(estimatedPriceImpact) / 100,
   };
   return price;
 };
