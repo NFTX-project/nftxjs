@@ -18,13 +18,13 @@ interface Config {
   network: number;
   subgraph: {
     API_KEY: string;
-    ERC1155_SUBGRAPH: Record<string, string>;
-    ERC721_SUBGRAPH: Record<string, string>;
-    NFTX_SUBGRAPH: Record<string, string>;
-    SUSHI_SUBGRAPH: Record<string, string>;
-    NON_STANDARD_SUBGRAPH: Record<string, string>;
-    NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string>;
-    NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string>;
+    ERC1155_SUBGRAPH: Record<string, string | string[]>;
+    ERC721_SUBGRAPH: Record<string, string | string[]>;
+    NFTX_SUBGRAPH: Record<string, string | string[]>;
+    SUSHI_SUBGRAPH: Record<string, string | string[]>;
+    NON_STANDARD_SUBGRAPH: Record<string, string | string[]>;
+    NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string | string[]>;
+    NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string | string[]>;
   };
   urls: {
     ZEROX_PRICE_URL: Record<string, string>;
@@ -33,7 +33,7 @@ interface Config {
   };
   contracts: {
     multicall: boolean;
-    use0xApi: Record<string, boolean>;
+    use0xApi: boolean;
     ethPrice: Record<string, string>;
   };
 }
@@ -58,11 +58,8 @@ const defaultConfig: Config = {
   contracts: {
     // Whether to batch read calls together to reduce the number of network requests
     multicall: true,
-    use0xApi: {
-      [Network.Mainnet]: true,
-      [Network.Goerli]: true,
-      [Network.Arbitrum]: false,
-    },
+    // Whether to use 0x for pricing and transactions
+    use0xApi: true,
     // It's necessary to hardcode the price of ETH on some test networks
     ethPrice: {
       [Network.Rinkeby]: '2500000000', // $2.5k
@@ -75,9 +72,9 @@ export type DeepPartial<T> = {
 };
 
 const config = {
-  ...merge(defaultConfig, {}),
+  ...merge(defaultConfig, {}, { arrayMerge: (_, arr) => arr }),
   configure(opts: DeepPartial<Config>) {
-    const merged = merge(config, opts);
+    const merged = merge(config, opts, { arrayMerge: (_, arr) => arr });
     Object.entries(merged).forEach(([key, value]) => {
       config[key] = value;
     });
