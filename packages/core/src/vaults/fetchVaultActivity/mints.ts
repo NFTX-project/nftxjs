@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { NFTX_STAKING_ZAP } from '@nftx/constants';
+import { NFTX_MARKETPLACE_0X_ZAP, NFTX_STAKING_ZAP } from '@nftx/constants';
 import { addressEqual, getChainConstant } from '../../web3';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import type { VaultActivity, VaultAddress } from '../types';
@@ -85,7 +85,13 @@ const isStakeOrMint = (
     return ['stake', 'inventory'];
   }
 
-  if (mint.zapAction) {
+  if (
+    mint.zapAction ||
+    addressEqual(
+      mint.user?.id,
+      getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network)
+    )
+  ) {
     return ['sell', undefined];
   }
 

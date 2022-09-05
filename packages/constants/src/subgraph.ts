@@ -110,7 +110,7 @@ export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
     // Shared
     `${SHARED_ROOT}/nftx-project/nftx-vault-tokens-holdings`,
   ],
-  [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/nftx-arbitrum/subgraphs/name/nftx-hosted/nftx-vault-token-holdings-arbitrum?nocache`,
+  [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-vault-token-holdings-arbitrum?nocache`,
   [Network.Rinkeby]: `${SHARED_PROXY_ROOT}/quantumlyy/nftx-holdings-subgraph-rinkeby`,
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-vault-token-holdings-goerli?nocache`,
 };
