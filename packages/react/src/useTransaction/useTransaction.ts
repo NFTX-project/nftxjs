@@ -1,5 +1,5 @@
 import type { ContractReceipt, ContractTransaction } from 'ethers';
-import { useCallback, useState } from 'react';
+import { useCallback, useReducer } from 'react';
 import type { TransactionState } from '../types';
 import {
   TransactionCancelledError,
@@ -32,38 +32,106 @@ const useTransaction = <F extends Fn>(
   opts?: UseTransactionOptions<Parameters<F>[0]>
 ) => {
   const wrappedFn = useWrapTransaction(fn, opts?.description);
-  const [status, setStatus] = useState<TransactionState>('None');
-  const [error, setError] = useState<any>(undefined);
-  const [data, setData] = useState<{
-    transaction?: ContractTransaction;
-    receipt?: ContractReceipt;
-  }>({});
+  type State = {
+    status: TransactionState;
+    error: any;
+    data: {
+      transaction?: ContractTransaction;
+      receipt?: ContractReceipt;
+    };
+  };
+  const [{ status, data, error }, dispatch] = useReducer(
+    (
+      state: State,
+      action:
+        | { status: 'None' }
+        | { status: 'PendingSignature' }
+        | { status: 'Mining'; transaction: ContractTransaction }
+        | { status: 'Success'; receipt: ContractReceipt }
+        | { status: 'Exception' | 'Fail'; error: any }
+    ) => {
+      switch (action?.status) {
+        case 'None':
+          return {
+            status: 'None' as TransactionState,
+            data: {},
+            error: undefined,
+          };
+        case 'PendingSignature':
+          return {
+            status: 'PendingSignature' as TransactionState,
+            data: {},
+            error: undefined,
+          };
+        case 'Mining':
+          return {
+            status: 'Mining' as TransactionState,
+            data: {
+              transaction: action.transaction,
+            },
+            error: undefined,
+          };
+        case 'Success':
+          return {
+            status: 'Success' as TransactionState,
+            data: {
+              transaction: state.data.transaction,
+              receipt: action.receipt,
+            },
+            error: undefined,
+          };
+        case 'Exception':
+        case 'Fail':
+          if (action.error instanceof TransactionExceptionError) {
+            return {
+              status: 'Exception' as TransactionState,
+              data: state.data,
+              error: action.error.error,
+            };
+          } else if (action.error instanceof TransactionFailedError) {
+            return {
+              status: 'Fail' as TransactionState,
+              data: state.data,
+              error: action.error.error,
+            };
+          } else if (action.error instanceof TransactionCancelledError) {
+            return {
+              status: 'None' as TransactionState,
+              data: state.data,
+              error: action.error,
+            };
+          } else {
+            return {
+              status: action.status,
+              data: state.data,
+              error: action.error,
+            };
+          }
+        default:
+          return state;
+      }
+    },
+    {
+      status: 'None',
+      error: undefined,
+      data: {},
+    } as State
+  );
+
   const mutate = async (args: Parameters<F>[0]) => {
     try {
-      setError(undefined);
-      setData({});
-      setStatus('PendingSignature');
+      dispatch({ status: 'PendingSignature' });
       const transaction = await wrappedFn(args);
-      setStatus('Mining');
-      setData((data) => ({ ...data, transaction }));
+      dispatch({ status: 'Mining', transaction });
 
       const receipt = await transaction.wait();
 
-      setStatus('Success');
-      setData((data) => ({ ...data, receipt }));
+      dispatch({ status: 'Success', receipt });
       opts?.onSuccess?.({ transaction, receipt }, args);
       return receipt;
     } catch (e) {
       let error = e;
-      opts?.onError?.(e);
-      if (e instanceof TransactionExceptionError) {
-        setStatus('Exception');
-        error = e.error;
-      } else if (e instanceof TransactionFailedError) {
-        setStatus('Fail');
-      } else if (e instanceof TransactionCancelledError) {
-        setStatus('None');
-      }
+
       if (opts?.onError) {
         try {
           opts.onError(error);
@@ -72,14 +140,12 @@ const useTransaction = <F extends Fn>(
         }
       }
 
-      setError(error);
+      dispatch({ status: 'Exception', error });
     }
   };
 
   const reset = useCallback(() => {
-    setStatus('None');
-    setError(undefined);
-    setData({});
+    dispatch({ status: 'None' });
   }, []);
 
   const meta = {

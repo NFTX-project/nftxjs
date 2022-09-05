@@ -1,6 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
-import type { VaultId } from '../../vaults/types';
+import type { Vault } from '../../vaults/types';
 import { getChainConstant, getContract } from '../../web3';
 import type { Address } from '../../web3/types';
 import NFTXMarketplaceZap from '@nftx/constants/abis/NFTXMarketplaceZap.json';
@@ -16,29 +16,44 @@ import { omitNil } from '../../utils';
 import increaseGasLimit from '../increaseGasLimit';
 import type { Signer } from 'ethers';
 import config from '@nftx/config';
-import { doesNetworkSupport0x, fetch0xQuote } from '../../price';
+import {
+  doesNetworkSupport0x,
+  fetch0xQuote,
+  fetchVaultBuyPrice,
+} from '../../price';
+import calculateBuyFee from '../../price/calculateBuyFee';
+import { WeiPerEther } from '@ethersproject/constants';
+import { parseEther } from '@ethersproject/units';
+
+type BuyVault = Pick<Vault, 'id' | 'vaultId' | 'reserveVtoken'> & {
+  fees: Pick<Vault['fees'], 'randomRedeemFee' | 'targetRedeemFee'>;
+  features: Pick<
+    Vault['features'],
+    'enableRandomRedeem' | 'enableTargetRedeem'
+  >;
+};
 
 const buyErc721 = async ({
   network,
   signer,
   userAddress,
-  vaultAddress,
-  vaultId,
-  maxPrice,
+  vault,
+  vault: { id: vaultAddress, vaultId },
+  slippage,
   randomBuys,
   tokenIds,
 }: {
   network: number;
   signer: Signer;
   userAddress: Address;
-  vaultId: VaultId;
-  vaultAddress: Address;
+  vault: BuyVault;
   tokenIds: string[] | [string, number][];
   randomBuys: number;
-  maxPrice: BigNumber;
+  slippage: number;
 }) => {
   const ids = getExactTokenIds(tokenIds);
-  const amount = getTotalTokenIds(tokenIds) + randomBuys;
+  const targetBuys = getTotalTokenIds(tokenIds);
+  const amount = targetBuys + randomBuys;
   const contract = getContract({
     network,
     signer,
@@ -47,6 +62,19 @@ const buyErc721 = async ({
   });
   const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
   const args = [vaultId, amount, ids, path, userAddress];
+  let maxPrice: BigNumber = null;
+  if (slippage) {
+    const { price } = await fetchVaultBuyPrice({
+      vault,
+      provider: signer.provider,
+      network,
+      randomBuys,
+      targetBuys,
+    });
+    maxPrice = price
+      .mul(WeiPerEther.add(parseEther(`${slippage}`)))
+      .div(WeiPerEther);
+  }
 
   const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
     await estimateGasAndFees({
@@ -73,11 +101,20 @@ const buy0xErc721 = async ({
   network,
   signer,
   tokenIds,
-  vaultId,
   userAddress,
-  vaultAddress,
-  quote: sellToken,
+  randomBuys,
+  vault,
+  slippage,
+}: {
+  network: number;
+  signer: Signer;
+  userAddress: Address;
+  vault: BuyVault;
+  tokenIds: string[] | [string, number][];
+  randomBuys: number;
+  slippage: number;
 }) => {
+  const { vaultId, id: vaultAddress } = vault;
   const contract = getContract({
     abi: NftxMarketplace0xZap,
     address: getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network),
@@ -86,28 +123,56 @@ const buy0xErc721 = async ({
   });
 
   const specificIds = getExactTokenIds(tokenIds);
-  const amount = getTotalTokenIds(tokenIds);
+  const targetBuys = getTotalTokenIds(tokenIds);
+  const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
+  const amount = targetBuys + randomBuys;
+  const buyAmount = fee.add(WeiPerEther.mul(amount));
 
-  const {
-    allowanceTarget: spender,
-    to: swapTarget,
-    data: swapCallData,
-  } = await fetch0xQuote({
-    network,
-    buyToken: vaultAddress,
-    buyAmount: amount,
-    sellToken,
-  });
+  const { to, data, estimatedPriceImpact, guaranteedPrice } =
+    await fetch0xQuote({
+      type: 'quote',
+      network,
+      buyToken: vaultAddress,
+      buyAmount,
+      sellToken: getChainConstant(WETH_TOKEN, network),
+      slippagePercentage: slippage,
+    });
+  const value = parseEther(guaranteedPrice).mul(buyAmount).div(WeiPerEther);
 
-  return contract.buyAndRedeem(
+  console.debug(
+    'buyAndRedeem',
     vaultId,
-    amount,
+    `${amount}`,
     specificIds,
-    spender,
-    swapTarget,
-    swapCallData,
-    userAddress
+    userAddress,
+    to,
+    data,
+    userAddress,
+    { value: `${value}` }
   );
+
+  try {
+    const result = await contract.buyAndRedeem(
+      vaultId,
+      amount,
+      specificIds,
+      userAddress,
+      to,
+      data,
+      userAddress,
+      { value }
+    );
+    return result;
+  } catch (e) {
+    if (Number(estimatedPriceImpact) > 20) {
+      // This most likely means there's not enough liquidity and we need a higher slippage rate
+      console.error(e);
+      throw new Error(
+        'Price impact was too high, you may need to increase your slippage tolerance to complete the transaction'
+      );
+    }
+    throw e;
+  }
 };
 
 const buyErc1155 = buyErc721;
@@ -132,19 +197,18 @@ const buy = async ({
   network = config.network,
   signer,
   userAddress,
-  vaultAddress,
-  vaultId,
-  maxPrice,
+  vault,
+  slippage = 0,
   randomBuys = 0,
   tokenIds = [],
   standard = 'ERC721',
   quote = 'ETH',
 }: {
   network?: number;
+  slippage?: number;
   signer: Signer;
   userAddress: Address;
-  vaultId: VaultId;
-  vaultAddress: Address;
+  vault: BuyVault;
   /** Ids of the individual NFTs you want to buy
    * For 721s you just pass a flat array of ids ['1','2','3']
    * For 1155s if you're dealing with multiples, you pass a tuple of [tokenId, quantity] [['1', 2], ['2', 1], ['3', 2]]
@@ -153,7 +217,6 @@ const buy = async ({
   /** If you want to do a random buy, enter the number of randoms you want (you can buy targets and randoms at the same time) */
   randomBuys?: number;
   /** The max price (including slippage) you're willing to pay */
-  maxPrice?: BigNumber;
   standard?: 'ERC721' | 'ERC1155';
   quote?: 'ETH';
 }): Promise<ContractTransaction> => {
@@ -166,15 +229,13 @@ const buy = async ({
   }
 
   return fn({
-    maxPrice,
     network,
-    quote,
     randomBuys,
     signer,
     tokenIds,
     userAddress,
-    vaultAddress,
-    vaultId,
+    vault,
+    slippage,
   });
 };
 

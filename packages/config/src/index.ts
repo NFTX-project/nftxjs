@@ -6,7 +6,8 @@ import {
   NON_STANDARD_SUBGRAPH,
   NFTX_TOKEN_BALANCE_SUBGRAPH,
   PUBLIC_GRAPH_API_KEY,
-  ZEROX_URL,
+  ZEROX_PRICE_URL,
+  ZEROX_QUOTE_URL,
   NFTX_APR_URL,
   Network,
   NFTX_FEE_TRACKER_SUBGRAPH,
@@ -17,21 +18,22 @@ interface Config {
   network: number;
   subgraph: {
     API_KEY: string;
-    ERC1155_SUBGRAPH: Record<string, string>;
-    ERC721_SUBGRAPH: Record<string, string>;
-    NFTX_SUBGRAPH: Record<string, string>;
-    SUSHI_SUBGRAPH: Record<string, string>;
-    NON_STANDARD_SUBGRAPH: Record<string, string>;
-    NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string>;
-    NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string>;
+    ERC1155_SUBGRAPH: Record<string, string | string[]>;
+    ERC721_SUBGRAPH: Record<string, string | string[]>;
+    NFTX_SUBGRAPH: Record<string, string | string[]>;
+    SUSHI_SUBGRAPH: Record<string, string | string[]>;
+    NON_STANDARD_SUBGRAPH: Record<string, string | string[]>;
+    NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string | string[]>;
+    NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string | string[]>;
   };
   urls: {
-    ZEROX_URL: Record<string, string>;
+    ZEROX_PRICE_URL: Record<string, string>;
+    ZEROX_QUOTE_URL: Record<string, string>;
     NFTX_APR_URL: Record<string, string>;
   };
   contracts: {
     multicall: boolean;
-    use0xApi: Record<string, boolean>;
+    use0xApi: boolean;
     ethPrice: Record<string, string>;
   };
 }
@@ -49,18 +51,15 @@ const defaultConfig: Config = {
     NFTX_FEE_TRACKER_SUBGRAPH,
   },
   urls: {
-    ZEROX_URL,
+    ZEROX_PRICE_URL,
+    ZEROX_QUOTE_URL,
     NFTX_APR_URL,
   },
   contracts: {
     // Whether to batch read calls together to reduce the number of network requests
     multicall: true,
-    // Disabled for now until we're ready to use 0x for transactions
-    use0xApi: {
-      [Network.Mainnet]: false,
-      [Network.Goerli]: false,
-      [Network.Arbitrum]: false,
-    },
+    // Whether to use 0x for pricing and transactions
+    use0xApi: true,
     // It's necessary to hardcode the price of ETH on some test networks
     ethPrice: {
       [Network.Rinkeby]: '2500000000', // $2.5k
@@ -73,9 +72,9 @@ export type DeepPartial<T> = {
 };
 
 const config = {
-  ...merge(defaultConfig, {}),
+  ...merge(defaultConfig, {}, { arrayMerge: (_, arr) => arr }),
   configure(opts: DeepPartial<Config>) {
-    const merged = merge(config, opts);
+    const merged = merge(config, opts, { arrayMerge: (_, arr) => arr });
     Object.entries(merged).forEach(([key, value]) => {
       config[key] = value;
     });

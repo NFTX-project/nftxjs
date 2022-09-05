@@ -82,7 +82,7 @@ export const NFTX_VAULT_FACTORY = {
 
 export const SUSHISWAP_ROUTER = {
   [Network.Mainnet]: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
-  [Network.Arbitrum]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506,',
+  [Network.Arbitrum]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
   [Network.Rinkeby]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
   [Network.Goerli]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
 };

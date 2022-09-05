@@ -3,9 +3,9 @@ import { Network } from '@nftx/constants';
 const getChainConstant = <T>(
   obj: Record<number, T>,
   network: number,
-  fallback?: T
+  fallback: T = obj[Network.Mainnet]
 ): T => {
-  return obj[network] ?? fallback ?? obj[Network.Mainnet];
+  return obj[network] ?? fallback;
 };
 
 export default getChainConstant;

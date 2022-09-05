@@ -1,7 +1,9 @@
 import { Zero } from '@ethersproject/constants';
 import type { Vault } from './types';
 
-export const isVaultSwappable = (vault: Pick<Vault, 'features'>) => {
+export const isVaultSwappable = (vault: {
+  features?: Pick<Vault['features'], 'enableRandomSwap' | 'enableTargetSwap'>;
+}) => {
   return (
     vault?.features?.enableTargetSwap ||
     vault?.features?.enableRandomSwap ||
@@ -9,11 +11,15 @@ export const isVaultSwappable = (vault: Pick<Vault, 'features'>) => {
   );
 };
 
-export const doesVaultHaveTargetSwapFee = (vault: Pick<Vault, 'fees'>) => {
+export const doesVaultHaveTargetSwapFee = (vault: {
+  fees: Pick<Vault['fees'], 'targetSwapFee'>;
+}) => {
   return (vault?.fees?.targetSwapFee ?? Zero).isZero() === false;
 };
 
-export const doesVaultHaveRandomSwapFee = (vault: Pick<Vault, 'fees'>) => {
+export const doesVaultHaveRandomSwapFee = (vault: {
+  fees: Pick<Vault['fees'], 'randomSwapFee'>;
+}) => {
   return (vault?.fees?.randomSwapFee ?? Zero).isZero() === false;
 };
 

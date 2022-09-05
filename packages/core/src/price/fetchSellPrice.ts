@@ -8,26 +8,39 @@ import { getChainConstant, getContract } from '../web3';
 import type { Address } from '../web3/types';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0XPrice';
+import type { Price } from './types';
 
 const fetchSellPriceFromApi = async ({
   network,
   tokenAddress,
   amount,
   quote,
+  critical,
 }: {
   network: number;
   tokenAddress: Address;
   amount: BigNumberish;
   quote: 'ETH';
+  critical: boolean;
 }) => {
-  const { buyAmount } = await fetch0xPrice({
-    network,
-    sellAmount: amount,
-    sellToken: tokenAddress,
-    buyToken: quote,
-  });
+  const { buyAmount, estimatedGas, gasPrice, sources, estimatedPriceImpact } =
+    await fetch0xPrice({
+      network,
+      sellAmount: amount,
+      sellToken: tokenAddress,
+      buyToken: quote,
+      critical,
+    });
 
-  return BigNumber.from(buyAmount);
+  const price: Price = {
+    price: BigNumber.from(buyAmount),
+    estimatedGas: BigNumber.from(estimatedGas),
+    gasPrice: BigNumber.from(gasPrice),
+    sources,
+    priceImpact: Number(estimatedPriceImpact) / 100,
+  };
+
+  return price;
 };
 
 const fetchSellPriceFromWeb3 = async ({
@@ -58,7 +71,10 @@ const fetchSellPriceFromWeb3 = async ({
       tokenOut,
     ])) as BigNumber[]) || [];
 
-  return quotePrice;
+  const price: Price = {
+    price: quotePrice,
+  };
+  return price;
 };
 
 /** Fetches a sell price for a given token */
@@ -68,12 +84,14 @@ const fetchSellPrice = ({
   tokenAddress,
   amount = WeiPerEther,
   quote = 'ETH',
+  critical,
 }: {
   network?: number;
   provider: Provider;
   tokenAddress: Address;
   amount?: BigNumberish;
   quote?: 'ETH';
+  critical?: boolean;
 }) => {
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
@@ -82,6 +100,7 @@ const fetchSellPrice = ({
       tokenAddress,
       amount,
       quote,
+      critical,
     });
   }
   return fetchSellPriceFromWeb3({

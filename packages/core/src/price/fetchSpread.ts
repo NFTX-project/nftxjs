@@ -10,24 +10,28 @@ const fetchSpread = async ({
   provider,
   tokenAddress,
   quote,
+  critical,
 }: {
   network?: number;
   provider: Provider;
   tokenAddress: Address;
   quote?: 'ETH';
+  critical?: boolean;
 }) => {
   try {
-    const buyPrice = await fetchBuyPrice({
+    const { price: buyPrice } = await fetchBuyPrice({
       network,
       provider,
       tokenAddress,
       quote,
+      critical,
     });
-    const sellPrice = await fetchSellPrice({
+    const { price: sellPrice } = await fetchSellPrice({
       network,
       provider,
       tokenAddress,
       quote,
+      critical,
     });
 
     return buyPrice.sub(sellPrice);
