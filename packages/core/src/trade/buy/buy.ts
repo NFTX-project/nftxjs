@@ -128,16 +128,22 @@ const buy0xErc721 = async ({
   const amount = targetBuys + randomBuys;
   const buyAmount = fee.add(WeiPerEther.mul(amount));
 
-  const { to, data, estimatedPriceImpact, guaranteedPrice } =
-    await fetch0xQuote({
-      type: 'quote',
-      network,
-      buyToken: vaultAddress,
-      buyAmount,
-      sellToken: getChainConstant(WETH_TOKEN, network),
-      slippagePercentage: slippage,
-    });
-  const value = parseEther(guaranteedPrice).mul(buyAmount).div(WeiPerEther);
+  const { to, data, guaranteedPrice } = await fetch0xQuote({
+    type: 'quote',
+    network,
+    buyToken: vaultAddress,
+    buyAmount,
+    sellToken: getChainConstant(WETH_TOKEN, network),
+    // slippagePercentage: slippage,
+    slippagePercentage: 0,
+  });
+
+  const slippageMultiplier = parseEther(`${slippage || 0}`).add(WeiPerEther);
+  const value = parseEther(guaranteedPrice)
+    .mul(buyAmount)
+    .div(WeiPerEther)
+    .mul(slippageMultiplier)
+    .div(WeiPerEther);
 
   console.debug(
     'buyAndRedeem',
@@ -151,28 +157,31 @@ const buy0xErc721 = async ({
     { value: `${value}` }
   );
 
-  try {
-    const result = await contract.buyAndRedeem(
-      vaultId,
-      amount,
-      specificIds,
-      userAddress,
-      to,
-      data,
-      userAddress,
-      { value }
-    );
-    return result;
-  } catch (e) {
-    if (Number(estimatedPriceImpact) > 20) {
-      // This most likely means there's not enough liquidity and we need a higher slippage rate
-      console.error(e);
-      throw new Error(
-        'Price impact was too high, you may need to increase your slippage tolerance to complete the transaction'
-      );
-    }
-    throw e;
-  }
+  // try {
+  const result = await contract.buyAndRedeem(
+    vaultId,
+    amount,
+    specificIds,
+    userAddress,
+    to,
+    data,
+    userAddress,
+    { value }
+  );
+  return result;
+  // } catch (e) {
+  //   if (e?.code === 4001) {
+  //     throw e;
+  //   }
+  //   if (Number(estimatedPriceImpact) > 20) {
+  //     // This most likely means there's not enough liquidity and we need a higher slippage rate
+  //     console.error(e);
+  //     throw new Error(
+  //       'Price impact was too high, you may need to increase your slippage tolerance to complete the transaction'
+  //     );
+  //   }
+  //   throw e;
+  // }
 };
 
 const buyErc1155 = buyErc721;

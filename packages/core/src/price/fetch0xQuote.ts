@@ -63,7 +63,7 @@ const fetch0xQuote = async ({
       // Default to just buying 1
       searchParams.append('buyAmount', WeiPerEther.toString());
     }
-    if (slippagePercentage) {
+    if (slippagePercentage != null) {
       searchParams.append('slippagePercentage', `${slippagePercentage}`);
     }
     const query = searchParams.toString();
