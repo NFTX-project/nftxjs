@@ -1,6 +1,5 @@
 import config from '@nftx/config';
-import { addressEqual, getChainConstant } from '../web3';
-import type { VaultAddress, VaultApr } from './types';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 
 type Response = Array<{
   vault_id: string;
@@ -8,12 +7,18 @@ type Response = Array<{
   liquidityApr: number;
 }>;
 
+type VaultApr = {
+  vaultAddress: string;
+  inventoryApr: number;
+  liquidityApr: number;
+};
+
 const fetchVaultAprs = async ({
   network = config.network,
   vaultAddresses,
 }: {
   network?: number;
-  vaultAddresses?: VaultAddress[];
+  vaultAddresses?: string[];
 } = {}): Promise<VaultApr[]> => {
   const response = await fetch(
     getChainConstant(config.urls.NFTX_APR_URL, network)

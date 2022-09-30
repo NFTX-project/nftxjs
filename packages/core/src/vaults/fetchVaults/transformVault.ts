@@ -1,10 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import type { TokenReserve } from '../../tokens';
 import { mapObj } from '../../utils';
-import type { Vault, VaultHolding } from '../types';
 import type { Response } from '../fetchSubgraphVaults';
 import transformVaultReserves from './transformVaultReserves';
 import transformVaultHolding from '../fetchVaultHoldings/transformVaultHolding';
+import type { TokenReserve, Vault, VaultHolding } from '@nftx/types';
 
 const transformVault = ({
   reserves,

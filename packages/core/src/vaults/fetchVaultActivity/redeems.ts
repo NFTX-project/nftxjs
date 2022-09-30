@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import { getChainConstant } from '../../web3';
-import type { VaultActivity, VaultAddress, VaultFeeReceipt } from '../types';
+import type { VaultActivity, VaultFeeReceipt } from '@nftx/types';
+import { getChainConstant } from '@nftx/utils';
 import { transformFeeReceipt } from './common';
 
 export type Redeem = {
@@ -81,16 +81,22 @@ const isRedeemOrUnstake = (redeem: Redeem, receipt: VaultFeeReceipt) => {
 export const processRedeems = async (
   response: { redeems: Redeem[] },
   network: number,
-  vaultAddresses: VaultAddress[]
+  vaultAddresses: string[],
+  toTimestamp: number
 ) => {
   let redeems = response.redeems.flatMap((redeem) => {
-    const receipt = transformFeeReceipt(redeem.feeReceipt, redeem.vault.id);
+    const receipt = transformFeeReceipt(
+      redeem.feeReceipt,
+      redeem.vault.id,
+      redeem.vault.vaultId
+    );
     return redeem.nftIds.map((nftId): VaultActivity => {
       const target = redeem.specificIds?.includes(nftId);
       // TODO: figure out a way to get msg.sender so we know if it's gem etc.
 
       return {
         tokenId: nftId,
+        vaultId: redeem.vault.vaultId,
         vaultAddress: redeem.vault.id,
         date: Number(redeem.date),
         txId: redeem.id,
@@ -112,6 +118,7 @@ export const processRedeems = async (
       vaultAddresses,
       network,
       fromTimestamp: nextTimestamp,
+      toTimestamp,
     });
 
     redeems = [...redeems, ...moreRedeems];
@@ -123,14 +130,17 @@ export const processRedeems = async (
 export const getRedeems = async ({
   network,
   fromTimestamp,
+  toTimestamp,
   vaultAddresses,
 }: {
   network: number;
   fromTimestamp: number;
-  vaultAddresses: VaultAddress[];
+  toTimestamp: number;
+  vaultAddresses: string[];
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
+    date_lte: toTimestamp,
     vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
     vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
   });
@@ -143,7 +153,12 @@ export const getRedeems = async ({
     query,
   });
 
-  const mints = await processRedeems(response, network, vaultAddresses);
+  const mints = await processRedeems(
+    response,
+    network,
+    vaultAddresses,
+    toTimestamp
+  );
 
   return mints;
 };

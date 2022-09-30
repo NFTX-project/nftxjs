@@ -7,7 +7,7 @@ const useSwap = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { swap },
+    core: { swap, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof swap>;
@@ -15,6 +15,10 @@ const useSwap = (opts?: UseTransactionOptions) => {
   return useTransaction((args: Args) => swap({ ...args, network, signer }), {
     description: 'Swap',
     ...opts,
+    async onSuccess(data, args) {
+      await invalidateVault({ vaultId: args.vault.vaultId, network });
+      return opts?.onSuccess?.(data, args);
+    },
   });
 };
 

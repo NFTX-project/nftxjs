@@ -1,10 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { NFTX_MARKETPLACE_0X_ZAP, NFTX_STAKING_ZAP } from '@nftx/constants';
-import { addressEqual, getChainConstant } from '../../web3';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import type { VaultActivity, VaultAddress } from '../types';
 import { transformFeeReceipt } from './common';
 import config from '@nftx/config';
+import type { VaultActivity } from '@nftx/types';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 
 export type Mint = {
   id: string;
@@ -101,14 +101,20 @@ const isStakeOrMint = (
 export const processMints = async (
   response: { mints: Mint[] },
   network: number,
-  vaultAddresses: VaultAddress[]
+  vaultAddresses: string[],
+  toTimestamp: number
 ) => {
   let mints = response.mints.flatMap((mint): VaultActivity[] => {
-    const receipt = transformFeeReceipt(mint.feeReceipt, mint.vault.id);
+    const receipt = transformFeeReceipt(
+      mint.feeReceipt,
+      mint.vault.id,
+      mint.vault.vaultId
+    );
     const [type, stakeType] = isStakeOrMint(mint, network);
 
     return mint.nftIds.map((nftId, i): VaultActivity => {
       return {
+        vaultId: mint.vault.vaultId,
         vaultAddress: mint.vault.id,
         date: Number(mint.date),
         tokenId: nftId,
@@ -129,6 +135,7 @@ export const processMints = async (
       network,
       vaultAddresses,
       fromTimestamp: Number(nextTimestamp),
+      toTimestamp,
     });
     mints = [...mints, ...moreMints];
   }
@@ -139,14 +146,17 @@ export const processMints = async (
 export const getMints = async ({
   network,
   fromTimestamp,
+  toTimestamp,
   vaultAddresses,
 }: {
   network: number;
   fromTimestamp: number;
-  vaultAddresses: VaultAddress[];
+  toTimestamp: number;
+  vaultAddresses: string[];
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
+    date_lte: toTimestamp,
     vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
     vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
   });
@@ -157,7 +167,12 @@ export const getMints = async ({
     query,
   });
 
-  const mints = await processMints(response, network, vaultAddresses);
+  const mints = await processMints(
+    response,
+    network,
+    vaultAddresses,
+    toTimestamp
+  );
 
   return mints;
 };

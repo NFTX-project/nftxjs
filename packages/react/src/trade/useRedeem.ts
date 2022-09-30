@@ -7,7 +7,7 @@ const useRedeem = (opts: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { redeem },
+    core: { redeem, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof redeem>;
@@ -15,6 +15,10 @@ const useRedeem = (opts: UseTransactionOptions) => {
   return useTransaction((args: Args) => redeem({ ...args, network, signer }), {
     description: 'Redeem',
     ...opts,
+    async onSuccess(data, args) {
+      await invalidateVault({ vaultId: args.vaultId, network });
+      return opts?.onSuccess?.(data, args);
+    },
   });
 };
 

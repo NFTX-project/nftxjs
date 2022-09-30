@@ -2,8 +2,8 @@ import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import { NFTX_STAKING_ZAP } from '@nftx/constants';
 import abi from '@nftx/constants/abis/NFTXStakingZap.json';
-import type { BigNumber } from 'ethers';
-import { getChainConstant, getContract } from '../web3';
+import { getChainConstant, getContract } from '@nftx/utils';
+import type { BigNumber } from '@ethersproject/bignumber';
 
 /** Returns the standard time that a position is locked in when you stake inventory or liquidity */
 const fetchLockTime = async ({

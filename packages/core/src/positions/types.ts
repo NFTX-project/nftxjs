@@ -1,10 +1,9 @@
 import type { BigNumber } from '@ethersproject/bignumber';
-import type { TokenReserve } from '../tokens';
-import type { VaultAddress, VaultFeeReceipt, VaultId } from '../vaults';
+import type { TokenReserve, VaultFeeReceipt } from '@nftx/types';
 
 export type Position = {
-  vaultId: VaultId;
-  vaultAddress: VaultAddress;
+  vaultId: string;
+  vaultAddress: string;
   poolId: string;
   liquidityEth: BigNumber;
   inventoryValue: BigNumber;

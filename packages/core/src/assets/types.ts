@@ -1,14 +1,12 @@
 import type { BigNumber } from '@ethersproject/bignumber';
-import type { VaultId } from '../vaults';
-import type { Address } from '../web3/types';
 
 export type Asset = {
   id: string;
   tokenId: string;
-  assetAddress: Address;
+  assetAddress: string;
   metaUrl: string;
   quantity?: BigNumber;
-  vaultId?: VaultId;
+  vaultId?: string;
 };
 
 export type AssetMetadata = {

@@ -1,26 +1,26 @@
-export { default as adjustPosition } from './adjustPosition';
-import { fetchPool, fetchPools } from '../pools';
-import { fetchClaimableTokens } from '../staking';
-import { fetchReservesForToken, fetchReservesForTokens } from '../tokens';
 import {
-  fetchVault,
-  fetchVaultAprs,
-  fetchXTokenShare,
+  fetchReservesForToken,
+  fetchReservesForTokens,
   fetchUserVaultBalance,
   fetchUserVaultBalances,
-  fetchVaults,
+  fetchXTokenShare,
   fetchXTokenShares,
-} from '../vaults';
-import { fetchTotalSupply } from '../web3';
+  totalSupply,
+} from '@nftx/utils';
+import { fetchLiquidityPool, fetchLiquidityPools } from '../pools';
+import { fetchClaimableTokens } from '../staking';
+import { fetchVault, fetchVaults } from '../vaults';
+import fetchVaultAprs from '../vaults/fetchVaultAprs';
 import makeFetchPosition from './fetchPosition';
 import makeFetchPositions from './fetchPositions';
-export * from './types';
+
+export { default as fetchUsers } from './fetchUsers';
 
 export const fetchPosition = makeFetchPosition({
   fetchClaimableTokens,
-  fetchPool,
+  fetchPool: fetchLiquidityPool,
   fetchReservesForToken,
-  fetchTotalSupply,
+  fetchTotalSupply: totalSupply,
   fetchUserVaultBalance,
   fetchVault,
   fetchVaultAprs,
@@ -28,7 +28,7 @@ export const fetchPosition = makeFetchPosition({
 });
 
 export const fetchPositions = makeFetchPositions({
-  fetchPools,
+  fetchPools: fetchLiquidityPools,
   fetchPosition,
   fetchReservesForTokens,
   fetchUserVaultBalances,

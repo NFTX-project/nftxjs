@@ -82,6 +82,9 @@ async function querySubgraph({
       if (errors?.[0]?.message) {
         throw new Error(errors[0].message);
       }
+      if (errors?.message) {
+        throw new Error(errors.message);
+      }
 
       return data;
     } catch (e) {

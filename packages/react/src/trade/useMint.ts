@@ -7,7 +7,7 @@ const useMint = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { mint },
+    core: { mint, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof mint>;
@@ -15,6 +15,10 @@ const useMint = (opts?: UseTransactionOptions) => {
   return useTransaction((args: Args) => mint({ ...args, network, signer }), {
     description: 'Mint',
     ...opts,
+    async onSuccess(data, args) {
+      await invalidateVault({ vaultId: args.vaultId, network });
+      return opts?.onSuccess(data, args);
+    },
   });
 };
 

@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import type { VaultHolding } from '../types';
+import type { VaultHolding } from '@nftx/types';
 import type { Response } from '../fetchSubgraphVaults';
 
 const transformVaultHolding = (

@@ -1,9 +1,8 @@
 import type { BigNumber } from '@ethersproject/bignumber';
-import type { VaultAddress, VaultId } from '../vaults';
 
 export type CumulativeFee = {
-  vaultId: VaultId;
-  vaultAddress: VaultAddress;
+  vaultId: string;
+  vaultAddress: string;
   txnId: string;
   symbol: string;
   timestamp: number;

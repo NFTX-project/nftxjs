@@ -1,10 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { Zero } from '@ethersproject/constants';
-import type { VaultAddress, VaultFeeReceipt } from '../types';
+import type { VaultFeeReceipt } from '@nftx/types';
 
 export const transformFeeReceipt = (
   receipt: { transfers: Array<{ amount: string; to: string }>; date: string },
-  vaultAddress: VaultAddress
+  vaultAddress: string,
+  vaultId: string
 ): VaultFeeReceipt => {
   const date = Number(receipt.date);
   const transfers = receipt.transfers.map((transfer) => {
@@ -17,5 +18,5 @@ export const transformFeeReceipt = (
     Zero
   );
 
-  return { vaultAddress, date, transfers, amount };
+  return { vaultAddress, vaultId, date, transfers, amount };
 };

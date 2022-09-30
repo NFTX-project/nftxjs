@@ -11,6 +11,8 @@ import {
   NFTX_APR_URL,
   Network,
   NFTX_FEE_TRACKER_SUBGRAPH,
+  ALCHEMY_URL,
+  NFTX_API_URL,
 } from '@nftx/constants';
 import merge from 'deepmerge';
 
@@ -30,11 +32,17 @@ interface Config {
     ZEROX_PRICE_URL: Record<string, string>;
     ZEROX_QUOTE_URL: Record<string, string>;
     NFTX_APR_URL: Record<string, string>;
+    ALCHEMY_URL: Record<string, string>;
+    NFTX_API_URL: string;
   };
   contracts: {
     multicall: boolean;
     use0xApi: boolean;
     ethPrice: Record<string, string>;
+  };
+  keys: {
+    NFTX_API: string;
+    ALCHEMY: string;
   };
 }
 
@@ -54,6 +62,8 @@ const defaultConfig: Config = {
     ZEROX_PRICE_URL,
     ZEROX_QUOTE_URL,
     NFTX_APR_URL,
+    ALCHEMY_URL,
+    NFTX_API_URL,
   },
   contracts: {
     // Whether to batch read calls together to reduce the number of network requests
@@ -64,6 +74,10 @@ const defaultConfig: Config = {
     ethPrice: {
       [Network.Rinkeby]: '2500000000', // $2.5k
     },
+  },
+  keys: {
+    NFTX_API: null,
+    ALCHEMY: null,
   },
 };
 

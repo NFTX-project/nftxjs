@@ -1,7 +1,7 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { WeiPerEther, Zero } from '@ethersproject/constants';
-import type { TokenReserve } from '../../tokens';
+import type { TokenReserve } from '@nftx/types';
 
 // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
 function getAmountIn(

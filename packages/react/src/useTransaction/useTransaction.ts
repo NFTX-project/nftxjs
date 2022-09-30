@@ -15,7 +15,7 @@ export type UseTransactionOptions<A = Record<string, any>> = {
   onSuccess?: (
     data: { transaction: ContractTransaction; receipt: ContractReceipt },
     args: A
-  ) => void;
+  ) => void | Promise<any>;
   onError?: (error: any) => void;
 };
 
@@ -127,7 +127,10 @@ const useTransaction = <F extends Fn>(
       const receipt = await transaction.wait();
 
       dispatch({ status: 'Success', receipt });
-      opts?.onSuccess?.({ transaction, receipt }, args);
+      const maybePromise = opts?.onSuccess?.({ transaction, receipt }, args);
+      if (maybePromise && maybePromise.then) {
+        await maybePromise;
+      }
       return receipt;
     } catch (e) {
       let error = e;

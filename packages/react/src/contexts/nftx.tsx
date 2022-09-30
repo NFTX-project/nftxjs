@@ -5,12 +5,11 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import * as core from '@nftx/core';
+import * as core from 'nftx.js';
 import { getDefaultProvider } from '@ethersproject/providers';
 import type { Provider } from '@ethersproject/providers';
 import { EventsProvider } from './events';
 import type { Signer } from 'ethers';
-import config from '@nftx/config';
 
 type Core = typeof core;
 
@@ -20,6 +19,8 @@ type INftxContext = {
   provider: Provider;
   signer: Signer;
 };
+
+const { config } = core;
 
 const defaultContext: INftxContext = {
   core,

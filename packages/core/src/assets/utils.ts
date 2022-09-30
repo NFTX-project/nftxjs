@@ -1,15 +1,14 @@
 import { CRYPTOKITTIES, CRYPTOPUNKS } from '@nftx/constants';
-import { addressEqual } from '../web3';
-import type { Address } from '../web3/types';
+import { addressEqual } from '@nftx/utils';
 
-export const isCryptoPunk = (address: Address) => {
+export const isCryptoPunk = (address: string) => {
   return addressEqual(address, CRYPTOPUNKS);
 };
 
-export const isCryptoKitty = (address: Address) => {
+export const isCryptoKitty = (address: string) => {
   return addressEqual(address, CRYPTOKITTIES);
 };
 
-export const isNonstandard721 = (address: Address) => {
+export const isNonstandard721 = (address: string) => {
   return isCryptoPunk(address) || isCryptoKitty(address);
 };

@@ -1,12 +1,11 @@
 import config from '@nftx/config';
-import type { Address } from '../web3/types';
 import type { Asset, AssetMetadata } from './types';
 
 export type Response = {
   animation_url: null | string;
   api_response: 'covalent' | 'opensea';
   asset_contract: {
-    address: Address;
+    address: string;
     name: string;
   };
   background_color?: null | string;

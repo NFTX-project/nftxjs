@@ -1,13 +1,13 @@
 import type { Asset } from '../assets';
-import { addressEqual } from '../web3';
-import type { Vault } from './types';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
+import type { Vault } from '@nftx/types';
 import {
+  addressEqual,
   checkEligible,
   fetchMerkleLeaves,
   isMerkleVault,
-} from '../eligibility';
+} from '@nftx/utils';
 
 const filterMintableAssets = async ({
   network = config.network,
@@ -17,7 +17,7 @@ const filterMintableAssets = async ({
 }: {
   network?: number;
   provider: Provider;
-  vaults: Vault[];
+  vaults: Pick<Vault, 'asset' | 'features' | 'eligibilityModule' | 'vaultId'>[];
   assets: Asset[];
 }) => {
   const result: Array<Asset> = [];

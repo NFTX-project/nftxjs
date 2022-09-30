@@ -1,8 +1,6 @@
 import config from '@nftx/config';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import { getChainConstant } from '../web3';
-import type { Address } from '../web3/types';
-import type { VaultAddress, VaultId } from './types';
+import { getChainConstant } from '@nftx/utils';
 
 export type Response = {
   globals: Array<{
@@ -69,6 +67,8 @@ export type Response = {
     inventoryStakingPool: {
       id: string;
       dividendToken: {
+        id: string;
+        name: string;
         symbol: string;
       };
     };
@@ -76,6 +76,13 @@ export type Response = {
       id: string;
       stakingToken: {
         id: string;
+        name: string;
+        symbol: string;
+      };
+      dividendToken: {
+        id: string;
+        name: string;
+        symbol: string;
       };
     };
   }>;
@@ -92,11 +99,11 @@ const fetchSubgraphVaults = async ({
   retryCount = 0,
 }: {
   network?: number;
-  vaultAddresses?: VaultAddress[];
-  vaultIds?: VaultId[];
+  vaultAddresses?: string[];
+  vaultIds?: string[];
   includeEmptyVaults?: boolean;
   finalisedOnly?: boolean;
-  manager?: Address;
+  manager?: string;
   lastId?: number;
   retryCount?: number;
 }): Promise<Response> => {
@@ -197,6 +204,11 @@ const fetchSubgraphVaults = async ({
       lpStakingPool {
         id
         stakingToken {
+          id
+          name
+          symbol
+        }
+        dividendToken {
           id
           name
           symbol

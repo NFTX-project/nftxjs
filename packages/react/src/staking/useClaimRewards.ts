@@ -7,14 +7,21 @@ const useClaimRewards = (opts?: UseTransactionOptions) => {
   const {
     signer,
     network,
-    core: { claimRewards },
+    core: { claimRewards, invalidateUser },
   } = useNftx();
 
-  type Args = TxnArgsOnly<typeof claimRewards>;
+  type Args = TxnArgsOnly<typeof claimRewards> & { userAddress: string };
 
   return useTransaction(
     (args: Args) => claimRewards({ network, signer, ...args }),
-    { description: 'Claim Rewards', ...opts }
+    {
+      description: 'Claim Rewards',
+      ...opts,
+      async onSuccess(data, args) {
+        await invalidateUser({ network, userAddress: args.userAddress });
+        return opts?.onSuccess?.(data, args);
+      },
+    }
   );
 };
 

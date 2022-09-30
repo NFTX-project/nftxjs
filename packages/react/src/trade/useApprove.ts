@@ -1,4 +1,4 @@
-import type { approve } from '@nftx/core';
+import type { approve } from 'nftx.js';
 import { useNftx } from '../contexts/nftx';
 import type { TxnArgsOnly } from '../types';
 import useTransaction, { UseTransactionOptions } from '../useTransaction';

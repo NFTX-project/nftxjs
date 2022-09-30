@@ -7,14 +7,21 @@ const useStakeVToken = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { stakeVToken },
+    core: { stakeVToken, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof stakeVToken>;
 
   return useTransaction(
     (args: Args) => stakeVToken({ network, signer, ...args }),
-    { description: 'Stake vTokens', ...opts }
+    {
+      description: 'Stake vTokens',
+      ...opts,
+      async onSuccess(data, args) {
+        await invalidateVault({ vaultId: args.vaultId, network });
+        return opts?.onSuccess?.(data, args);
+      },
+    }
   );
 };
 

@@ -2,8 +2,9 @@ import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
-import type { fetchVaults, Vault } from '../vaults';
-import { Address, getChainConstant } from '../web3';
+import type { Vault } from '@nftx/types';
+import { addressEqual, getChainConstant } from '@nftx/utils';
+import type { fetchVaults } from '../vaults';
 import { parseAggregatedFee } from './fetchLifetimeFees';
 
 type QuerySubgraph = typeof querySubgraph;
@@ -23,7 +24,7 @@ export default ({
   }: {
     lastId?: string;
     network: number;
-    userAddress: Address;
+    userAddress: string;
   }) => {
     type Response = {
       userVaultFeeAggregates: Array<{
@@ -85,8 +86,8 @@ export default ({
     network = config.network,
     provider,
   }: {
-    userAddress: Address;
-    vaults?: Vault[];
+    userAddress: string;
+    vaults?: Pick<Vault, 'reserveWeth' | 'rawPrice' | 'id'>[];
     network?: number;
     provider: Provider;
   }) {
@@ -98,7 +99,9 @@ export default ({
     }
 
     return fees.reduce((total, fee) => {
-      const vault = vaults.find((vault) => vault.id === fee.vault.address);
+      const vault = vaults.find((vault) =>
+        addressEqual(vault.id, fee.vault.address)
+      );
       if (vault == null) {
         return total;
       }
