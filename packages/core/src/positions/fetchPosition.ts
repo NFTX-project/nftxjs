@@ -3,28 +3,10 @@ import { Zero } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import { NFTX_LP_STAKING } from '@nftx/constants';
-import type { fetchPool, LiquidityPool } from '../pools';
+import type { fetchLiquidityPool, LiquidityPool } from '../pools';
 import type { fetchClaimableTokens } from '../staking';
-import type { fetchReservesForToken, TokenReserve } from '../tokens';
 import { t } from '../utils';
-import {
-  fetchUserVaultBalance,
-  fetchVault,
-  fetchVaultAprs,
-  fetchVaultFees,
-  fetchXTokenShare,
-  Vault,
-  VaultAddress,
-  VaultFeeReceipt,
-} from '../vaults';
-import {
-  Address,
-  addressEqual,
-  fetchTokenBalance,
-  getChainConstant,
-  type fetchTotalSupply,
-} from '../web3';
-import type { Position } from './types';
+import { fetchVault, fetchVaultFees } from '../vaults';
 import {
   calculateClaimableEth,
   calculateInventoryBalance,
@@ -35,14 +17,30 @@ import {
   calculateLiquidityShare,
   calculateStakeSplit,
 } from './utils';
+import type {
+  Position,
+  TokenReserve,
+  Vault,
+  VaultFeeReceipt,
+} from '@nftx/types';
+import {
+  addressEqual,
+  balanceOf,
+  fetchReservesForToken,
+  fetchUserVaultBalance,
+  fetchXTokenShare,
+  getChainConstant,
+  totalSupply,
+} from '@nftx/utils';
+import type fetchVaultAprs from '../vaults/fetchVaultAprs';
 
-type FetchPool = typeof fetchPool;
+type FetchPool = typeof fetchLiquidityPool;
 type FetchClaimableTokens = typeof fetchClaimableTokens;
 type FetchUserVaultBalance = typeof fetchUserVaultBalance;
 type FetchVault = typeof fetchVault;
 type FetchVaultAprs = typeof fetchVaultAprs;
 type FetchXTokenShare = typeof fetchXTokenShare;
-type FetchTotalSupply = typeof fetchTotalSupply;
+type FetchTotalSupply = typeof totalSupply;
 type FetchReservesForToken = typeof fetchReservesForToken;
 
 export default ({
@@ -72,9 +70,9 @@ export default ({
     userAddress,
     ...args
   }: {
-    vaultAddress: VaultAddress;
+    vaultAddress: string;
     provider: Provider;
-    userAddress: Address;
+    userAddress: string;
     vault?: {
       id: Vault['id'];
       vaultId: Vault['vaultId'];
@@ -112,8 +110,13 @@ export default ({
         })
       : null;
     const xTokenBalance =
-      args.xTokenBalance ?? balance?.xToken?.balance ?? Zero;
-    const xSlpBalance = args.xSlpBalance ?? balance?.xSlp?.balance ?? Zero;
+      args.xTokenBalance ??
+      balance?.find((x) => x.type === 'xToken')?.balance ??
+      Zero;
+    const xSlpBalance =
+      args.xSlpBalance ??
+      balance?.find((x) => x.type === 'xTokenWETH')?.balance ??
+      Zero;
     let xTokenShare = args.xTokenShare;
     if (xTokenShare == null && vault.inventoryStakingPool?.id != null) {
       xTokenShare = await fetchXTokenShare({
@@ -137,7 +140,7 @@ export default ({
     let slpBalance = args.slpBalance;
     if (!slpBalance && pool?.stakingToken?.id) {
       [, slpBalance] = await t(
-        fetchTokenBalance({
+        balanceOf({
           network,
           provider,
           ownerAddress: getChainConstant(NFTX_LP_STAKING, network),
@@ -257,10 +260,19 @@ export default ({
     // The total value including claimable amounts
     const totalValue = valueStaked.add(claimableValue);
 
-    const position: Position = {
+    const position: Omit<
+      Position,
+      | 'inventoryStaked'
+      | 'liquidityStaked'
+      | 'totalValueStaked'
+      | 'inventoryLockTime'
+      | 'liquidityLockTime'
+      | 'stakingTokenId'
+    > = {
       vaultId: vault.vaultId,
       vaultAddress: vaultAddress,
-      poolId: pool?.id,
+      userAddress,
+      liquidityPoolId: pool?.id,
       inventoryTokens,
       inventoryValue,
       inventoryShare,
@@ -281,15 +293,18 @@ export default ({
       totalValue,
 
       poolReserves: reserves,
-      xSlp: xSlpBalance,
+      xSlpBalance,
       xSlpSupply,
-      xToken: xTokenBalance,
+      xTokenBalance,
       xTokenShare,
       xTokenSupply,
       slpBalance,
       slpSupply,
 
-      feeReceipts,
+      periodFees: feeReceipts.reduce(
+        (total, receipt) => total.add(receipt.amount),
+        Zero
+      ),
       createdAt: vault.createdAt,
     };
 

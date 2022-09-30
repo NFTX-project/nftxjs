@@ -1,5 +1,4 @@
 import config from '@nftx/config';
-import type { VaultAddress } from '../types';
 import { getAll } from './getAll';
 
 function fetchVaultActivity({
@@ -7,16 +6,23 @@ function fetchVaultActivity({
   fromTimestamp,
   vaultAddress,
   vaultAddresses = vaultAddress ? [vaultAddress] : undefined,
+  toTimestamp,
 }: {
   network?: number;
-  vaultAddress?: VaultAddress;
-  vaultAddresses?: VaultAddress[];
+  vaultAddress?: string;
+  vaultAddresses?: string[];
   fromTimestamp?: number;
+  toTimestamp?: number;
 }) {
   const roundedTimestamp = fromTimestamp
-    ? Math.floor(Math.round(fromTimestamp / 30) * 30)
+    ? Math.floor(Math.round(fromTimestamp / 60) * 60)
     : undefined;
-  return getAll({ network, vaultAddresses, fromTimestamp: roundedTimestamp });
+  return getAll({
+    network,
+    vaultAddresses,
+    fromTimestamp: roundedTimestamp,
+    toTimestamp,
+  });
 }
 
 export default fetchVaultActivity;

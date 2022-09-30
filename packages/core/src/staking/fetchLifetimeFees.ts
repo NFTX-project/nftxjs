@@ -1,8 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
-import type { VaultId } from '../vaults';
-import { Address, getChainConstant } from '../web3';
+import { getChainConstant } from '@nftx/utils';
 
 type QuerySubgraph = typeof querySubgraph;
 
@@ -36,8 +35,8 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
     userAddress,
     network = config.network,
   }: {
-    vaultId: VaultId;
-    userAddress: Address;
+    vaultId: string;
+    userAddress: string;
     network?: number;
   }) {
     type Response = {

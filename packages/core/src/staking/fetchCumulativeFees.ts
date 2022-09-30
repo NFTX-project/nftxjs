@@ -3,12 +3,7 @@ import { Zero } from '@ethersproject/constants';
 import config from '@nftx/config';
 import { NFTX_FEE_TRACKER_SUBGRAPH } from '@nftx/constants';
 import { gql, type querySubgraph } from '@nftx/subgraph';
-import type { VaultId } from '../vaults';
-import {
-  Address,
-  type fetchBlockNumberByTimestamp,
-  getChainConstant,
-} from '../web3';
+import { fetchBlockNumberByTimestamp, getChainConstant } from '@nftx/utils';
 import {
   createHexVaultId,
   createId,
@@ -208,8 +203,8 @@ export default ({
   }: {
     network?: number;
     timestampFrom: number;
-    userAddress: Address;
-    vaultIds: VaultId[];
+    userAddress: string;
+    vaultIds: string[];
   }) {
     const blockFrom = await fetchBlockNumberByTimestamp({
       timestamp: timestampFrom,

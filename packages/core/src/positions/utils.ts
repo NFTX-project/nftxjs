@@ -1,7 +1,7 @@
 import { WeiPerEther, Zero } from '@ethersproject/constants';
 import type { BigNumber } from '@ethersproject/bignumber';
 import { formatEther } from '@ethersproject/units';
-import type { TokenReserve } from '../tokens';
+import type { TokenReserve } from '@nftx/types';
 
 export const calculateLiquidityBalance = ({
   liquidityShare,

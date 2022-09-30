@@ -2,9 +2,9 @@ import { Zero } from '@ethersproject/constants';
 import NftxRewardDistributionTokenAbi from '@nftx/constants/abis/NFTXRewardDistributionTokenUpgradeable.json';
 import type { Provider } from '@ethersproject/providers';
 import type { BigNumber } from '@ethersproject/bignumber';
-import type { getContract } from '../web3';
 import type { LiquidityPool } from '../pools';
 import config from '@nftx/config';
+import type { getContract } from '@nftx/utils';
 
 type GetContract = typeof getContract;
 

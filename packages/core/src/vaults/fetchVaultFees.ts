@@ -1,9 +1,9 @@
 import { compareByAlpha, toLowerCase } from '../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './fetchVaultActivity/common';
-import type { VaultAddress, VaultFeeReceipt } from './types';
-import { getChainConstant } from '../web3';
 import config from '@nftx/config';
+import type { VaultFeeReceipt } from '@nftx/types';
+import { getChainConstant } from '@nftx/utils';
 
 const fetchSingleVaultFees = async ({
   vaultAddress,
@@ -18,6 +18,7 @@ const fetchSingleVaultFees = async ({
 }): Promise<VaultFeeReceipt[]> => {
   const query = gql<{
     vault: {
+      vaultId: string;
       feeReceipts: Array<{
         transfers: Array<{ amount: string; to: string }>;
         date: string;
@@ -26,6 +27,7 @@ const fetchSingleVaultFees = async ({
   }>`
     {
       vault(id: $vaultAddress) {
+        vaultId
         feeReceipts(
           first: 1000
           where: { date_gt: $fromTimestamp }
@@ -51,7 +53,7 @@ const fetchSingleVaultFees = async ({
 
     let receipts =
       data?.vault?.feeReceipts?.map((receipt) => {
-        return transformFeeReceipt(receipt, vaultAddress);
+        return transformFeeReceipt(receipt, vaultAddress, data.vault.vaultId);
       }) ?? [];
 
     if (receipts.length === 1000) {
@@ -86,7 +88,7 @@ const fetchMultiVaultFees = async ({
   retryCount = 0,
 }: {
   network: number;
-  vaultAddresses: VaultAddress[];
+  vaultAddresses: string[];
   fromTimestamp: number;
   lastId?: number;
   retryCount?: number;
@@ -145,7 +147,7 @@ const fetchMultiVaultFees = async ({
     const feeReceipts = await Promise.all(
       data?.vaults?.map(async (vault) => {
         let receipts = vault.feeReceipts.map((receipt) => {
-          return transformFeeReceipt(receipt, vault.id);
+          return transformFeeReceipt(receipt, vault.id, vault.vaultId);
         });
         if (receipts.length === 1000) {
           const moreReceipts = await fetchSingleVaultFees({
@@ -176,13 +178,13 @@ const fetchMultiVaultFees = async ({
 
 function fetchVaultFees(args: {
   network?: number;
-  vaultAddress: VaultAddress;
+  vaultAddress: string;
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
 function fetchVaultFees(args: {
   network?: number;
-  vaultAddresses: VaultAddress[];
+  vaultAddresses: string[];
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
@@ -193,12 +195,12 @@ async function fetchVaultFees({
   fromTimestamp = 0,
 }: {
   network?: number;
-  vaultAddress?: VaultAddress;
-  vaultAddresses?: VaultAddress[];
+  vaultAddress?: string;
+  vaultAddresses?: string[];
   fromTimestamp?: number;
 }) {
   const roundedTimestamp = fromTimestamp
-    ? Math.floor(Math.round(fromTimestamp / 30) * 30)
+    ? Math.floor(Math.round(fromTimestamp / 60) * 60)
     : undefined;
 
   if (vaultAddress) {

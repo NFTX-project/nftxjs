@@ -1,4 +1,3 @@
-import type { VaultAddress } from '@nftx/core';
 import { useNftx } from '../contexts/nftx';
 import type { TxnArgsOnly } from '../types';
 import type { UseTransactionOptions } from '../useTransaction';
@@ -9,26 +8,40 @@ const useStakeLiquidity = (opts?: UseTransactionOptions) => {
     network,
     signer,
     provider,
-    core: { stakeLiquidity, fetchPool },
+    core: { stakeLiquidity, fetchPool, invalidateVault },
   } = useNftx();
 
   type Args = Omit<
     TxnArgsOnly<typeof stakeLiquidity>,
     'gasPrice' | 'isNewPool'
-  > & { vaultAddress: VaultAddress };
+  > & { vaultId: string };
 
   return useTransaction(
-    async ({ vaultAddress, ...args }: Args) => {
+    async ({ vaultId, ...args }: Args) => {
       const { gasPrice } = await provider.getFeeData();
       const pool = await fetchPool({
         network,
-        vaultAddress,
+        vaultId,
       });
       const isNewPool = pool == null;
 
-      return stakeLiquidity({ network, signer, gasPrice, isNewPool, ...args });
+      return stakeLiquidity({
+        network,
+        signer,
+        gasPrice,
+        isNewPool,
+        vaultId,
+        ...args,
+      });
     },
-    { description: 'Stake Liquidity', ...opts }
+    {
+      description: 'Stake Liquidity',
+      ...opts,
+      async onSuccess(data, args) {
+        await invalidateVault({ network, vaultId: args.vaultId });
+        return opts?.onSuccess?.(data, args);
+      },
+    }
   );
 };
 

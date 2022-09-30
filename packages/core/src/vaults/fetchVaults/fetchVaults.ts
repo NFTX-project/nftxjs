@@ -1,14 +1,16 @@
-import { fetchReservesForTokens } from '../../tokens';
-import type { Address } from '../../web3/types';
-import type { Vault, VaultAddress, VaultId } from '../types';
 import { OPENSEA_COLLECTION } from '@nftx/constants';
 import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
-import { addressEqual } from '../../web3';
 import fetchVaultHoldings from '../fetchVaultHoldings';
 import config from '@nftx/config';
-import { fetchMerkleReference, isMerkleVault } from '../../eligibility';
 import type { Provider } from '@ethersproject/providers';
+import {
+  addressEqual,
+  fetchMerkleReference,
+  fetchReservesForTokens,
+  isMerkleVault,
+} from '@nftx/utils';
+import type { Vault } from '@nftx/types';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
@@ -37,7 +39,7 @@ const fetchMoreHoldings = async ({
   network,
 }: {
   network: number;
-  vault: { id: VaultAddress; holdings: Array<{ tokenId: string }> };
+  vault: { id: string; holdings: Array<{ tokenId: string }> };
 }) => {
   if (vault.holdings.length === 1000) {
     const lastId = vault.holdings[vault.holdings.length - 1].tokenId;
@@ -65,12 +67,12 @@ const fetchVaults = async ({
 }: {
   network?: number;
   provider: Provider;
-  vaultAddresses?: VaultAddress[];
-  vaultIds?: VaultId[];
+  vaultAddresses?: string[];
+  vaultIds?: string[];
   includeEmptyVaults?: boolean;
   finalisedOnly?: boolean;
   enabledOnly?: boolean;
-  manager?: Address;
+  manager?: string;
   lastId?: number;
   retryCount?: number;
 }): Promise<Vault[]> => {

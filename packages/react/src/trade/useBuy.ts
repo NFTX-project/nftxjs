@@ -6,7 +6,7 @@ const useBuy = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { buy },
+    core: { buy, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof buy>;
@@ -14,6 +14,10 @@ const useBuy = (opts?: UseTransactionOptions) => {
   return useTransaction((args: Args) => buy({ ...args, network, signer }), {
     description: 'Buy',
     ...opts,
+    async onSuccess(data, args) {
+      await invalidateVault({ network, vaultId: args.vault.vaultId });
+      return opts?.onSuccess?.(data, args);
+    },
   });
 };
 

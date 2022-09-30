@@ -7,14 +7,21 @@ const useUnstakeLiquidity = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { unstakeLiquidity },
+    core: { unstakeLiquidity, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof unstakeLiquidity>;
 
   return useTransaction(
     (args: Args) => unstakeLiquidity({ network, signer, ...args }),
-    { description: 'Unstake Liquidity', ...opts }
+    {
+      description: 'Unstake Liquidity',
+      ...opts,
+      async onSuccess(data, args) {
+        await invalidateVault({ vaultId: args.vaultId, network });
+        return opts?.onSuccess?.(data, args);
+      },
+    }
   );
 };
 

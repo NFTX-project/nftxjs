@@ -1,25 +1,25 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import type { fetchPools, LiquidityPool } from '../pools';
-import type { fetchReservesForTokens, TokenReserve } from '../tokens';
+import type { fetchLiquidityPools, LiquidityPool } from '../pools';
+import { fetchVaultFees, fetchVaults } from '../vaults';
+import type fetchPosition from './fetchPosition';
+import { Zero } from '@ethersproject/constants';
 import {
+  addressEqual,
+  fetchReservesForTokens,
   fetchUserVaultBalances,
-  fetchVaultAprs,
-  fetchVaultFees,
-  fetchVaults,
   fetchXTokenShares,
+} from '@nftx/utils';
+import type {
+  TokenReserve,
   UserVaultBalance,
   Vault,
-  VaultApr,
   VaultFeeReceipt,
-  VaultId,
-} from '../vaults';
-import type fetchPosition from './fetchPosition';
-import { Address, addressEqual } from '../web3';
-import { Zero } from '@ethersproject/constants';
+} from '@nftx/types';
+import type fetchVaultAprs from '../vaults/fetchVaultAprs';
 
-type FetchPools = typeof fetchPools;
+type FetchPools = typeof fetchLiquidityPools;
 type FetchReservesForTokens = typeof fetchReservesForTokens;
 type FetchVaultAprs = typeof fetchVaultAprs;
 type FetchVaults = typeof fetchVaults;
@@ -52,25 +52,28 @@ export default ({
     minimumBalance = Zero,
     ...args
   }: {
-    userAddress: Address;
+    userAddress: string;
     network?: number;
     provider: Provider;
     vaults?: Vault[];
-    aprs?: VaultApr[];
+    aprs?: {
+      vaultAddress: string;
+      liquidityApr: string;
+      inventoryApr: string;
+    }[];
     pools?: LiquidityPool[];
     reserves?: TokenReserve[];
     balances?: {
       xSlp: UserVaultBalance[];
       xTokens: UserVaultBalance[];
     };
-    xTokenShares?: { share: BigNumber; vaultId: VaultId }[];
+    xTokenShares?: { share: BigNumber; vaultId: string }[];
     feeReceipts?: VaultFeeReceipt[];
     minimumBalance?: BigNumber;
   }) {
     const allVaults = args.vaults ?? (await fetchVaults({ network, provider }));
     const balances =
-      args.balances ??
-      (await fetchUserVaultBalances({ userAddress, network, provider }));
+      args.balances ?? (await fetchUserVaultBalances({ userAddress, network }));
     const userVaultIds = [
       ...new Set(
         [...balances.xTokens, ...balances.xSlp]
@@ -104,7 +107,8 @@ export default ({
     const positions = await Promise.all(
       stakedVaults.map((vault) => {
         const { inventoryApr = 0, liquidityApr = 0 } =
-          aprs.find((apr) => addressEqual(apr.vaultAddress, vault.id)) ?? {};
+          [...aprs].find((apr) => addressEqual(apr.vaultAddress, vault.id)) ??
+          {};
         const pool = pools.find((pool) => pool.vaultId === vault.vaultId);
         const reserves = allReserves.find((reserves) =>
           addressEqual(reserves.tokenId, vault.id)
@@ -126,8 +130,8 @@ export default ({
           provider,
           userAddress,
           vaultAddress: vault.id,
-          inventoryApr,
-          liquidityApr,
+          inventoryApr: Number(inventoryApr),
+          liquidityApr: Number(liquidityApr),
           network,
           pool,
           reserves,

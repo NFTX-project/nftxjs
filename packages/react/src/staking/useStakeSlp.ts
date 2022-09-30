@@ -6,14 +6,21 @@ const useStakeSlp = (opts?: UseTransactionOptions) => {
   const {
     network,
     signer,
-    core: { stakeSlp },
+    core: { stakeSlp, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof stakeSlp>;
 
   return useTransaction(
     (args: Args) => stakeSlp({ network, signer, ...args }),
-    { description: 'Stake SLP', ...opts }
+    {
+      description: 'Stake SLP',
+      ...opts,
+      async onSuccess(data, args) {
+        await invalidateVault({ vaultId: args.vaultId, network });
+        return opts?.onSuccess?.(data, args);
+      },
+    }
   );
 };
 
