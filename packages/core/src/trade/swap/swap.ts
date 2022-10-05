@@ -69,8 +69,8 @@ const swapErc721WithFee = async ({
     provider: signer.provider,
     network,
     vault,
-    randomSwaps: redeemIds.length - mintIds.length,
-    targetSwaps: mintIds.length,
+    randomSwaps: mintIds.length - redeemIds.length,
+    targetSwaps: redeemIds.length,
   });
   if (slippage) {
     maxPrice = maxPrice
@@ -211,8 +211,8 @@ const swapErc1155WithFee = async ({
     provider: signer.provider,
     network,
     vault,
-    randomSwaps: redeemIds.length - mintIds.length,
-    targetSwaps: mintIds.length,
+    randomSwaps: mintIds.length - redeemIds.length,
+    targetSwaps: redeemIds.length,
   });
   if (slippage) {
     maxPrice = maxPrice
