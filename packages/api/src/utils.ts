@@ -36,7 +36,7 @@ export const queryApi = async <T>({
           if (v == null) {
             return;
           }
-          uri.searchParams.append(`${key}[${i}]`, v);
+          uri.searchParams.append(key, v);
         });
       } else {
         uri.searchParams.set(key, value);
