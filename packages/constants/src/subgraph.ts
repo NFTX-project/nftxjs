@@ -75,20 +75,28 @@ export const SUSHI_SUBGRAPH = {
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/sushiswap/exchange-goerli`,
 };
 
+export const NFTX_SUBGRAPH_MAINNET_URLS = {
+  GATEWAY_PROXY: `${GATEWAY_CACHE_PROXY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
+  GATEWAY: `${GATEWAY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
+  INDEXER_PROXY: `${INDEXER_PROXY_ROOT}/QmXa6ChLJzAVu1imQ5YCMTzgPGVCCRdhVgVKWpkXEyKtGQ`,
+  INDEXER: `${INDEXER_ROOT}/QmXa6ChLJzAVu1imQ5YCMTzgPGVCCRdhVgVKWpkXEyKtGQ`,
+  SHARED_PROXY: `${SHARED_PROXY_ROOT}/nftx-project/nftx-v2`,
+  SHARED: `${SHARED_ROOT}/nftx-project/nftx-v2`,
+};
 export const NFTX_SUBGRAPH = {
   [Network.Mainnet]: [
     // Gateway + Proxy + Cache
-    `${GATEWAY_CACHE_PROXY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
+    NFTX_SUBGRAPH_MAINNET_URLS.GATEWAY_PROXY,
     // Indexer + Proxy
-    `${INDEXER_PROXY_ROOT}/QmXa6ChLJzAVu1imQ5YCMTzgPGVCCRdhVgVKWpkXEyKtGQ`,
+    NFTX_SUBGRAPH_MAINNET_URLS.INDEXER_PROXY,
     // Gateway
-    `${GATEWAY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
+    NFTX_SUBGRAPH_MAINNET_URLS.GATEWAY,
     // Indexer
-    `${INDEXER_ROOT}/QmXa6ChLJzAVu1imQ5YCMTzgPGVCCRdhVgVKWpkXEyKtGQ`,
+    NFTX_SUBGRAPH_MAINNET_URLS.INDEXER,
     // Shared + Proxy
-    `${SHARED_PROXY_ROOT}/nftx-project/nftx-v2`,
+    NFTX_SUBGRAPH_MAINNET_URLS.SHARED_PROXY,
     // Shared
-    `${SHARED_ROOT}/nftx-project/nftx-v2`,
+    NFTX_SUBGRAPH_MAINNET_URLS.SHARED,
   ],
   [Network.Arbitrum]: `${SHARED_ROOT}/nftx-project/nftx-v2-arbitrum`,
   [Network.Rinkeby]: `${SHARED_ROOT}/nftx-project/nftx-v2-rinkeby`,
