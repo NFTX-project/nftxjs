@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import { NFTX_MARKETPLACE_0X_ZAP } from '@nftx/constants';
+import { NFTX_MARKETPLACE_0X_ZAP, NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
 import { doesNetworkSupport0x } from '../../price';
 import { Address, getChainConstant } from '../../web3';
 import isApproved from '../isApproved';
@@ -16,7 +16,7 @@ const isSellApproved = ({
 }: Args) => {
   const supports0x = doesNetworkSupport0x(network);
   const spenderAddress = getChainConstant(
-    supports0x ? NFTX_MARKETPLACE_0X_ZAP : NFTX_MARKETPLACE_0X_ZAP,
+    supports0x ? NFTX_MARKETPLACE_0X_ZAP : NFTX_MARKETPLACE_ZAP,
     network
   );
 
