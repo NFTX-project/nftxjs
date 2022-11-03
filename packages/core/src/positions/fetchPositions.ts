@@ -115,9 +115,9 @@ export default ({
         const xTokenBalance = balances.xTokens.find(
           ({ vaultId }) => vaultId === vault.vaultId
         )?.balance;
-        const xTokenShare = xTokenShares.find(
-          ({ vaultId }) => vaultId === vault.vaultId
-        )?.share;
+        const xTokenShare =
+          xTokenShares.find(({ vaultId }) => vaultId === vault.vaultId)
+            ?.share ?? Zero;
         const feeReceipts = allFeeReceipts?.filter((x) =>
           addressEqual(x.vaultAddress, vault.id)
         );

@@ -122,6 +122,9 @@ export default ({
         network,
       });
     }
+    if (xTokenShare == null) {
+      xTokenShare = Zero;
+    }
     const needsApr = args.inventoryApr == null || args.liquidityApr == null;
     const apr = needsApr
       ? (
