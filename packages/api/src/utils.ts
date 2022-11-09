@@ -18,7 +18,7 @@ export const bustCache = () => {
 
 export const queryApi = async <T>({
   url,
-  query,
+  query = {},
   method = 'GET',
 }: {
   url: string;
@@ -26,23 +26,22 @@ export const queryApi = async <T>({
   method?: string;
 }) => {
   const uri = new URL(url, config.urls.NFTX_API_URL);
-  if (query) {
-    Object.entries(query).forEach(([key, value]) => {
-      if (value == null) {
-        return;
-      }
-      if (Array.isArray(value)) {
-        value.forEach((v, i) => {
-          if (v == null) {
-            return;
-          }
-          uri.searchParams.append(key, v);
-        });
-      } else {
-        uri.searchParams.set(key, value);
-      }
-    });
-  }
+  uri.searchParams.set('ebn', 'true');
+  Object.entries(query).forEach(([key, value]) => {
+    if (value == null) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((v, i) => {
+        if (v == null) {
+          return;
+        }
+        uri.searchParams.append(key, v);
+      });
+    } else {
+      uri.searchParams.set(key, value);
+    }
+  });
   if (cacheKey) {
     uri.searchParams.set('_c', cacheKey);
   }
