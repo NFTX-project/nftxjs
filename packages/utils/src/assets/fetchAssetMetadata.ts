@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Asset, AssetMetadata } from './types';
+import type { Asset, AssetMetadata } from '@nftx/types';
 
 export type Response = {
   animation_url: null | string;
@@ -43,6 +43,11 @@ const fetchAssetMetadata = async ({
   }
 
   const meta: AssetMetadata = {
+    id: `${assetAddress}/${tokenId}`,
+    assetAddress,
+    metaUrl,
+    vaultId: null,
+    quantity: null,
     name: data.name,
     api: data.api_response,
     traits: data.traits,
