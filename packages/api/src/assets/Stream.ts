@@ -101,11 +101,15 @@ export default class Stream<T> implements IStream<T> {
     }
   }
 
-  end() {
-    if (!this.ended) {
-      this.ended = true;
-      this.reading = false;
-      this.listeners.end?.();
+  end(data: T) {
+    if (this.ended) {
+      return;
     }
+
+    this.listeners.data?.(data);
+
+    this.ended = true;
+    this.reading = false;
+    this.listeners.end?.();
   }
 }
