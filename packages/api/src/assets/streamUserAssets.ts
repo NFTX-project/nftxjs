@@ -28,11 +28,11 @@ const streamUserAssets = ({
         url,
         query: { cursor },
       });
-      stream.write(result.assets);
-      if (result.cursor) {
-        cursor = result.cursor;
+      cursor = result.cursor;
+      if (cursor) {
+        stream.write(result.assets);
       } else {
-        stream.end();
+        stream.end(result.assets);
       }
     } catch (e) {
       stream.error(e);
