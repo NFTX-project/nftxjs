@@ -17,6 +17,11 @@ type Response = {
   }>;
 };
 
+type OwnedCollection = Response['contracts'][0] & {
+  vaultId: string;
+  assetAddress: string;
+};
+
 const fetchUserCollectionsAlchemy = async ({
   network,
   userAddress,
@@ -29,7 +34,7 @@ const fetchUserCollectionsAlchemy = async ({
   const baseUrl = getChainConstant(config.urls.ALCHEMY_URL, network);
   const apiKey = config.keys.ALCHEMY;
 
-  const ownedCollections: { vaultId: string; assetAddress: string }[] = [];
+  const ownedCollections: OwnedCollection[] = [];
 
   let cursor: string = null;
 
@@ -60,7 +65,11 @@ const fetchUserCollectionsAlchemy = async ({
               !isCryptoKitty(v.asset.id)
           )
           .map((vault) => {
-            return { vaultId: vault.vaultId, assetAddress: vault.asset.id };
+            return {
+              vaultId: vault.vaultId,
+              assetAddress: vault.asset.id,
+              ...collection,
+            };
           });
       }) ?? [];
 
