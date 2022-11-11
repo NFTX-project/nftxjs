@@ -26,7 +26,15 @@ export type AssetMetadata = Asset & {
 export type Collection = {
   address: string;
   isSpam: boolean;
-  media: [{ raw: string; gateway: string }];
+  media: [
+    {
+      raw: string;
+      gateway: string;
+      thumbnail: string;
+      format: string;
+      bytes: number;
+    }
+  ];
   name: string;
   numDistinctTokensOwned: number;
   opensea?: {
