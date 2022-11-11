@@ -1,10 +1,10 @@
 import config from '@nftx/config';
 import type { Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
-import fetchUserCollectionsAlchemy from './alchemy';
+import fetchUserVaultCollectionsAlchemy from './alchemy';
 import fallback from './fallback';
 
-const fetchUserCollections = async ({
+const fetchUserVaultCollections = async ({
   network,
   userAddress,
   vaults,
@@ -18,10 +18,10 @@ const fetchUserCollections = async ({
     config.keys.ALCHEMY
   ) {
     console.debug('fetching collections from alchemy');
-    return fetchUserCollectionsAlchemy({ network, userAddress, vaults });
+    return fetchUserVaultCollectionsAlchemy({ network, userAddress, vaults });
   }
   console.debug('fetching collections the hard way');
   return fallback({ network, userAddress, vaults });
 };
 
-export default fetchUserCollections;
+export default fetchUserVaultCollections;

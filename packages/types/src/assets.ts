@@ -22,3 +22,14 @@ export type AssetMetadata = Asset & {
   animationUrl: string;
   backgroundColor: string;
 };
+
+export type Collection = {
+  address: string;
+  totalBalance: number;
+  numDistinctTokensOwned: number;
+  isSpam: boolean;
+  tokenId: string;
+  name: string;
+  symbol: string;
+  tokenType: 'ERC721' | 'ERC1155';
+};

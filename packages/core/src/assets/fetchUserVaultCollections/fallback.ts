@@ -1,7 +1,7 @@
 import type { Asset, Vault } from '@nftx/types';
 import fetchAssets from '../fetchAssets';
 
-const fetchUserCollectionsFallback = async ({
+const fetchUserVaultCollectionsFallback = async ({
   network,
   userAddress,
   vaults,
@@ -37,4 +37,4 @@ const fetchUserCollectionsFallback = async ({
   return Object.values(groupedAssets);
 };
 
-export default fetchUserCollectionsFallback;
+export default fetchUserVaultCollectionsFallback;

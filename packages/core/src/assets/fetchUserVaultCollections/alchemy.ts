@@ -1,6 +1,6 @@
 import config from '@nftx/config';
-import { getChainConstant } from '@nftx/utils';
-import type { Collection } from '../types';
+import type { Vault } from '@nftx/types';
+import { addressEqual, getChainConstant, isCryptoKitty } from '@nftx/utils';
 
 type Response = {
   totalCount: number;
@@ -17,17 +17,22 @@ type Response = {
   }>;
 };
 
-const fetchUserCollectionsAlchemy = async ({
+const fetchUserVaultCollectionsAlchemy = async ({
   network,
   userAddress,
+  vaults,
 }: {
   network: number;
   userAddress: string;
+  vaults: Pick<Vault, 'asset' | 'vaultId'>[];
 }) => {
   const baseUrl = getChainConstant(config.urls.ALCHEMY_URL, network);
   const apiKey = config.keys.ALCHEMY;
 
-  const ownedCollections: Collection[] = [];
+  const ownedCollections: {
+    vaultId: string;
+    assetAddress: string;
+  }[] = [];
 
   let cursor: string = null;
 
@@ -49,7 +54,21 @@ const fetchUserCollectionsAlchemy = async ({
     }
     const data: Response = await response.json();
 
-    const collections = data?.contracts || [];
+    const collections =
+      data?.contracts?.flatMap((collection) => {
+        return vaults
+          .filter(
+            (v) =>
+              addressEqual(v.asset.id, collection.address) &&
+              !isCryptoKitty(v.asset.id)
+          )
+          .map((vault) => {
+            return {
+              vaultId: vault.vaultId,
+              assetAddress: vault.asset.id,
+            };
+          });
+      }) ?? [];
 
     ownedCollections.push(...collections);
     cursor = data?.pageKey;
@@ -58,4 +77,4 @@ const fetchUserCollectionsAlchemy = async ({
   return ownedCollections;
 };
 
-export default fetchUserCollectionsAlchemy;
+export default fetchUserVaultCollectionsAlchemy;

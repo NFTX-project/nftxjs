@@ -1,1 +1,1 @@
-export { default } from './fetchUsercollections';
+export { default } from './fetchUserCollections';
