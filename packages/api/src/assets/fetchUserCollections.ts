@@ -1,7 +1,8 @@
 import config from '@nftx/config';
+import type { Collection } from '@nftx/types';
 import { queryApi } from '../utils';
 
-type Response = { vaultId: string; assetAddress: string }[];
+type Response = Collection[];
 
 const fetchUserCollections = ({
   network = config.network,
