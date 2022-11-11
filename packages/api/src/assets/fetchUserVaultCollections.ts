@@ -10,7 +10,7 @@ const fetchUserVaultCollections = ({
   network?: number;
   userAddress: string;
 }) => {
-  const url = `/${network}/users/${userAddress}/vaultCollections`;
+  const url = `/${network}/users/${userAddress}/vault-collections`;
   return queryApi<Response>({
     url,
   });
