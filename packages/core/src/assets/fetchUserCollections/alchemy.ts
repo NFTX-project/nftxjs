@@ -1,20 +1,11 @@
 import config from '@nftx/config';
+import type { Collection } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
-import type { Collection } from '../types';
 
 type Response = {
   totalCount: number;
   pageKey: string;
-  contracts: Array<{
-    address: string;
-    totalBalance: number;
-    numDistinctTokensOwned: number;
-    isSpam: boolean;
-    tokenId: string;
-    name: string;
-    symbol: string;
-    tokenType: 'ERC721' | 'ERC1155';
-  }>;
+  contracts: Collection[];
 };
 
 const fetchUserCollectionsAlchemy = async ({
