@@ -25,11 +25,21 @@ export type AssetMetadata = Asset & {
 
 export type Collection = {
   address: string;
-  totalBalance: number;
-  numDistinctTokensOwned: number;
   isSpam: boolean;
-  tokenId: string;
+  media: [{ raw: string; gateway: string }];
   name: string;
+  numDistinctTokensOwned: number;
+  opensea?: {
+    floorPrice: number;
+    collectionName: string;
+    safelistRequestStatus: string;
+    imageUrl: string;
+    description: string;
+    lastIngestedAt: string;
+  };
   symbol: string;
-  tokenType: 'ERC721' | 'ERC1155';
+  tokenId: string;
+  tokenType: 'ERC721' | 'ERC1155' | 'UNKNOWN';
+  totalBalance: number;
+  totalSupply: string;
 };
