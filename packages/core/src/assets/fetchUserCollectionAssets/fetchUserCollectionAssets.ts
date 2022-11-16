@@ -1,25 +1,19 @@
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import type { Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import fetchAssetsAlchemy from './fetchAssetsAlchemy';
 import fetchAssetsSubgraph from './fetchAssetsSubgraph';
 
-const fetchAssets = async ({
+const fetchUserCollectionAssets = async ({
   network,
-  vaults,
+  assetAddresses,
   userAddress,
   cursor,
-  provider,
 }: {
   network: number;
   userAddress: string;
   cursor?: string;
-  vaults: Pick<Vault, 'asset' | 'vaultId' | 'eligibilityModule' | 'features'>[];
-  provider: Provider;
+  assetAddresses: string[];
 }) => {
-  const assetAddresses = [...new Set(vaults.map((v) => v.asset.id))];
-
   if (
     getChainConstant(config.urls.ALCHEMY_URL, network, null) &&
     config.keys.ALCHEMY
@@ -30,9 +24,7 @@ const fetchAssets = async ({
         assetAddresses,
         cursor,
         network,
-        provider,
         userAddress,
-        vaults,
       });
     } catch (e) {
       if (e.message?.includes?.('falling back to subgraph')) {
@@ -50,10 +42,8 @@ const fetchAssets = async ({
     assetAddresses,
     network,
     userAddress,
-    vaults,
     cursor,
-    provider,
   });
 };
 
-export default fetchAssets;
+export default fetchUserCollectionAssets;

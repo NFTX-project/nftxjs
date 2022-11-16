@@ -1,19 +1,23 @@
 import config from '@nftx/config';
 import type { Asset } from '@nftx/types';
-import streamUserAssets from './streamUserAssets';
+import streamUserCollectionAssets from './streamUserCollectionAssets';
 
-const fetchAllUserAssets = ({
+const fetchAllUserCollectionAssets = ({
   network = config.network,
   userAddress,
-  vaultId,
+  assetAddress,
 }: {
   network?: number;
   userAddress: string;
-  vaultId?: string;
+  assetAddress: string;
 }) => {
   return new Promise<Asset[]>((res, rej) => {
     const allAssets: Asset[] = [];
-    const stream = streamUserAssets({ userAddress, network, vaultId });
+    const stream = streamUserCollectionAssets({
+      userAddress,
+      network,
+      assetAddress,
+    });
 
     stream.on('data', (data) => {
       allAssets.push(...data);
@@ -25,4 +29,4 @@ const fetchAllUserAssets = ({
   });
 };
 
-export default fetchAllUserAssets;
+export default fetchAllUserCollectionAssets;

@@ -1,5 +1,4 @@
-import type { Provider } from '@ethersproject/providers';
-import type { Asset, Vault } from '@nftx/types';
+import type { Asset } from '@nftx/types';
 import { createCursor, parseCursor } from './cursor';
 import erc1155 from './erc1155';
 import erc721 from './erc721';
@@ -10,15 +9,11 @@ const fetchAssetsSubgraph = async ({
   assetAddresses,
   network,
   userAddress,
-  vaults,
-  provider,
 }: {
   cursor?: string;
   assetAddresses: string[];
   network: number;
   userAddress: string;
-  vaults: Pick<Vault, 'vaultId' | 'asset' | 'eligibilityModule' | 'features'>[];
-  provider: Provider;
 }): Promise<{ cursor: string; assets: Asset[] }> => {
   let { next1155Id, next721Id, nextNonStandardId } = parseCursor(cursor);
 
@@ -29,9 +24,7 @@ const fetchAssetsSubgraph = async ({
       assetAddresses,
       network,
       userAddress,
-      vaults,
       lastId: next721Id,
-      provider,
     });
     allAssets.push(...assets);
     next721Id = nextId;
@@ -41,9 +34,7 @@ const fetchAssetsSubgraph = async ({
       assetAddresses,
       network,
       userAddress,
-      vaults,
       lastId: next1155Id,
-      provider,
     });
     assets.push(...assets);
     next1155Id = nextId;
@@ -53,9 +44,7 @@ const fetchAssetsSubgraph = async ({
       assetAddresses,
       network,
       userAddress,
-      vaults,
       lastId: nextNonStandardId,
-      provider,
     });
     allAssets.push(...assets);
     nextNonStandardId = nextId;

@@ -1,9 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import type { Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
-import type { Asset, Vault } from '@nftx/types';
+import type { Asset } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { processAssetItems } from '../utils';
 
@@ -27,16 +26,12 @@ const erc1155 = async ({
   network,
   userAddress,
   assetAddresses,
-  vaults,
-  provider,
   lastId = '0',
   retryCount = 0,
 }: {
   network: number;
   userAddress: string;
   assetAddresses: string[];
-  vaults: Pick<Vault, 'vaultId' | 'asset' | 'features' | 'eligibilityModule'>[];
-  provider: Provider;
   lastId?: string;
   retryCount?: number;
 }): Promise<{ assets: Asset[]; nextId: string }> => {
@@ -84,8 +79,6 @@ const erc1155 = async ({
         network,
         userAddress,
         lastId,
-        vaults,
-        provider,
         retryCount: retryCount + 1,
       });
     }
@@ -94,8 +87,6 @@ const erc1155 = async ({
 
   const assets = await processAssetItems({
     network,
-    provider,
-    vaults,
     items:
       data?.account?.balances?.map((x) => {
         const assetAddress = x.contract.id;

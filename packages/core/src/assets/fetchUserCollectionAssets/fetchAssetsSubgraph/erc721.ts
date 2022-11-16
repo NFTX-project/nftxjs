@@ -2,9 +2,8 @@ import { Network } from '@nftx/constants';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import config from '@nftx/config';
 import { getChainConstant } from '@nftx/utils';
-import type { Asset, Vault } from '@nftx/types';
+import type { Asset } from '@nftx/types';
 import { processAssetItems } from '../utils';
-import type { Provider } from '@ethersproject/providers';
 
 const LIMIT = 1000;
 
@@ -12,16 +11,12 @@ const erc721 = async ({
   network,
   userAddress,
   assetAddresses,
-  vaults,
-  provider,
   lastId = '-1',
   retryCount = 0,
 }: {
   network: number;
   userAddress: string;
   assetAddresses: string[];
-  provider: Provider;
-  vaults: Pick<Vault, 'asset' | 'vaultId' | 'features' | 'eligibilityModule'>[];
   lastId?: string;
   retryCount?: number;
 }): Promise<{ assets: Asset[]; nextId: string }> => {
@@ -77,8 +72,6 @@ const erc721 = async ({
         nextId = data.account.tokens[data.account.tokens.length - 1].identifier;
         assets = await processAssetItems({
           network,
-          provider,
-          vaults,
           items: data.account.tokens.map((x) => ({
             assetAddress: x.contract.id,
             tokenId: x.identifier,
@@ -129,8 +122,6 @@ const erc721 = async ({
         nextId = data.account.tokens[data.account.tokens.length - 1].identifier;
         assets = await processAssetItems({
           network,
-          provider,
-          vaults,
           items: data.account.tokens.map((x) => {
             const [assetAddress] = x.id.split('/');
             const tokenId = x.identifier;
@@ -148,9 +139,7 @@ const erc721 = async ({
         assetAddresses,
         network,
         userAddress,
-        vaults,
         lastId,
-        provider,
         retryCount: retryCount + 1,
       });
     }

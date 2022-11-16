@@ -1,11 +1,26 @@
 import config from '@nftx/config';
 import type { Asset } from '@nftx/types';
-import { queryApi } from '../utils';
-import Stream, { type IStream } from './Stream';
+import { queryApi } from '../../utils';
+import Stream, { type IStream } from '../Stream';
 
 type Response = { assets: Asset[]; cursor: string };
 
-const streamUserAssets = ({
+const getUrl = ({
+  network,
+  userAddress,
+  vaultId,
+}: {
+  vaultId: string;
+  network: number;
+  userAddress: string;
+}) => {
+  if (vaultId) {
+    return `/${network}/users/${userAddress}/vaults/${vaultId}/assets`;
+  }
+  return `/${network}/users/${userAddress}/assets`;
+};
+
+const streamUserVaultAssets = ({
   network = config.network,
   userAddress,
   vaultId,
@@ -20,9 +35,7 @@ const streamUserAssets = ({
 
   stream.on('read', async () => {
     try {
-      const url = vaultId
-        ? `/${network}/users/${userAddress}/vaults/${vaultId}/assets`
-        : `/${network}/users/${userAddress}/assets`;
+      const url = getUrl({ network, userAddress, vaultId });
 
       const result = await queryApi<Response>({
         url,
@@ -42,4 +55,4 @@ const streamUserAssets = ({
   return stream;
 };
 
-export default streamUserAssets;
+export default streamUserVaultAssets;
