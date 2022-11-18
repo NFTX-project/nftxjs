@@ -1,11 +1,12 @@
 import config from '@nftx/config';
-import type { Asset, AssetMetadata } from '@nftx/types';
+import type { Address } from '../web3/types';
+import type { Asset, AssetMetadata } from './types';
 
 export type Response = {
   animation_url: null | string;
   api_response: 'covalent' | 'opensea';
   asset_contract: {
-    address: string;
+    address: Address;
     name: string;
   };
   background_color?: null | string;
@@ -32,7 +33,7 @@ const fetchAssetMetadata = async ({
   tokenId,
   network = config.network,
 }: Pick<Asset, 'assetAddress' | 'tokenId'> & { network?: number }) => {
-  const metaUrl = `https://meta-api.nftx.xyz/asset/${assetAddress}/${tokenId}?chainId=${network}`;
+  const metaUrl = `https://metadata-api.nftx.xyz/asset/${assetAddress}/${tokenId}?chainId=${network}`;
   const response = await fetch(metaUrl);
   if (!response.ok) {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -43,11 +44,6 @@ const fetchAssetMetadata = async ({
   }
 
   const meta: AssetMetadata = {
-    id: `${assetAddress}/${tokenId}`,
-    assetAddress,
-    metaUrl,
-    vaultId: null,
-    quantity: null,
     name: data.name,
     api: data.api_response,
     traits: data.traits,
