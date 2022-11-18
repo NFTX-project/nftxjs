@@ -18,8 +18,8 @@ const fetchFees = ({
   vaultIds?: string[];
 }) => {
   if (fromTimestamp) {
-    // Round timestamps to the nearest 30s
-    fromTimestamp = Math.floor(Math.round(fromTimestamp / 60) * 60);
+    // Round timestamps to the nearest 60m
+    fromTimestamp = Math.floor(Math.round(fromTimestamp / 3600) * 3600);
   }
   return queryApi<VaultFeeReceipt[]>({
     url: `/${network}/vault-fees`,

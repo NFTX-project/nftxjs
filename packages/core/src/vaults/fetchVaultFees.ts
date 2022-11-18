@@ -200,7 +200,7 @@ async function fetchVaultFees({
   fromTimestamp?: number;
 }) {
   const roundedTimestamp = fromTimestamp
-    ? Math.floor(Math.round(fromTimestamp / 60) * 60)
+    ? Math.floor(Math.round(fromTimestamp / 3600) * 3600)
     : undefined;
 
   if (vaultAddress) {

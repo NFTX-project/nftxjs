@@ -81,7 +81,7 @@ export const processAssetItems = async ({
               assetAddress: item.assetAddress,
               tokenId: item.tokenId,
               vaultId: vault.vaultId,
-              metaUrl: `https://api.nftx.xyz/asset/${item.assetAddress}/${item.tokenId}?chainId=${network}`,
+              metaUrl: `https://metadata-api.nftx.xyz/asset/${item.assetAddress}/${item.tokenId}?chainId=${network}`,
               quantity: item.quantity,
             };
             return asset;
