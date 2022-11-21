@@ -32,7 +32,7 @@ const fetchAssetMetadata = async ({
   tokenId,
   network = config.network,
 }: Pick<Asset, 'assetAddress' | 'tokenId'> & { network?: number }) => {
-  const metaUrl = `https://meta-api.nftx.xyz/asset/${assetAddress}/${tokenId}?chainId=${network}`;
+  const metaUrl = `https://metadata-api.nftx.xyz/asset/${assetAddress}/${tokenId}?chainId=${network}`;
   const response = await fetch(metaUrl);
   if (!response.ok) {
     throw new Error(`${response.status}: ${response.statusText}`);
