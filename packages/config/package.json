@@ -1,6 +1,6 @@
 {
   "name": "@nftx/config",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "@nftx/constants": "<1.0.0"
   },
   "devDependencies": {
-    "@nftx/constants": "^0.1.0"
+    "@nftx/constants": "^0.1.1"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
