@@ -6,7 +6,7 @@ import type { Price } from '@nftx/types';
 import { fetchReservesForToken } from '@nftx/utils';
 import { BigNumber } from 'ethers';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
-import fetch0xPrice from './fetch0XPrice';
+import fetch0xPrice from './fetch0xPrice';
 
 const fetchSpotPriceFromApi = async ({
   network,

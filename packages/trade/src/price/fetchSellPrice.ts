@@ -7,7 +7,7 @@ import routerAbi from '@nftx/constants/abis/UniswapV2Router.json';
 import type { Price } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
-import fetch0xPrice from './fetch0XPrice';
+import fetch0xPrice from './fetch0xPrice';
 
 const fetchSellPriceFromApi = async ({
   network,
