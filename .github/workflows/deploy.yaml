@@ -16,4 +16,4 @@ jobs:
         env:
           GH_TOKEN: ${{secrets.GH_TOKEN}}
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: yarn lerna publish
+        run: yarn lerna publish -y
