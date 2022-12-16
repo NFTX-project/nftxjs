@@ -1,0 +1,14 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 0.1.0 (2022-12-16)
+
+
+### Features
+
+* **@nftx/api:** api package ([154e4cb](https://github.com/NFTX-project/nftxjs/commit/154e4cbd0f54280ce0cb678cd77ab09c47986edb))
+* **@nftx/constants:** new package ([baac254](https://github.com/NFTX-project/nftxjs/commit/baac2544d10d7290a8325d1ed595cb2892ac97e1))
+* **@nftx/subgraph:** new package ([ff522eb](https://github.com/NFTX-project/nftxjs/commit/ff522ebc08cdef496fccf99f5477445e83def55a))
+* **nftx.js:** new package ([45079e7](https://github.com/NFTX-project/nftxjs/commit/45079e7df59563978583186fa20b07fb4959fad8))
