@@ -10,6 +10,9 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
       - name: Build
         run: yarn ci
       - name: Deploy
