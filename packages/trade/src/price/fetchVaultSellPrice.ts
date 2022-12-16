@@ -3,7 +3,7 @@ import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import type { Vault } from '@nftx/types';
 import calculateSellFee from './calculateSellFee';
-import fetchSellPrice from './FetchSellPrice';
+import fetchSellPrice from './fetchSellPrice';
 
 /** Fetches the sell price for a given vault */
 const fetchVaultSellPrice = async ({
