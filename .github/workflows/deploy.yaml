@@ -19,11 +19,11 @@ jobs:
           token: '${{ secrets.GH_TOKEN }}'
 
       - name: Build
-        run: yarn ci
+        run: yarn ci && git add . && git reset --hard
 
       - name: Publish
         env:
           GH_TOKEN: ${{secrets.GH_TOKEN}}
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: yarn lerna version -y && pnpm publish -r --no-git-checks
+        run: yarn lerna version # && pnpm publish -r --no-git-checks
