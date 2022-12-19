@@ -19,7 +19,7 @@ jobs:
           token: '${{ secrets.GH_TOKEN }}'
 
       - name: Build
-        run: yarn ci && git add . && git reset --hard
+        run: yarn ci && git add . && git reset --hard && git pull --tags
 
       - name: Publish
         env:
