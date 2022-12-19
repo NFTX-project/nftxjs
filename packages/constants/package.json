@@ -1,6 +1,6 @@
 {
   "name": "@nftx/constants",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "",
   "main": "dist/cjs/constants.js",
   "module": "dist/es/constants.js",
