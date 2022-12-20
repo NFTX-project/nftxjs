@@ -1,6 +1,6 @@
 {
   "name": "@nftx/utils",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -44,10 +44,10 @@
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@ethersproject/units": "^5.6.0",
-    "@nftx/config": "^0.1.3",
-    "@nftx/constants": "^0.1.3",
-    "@nftx/subgraph": "^0.1.3",
-    "@nftx/types": "^0.1.3",
+    "@nftx/config": "^0.1.4",
+    "@nftx/constants": "^0.1.4",
+    "@nftx/subgraph": "^0.1.4",
+    "@nftx/types": "^0.1.4",
     "ethers": "^5.6.2"
   },
   "bugs": {

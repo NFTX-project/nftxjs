@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.4](https://github.com/NFTX-project/nftxjs/compare/v0.1.3...v0.1.4) (2022-12-20)
+
+
+### Bug Fixes
+
+* **@nftx/constants:** test release commit ([0560788](https://github.com/NFTX-project/nftxjs/commit/05607888cf249066d02987469a0567edb0b75725))
+
+
+
+
+
 ## 0.1.3 (2022-12-19)
 
 **Note:** Version bump only for package nftxjs
