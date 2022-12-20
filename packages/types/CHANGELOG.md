@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.7](https://github.com/NFTX-project/nftxjs/compare/v0.1.6...v0.1.7) (2022-12-20)
+
+
+### Bug Fixes
+
+* **@nftx/types:** force release ([ab34793](https://github.com/NFTX-project/nftxjs/commit/ab34793fccd6e36da469c48154af686b8456027f))
+
+
+
+
+
 ## [0.1.6](https://github.com/NFTX-project/nftxjs/compare/v0.1.5...v0.1.6) (2022-12-20)
 
 
