@@ -1,6 +1,6 @@
 {
   "name": "@nftx/trade",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -44,8 +44,8 @@
     "@ethersproject/units": "^5.6.0",
     "@nftx/config": "^0.1.5",
     "@nftx/constants": "^0.1.5",
-    "@nftx/types": "^0.1.4",
-    "@nftx/utils": "^0.1.5",
+    "@nftx/types": "^0.1.6",
+    "@nftx/utils": "^0.1.6",
     "ethers": "^5.6.2"
   },
   "bugs": {
