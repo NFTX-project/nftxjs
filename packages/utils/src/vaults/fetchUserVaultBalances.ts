@@ -7,6 +7,9 @@ import { getChainConstant } from '../web3';
 type QuerySubgraph = typeof querySubgraph;
 
 export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  /**
+   * Fetches a user's holdings of vToken/xToken/vTokenWETH/xTokenWETH across all vaults
+   */
   async function fetchUserBalances({
     userAddress,
     network = config.network,

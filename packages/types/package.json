@@ -4,8 +4,10 @@
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
-  "main": "main.js",
   "types": "dist/ts/index.d.ts",
+  "typedoc": {
+    "entryPoint": "src/index.ts"
+  },
   "publishConfig": {
     "access": "public"
   },

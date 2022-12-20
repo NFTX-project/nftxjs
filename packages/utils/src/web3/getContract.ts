@@ -4,8 +4,9 @@ import config from '@nftx/config';
 import type { Signer } from 'ethers';
 import MulticallContract from './MulticallContract';
 
-/** Returns an ethers.js contract
- * For "read" if multicall is supported and enabled it will return a multicall contract
+/**
+ * Returns an ethers.js contract
+ * For "read" calls: if multicall is supported and enabled it will return a MulticallContract
  */
 const getContract = <T>({
   network = config.network,
@@ -16,10 +17,15 @@ const getContract = <T>({
   multicall = true,
 }: {
   network?: number;
+  /** An ethers provider - only required for contract reads */
   provider?: Provider;
+  /** An ethers signer - only required for contract writes */
   signer?: Signer;
+  /** The contract address */
   address: string;
+  /** The JSON-formatted ABI interface */
   abi: ContractInterface;
+  /** Whether or not to enable multicall contracts */
   multicall?: boolean;
 }): Contract & T => {
   if (signer) {

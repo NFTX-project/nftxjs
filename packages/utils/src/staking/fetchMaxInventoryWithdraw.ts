@@ -12,19 +12,14 @@ export default ({ getContract }: { getContract: GetContract }) =>
    * Rather than just taking your xToken balance and rounding it down,
    * this calculates the exact amount you can withdraw and whether there is a fractional remainder amount
    */
-  async function fetchMaxInventoryWithdraw({
-    network,
-    provider,
-    xToken,
-    userAddress,
-    vaultId,
-  }: {
+  async function fetchMaxInventoryWithdraw(args: {
     network: number;
     provider: Provider;
     vaultId: string;
     userAddress: string;
     xToken: string;
   }) {
+    const { network, provider, xToken, userAddress, vaultId } = args;
     const contract = getContract({
       network,
       provider,

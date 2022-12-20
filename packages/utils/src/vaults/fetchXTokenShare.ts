@@ -6,6 +6,10 @@ import getContract from '../web3/getContract';
 import { getChainConstant } from '../web3';
 import config from '@nftx/config';
 
+/**
+ * For the given vaultId, returns the xTokenShare.
+ * The xTokenShare is what 1 xToken is worth in vToken.
+ */
 const fetchXTokenShare = async ({
   network = config.network,
   provider,

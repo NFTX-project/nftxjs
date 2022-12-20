@@ -7,6 +7,9 @@
   "main": "dist/cjs/nftx.js",
   "module": "dist/es/nftx.js",
   "types": "dist/ts/index.d.ts",
+  "typedoc": {
+    "entryPoint": "src/index.ts"
+  },
   "publishConfig": {
     "access": "public"
   },

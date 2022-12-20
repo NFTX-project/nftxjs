@@ -12,6 +12,9 @@ export default ({
   fetchUserVaultBalances: FetchUserVaultBalances;
   balanceOf: BalanceOf;
 }) =>
+  /**
+   * Fetches a user's holdings of vToken/xToken/vTokenWETH/xTokenWETH for a specific vault
+   */
   async function fetchUserVaultBalance({
     userAddress,
     network,

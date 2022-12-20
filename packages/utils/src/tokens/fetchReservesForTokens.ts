@@ -121,14 +121,16 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
   };
 }
 
-/** Fetch token/weth reserves for the given addresses */
-const fetchReservesForTokens = async ({
-  network = config.network,
-  tokenAddresses,
-}: {
+/**
+ * Fetch token/weth reserves for the given addresses
+ * The reserves are pulled from the Sushi subgraph
+ * @returns Promise<{@link @nftx/types!TokenReserve}[]>
+ */
+const fetchReservesForTokens = async (args: {
   network?: number;
   tokenAddresses?: string[];
 }) => {
+  const { network = config.network, tokenAddresses } = args;
   const query = gql<Response>`{
     tokens(
       first: ${LIMIT},

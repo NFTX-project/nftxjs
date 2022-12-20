@@ -1,3 +1,5 @@
+.DS_Store
+
 # Logs
 logs
 *.log
@@ -47,6 +49,7 @@ typings/
 # TypeScript cache
 *.tsbuildinfo
 
+
 # Optional npm cache directory
 .npm
 
@@ -81,6 +84,8 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
+out
+/docs
 
 # Gatsby files
 .cache/

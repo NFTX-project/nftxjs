@@ -12,17 +12,13 @@ export default () =>
    * And processTokens to process them first
    * (Unprocessed assets will always just return false if passed in here first)
    */
-  async function checkEligible({
-    network = config.network,
-    vault,
-    provider,
-    tokenIds,
-  }: {
+  async function checkEligible(args: {
     network?: number;
     vault: Pick<Vault, 'eligibilityModule'>;
     provider: Provider;
     tokenIds: string[];
   }) {
+    const { network = config.network, vault, provider, tokenIds } = args;
     if (!vault.eligibilityModule?.id) {
       return tokenIds.map((tokenId) => ({ tokenId, eligible: true }));
     }

@@ -1,9 +1,13 @@
 type Fetch = typeof fetch;
 
 export default ({ fetch }: { fetch: Fetch }) =>
+  /**
+   * Returns an approximate block number for a given timestamp
+   */
   async function fetchBlockNumberByTimestamp({
     timestamp,
   }: {
+    /** Timestamp in seconds */
     timestamp: number;
   }) {
     const response = await fetch(

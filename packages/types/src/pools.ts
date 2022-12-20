@@ -1,6 +1,10 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { TokenReserve } from './tokens';
 
+/**
+ * An NFTX pool
+ * This interface contains details on both inventory staking and liquidity staking
+ */
 export type Pool = {
   vaultId: string;
   vaultAddress: string;

@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import type { TransactionEvent, TransactionState } from '../types';
 
-type IEventsContext = {
+export type IEventsContext = {
   events: TransactionEvent[];
   pushEvent: (e: TransactionEvent) => void;
 };

@@ -7,6 +7,9 @@
   "main": "dist/cjs/api.js",
   "module": "dist/es/api.js",
   "types": "dist/ts/index.d.ts",
+  "typedoc": {
+    "entryPoint": "src/index.ts"
+  },
   "publishConfig": {
     "access": "public"
   },

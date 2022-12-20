@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Asset, AssetMetadata } from '@nftx/types';
+import type { AssetMetadata } from '@nftx/types';
 
 export type Response = {
   animation_url: null | string;
@@ -24,14 +24,17 @@ export type Response = {
   traits: { [key: string]: string | [] };
 };
 
-/** Fetches metadata for a given asset meta url
- * You can get the meta url from asset.metaUrl (where asset was fetched from fetchUserAssets)
+/**
+ * Fetches metadata for a given {@link @nftx/types!Asset} meta url.
+ * You can get the meta url from asset.metaUrl
+ * @returns Promise<{@link @nftx/types!AssetMetadata}>
  */
-const fetchAssetMetadata = async ({
-  assetAddress,
-  tokenId,
-  network = config.network,
-}: Pick<Asset, 'assetAddress' | 'tokenId'> & { network?: number }) => {
+const fetchAssetMetadata = async (args: {
+  assetAddress: string;
+  tokenId: string;
+  network?: number;
+}) => {
+  const { assetAddress, tokenId, network = config.network } = args;
   const metaUrl = `https://metadata-api.nftx.xyz/asset/${assetAddress}/${tokenId}?chainId=${network}`;
   const response = await fetch(metaUrl);
   if (!response.ok) {

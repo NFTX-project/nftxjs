@@ -11,6 +11,7 @@
     "test": "lerna run test",
     "build": "lerna run build",
     "yalc": "lerna exec yalc publish",
+    "docs": "typedoc --name nftx.js --entryPointStrategy packages .",
     "ci": "yarn install && yarn lint && yarn test"
   },
   "devDependencies": {
@@ -22,15 +23,18 @@
     "@types/react": "^18.0.7",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0",
+    "better-docs": "^2.7.2",
     "eslint": "^8.12.0",
     "eslint-config-next": "^12.1.4",
     "eslint-config-prettier": "^8.5.0",
     "ethers": "^5.6.2",
     "jest": "^27.5.1",
+    "jsdoc": "^3.6.11",
     "lerna": "^6.1.0",
     "rollup": "^2.70.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-node-resolve": "^5.2.0",
+    "typedoc": "^0.23.23",
     "typescript": "^4.6.3"
   },
   "workspaces": [

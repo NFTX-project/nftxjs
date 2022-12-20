@@ -1,7 +1,7 @@
 import { parseUnits } from '@ethersproject/units';
 
 /** Takes a number and returns a BigNumber
- * Essentially the same as parseEther but accounts for things like decimal precision
+ * Essentially the same as ethers.js's parseEther but accounts for things like decimal precision
  */
 const fromEthersNumber = (
   val: number | string,
@@ -22,7 +22,6 @@ const fromEthersNumber = (
   }
 
   try {
-    // return BigNumber.from(`${value * 10 ** precision}`);
     return parseUnits(value, precision);
   } catch (e) {
     console.error(e);

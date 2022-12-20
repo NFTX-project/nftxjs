@@ -13,7 +13,7 @@ import type { Signer } from 'ethers';
 
 type Core = typeof core;
 
-type INftxContext = {
+export type INftxContext = {
   core: Core;
   network: number;
   provider: Provider;

@@ -1,6 +1,9 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Pool } from './pools';
 
+/**
+ * A given user's NFTX position in a given a pool
+ */
 export type Position = Pool & {
   userAddress: string;
   /** The amount of ETH staked by the user (paired with vToken) */

@@ -7,6 +7,9 @@
   "main": "dist/cjs/react.js",
   "module": "dist/es/react.js",
   "types": "dist/ts/index.d.ts",
+  "typedoc": {
+    "entryPoint": "src/index.ts"
+  },
   "publishConfig": {
     "access": "public"
   },

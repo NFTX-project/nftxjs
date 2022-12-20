@@ -92,14 +92,12 @@ const calculateApr = ({
   return apr;
 };
 
-const calculateVaultApr = ({
-  vault,
-  slpSupply,
-  slpBalance,
-  xTokenSupply,
-  xTokenShare,
-  periodFees,
-}: {
+/**
+ * Calculate a vault's APR rate.
+ * This method requires several different datapoints, such as slpSupply, xTokenSupply, accrued fees, etc.
+ * Therefore it is recommended to instead use {@link @nftx/api!fetchPool} to get a vault's pool which contains the current APR values.
+ */
+const calculateVaultApr = (args: {
   vault: Pick<Vault, 'reserveVtoken' | 'createdAt'>;
   slpSupply: BigNumber;
   slpBalance: BigNumber;
@@ -107,6 +105,14 @@ const calculateVaultApr = ({
   xTokenShare: BigNumber;
   periodFees: BigNumber;
 }) => {
+  const {
+    vault,
+    slpSupply,
+    slpBalance,
+    xTokenSupply,
+    xTokenShare,
+    periodFees,
+  } = args;
   const lpVToken = calculateLiquidityPoolSize({
     reserveVToken: vault.reserveVtoken,
     slpSupply,

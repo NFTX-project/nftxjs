@@ -12,22 +12,23 @@ import {
 } from './utils';
 
 /**
- * Takes an existing position and an amount of liquidity/inventory to add or remove, and returns new position properties
+ * Takes an existing {@link @nftx/types!Position} and an amount of liquidity/inventory to add or remove, and returns new position properties.
+ * This allows you to estimate impacts on pool share, apy, reserves, etc.
  */
 const adjustPosition = (
   position: Position,
-  {
-    vToken,
-    slp,
-    lpEth,
-    lpNft,
-  }: {
+  args: {
+    /** Amount of vToken to stake as inventory */
     vToken?: BigNumber;
+    /** Amount of slp (vTokenWETH) to stake as liquidity */
     slp?: BigNumber;
+    /** Amount of NFTs to stake (must be paired with lpEth) */
     lpNft?: BigNumber;
+    /** Amount of ETH to stake (must be paired with lpNft) */
     lpEth?: BigNumber;
   }
 ): Position => {
+  const { vToken, slp, lpEth, lpNft } = args;
   let {
     inventoryShare,
     liquidityShare,

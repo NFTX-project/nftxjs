@@ -12,13 +12,11 @@ export default ({
 }: {
   fetchMerkleLeaves: FetchMerkleLeaves;
 }) =>
-  async function requiresProcessing({
-    tokenIds,
-    network = config.network,
-    provider,
-    vault,
-    leaves,
-  }: {
+  /**
+   * Checks if a set of token ids require processing
+   * For each token that returns true, you will need to call {@link processTokens}
+   */
+  async function requiresProcessing(args: {
     network?: number;
     provider: Provider;
     tokenIds: string[];
@@ -28,8 +26,11 @@ export default ({
         'id' | 'merkleReference'
       >;
     };
+    /** Merkle eligibility leaves. If this parameter is omitted, they will be fetched as part of this method */
     leaves?: string[];
   }) {
+    const { tokenIds, network = config.network, provider, vault } = args;
+    let { leaves } = args;
     if (!tokenIds.length) {
       return [];
     }

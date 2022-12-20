@@ -197,7 +197,7 @@ const wrapContract = (network: number, contract: EthersContract) => {
   return proxy;
 };
 
-interface IMulticallContractClass {
+export interface IMulticallContractClass {
   new <T extends Record<string, any>>(
     network: number,
     addressOrName: string,
@@ -205,7 +205,8 @@ interface IMulticallContractClass {
     provider: Provider
   ): IMulticallContract<T>;
 }
-type IMulticallContract<T extends Record<string, any>> = EthersContract & T;
+export type IMulticallContract<T extends Record<string, any>> = EthersContract &
+  T;
 
 class MulticallContract extends EthersContract {
   constructor(

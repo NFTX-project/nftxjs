@@ -16,9 +16,22 @@ import {
 } from '@nftx/constants';
 import merge from 'deepmerge';
 
-interface Config {
+/** Configuration settings for nftx.js */
+export interface Config {
+  /** The default network to use if not explicitly given */
   network: number;
+  /** Subgraph URLs and keys
+   * Each item should be an object keyed by network
+   * The value can either be a URL string, or an array of strings
+   * If an array is provided, we will use each item as a fallback to the previous one
+   * @example
+   * ERC721_SUBGRAPH: {
+   *  [Network.Mainnet]: 'https://my-subgraph-url.com',
+   *  [Network.Goerli]: ['https://try-me-first.com', 'https://try-me-second.com']
+   * }
+   */
   subgraph: {
+    /** A user-specific subgraph api key, if you have one */
     API_KEY: string;
     ERC1155_SUBGRAPH: Record<string, string | string[]>;
     ERC721_SUBGRAPH: Record<string, string | string[]>;
@@ -28,6 +41,9 @@ interface Config {
     NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string | string[]>;
     NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string | string[]>;
   };
+  /** External & 3rd party URLs used by nftx.js
+   * Each item should be an object keyed by network
+   */
   urls: {
     ZEROX_PRICE_URL: Record<string, string>;
     ZEROX_QUOTE_URL: Record<string, string>;
@@ -35,12 +51,18 @@ interface Config {
     ALCHEMY_URL: Record<string, string>;
     NFTX_API_URL: string;
   };
+  /** Contract configuration options */
   contracts: {
+    /** Whether to batch read calls together to reduce the number of network requests */
     multicall: boolean;
+    /** Whether to use 0x for pricing and transactions */
     use0xApi: boolean;
+    /** It's necessary to hardcode the price of ETH on some test networks */
     ethPrice: Record<string, string>;
   };
+  /** API keys */
   keys: {
+    /** Your specific nftx.js API key, this must be provided in order to use the library */
     NFTX_API: string;
     ALCHEMY: string;
   };
@@ -66,15 +88,13 @@ const defaultConfig: Config = {
     NFTX_API_URL,
   },
   contracts: {
-    // Whether to batch read calls together to reduce the number of network requests
     multicall: true,
-    // Whether to use 0x for pricing and transactions
     use0xApi: true,
-    // It's necessary to hardcode the price of ETH on some test networks
     ethPrice: {
       [Network.Rinkeby]: '2500000000', // $2.5k
     },
   },
+
   keys: {
     NFTX_API: null,
     ALCHEMY: null,
@@ -85,8 +105,27 @@ export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
 };
 
-const config = {
-  ...merge(defaultConfig, {}, { arrayMerge: (_, arr) => arr }),
+const initialConfig: Config = merge(
+  defaultConfig,
+  {},
+  { arrayMerge: (_, arr) => arr }
+);
+
+/**
+ * Configuration settings for nftx.js
+ */
+const config: Config & {
+  /**
+   * Set a series of options
+   * You can pass in a combination of partial options and they will be merged into the previous configuration
+   */
+  configure(opts: DeepPartial<Config>): void;
+} = {
+  ...initialConfig,
+  /**
+   * Set a series of options
+   * You can pass in a combination of partial options and they will be merged into the previous configuration
+   */
   configure(opts: DeepPartial<Config>) {
     const merged = merge(config, opts, { arrayMerge: (_, arr) => arr });
     Object.entries(merged).forEach(([key, value]) => {

@@ -10,6 +10,7 @@ export const CRYPTOKITTIES = '0x06012c8cf97bead5deae237070f9587f8e7a266d';
  */
 export const CRYPTOPUNKS = '0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb';
 
+/** The address for WETH across networks */
 export const WETH_TOKEN = {
   [Network.Mainnet]: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
   [Network.Arbitrum]: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
@@ -17,6 +18,7 @@ export const WETH_TOKEN = {
   [Network.Goerli]: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
 };
 
+/** The address for USDC across networks */
 export const USDC = {
   [Network.Mainnet]: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
   [Network.Arbitrum]: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',

@@ -13,14 +13,12 @@ export default ({
 }: {
   fetchMerkleLeaves: FetchMerkleLeaves;
 }) =>
-  async function processTokens({
-    network = config.network,
-    provider,
-    signer,
-    vault,
-    tokenIds,
-    leaves,
-  }: {
+  /**
+   * Checks specific token ids against a merkle eligibility module.
+   * Once called, you must call the {@link checkEligible} method to get the eligibility state.
+   * Do not call this method on a vault that doesn't implement a merkle module
+   */
+  async function processTokens(args: {
     network?: number;
     provider: Provider;
     signer: Signer;
@@ -31,8 +29,17 @@ export default ({
       >;
     };
     tokenIds: string[];
+    /** Merkle eligibility leaves. If this parameter is omitted, they will be fetched as part of this method */
     leaves?: string[];
   }) {
+    const {
+      network = config.network,
+      provider,
+      signer,
+      vault,
+      tokenIds,
+    } = args;
+    let { leaves } = args;
     if (!vault?.eligibilityModule?.merkleReference) {
       throw new Error('Not a valid eligibility module');
     }

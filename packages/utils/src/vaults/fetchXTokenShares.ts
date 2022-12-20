@@ -2,6 +2,10 @@ import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import fetchXTokenShare from './fetchXTokenShare';
 
+/**
+ * For the given vaultIds, returns the xTokenShares for each vault .
+ * The xTokenShare is what 1 xToken is worth in vToken.
+ */
 const fetchXTokenShares = async ({
   network = config.network,
   provider,

@@ -5,6 +5,9 @@ import type { Vault } from '@nftx/types';
 import { getContract } from '../web3';
 
 export default () =>
+  /**
+   * Fetches a list of eligible token ids for a vault with merkle eligibility rules
+   */
   async function fetchMerkleLeaves({
     network = config.network,
     provider,
@@ -13,10 +16,10 @@ export default () =>
     provider: Provider;
     network?: number;
     vault: {
-      eligibilityModule?: Pick<
-        Vault['eligibilityModule'],
-        'id' | 'merkleReference'
-      >;
+      eligibilityModule?: {
+        id: Vault['eligibilityModule']['id'];
+        merkleReference: Vault['eligibilityModule']['merkleReference'];
+      };
     };
   }) {
     if (!vault?.eligibilityModule?.id) {

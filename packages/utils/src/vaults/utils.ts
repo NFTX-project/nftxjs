@@ -1,6 +1,7 @@
 import { Zero } from '@ethersproject/constants';
 import type { Vault } from '@nftx/types';
 
+/** Returns whether a vault has swaps enabled (either random or target swaps count) */
 export const isVaultSwappable = (vault: {
   features?: Pick<Vault['features'], 'enableRandomSwap' | 'enableTargetSwap'>;
 }) => {
@@ -11,18 +12,23 @@ export const isVaultSwappable = (vault: {
   );
 };
 
+/** Returns whether a vault charges a fee for a target swap */
 export const doesVaultHaveTargetSwapFee = (vault: {
   fees: Pick<Vault['fees'], 'targetSwapFee'>;
 }) => {
   return (vault?.fees?.targetSwapFee ?? Zero).isZero() === false;
 };
 
+/** Returns whether a vault charges a fee for a random swap */
 export const doesVaultHaveRandomSwapFee = (vault: {
   fees: Pick<Vault['fees'], 'randomSwapFee'>;
 }) => {
   return (vault?.fees?.randomSwapFee ?? Zero).isZero() === false;
 };
 
+/**
+ * Carries out a rudimentary check to see if a vault contains a given search string.
+ */
 export const matchVault = (
   vault: Pick<Vault, 'token' | 'asset'>,
   search: string
@@ -39,6 +45,9 @@ export const matchVault = (
   );
 };
 
+/**
+ * Returns any vaults that match a search string
+ */
 export const searchVaults = (
   vaults: Pick<Vault, 'token' | 'asset'>[],
   search: string

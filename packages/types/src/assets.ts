@@ -1,14 +1,24 @@
 import type { BigNumber } from 'ethers';
 
+/**
+ * An ERC721 or ERC1155 asset
+ */
 export type Asset = {
   id: string;
   tokenId: string;
   assetAddress: string;
+  /**
+   * URL path to fetch the asset's metadata
+   * {@link AssetMetadata}
+   */
   metaUrl: string;
   vaultId: string;
   quantity?: BigNumber;
 };
 
+/**
+ * Metadata about an ERC asset pulled from covalent or opensea
+ */
 export type AssetMetadata = Asset & {
   name: string;
   traits: Record<string, string | string[]>;
@@ -23,6 +33,7 @@ export type AssetMetadata = Asset & {
   backgroundColor: string;
 };
 
+/** Metadata bouat an ERC collection */
 export type Collection = {
   address: string;
   isSpam: boolean;

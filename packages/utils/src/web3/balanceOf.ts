@@ -5,12 +5,7 @@ import getContract from './getContract';
 import config from '@nftx/config';
 
 /** Return the user's balance of a given token */
-const balanceOf = async ({
-  network = config.network,
-  ownerAddress,
-  provider,
-  tokenAddress,
-}: {
+const balanceOf = async (args: {
   network?: number;
   provider: Provider;
   /** The token address */
@@ -18,6 +13,12 @@ const balanceOf = async ({
   /** The owner (i.e. the user) whose balance we're fetching */
   ownerAddress: string;
 }) => {
+  const {
+    network = config.network,
+    ownerAddress,
+    provider,
+    tokenAddress,
+  } = args;
   const contract = getContract({
     network,
     address: tokenAddress.toLowerCase(),
