@@ -27,9 +27,6 @@
   "peerDependencies": {
     "@nftx/constants": "<1.0.0"
   },
-  "devDependencies": {
-    "@nftx/constants": "^0.1.5"
-  },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },

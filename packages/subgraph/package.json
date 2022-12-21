@@ -30,9 +30,5 @@
   "peerDependencies": {
     "@nftx/config": "<1.0.0",
     "@nftx/constants": "<1.0.0"
-  },
-  "devDependencies": {
-    "@nftx/config": "^0.1.5",
-    "@nftx/constants": "^0.1.5"
   }
 }
