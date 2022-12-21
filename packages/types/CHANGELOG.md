@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.8](https://github.com/NFTX-project/nftxjs/compare/v0.1.7...v0.1.8) (2022-12-21)
+
+
+### Bug Fixes
+
+* **@nftx/types:** not pushing dist folder to npm ([bb3f562](https://github.com/NFTX-project/nftxjs/commit/bb3f5627df38cf91838fac61f817ecccc0bca7dd))
+
+
+
+
+
 ## [0.1.7](https://github.com/NFTX-project/nftxjs/compare/v0.1.6...v0.1.7) (2022-12-20)
 
 
