@@ -6,17 +6,10 @@ import type { Price, Vault } from '@nftx/types';
 import calculateBuyFee from './calculateBuyFee';
 import fetchBuyPrice from './fetchBuyPrice';
 
-/** Fetches the buy price for a vault
- * Accounts for vault fees and buying multiple targets/randoms
+/** Fetches the buy price for a vault.
+ * Unlike fetchBuyPrice, this method accounts for vault fees and buying multiple targets/randoms
  */
-const fetchVaultBuyPrice = async ({
-  vault,
-  network = config.network,
-  provider,
-  targetBuys,
-  randomBuys,
-  critical,
-}: {
+const fetchVaultBuyPrice = async (args: {
   vault: Pick<Vault, 'id' | 'reserveVtoken'> & {
     fees: Pick<Vault['fees'], 'randomRedeemFee' | 'targetRedeemFee'>;
     features: Pick<
@@ -32,6 +25,15 @@ const fetchVaultBuyPrice = async ({
   randomBuys?: number;
   critical?: boolean;
 }): Promise<Price> => {
+  const {
+    vault,
+    network = config.network,
+    provider,
+    targetBuys,
+    randomBuys,
+    critical,
+  } = args;
+
   const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
 
   let amount = fee;

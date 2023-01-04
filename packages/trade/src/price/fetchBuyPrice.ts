@@ -76,17 +76,11 @@ const fetchBuyPriceFromWeb3 = async ({
   };
 };
 
-/** Fetches a buy price for a given token
- * If possible, the price is fetched from the 0x service, otherwise it uses sushiswap
+/** Fetches a buy price for a given token.
+ * If possible, the price is fetched from the 0x api, otherwise it uses sushiswap.
+ * If you're looking to buy an item from a vault, use fetchVaultBuyPrice
  */
-const fetchBuyPrice = async ({
-  network = config.network,
-  provider,
-  tokenAddress,
-  quote = 'ETH',
-  amount = WeiPerEther,
-  critical,
-}: {
+const fetchBuyPrice = async (args: {
   network?: number;
   provider: Provider;
   tokenAddress: string;
@@ -94,6 +88,14 @@ const fetchBuyPrice = async ({
   quote?: 'ETH';
   critical?: boolean;
 }): Promise<Price> => {
+  const {
+    network = config.network,
+    provider,
+    tokenAddress,
+    quote = 'ETH',
+    amount = WeiPerEther,
+    critical,
+  } = args;
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
     return fetchBuyPriceFromApi({

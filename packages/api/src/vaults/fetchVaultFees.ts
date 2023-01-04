@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { VaultFeeReceipt } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get recent fee receipts for a vault */
 const fetchVaultFees = ({
   network = config.network,
   fromTimestamp,

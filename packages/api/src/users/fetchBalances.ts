@@ -1,7 +1,13 @@
 import config from '@nftx/config';
-import type { UserVaultBalance } from '@nftx/types';
+import type { UserVaultBalance, NftxTokenType } from '@nftx/types';
 import { queryApi } from '../utils';
 
+type Type = keyof typeof NftxTokenType;
+
+/**
+ * Get a list of NFTX balances for a given user.
+ * You can further filter the balances by type or vault.
+ */
 const fetchBalances = ({
   network = config.network,
   userAddress,
@@ -12,8 +18,8 @@ const fetchBalances = ({
 }: {
   network?: number;
   userAddress: string;
-  type?: string;
-  types?: string[];
+  type?: Type;
+  types?: Type[];
   vaultId?: string;
   vaultIds?: string[];
 }) => {

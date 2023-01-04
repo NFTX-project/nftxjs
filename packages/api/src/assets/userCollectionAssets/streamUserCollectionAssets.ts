@@ -17,6 +17,24 @@ const getUrl = ({
   return `/${network}/users/${userAddress}/assets/${assetAddress}`;
 };
 
+/**
+ * Get a list of a user's NFTs for a given collection.
+ * Returns a stream that should be consumed by either subscribing to data or manually reading.
+ * @example
+ * const stream = streamUserCollectionAssets({ userAddress, assetAddress });
+ * while (!stream.ended) {
+ *   const moreAssets = await stream.read();
+ *   // Do something with assets
+ * }
+ * @example
+ * const stream = streamUserCollectionAssets({ userAddress, assetAddress });
+ * stream.on('data', (moreAssets) => {
+ *   // Do something with assets
+ * });
+ * stream.on('end', () => {
+ *   // Done
+ * });
+ */
 const streamUserCollectionAssets = ({
   network = config.network,
   userAddress,

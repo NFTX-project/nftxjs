@@ -1,4 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
+import type { ContractTransaction } from '@ethersproject/contracts';
 import config from '@nftx/config';
 import type { Signer } from 'ethers';
 import type exitLiquidity from './exitLiquidity';
@@ -14,16 +15,12 @@ export default ({
   exitLiquidity: ExitLiquidity;
   withdrawLiquidity: WithdrawLiquidity;
 }) =>
-  /** Unstake an LP position
-   * if the amount to withdraw is the maximum, we will exit the position
+  /**
+   * Unstake a Liquidity Position (LP)
+   * This will remove your liquidity from NFTX and return it as SLP.
+   * If the amount to withdraw is the maximum, we will exit the position.
    */
-  function unstakeLiquidity({
-    vaultId,
-    slpAmount,
-    max,
-    network = config.network,
-    signer,
-  }: {
+  function unstakeLiquidity(args: {
     network?: number;
     signer: Signer;
     vaultId: string;
@@ -31,7 +28,9 @@ export default ({
     slpAmount?: BigNumber;
     /** The maximum amount of xSlp that can be withdrawn, i.e. your balance */
     max?: BigNumber;
-  }) {
+  }): Promise<ContractTransaction> {
+    const { vaultId, slpAmount, max, network = config.network, signer } = args;
+
     // If we're unstaking everything we can just exit the position entirely
     if (slpAmount && max && slpAmount.gte(max)) {
       return exitLiquidity({ network, signer, vaultId });

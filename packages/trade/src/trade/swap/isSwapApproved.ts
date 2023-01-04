@@ -23,15 +23,20 @@ type Args = Omit<
   };
 };
 
-const isSwapApproved = ({
-  network = config.network,
-  assetAddress,
-  vault,
-  mintTokenIds,
-  redeemTokenIds,
-  quote,
-  ...args
-}: Args) => {
+/**
+ * For a given set of token ids for a given vault, has the user approved the contract for spending?
+ */
+const isSwapApproved = (_args: Args) => {
+  const {
+    network = config.network,
+    assetAddress,
+    vault,
+    mintTokenIds,
+    redeemTokenIds,
+    quote,
+    ...args
+  } = _args;
+
   const totalCount = getTotalTokenIds(mintTokenIds);
   const targetCount = getTotalTokenIds(redeemTokenIds);
   const randomCount = totalCount - targetCount;
@@ -40,6 +45,10 @@ const isSwapApproved = ({
     (randomCount > 0 && vault.fees.randomSwapFee.gt(0));
   const supports0x = doesNetworkSupport0x(network);
 
+  // The contract doing the swap can vary.
+  // If there are no fees involved, we can do the swap directly on the vault contract (which is cheaper)
+  // If we're using the 0x api we need the 0x Zap contract
+  // Otherwise we need to approve the Marketplace Zap contract
   const spenderAddress = (() => {
     if (!hasFee || quote === 'VTOKEN') {
       return vault.id;

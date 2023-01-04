@@ -7,6 +7,20 @@ type Result = {
   next: () => Promise<Result>;
 };
 
+/**
+ * Get a list of a user's NFTs for a given vault
+ * Returns assets plus a next function to fetch the next set of assets.
+ * @example
+ * let { assets, next } = await fetchUserVaultAssets({ userAddress, vaultId });
+ * // Do something with assets
+ *
+ * while (next) {
+ *   const result = await next();
+ *   const moreAssets = result.assets;
+ *   // Do something with moreAssets
+ *   next = results.next;
+ * }
+ */
 const fetchUserVaultAssets = async ({
   network = config.network,
   userAddress,

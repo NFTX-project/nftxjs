@@ -1,7 +1,7 @@
-/** Extracts the ids give an array of target ids
- * if an id has multiple quantities, the id is included multiple times in the output
+/** Extracts the ids given an array of target ids.
+ * If an id has multiple quantities, the id is included multiple times in the output
  * @example ['1', '2', '3'] -> ['1', '2', '3']
- * @example [['1', 1], ['2', 2], ['3', 1]] -> ['1', '2', '2', '3']
+ * @example [['1', 1], ['2', 2], ['3', 3]] -> ['1', '2', '2', '3', '3', '3']
  */
 export const getExactTokenIds = (
   tokenIds: Array<string> | Array<[string, number]>
@@ -17,9 +17,10 @@ export const getExactTokenIds = (
     .flat();
 };
 
-/** Returns an array of target ids (ignoring 1155 quantity)
+/** Returns an array of unique target ids.
+ * If an id has multiple quantities, it is only included once in the output
  * @example ['1', '2', '3'] -> ['1', '2', '3']
- * @example [['1', 1], ['2', 2], ['3', 1]] -> ['1', '2', '3']
+ * @example [['1', 1], ['2', 2], ['3', 3]] -> ['1', '2', '3']
  */
 export const getUniqueTokenIds = (
   tokenIds: Array<string> | Array<[string, number]>
@@ -34,9 +35,9 @@ export const getUniqueTokenIds = (
     .filter((x) => x != null);
 };
 
-/** Returns an array of amounts ids (ignoring 1155 quantity)
+/** Returns an array of amounts for each token id
  * @example ['1', '2', '3'] -> [1, 1, 1]
- * @example [['1', 1], ['2', 2], ['3', 1]] -> [1, 2, 1]
+ * @example [['1', 1], ['2', 2], ['3', 3]] -> [1, 2, 3]
  */
 export const getTokenIdAmounts = (
   tokenIds: Array<string> | Array<[string, number]>
@@ -49,9 +50,10 @@ export const getTokenIdAmounts = (
   });
 };
 
-/** Returns the total amount of ids
+/** Returns the total amount of ids.
+ * If an id has multiple quantities, it adds up the total quantity
  * @example ['1', '2', '3'] -> 3
- * @example [['1', 1], ['2', 2], ['3', 1]] -> 4
+ * @example [['1', 1], ['2', 2], ['3', 3]] -> 6
  */
 export const getTotalTokenIds = (
   tokenIds: Array<string> | Array<[string, number]>

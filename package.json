@@ -11,7 +11,7 @@
     "test": "lerna run test",
     "build": "lerna run build",
     "yalc": "lerna exec yalc publish",
-    "docs": "typedoc --name nftx.js --entryPointStrategy packages .",
+    "docs": "typedoc --out docs/api --name nftx.js --entryPointStrategy packages .",
     "ci": "yarn install && yarn lint && yarn test"
   },
   "devDependencies": {

@@ -1,7 +1,9 @@
 import { normalizeIfAddress } from './utils';
 
-/** Takes an object of key/values, removes null items, and returns the stringified result
- * If you pass any addresses (i.e. 0x0000) it will lowercase them by default
+/**
+ * Helper method that builds a subgraph where clause
+ * Takes an object of key/values, removes null items, and returns the stringified result.
+ * If you pass any addresses (i.e. 0x0000) it will lowercase them.
  */
 const buildWhere = <T extends Record<string, any>>(obj: T) => {
   const pairs: string[] = Object.entries(obj).reduce((acc, [key, value]) => {

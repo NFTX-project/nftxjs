@@ -44,13 +44,12 @@ const fetchEthPriceFromWeb3 = async ({
   return quote;
 };
 
-const fetchEthPrice = ({
-  network = config.network,
-  provider,
-}: {
-  network?: number;
-  provider: Provider;
-}) => {
+/** Fetches the current ETH price in $ terms.
+ * For test networks and testing in general, you can configure a hardcoded price using nftx.js's configure method.
+ */
+const fetchEthPrice = (args: { network?: number; provider: Provider }) => {
+  const { network = config.network, provider } = args;
+
   const hardcodedPrice = getChainConstant(
     config.contracts.ethPrice,
     network,

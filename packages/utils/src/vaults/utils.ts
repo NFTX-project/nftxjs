@@ -48,8 +48,8 @@ export const matchVault = (
 /**
  * Returns any vaults that match a search string
  */
-export const searchVaults = (
-  vaults: Pick<Vault, 'token' | 'asset'>[],
+export const searchVaults = <T extends Pick<Vault, 'token' | 'asset'>>(
+  vaults: T[],
   search: string
 ) => {
   return vaults?.filter((vault) => matchVault(vault, search));

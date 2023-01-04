@@ -9,6 +9,16 @@ let cacheKey: string;
   }
 })();
 
+const parseResponse = (str: string) => {
+  return JSON.parse(str, (key, value) => {
+    if (typeof value === 'string' && value.startsWith('BigNumber(')) {
+      const [, v] = value.match(/BigNumber\((.+)?\)/);
+      return BigNumber.from(v);
+    }
+    return value;
+  });
+};
+
 export const bustCache = () => {
   cacheKey = Math.floor(Math.random() * 100000).toString(16);
   if (typeof window !== 'undefined') {
@@ -65,14 +75,4 @@ export const queryApi = async <T>({
   const data = parseResponse(text);
 
   return data as T;
-};
-
-const parseResponse = (str: string) => {
-  return JSON.parse(str, (key, value) => {
-    if (typeof value === 'string' && value.startsWith('BigNumber(')) {
-      const [, v] = value.match(/BigNumber\((.+)?\)/);
-      return BigNumber.from(v);
-    }
-    return value;
-  });
 };

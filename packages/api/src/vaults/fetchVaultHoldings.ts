@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { VaultHolding } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get all tokens held by a vault */
 const fetchVaultHoldings = ({
   vaultId,
   network = config.network,

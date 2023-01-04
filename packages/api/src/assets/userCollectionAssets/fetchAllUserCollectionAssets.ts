@@ -2,6 +2,12 @@ import config from '@nftx/config';
 import type { Asset } from '@nftx/types';
 import streamUserCollectionAssets from './streamUserCollectionAssets';
 
+/**
+ * Get a list of a user's assets for a given collection.
+ * Returns a promise that resolves once all assets have been fetched.
+ * @example
+ * const assets = await fetchAllUserCollectionAssets({ userAddress, assetAddress });
+ */
 const fetchAllUserCollectionAssets = ({
   network = config.network,
   userAddress,

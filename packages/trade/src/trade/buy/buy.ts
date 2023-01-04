@@ -198,34 +198,40 @@ const matrix = {
   },
 };
 
-/** Buy one or more NFTs from an NFTX vault */
-const buy = async ({
-  network = config.network,
-  signer,
-  userAddress,
-  vault,
-  slippage = 0,
-  randomBuys = 0,
-  tokenIds = [],
-  standard = 'ERC721',
-  quote = 'ETH',
-}: {
+/**
+ * Buy one or more NFTs from a vault.
+ */
+const buy = async (args: {
   network?: number;
+  /** The percentage amount of slippage you're willing to accept  */
   slippage?: number;
   signer: Signer;
+  /** The address of the buyer */
   userAddress: string;
+  /** The vault you're buying from */
   vault: BuyVault;
-  /** Ids of the individual NFTs you want to buy
-   * For 721s you just pass a flat array of ids ['1','2','3']
+  /** Ids of the individual NFTs you want to buy.
+   * For 721s you just pass a flat array of ids ['1','2','3'].
    * For 1155s if you're dealing with multiples, you pass a tuple of [tokenId, quantity] [['1', 2], ['2', 1], ['3', 2]]
    */
   tokenIds?: string[] | [string, number][];
   /** If you want to do a random buy, enter the number of randoms you want (you can buy targets and randoms at the same time) */
   randomBuys?: number;
-  /** The max price (including slippage) you're willing to pay */
   standard?: 'ERC721' | 'ERC1155';
   quote?: 'ETH';
 }): Promise<ContractTransaction> => {
+  const {
+    network = config.network,
+    signer,
+    userAddress,
+    vault,
+    slippage = 0,
+    randomBuys = 0,
+    tokenIds = [],
+    standard = 'ERC721',
+    quote = 'ETH',
+  } = args;
+
   const supports0x = doesNetworkSupport0x(network);
 
   const fn = matrix[quote]?.[standard]?.[`${supports0x}`];

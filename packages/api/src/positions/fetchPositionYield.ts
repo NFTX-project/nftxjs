@@ -8,6 +8,7 @@ type Response = Array<{
   ethValue: BigNumber;
 }>;
 
+/** Get the lifetime yield amount for a specific position */
 const fetchPositionYield = ({
   userAddress,
   vaultId,

@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { TokenReserve } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get token reserves for a contract address */
 const fetchReserve = ({
   network = config.network,
   address,

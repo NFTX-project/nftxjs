@@ -3,7 +3,7 @@ import { WeiPerEther } from '@ethersproject/constants';
 import config from '@nftx/config';
 import { getChainConstant } from '@nftx/utils';
 
-type Response = {
+export type ZeroXQuote = {
   price: string;
   guaranteedPrice: string;
   to: string;
@@ -29,28 +29,40 @@ type Response = {
   buyTokenToEthRate: string;
 };
 
-/** Fetch a quote price from the 0x api */
-const fetch0xQuote = async ({
-  network = config.network,
-  buyToken,
-  sellToken,
-  buyAmount,
-  sellAmount,
-  slippagePercentage,
-  type = 'quote',
-  critical = type === 'quote',
-}: {
+/** Fetch a quote price from the 0x api.
+ * The returned quote can be passed directly to 0x to process the quoted transaction.
+ * You can specify either buyAmount or sellAmount, but not both. If you do not pass any amounts in, it defaults to buying 1.
+ * This method is just a wrapper around 0x's own api, docs can be found here:
+ * https://docs.0x.org/0x-api-swap/api-references/get-swap-v1-quote
+ */
+const fetch0xQuote = async (args: {
   network?: number;
+  /** The address of the token you're buying */
   buyToken: string;
+  /** the amount of buyToken you want to buy */
   buyAmount?: BigNumberish;
+  /** The address of the token you're selling */
   sellToken: string;
+  /** The amount of sellToken you want to sell */
   sellAmount?: BigNumberish;
+  /** The percentage amount of acceptable slippage on either sellAmount or buyAmount. Defaults to 1%. If you don't want to allow any slippage, you must explicitly pass 0 */
   slippagePercentage?: number;
-  /** Whether to fetch the quote from 0x or from our fork */
+  /** If a "critical" quote, the response will be fetched from 0x directly. For non-critical requests (such as "price" calls), the response is fetched from NFTX's fork which implements additional caching layers and a higher rate limiting threshold */
   critical?: boolean;
   /** Whether to fetch an actual quote that can be directly submitted as a transaction, or just a readonly price */
   type?: 'quote' | 'price';
-}): Promise<Response> => {
+}): Promise<ZeroXQuote> => {
+  const {
+    network = config.network,
+    buyToken,
+    sellToken,
+    buyAmount,
+    sellAmount,
+    slippagePercentage,
+    type = 'quote',
+    critical = type === 'quote',
+  } = args;
+
   try {
     const searchParams = new URLSearchParams();
     searchParams.append('buyToken', buyToken);
@@ -80,7 +92,7 @@ const fetch0xQuote = async ({
     if (!response.ok) {
       throw new Error(`Failed to fetch ${url}`);
     }
-    const data: Response = await response.json();
+    const data: ZeroXQuote = await response.json();
 
     return {
       ...data,

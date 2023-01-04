@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { VaultActivity } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get recent vault activity for a specific vault */
 const fetchVaultActivity = ({
   network = config.network,
   fromTimestamp,

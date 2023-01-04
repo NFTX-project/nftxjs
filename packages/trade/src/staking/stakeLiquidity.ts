@@ -1,6 +1,6 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
-import type { Contract } from '@ethersproject/contracts';
+import type { Contract, ContractTransaction } from '@ethersproject/contracts';
 import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import { NFTX_STAKING_ZAP } from '@nftx/constants';
@@ -145,27 +145,38 @@ export default ({
     });
   };
 
-  return function stakeLiquidity({
-    network = config.network,
-    signer,
-    vaultId,
-    pairedEth,
-    slippage,
-    tokenIds,
-    isNewPool,
-    gasPrice,
-    standard = 'ERC721',
-  }: {
+  /**
+   * Takes NFTs and stakes them into a Liquidity Position (LP).
+   * Behind the scenes, we trade your NFTs for vTokens, pair the vTokens with ETH on Sushi and receive SLP tokens in return, then stake your SLP on NFTX and receive xSlp.
+   */
+  return function stakeLiquidity(args: {
     network?: number;
     signer: Signer;
-    pairedEth: BigNumber;
-    slippage: number;
+    /** The vault you are staking into */
     vaultId: string;
+    /** Token IDs for the NFTs you want to stake */
     tokenIds: string[] | [string, number][];
+    /** The amount of ETH to pair with your NFTs */
+    pairedEth: BigNumber;
+    /** A percentage value for the maximum amount of slippage you are willing to accept */
+    slippage: number;
+    /** If you are staking into a brand new pool, there will be a slightly higher gas cost due to setting up the pools, this option helps to accomodate for this */
     isNewPool?: boolean;
     gasPrice?: BigNumber;
     standard?: 'ERC721' | 'ERC1155';
-  }) {
+  }): Promise<ContractTransaction> {
+    const {
+      network = config.network,
+      signer,
+      vaultId,
+      pairedEth,
+      slippage,
+      tokenIds,
+      isNewPool,
+      gasPrice,
+      standard = 'ERC721',
+    } = args;
+
     const contract = getContract({
       network,
       abi,

@@ -1,5 +1,5 @@
 export { default as doesNetworkSupport0x } from './doesNetworkSupport0x';
-export { default as fetch0xQuote } from './fetch0xQuote';
+export { default as fetch0xQuote, type ZeroXQuote } from './fetch0xQuote';
 export { default as fetchBuyPrice } from './fetchBuyPrice';
 export { default as fetchEthPrice } from './fetchEthPrice';
 export { default as fetchSellPrice } from './fetchSellPrice';

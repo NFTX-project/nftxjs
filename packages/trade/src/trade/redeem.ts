@@ -7,15 +7,9 @@ import type { Signer } from 'ethers';
 import { getExactTokenIds } from './utils';
 
 /** Redeems an item from the vault
- * Exchanges, for example, 1.05 PUNK for a punk nft
+ * Exchanges, for example, 1.05 PUNK for a punk nft (accounting for vault fees)
  */
-const redeem = async ({
-  network = config.network,
-  signer,
-  targetIds,
-  vaultAddress,
-  randomRedeems,
-}: {
+const redeem = async (args: {
   network?: number;
   signer: Signer;
   userAddress: string;
@@ -29,6 +23,14 @@ const redeem = async ({
   /** If you want to do a random redeem, enter the number of randoms you want to carry out */
   randomRedeems?: number;
 }): Promise<ContractTransaction> => {
+  const {
+    network = config.network,
+    signer,
+    targetIds,
+    vaultAddress,
+    randomRedeems,
+  } = args;
+
   const contract = getContract({
     network,
     signer,
@@ -42,7 +44,7 @@ const redeem = async ({
   // it will fill out the rest with randoms
   const amount = specificIds.length + (randomRedeems ?? 0);
 
-  // Add gas buffer to redeems ti account for calculation weirdness
+  // Add gas buffer to redeems to account for calculation weirdness
   let gas: BigNumber;
   try {
     gas = await contract.estimateGas.redeem(amount, specificIds);

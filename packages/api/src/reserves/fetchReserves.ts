@@ -1,6 +1,7 @@
 import type { TokenReserve } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get token reserves for the given contract addresses */
 const fetchReserves = ({
   network,
   addresses,

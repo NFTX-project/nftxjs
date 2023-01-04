@@ -243,29 +243,35 @@ const matrix = {
   },
 };
 
-const sell = async ({
-  network = config.network,
-  signer,
-  tokenIds,
-  userAddress,
-  vault,
-  slippage = 0,
-  quote = 'ETH',
-  standard = Array.isArray(tokenIds?.[0]) ? 'ERC1155' : 'ERC721',
-}: {
+/** Mints an NFT into an NFTX vault and returns ETH. */
+const sell = async (args: {
   network?: number;
+  /** The percentage amount of slippage you're willing to accept  */
   slippage?: number;
+  /** The vault you're selling into */
   vault: SellVault;
   signer: Signer;
+  /** The address of the seller */
   userAddress: string;
-  /** Ids of the individual NFTs you want to sell
-   * For 721s you just pass a flat array of ids ['1', '2']
+  /** Ids of the individual NFTs you want to sell.
+   * For 721s you just pass a flat array of ids ['1', '2'].
    * For 1155s if you're dealing with multiples, you pass a tuple of [tokenId, quantity] [['1', 2], ['2', 1]]
    */
   tokenIds: string[] | [string, number][];
   standard?: 'ERC721' | 'ERC1155';
   quote?: 'ETH';
 }): Promise<ContractTransaction> => {
+  const {
+    network = config.network,
+    signer,
+    tokenIds,
+    userAddress,
+    vault,
+    slippage = 0,
+    quote = 'ETH',
+    standard = Array.isArray(tokenIds?.[0]) ? 'ERC1155' : 'ERC721',
+  } = args;
+
   const path = [vault.id, getChainConstant(WETH_TOKEN, network)] as [
     string,
     string

@@ -6,6 +6,9 @@ type Response = {
   lifetimeYield: BigNumber;
 };
 
+/**
+ * Gets the lifetime amount of yield a user has earned in ETH
+ */
 const fetchUserYield = ({
   network = config.network,
   userAddress,

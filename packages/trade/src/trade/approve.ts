@@ -84,17 +84,11 @@ function approveErc20({
   return contract.approve(spenderAddress, amount ?? MaxUint256);
 }
 
-/** Approves a spender to spend a specific token address */
-async function approve({
-  network = config.network,
-  tokenAddress,
-  spenderAddress,
-  tokenId,
-  tokenIds,
-  signer,
-  amount,
-  standard = tokenId || tokenIds ? 'ERC721' : amount ? 'ERC20' : null,
-}: {
+/**
+ * Approves a spender to spend a specific token address.
+ * If you want to approve a standard sell or swap, use the relevant methods instead (approveSell/approveSwap)
+ */
+async function approve(args: {
   network?: number;
   /** The token we want to spend */
   tokenAddress: string;
@@ -109,6 +103,17 @@ async function approve({
   /** If the standard is omitted, we will infer either ERC721 or ERC20 based on amount/tokenId/tokenIds parameters */
   standard?: 'ERC721' | 'ERC1155' | 'ERC20';
 }): Promise<ContractTransaction> {
+  const {
+    network = config.network,
+    tokenAddress,
+    spenderAddress,
+    tokenId,
+    tokenIds,
+    signer,
+    amount,
+    standard = tokenId || tokenIds ? 'ERC721' : amount ? 'ERC20' : null,
+  } = args;
+
   if (standard === 'ERC721') {
     if (isCryptoPunk(tokenAddress)) {
       return approvePunk({

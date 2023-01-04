@@ -1,3 +1,5 @@
+/docs/api
+
 .DS_Store
 
 # Logs
@@ -85,7 +87,6 @@ typings/
 .nuxt
 dist
 out
-/docs
 
 # Gatsby files
 .cache/

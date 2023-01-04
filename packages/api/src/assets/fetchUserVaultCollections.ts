@@ -3,6 +3,7 @@ import { queryApi } from '../utils';
 
 type Response = { vaultId: string; assetAddress: string }[];
 
+/** Returns a list of all collections held by a user that have a corresponding NFTX vault */
 const fetchUserVaultCollections = ({
   network = config.network,
   userAddress,

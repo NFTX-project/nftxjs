@@ -352,27 +352,38 @@ const matrix = {
   },
 };
 
-const swap = ({
-  network = config.network,
-  signer,
-  vault,
-  mintTokenIds,
-  redeemTokenIds,
-  userAddress,
-  slippage = 0,
-  quote = 'ETH',
-  standard = 'ERC721',
-}: {
+/**
+ * Swap NFTs in your wallet for those in the vault.
+ * The price for swapping is a swap fee determined by the vault. If there is no fee, you'll only have to pay gas.
+ * If you provide more mint token ids than redeem token ids, you will receive random items from the vault (at a lower fee)
+ */
+const swap = (args: {
   network?: number;
   signer: Signer;
+  /** Token IDs of the NFTs you want to put into the vault */
   mintTokenIds: string[] | [string, number][];
+  /** Token IDs of the NFTs you want to take out of the vault */
   redeemTokenIds: string[] | [string, number][];
+  /** The vault you are swapping in */
   vault: SwapVault;
   userAddress: string;
+  /** The percentage amount of slippage you're willing to accept */
   slippage?: number;
   quote?: 'ETH' | 'VTOKEN';
   standard?: 'ERC721' | 'ERC1155';
 }) => {
+  const {
+    network = config.network,
+    signer,
+    vault,
+    mintTokenIds,
+    redeemTokenIds,
+    userAddress,
+    slippage = 0,
+    quote = 'ETH',
+    standard = 'ERC721',
+  } = args;
+
   const totalCount = getTotalTokenIds(mintTokenIds);
   const targetCount = getTotalTokenIds(redeemTokenIds);
   const randomCount = totalCount - targetCount;

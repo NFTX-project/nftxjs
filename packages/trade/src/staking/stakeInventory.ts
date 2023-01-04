@@ -1,3 +1,4 @@
+import type { ContractTransaction } from '@ethersproject/contracts';
 import config from '@nftx/config';
 import { NFTX_STAKING_ZAP } from '@nftx/constants';
 import NftxStakingAbi from '@nftx/constants/abis/NFTXStakingZap.json';
@@ -59,20 +60,28 @@ const stake1155 = ({
 };
 
 export default ({ getContract }: { getContract: GetContract }) =>
-  function stakeInventory({
-    network = config.network,
-    signer,
-    vaultId,
-    tokenIds,
-    standard = 'ERC721',
-  }: {
+  /**
+   * Takes NFTs and stakes them into an Inventory Position (IP).
+   * Behind the scenes, we trade your NFTs for vTokens, then we stake your vTokens and receive xTokens in return
+   */
+  function stakeInventory(args: {
     network?: number;
     signer: Signer;
+    /** The vault you are staking into */
     vaultId: string;
+    /** Token IDs for the NFTs you want to stake */
     tokenIds: string[] | [string, number][];
     standard?: 'ERC721' | 'ERC1155';
     quote?: 'ETH';
-  }) {
+  }): Promise<ContractTransaction> {
+    const {
+      network = config.network,
+      signer,
+      vaultId,
+      tokenIds,
+      standard = 'ERC721',
+    } = args;
+
     if (standard === 'ERC721') {
       return stake721({ getContract, network, signer, tokenIds, vaultId });
     }

@@ -65,22 +65,24 @@ const fetchSpotPriceFromSubgraph = async ({
   return price;
 };
 
-/** Fetches a spot price for a given token
+/** Fetches a spot price for a given token.
  * If possible, the price is fetched from the 0x service, otherwise it uses pool reserves
  */
-const fetchSpotPrice = ({
-  network = config.network,
-  provider,
-  tokenAddress,
-  quote = 'ETH',
-  critical,
-}: {
+const fetchSpotPrice = (args: {
   network?: number;
   provider: Provider;
   tokenAddress: string;
   quote?: 'ETH';
   critical?: boolean;
 }) => {
+  const {
+    network = config.network,
+    provider,
+    tokenAddress,
+    quote = 'ETH',
+    critical,
+  } = args;
+
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
     return fetchSpotPriceFromApi({

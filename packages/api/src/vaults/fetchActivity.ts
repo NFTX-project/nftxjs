@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { VaultActivity } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get recent vault activity across all vaults */
 const fetchActivity = ({
   network = config.network,
   fromTimestamp,
@@ -11,6 +12,7 @@ const fetchActivity = ({
   vaultIds,
 }: {
   network?: number;
+  /** Timestamp (in seconds). The given timestamp will be rounded to the nearest hour */
   fromTimestamp?: number;
   vaultAddress?: string;
   vaultAddresses?: string[];

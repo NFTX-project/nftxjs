@@ -2,6 +2,10 @@ import config from '@nftx/config';
 import type { UserVaultBalance } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/**
+ * Get a list of NFTX balances for a given user/vault.
+ * You can further filter the balances by type.
+ */
 const fetchVaultBalances = ({
   network = config.network,
   userAddress,

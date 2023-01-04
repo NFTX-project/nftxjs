@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NFTX.js</title>
+  </head>
+  <body>
+    <h1>NFTX.js</h1>
+    <div>
+      This is an SDK that exposes all of the core functionality of NFTX:
+      <ul>
+        <li>Searching and fetching vaults</li>
+        <li>Fetching detailed vault and pool info</li>
+        <li>Fetching position details</li>
+        <li>Getting vault price quotes</li>
+        <li>Buying</li>
+        <li>Selling</li>
+        <li>Swapping</li>
+        <li>Staking</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Getting started</h2>
+      <h3>Installation</h3>
+      <pre>
+        <code>
+          npm install nftx.js
+        </code>
+      </pre>
+      <h3>Usage</h3>
+      <pre>
+        <code>
+          import { buy, configure, fetchVault } from 'nftx.js';
+
+          configure({
+            network: 1,
+            keys: {
+              NFTX_API: '<<your-api-key>>'
+            }
+          });
+
+          const vault = await fetchVault({ vaultId: '0' });
+
+          const transaction = await buy({
+            signer,
+            userAddress: '0x0000',
+            vault,
+            tokenIds: ['2712'],
+            randomBuys: 1
+          });
+
+          const receipt = await transaction.wait();
+        </code>
+      </pre>
+<h3>Integrate with React</h3>
+<pre>
+  <code>
+    import { fetchVault } from 'nftx.js';
+    import { NftxProvider, useBuy, Vault } from '@nftx/react';
+
+    const Core = () => {
+      const [vault, setVault] = useState<Vault>();
+      const [ buy, { status } ] = useBuy();
+
+      useEffect(() => {
+        fetchVault({ vaultId: '0' }).then((vault) => {
+          setVault(vault);
+        });
+      }, []);
+
+      const onClick = () => {
+        buy({
+          userAddress: '0x0000',
+          vault,
+          tokenIds: ['2712'],
+          randomBuys: 1
+        });
+      };
+
+      return (
+        <button onClick={onClick}>Buy a PUNK</button>
+      );
+    };
+
+    const App = () => {
+      return (
+        <NftxProvider network={1} provider={provider} signer={signer}>
+          <Core />
+        </NftxProvider>
+      );
+    };
+  </code>
+</pre>
+    </div>
+    <div>
+      <h2>Links</h2>
+      <a href="/api">API docs</a>
+      <a href="https://github.com/NFTX-project/nftxjs">Github</a>
+      <a href="https://www.npmjs.com/package/nftx.js">nftx.js on npm</a>
+      <a href="https://www.npmjs.com/package/@nftx/react">@nftx/react on npm</a>
+    </div>
+  </body>
+</html>

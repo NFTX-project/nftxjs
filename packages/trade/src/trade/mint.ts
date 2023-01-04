@@ -5,15 +5,10 @@ import { getContract } from '@nftx/utils';
 import type { Signer } from 'ethers';
 import { getTokenIdAmounts, getUniqueTokenIds } from './utils';
 
-/** Mints an NFT into the NFTX vault in exchange for an ERC20 token
- * For example, minting a punk NFT would return 0.95 PUNK
+/** Mints an NFT into the NFTX vault in exchange for a vToken.
+ * For example, minting a punk NFT would return 0.95 PUNK (accounting for vault fees)
  */
-const mint = async ({
-  network = config.network,
-  signer,
-  tokenIds,
-  vaultAddress,
-}: {
+const mint = async (args: {
   network?: number;
   signer: Signer;
   userAddress: string;
@@ -25,6 +20,8 @@ const mint = async ({
    */
   tokenIds: string[] | [string, number][];
 }): Promise<ContractTransaction> => {
+  const { network = config.network, signer, tokenIds, vaultAddress } = args;
+
   const ids = getUniqueTokenIds(tokenIds);
   const amounts = getTokenIdAmounts(tokenIds);
 

@@ -76,15 +76,11 @@ const fetchSellPriceFromWeb3 = async ({
   return price;
 };
 
-/** Fetches a sell price for a given token */
-const fetchSellPrice = ({
-  network = config.network,
-  provider,
-  tokenAddress,
-  amount = WeiPerEther,
-  quote = 'ETH',
-  critical,
-}: {
+/** Fetches a sell price for a given token.
+ * If possible, the price is fetched from the 0x api, otherwise it uses sushiswap.
+ * If you're looking to sell an item into a vault, use fetchVaultSellPrice.
+ */
+const fetchSellPrice = (args: {
   network?: number;
   provider: Provider;
   tokenAddress: string;
@@ -92,6 +88,15 @@ const fetchSellPrice = ({
   quote?: 'ETH';
   critical?: boolean;
 }) => {
+  const {
+    network = config.network,
+    provider,
+    tokenAddress,
+    amount = WeiPerEther,
+    quote = 'ETH',
+    critical,
+  } = args;
+
   const apiSupported = doesNetworkSupport0x(network);
   if (apiSupported) {
     return fetchSellPriceFromApi({

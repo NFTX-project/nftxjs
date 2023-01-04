@@ -140,27 +140,37 @@ const isErc20Approved = async ({
   }
 };
 
-const isApproved = async ({
-  network = config.network,
-  provider,
-  spenderAddress,
-  tokenAddress,
-  userAddress,
-  amount,
-  tokenId,
-  tokenIds,
-  standard = tokenId || tokenIds ? 'ERC721' : 'ERC20',
-}: {
+/** Returns whether a spender is approved to spend a given token */
+const isApproved = async (args: {
   network?: number;
   provider: Provider;
+  /** The token you want to spend */
   tokenAddress: string;
+  /** The contract that will be spending the token */
   spenderAddress: string;
+  /** The user who is approving the spender */
   userAddress: string;
+  /** Optionally provide the tokenId. Certain contracts such as CryptoPunks need to approve individual tokens */
   tokenId?: string;
+  /** Optionally provide a list of tokenIds. Certain contracts such as CryptoPunks need to approve individual tokens */
   tokenIds?: string[];
+  /** For ERC20 contracts, you can supply a specific amount to be approved. Defaults to the maximum amount */
   amount?: BigNumber;
+  /** The token standard for tokenAddress */
   standard?: 'ERC721' | 'ERC1155' | 'ERC20';
 }): Promise<boolean> => {
+  const {
+    network = config.network,
+    provider,
+    spenderAddress,
+    tokenAddress,
+    userAddress,
+    amount,
+    tokenId,
+    tokenIds,
+    standard = tokenId || tokenIds ? 'ERC721' : 'ERC20',
+  } = args;
+
   if (standard === 'ERC721') {
     if (isCryptoPunk(tokenAddress)) {
       return arePunksApproved({

@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { Position } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get all positions for a given vault */
 const fetchVaultPositions = ({
   vaultId,
   network = config.network,

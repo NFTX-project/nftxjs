@@ -5,14 +5,7 @@ import fetch0xQuote from './fetch0xQuote';
  * This can be used for reading pricing info
  * If you want to then commit a transaction, use fetch0xQuote instead
  */
-const fetch0xPrice = async ({
-  buyToken,
-  sellToken,
-  buyAmount,
-  sellAmount,
-  network,
-  critical,
-}: {
+const fetch0xPrice = async (args: {
   network: number;
   buyToken: string;
   sellToken: string;
@@ -21,13 +14,8 @@ const fetch0xPrice = async ({
   critical?: boolean;
 }) => {
   return fetch0xQuote({
-    network,
-    buyToken,
-    sellToken,
-    buyAmount,
-    sellAmount,
     type: 'price',
-    critical,
+    ...args,
   });
 };
 

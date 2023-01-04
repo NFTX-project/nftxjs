@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { VaultFeeReceipt } from '@nftx/types';
 import { queryApi } from '../utils';
 
+/** Get recent fee receipts across all vaults */
 const fetchFees = ({
   network = config.network,
   fromTimestamp,
@@ -11,6 +12,7 @@ const fetchFees = ({
   vaultIds,
 }: {
   network?: number;
+  /** Timestamp (in seconds). The given timestamp will be rounded to the nearest hour */
   fromTimestamp?: number;
   vaultAddress?: string;
   vaultAddresses?: string[];

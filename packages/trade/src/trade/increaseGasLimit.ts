@@ -1,13 +1,15 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 
 /**
- * Takes a contract gas estimate and increases it by given %
+ * Takes a contract gas estimate and increases it by a given percentage
  */
 export const increaseGasLimit = ({
   estimate,
   amount = 1,
 }: {
+  /** A gas estimate */
   estimate: BigNumber;
+  /** The amount to increase the estimate by. This is a whole number percentage (i.e. 1 = 1%) */
   amount?: number;
 }) => {
   try {

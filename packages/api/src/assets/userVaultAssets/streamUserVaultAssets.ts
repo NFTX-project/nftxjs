@@ -20,6 +20,24 @@ const getUrl = ({
   return `/${network}/users/${userAddress}/assets`;
 };
 
+/**
+ * Get a list of a user's NFTs for a given vault
+ * Returns a stream that should be consumed by either subscribing to data or manually reading.
+ * @example
+ * const stream = streamUserVaultAssets({ userAddress, vaultId });
+ * while (!stream.ended) {
+ *   const assets = await stream.read();
+ *   // Do something with assets
+ * }
+ * @example
+ * const stream = streamUserVaultAssets({ userAddress, vaultId });
+ * stream.on('data', (assets) => {
+ *   // Do something with assets
+ * });
+ * stream.on('end', () => {
+ *   // Done
+ * });
+ */
 const streamUserVaultAssets = ({
   network = config.network,
   userAddress,
