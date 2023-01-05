@@ -1,4 +1,5 @@
 /docs/api
+/docs/*.html
 
 .DS_Store
 

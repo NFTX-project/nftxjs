@@ -1,0 +1,11 @@
+[
+  {
+    "input": "index.md",
+    "output": "index.html",
+    "title": "NFTX.js",
+    "styles": ["styles/styles.css", "styles/highlight.css"],
+    "typographer": true,
+    "force": true,
+    "failOnWarn": true
+  }
+]
