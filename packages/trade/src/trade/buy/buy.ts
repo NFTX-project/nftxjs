@@ -137,6 +137,7 @@ const buy0xErc721 = async ({
     slippagePercentage: 0,
   });
 
+  const args = [vaultId, amount, specificIds, data, userAddress];
   const slippageMultiplier = parseEther(`${slippage || 0}`).add(WeiPerEther);
   const value = parseEther(guaranteedPrice)
     .mul(buyAmount)
@@ -144,27 +145,27 @@ const buy0xErc721 = async ({
     .mul(slippageMultiplier)
     .div(WeiPerEther);
 
-  console.debug(
-    'buyAndRedeem',
-    vaultId,
-    `${amount}`,
-    specificIds,
-    data,
-    userAddress,
-    {
-      value: `${value}`,
-    }
-  );
+  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
+    await estimateGasAndFees({
+      contract,
+      method: 'buyAndRedeem',
+      args: args,
+      overrides: omitNil({ value }),
+    });
+
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+
+  const overrides = omitNil({
+    value,
+    gasLimit,
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+  });
+
+  console.debug('buyAndRedeem', ...args, overrides);
 
   // try {
-  const result = await contract.buyAndRedeem(
-    vaultId,
-    amount,
-    specificIds,
-    data,
-    userAddress,
-    { value }
-  );
+  const result = await contract.buyAndRedeem(...args, overrides);
   return result;
   // } catch (e) {
   //   if (e?.code === 4001) {
