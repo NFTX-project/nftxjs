@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/NFTX-project/nftxjs/compare/v0.1.10...v0.2.0) (2023-01-09)
+
+
+### Features
+
+* increase gas limit for 0x zap ([aa62903](https://github.com/NFTX-project/nftxjs/commit/aa62903809abee94a8f6cbeb59ef0c99bc67ed26))
+
+
+
+
+
 ## [0.1.10](https://github.com/NFTX-project/nftxjs/compare/v0.1.9...v0.1.10) (2023-01-04)
 
 **Note:** Version bump only for package nftxjs
