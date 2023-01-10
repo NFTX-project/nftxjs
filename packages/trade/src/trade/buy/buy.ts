@@ -53,11 +53,12 @@ const buyErc721 = async ({
   const ids = getExactTokenIds(tokenIds);
   const targetBuys = getTotalTokenIds(tokenIds);
   const amount = targetBuys + randomBuys;
+  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
   const contract = getContract({
     network,
     signer,
     abi: NFTXMarketplaceZap,
-    address: getChainConstant(NFTX_MARKETPLACE_ZAP, network),
+    address,
   });
   const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
   const args = [vaultId, amount, ids, path, userAddress];
@@ -84,16 +85,16 @@ const buyErc721 = async ({
     });
 
   const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
+  const overrides = omitNil({
+    value: maxPrice?.toString(),
+    gasLimit,
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+  });
 
-  return contract.buyAndRedeem(
-    ...args,
-    omitNil({
-      value: maxPrice?.toString(),
-      gasLimit,
-      maxFeePerGas,
-      maxPriorityFeePerGas,
-    })
-  );
+  console.debug(address, 'buyAndRedeem', ...args, overrides);
+
+  return contract.buyAndRedeem(...args, overrides);
 };
 
 const buy0xErc721 = async ({
@@ -113,10 +114,11 @@ const buy0xErc721 = async ({
   randomBuys: number;
   slippage: number;
 }) => {
+  const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
   const { vaultId, id: vaultAddress } = vault;
   const contract = getContract({
     abi: NftxMarketplace0xZap,
-    address: getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network),
+    address,
     network,
     signer,
   });
@@ -162,11 +164,10 @@ const buy0xErc721 = async ({
     maxPriorityFeePerGas,
   });
 
-  console.debug('buyAndRedeem', ...args, overrides);
+  console.debug(address, 'buyAndRedeem', ...args, overrides);
 
   // try {
-  const result = await contract.buyAndRedeem(...args, overrides);
-  return result;
+  return contract.buyAndRedeem(...args, overrides);
   // } catch (e) {
   //   if (e?.code === 4001) {
   //     throw e;

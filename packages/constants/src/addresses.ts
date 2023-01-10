@@ -72,7 +72,7 @@ export const NFTX_MARKETPLACE_ZAP = {
 
 export const NFTX_MARKETPLACE_0X_ZAP = {
   [Network.Mainnet]: '0xbbc53022Af15Bb973AD906577c84784c47C14371',
-  [Network.Goerli]: '0x14141d76D162cB20CdA7C42254C0349294e501Db',
+  [Network.Goerli]: '0x177246Adb119ed83f982d1e3c4859F354578D5eF',
 };
 
 export const NFTX_VAULT_FACTORY = {

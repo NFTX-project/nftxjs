@@ -52,6 +52,7 @@ const sell0xErc721 = async ({
   const fee = calculateSellFee({ vault, amount });
   const sellAmount = parseEther(`${amount}`).sub(fee);
   const ids = getUniqueTokenIds(tokenIds);
+  const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
 
   const { data } = await fetch0xQuote({
     network,
@@ -61,14 +62,27 @@ const sell0xErc721 = async ({
     slippagePercentage: slippage,
     type: 'quote',
   });
+
+  const args = [vaultId, ids, data, userAddress];
   const contract = getContract({
     network,
     signer,
-    address: getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network),
+    address,
     abi: nftxMarketplace0xZap,
   });
 
-  return contract.mintAndSell721(vaultId, ids, data, userAddress);
+  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
+    await estimateGasAndFees({
+      contract,
+      method: 'mintAndSell721',
+      args,
+    });
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+
+  const overrides = omitNil({ gasLimit, maxFeePerGas, maxPriorityFeePerGas });
+  console.debug(address, 'mintAndSell721', ...args, overrides);
+
+  return contract.mintAndSell721(...args, overrides);
 };
 
 const sellErc721 = async ({
@@ -89,11 +103,12 @@ const sellErc721 = async ({
   signer: Signer;
   slippage: number;
 }) => {
+  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
   const contract = getContract({
     network,
     signer,
     abi: nftxMarketplaceZap,
-    address: getChainConstant(NFTX_MARKETPLACE_ZAP, network),
+    address,
   });
   const ids = getUniqueTokenIds(tokenIds);
   let { price: minPrice } = await fetchVaultSellPrice({
@@ -116,23 +131,11 @@ const sellErc721 = async ({
       args,
     });
   const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
+  const overrides = omitNil({ gasLimit, maxFeePerGas, maxPriorityFeePerGas });
 
-  try {
-    // Attempt an EIP1559 transaction
-    return contract.mintAndSell721(
-      ...args,
-      omitNil({ gasLimit, maxFeePerGas, maxPriorityFeePerGas })
-    );
-  } catch {
-    // Fallback to a legacy tx
-    return contract.mintAndSell721(
-      vaultId,
-      ids,
-      minPrice,
-      userAddress,
-      omitNil({ gasLimit })
-    );
-  }
+  console.debug(address, 'mintAndSell721', ...args, overrides);
+
+  return contract.mintAndSell721(...args, overrides);
 };
 
 const sellErc1155 = async ({
@@ -153,11 +156,12 @@ const sellErc1155 = async ({
   network: number;
   signer: Signer;
 }) => {
+  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
   const contract = getContract({
     network,
     signer,
     abi: nftxMarketplaceZap,
-    address: getChainConstant(NFTX_MARKETPLACE_ZAP, network),
+    address,
   });
   const ids = getUniqueTokenIds(tokenIds);
   const amounts = getTokenIdAmounts(tokenIds);
@@ -177,15 +181,15 @@ const sellErc1155 = async ({
   const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
     await estimateGasAndFees({ contract, method: 'mintAndSell1155', args });
   const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
+  const overrides = omitNil({
+    gasLimit,
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+  });
 
-  return contract.mintAndSell1155(
-    ...args,
-    omitNil({
-      gasLimit,
-      maxFeePerGas,
-      maxPriorityFeePerGas,
-    })
-  );
+  console.debug(address, 'mintAndSell1155', ...args, overrides);
+
+  return contract.mintAndSell1155(...args, overrides);
 };
 
 const sell0xErc1155 = async ({
@@ -210,6 +214,7 @@ const sell0xErc1155 = async ({
   const amount = getTotalTokenIds(tokenIds);
   const fee = calculateSellFee({ vault, amount });
   const sellAmount = parseEther(`${amount}`).sub(fee);
+  const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
 
   const { data } = await fetch0xQuote({
     network,
@@ -223,11 +228,23 @@ const sell0xErc1155 = async ({
   const contract = getContract({
     network,
     signer,
-    address: getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network),
+    address,
     abi: nftxMarketplace0xZap,
   });
 
-  return contract.mintAndSell1155(vaultId, ids, amounts, data, userAddress);
+  const args = [vaultId, ids, amounts, data, userAddress];
+
+  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
+    await estimateGasAndFees({ contract, method: 'mintAndSell1155', args });
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+  const overrides = omitNil({
+    gasLimit,
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+  });
+
+  console.debug(address, 'mintAndSell1155', args, overrides);
+  return contract.mintAndSell1155(...args, overrides);
 };
 
 const matrix = {
