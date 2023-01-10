@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/NFTX-project/nftxjs/compare/v0.2.3...v0.3.0) (2023-01-10)
+
+
+### Features
+
+* add new marketplace 0x zap ([91dfc86](https://github.com/NFTX-project/nftxjs/commit/91dfc8647dc33ec79e430b481cbafb80647ba91e))
+
+
+
+
+
 ## [0.2.3](https://github.com/NFTX-project/nftxjs/compare/v0.2.2...v0.2.3) (2023-01-10)
 
 
