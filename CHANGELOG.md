@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/NFTX-project/nftxjs/compare/v0.2.0...v0.2.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* new 0x zap address ([f816af6](https://github.com/NFTX-project/nftxjs/commit/f816af670da0a6afd769a73d9da22b44798bb141))
+
+
+
+
+
 # [0.2.0](https://github.com/NFTX-project/nftxjs/compare/v0.1.10...v0.2.0) (2023-01-09)
 
 
