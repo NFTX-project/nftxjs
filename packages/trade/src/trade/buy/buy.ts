@@ -155,7 +155,7 @@ const buy0xErc721 = async ({
       overrides: omitNil({ value }),
     });
 
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
 
   const overrides = omitNil({
     value,

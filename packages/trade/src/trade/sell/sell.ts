@@ -77,7 +77,7 @@ const sell0xErc721 = async ({
       method: 'mintAndSell721',
       args,
     });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
 
   const overrides = omitNil({ gasLimit, maxFeePerGas, maxPriorityFeePerGas });
   console.debug(address, 'mintAndSell721', ...args, overrides);
@@ -236,7 +236,7 @@ const sell0xErc1155 = async ({
 
   const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
     await estimateGasAndFees({ contract, method: 'mintAndSell1155', args });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
   const overrides = omitNil({
     gasLimit,
     maxFeePerGas,

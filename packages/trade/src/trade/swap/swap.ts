@@ -186,7 +186,7 @@ const swap0xErc721 = async ({
       method: 'buyAndSwap721',
       overrides: omitNil({ value }),
     });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
 
   const overrides = omitNil({
     value,
@@ -329,7 +329,7 @@ const swap0xErc1155 = async ({
       method: 'buyAndSwap1155',
       overrides: omitNil({ value }),
     });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 3 });
+  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
   const overrides = omitNil({
     value,
     gasLimit,
