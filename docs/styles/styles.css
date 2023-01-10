@@ -45,11 +45,11 @@ pre {
 
 a {
   color: rgb(250, 250, 250);
-  text-decoration: none;
 }
 a:visited {
   color: rgb(200, 200, 200);
 }
 a:hover {
   text-decoration: underline;
+  color: purple;
 }

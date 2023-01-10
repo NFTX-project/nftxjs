@@ -11,7 +11,7 @@ import type { TransactionEvent, TransactionState } from '../types';
 
 export type IEventsContext = {
   events: TransactionEvent[];
-  pushEvent: (e: TransactionEvent) => void;
+  pushEvent: (e: Omit<TransactionEvent, 'id'>) => void;
 };
 
 export const EventsContext = createContext<IEventsContext>({
@@ -35,8 +35,14 @@ export const EventsProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  const pushEvent = useCallback((e: TransactionEvent) => {
-    dispatch({ type: 'push', event: e });
+  const pushEvent = useCallback((e: Omit<TransactionEvent, 'id'>) => {
+    dispatch({
+      type: 'push',
+      event: {
+        id: [e.type, e.createdAt, e.transaction?.hash].join('-'),
+        ...e,
+      },
+    });
   }, []);
 
   const value = useMemo(() => ({ events, pushEvent }), [events, pushEvent]);
@@ -61,19 +67,26 @@ export const useAddEvent = () => {
 };
 
 function useOnEvent(
+  /** Filter a specific type */
   type: TransactionState,
+  callback: (e: TransactionEvent) => any
+): void;
+function useOnEvent(
+  /** Filter by specific types */
+  types: TransactionState[],
   callback: (e: TransactionEvent) => any
 ): void;
 function useOnEvent(callback: (e: TransactionEvent) => any): void;
 function useOnEvent(...args: any[]) {
-  const type = typeof args[0] === 'string' ? args[0] : null;
-  const callback: (e: TransactionEvent) => any = args[args.length - 1];
+  const callback: (e: TransactionEvent) => any = args.pop();
+  const type: string | string[] = args.pop();
+  const types = type == null ? null : Array.isArray(type) ? type : [type];
 
   const event = useLatestEvent();
 
   useEffect(() => {
     if (event) {
-      if (type == null || type === event.type) {
+      if (types == null || types.includes(event.type)) {
         callback(event);
       }
     }

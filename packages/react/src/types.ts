@@ -9,6 +9,7 @@ export type TransactionState =
   | 'Exception';
 
 export type TransactionEvent = {
+  id: string;
   type: TransactionState;
   description: string;
   createdAt: number;

@@ -7,5 +7,50 @@
     "typographer": true,
     "force": true,
     "failOnWarn": true
+  },
+  {
+    "input": "config.md",
+    "output": "config.html",
+    "title": "Config | NFTX.js",
+    "styles": ["styles/styles.css", "styles/highlight.css"],
+    "typographer": true,
+    "force": true,
+    "failOnWarn": true
+  },
+  {
+    "input": "positions.md",
+    "output": "positions.html",
+    "title": "Positions | NFTX.js",
+    "styles": ["styles/styles.css", "styles/highlight.css"],
+    "typographer": true,
+    "force": true,
+    "failOnWarn": true
+  },
+  {
+    "input": "react.md",
+    "output": "react.html",
+    "title": "@nftx/react | NFTX.js",
+    "styles": ["styles/styles.css", "styles/highlight.css"],
+    "typographer": true,
+    "force": true,
+    "failOnWarn": true
+  },
+  {
+    "input": "trading.md",
+    "output": "trading.html",
+    "title": "Trading | NFTX.js",
+    "styles": ["styles/styles.css", "styles/highlight.css"],
+    "typographer": true,
+    "force": true,
+    "failOnWarn": true
+  },
+  {
+    "input": "vaults.md",
+    "output": "vaults.html",
+    "title": "NFTX.js",
+    "styles": ["styles/styles.css", "styles/highlight.css"],
+    "typographer": true,
+    "force": true,
+    "failOnWarn": true
   }
 ]

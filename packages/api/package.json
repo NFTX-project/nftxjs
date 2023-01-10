@@ -31,6 +31,12 @@
   "devDependencies": {
     "@ethersproject/bignumber": "^5.6.0"
   },
+  "nx": {
+    "implicitDependencies": [
+      "@nftx/types",
+      "@nftx/config"
+    ]
+  },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },

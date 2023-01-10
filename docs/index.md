@@ -1,6 +1,10 @@
 # NFTX.js
 
+[api](api/modules/nftx_js.html) | [github](https://github.com/NFTX-project/nftxjs) | [npm](https://www.npmjs.com/package/nftx.js)
+
 This is an SDK that covers all of the core functionality of NFTX.
+
+Our aim is to be as technology-agnostic as possible. We're not tightly coupled with any view framework or environment. You can integrate with React, useDapp, Wagmi, Vue, Nodejs. Our only dependency is on [ethers.js](https://docs.ethers.org/ethers.js/v3.0/html/)
 
 - Buy
 - Sell
@@ -10,8 +14,6 @@ This is an SDK that covers all of the core functionality of NFTX.
 - Fetch detailed vault and pool info
 - Fetch a user or vault's positions
 - Get price quotes
-
-[api](api/modules/nftx_js.html) | [github](https://github.com/NFTX-project/nftxjs) | [npm](https://www.npmjs.com/package/nftx.js)
 
 ## Getting started
 
@@ -49,6 +51,14 @@ const transaction = await buy({
 // Wait for the transaction to be confirmed.
 const receipt = await transaction.wait();
 ```
+
+## Core features
+
+- [config](config)
+- [vaults and pools](vaults)
+- [positions](positions)
+- [buy/sell/swap/stake](trading)
+- [@nftx/react](react)
 
 ## Integrate with React
 

@@ -33,5 +33,10 @@
   "sideEffects": false,
   "dependencies": {
     "deepmerge": "^4.2.2"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "@nftx/constants"
+    ]
   }
 }
