@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.3](https://github.com/NFTX-project/nftxjs/compare/v0.2.2...v0.2.3) (2023-01-10)
+
+
+### Bug Fixes
+
+* bump gas by 7% ([d5541c1](https://github.com/NFTX-project/nftxjs/commit/d5541c103ce252dcc290692c5031889ba68a9be3))
+
+
+
+
+
 ## [0.2.2](https://github.com/NFTX-project/nftxjs/compare/v0.2.1...v0.2.2) (2023-01-10)
 
 
