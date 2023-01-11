@@ -31,7 +31,6 @@ const GATEWAY_CACHE_PROXY_ROOT = `${CACHE_PROXY_HOST}/${GATEWAY_PROXY_NAME}/${GA
 
 export const NON_STANDARD_SUBGRAPH = {
   [Network.Mainnet]: `${SHARED_PROXY_ROOT}/0xorg/non-standard-nfts`,
-  [Network.Rinkeby]: `${SHARED_PROXY_ROOT}/0xorg/non-standard-nfts-rinkeby`,
 };
 
 export const ERC721_SUBGRAPH = {
@@ -50,14 +49,12 @@ export const ERC721_SUBGRAPH = {
     `${SHARED_ROOT}/amxx/eip721-subgraph`,
   ],
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip721-subgraph-arbitrum`,
-  [Network.Rinkeby]: `${SHARED_PROXY_ROOT}/0xorg/eip721-subgraph-rinkeby`,
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/eip721-goerli`,
 };
 
 export const ERC1155_SUBGRAPH = {
   [Network.Mainnet]: `${GATEWAY_PROXY_ROOT}/GCQVLurkeZrdMf4t5v5NyeWJY8pHhfE9sinjFMjLYd9C`,
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip1155-subgraph-arbitrum`,
-  [Network.Rinkeby]: `${SHARED_PROXY_ROOT}/0xorg/eip1155-subgraph-rinkeby`,
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/odyssy-automaton/erc1155-goerli-subgraph`,
 };
 
@@ -71,7 +68,6 @@ export const SUSHI_SUBGRAPH = {
     `${SHARED_ROOT}/sushiswap/exchange`,
   ],
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/sushiswap/arbitrum-exchange`,
-  [Network.Rinkeby]: `${SHARED_PROXY_ROOT}/bilalmir135/sushi-swap-exchange`,
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/sushiswap/exchange-goerli`,
 };
 
@@ -80,8 +76,8 @@ export const NFTX_SUBGRAPH_MAINNET_URLS = {
   GATEWAY: `${GATEWAY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
   INDEXER_PROXY: `${INDEXER_PROXY_ROOT}/QmXa6ChLJzAVu1imQ5YCMTzgPGVCCRdhVgVKWpkXEyKtGQ`,
   INDEXER: `${INDEXER_ROOT}/QmXa6ChLJzAVu1imQ5YCMTzgPGVCCRdhVgVKWpkXEyKtGQ`,
-  SHARED_PROXY: `${SHARED_PROXY_ROOT}/nftx-project/nftx-v2`,
-  SHARED: `${SHARED_ROOT}/nftx-project/nftx-v2`,
+  SHARED_PROXY: `${SHARED_PROXY_ROOT}/nftx-project/nftx-v2-1-mainnet`,
+  SHARED: `${SHARED_ROOT}/nftx-project/nftx-v2-1-mainnet`,
 };
 export const NFTX_SUBGRAPH = {
   [Network.Mainnet]: [
@@ -99,7 +95,6 @@ export const NFTX_SUBGRAPH = {
     NFTX_SUBGRAPH_MAINNET_URLS.SHARED,
   ],
   [Network.Arbitrum]: `${SHARED_ROOT}/nftx-project/nftx-v2-arbitrum`,
-  [Network.Rinkeby]: `${SHARED_ROOT}/nftx-project/nftx-v2-rinkeby`,
   [Network.Goerli]: `${SHARED_ROOT}/nftx-project/nftx-v2-1-goerli`,
 };
 
@@ -119,7 +114,6 @@ export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
     `${SHARED_ROOT}/nftx-project/nftx-vault-tokens-holdings`,
   ],
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-vault-token-holdings-arbitrum?nocache`,
-  [Network.Rinkeby]: `${SHARED_PROXY_ROOT}/quantumlyy/nftx-holdings-subgraph-rinkeby`,
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-v2-1-token-holdings-goerl?nocache`,
 };
 
