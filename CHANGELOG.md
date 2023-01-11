@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/NFTX-project/nftxjs/compare/v0.3.0...v0.3.1) (2023-01-11)
+
+
+### Bug Fixes
+
+* added explicit dependencies between nftx packages ([3e0dd33](https://github.com/NFTX-project/nftxjs/commit/3e0dd33bd0677a9a1c5c2298bcbc55d59bbd6aa3))
+
+
+
+
+
 # [0.3.0](https://github.com/NFTX-project/nftxjs/compare/v0.2.3...v0.3.0) (2023-01-10)
 
 
