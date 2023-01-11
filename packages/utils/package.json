@@ -31,10 +31,6 @@
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@ethersproject/units": "^5.6.0",
-    "@nftx/config": "<1.0.0",
-    "@nftx/constants": "<1.0.0",
-    "@nftx/subgraph": "<1.0.0",
-    "@nftx/types": "<1.0.0",
     "ethers": "^5.6.2"
   },
   "devDependencies": {
@@ -51,6 +47,10 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@nftx/config": "^0.3.0",
+    "@nftx/constants": "^0.3.0",
+    "@nftx/subgraph": "^0.3.0",
+    "@nftx/types": "^0.3.0",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.32"
   }

@@ -27,8 +27,8 @@
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
   "sideEffects": false,
-  "peerDependencies": {
-    "@nftx/config": "<1.0.0",
-    "@nftx/constants": "<1.0.0"
+  "dependencies": {
+    "@nftx/config": "^0.3.0",
+    "@nftx/constants": "^0.3.0"
   }
 }

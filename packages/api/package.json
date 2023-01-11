@@ -23,19 +23,15 @@
     "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build"
   },
+  "dependencies": {
+    "@nftx/config": "^0.3.0",
+    "@nftx/types": "^0.3.0"
+  },
   "peerDependencies": {
-    "@ethersproject/bignumber": "^5.6.0",
-    "@nftx/config": "<1.0.0",
-    "@nftx/types": "<1.0.0"
+    "@ethersproject/bignumber": "^5.6.0"
   },
   "devDependencies": {
     "@ethersproject/bignumber": "^5.6.0"
-  },
-  "nx": {
-    "implicitDependencies": [
-      "@nftx/types",
-      "@nftx/config"
-    ]
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"

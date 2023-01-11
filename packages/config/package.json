@@ -24,19 +24,12 @@
     "prepublishOnly": "yarn build",
     "docs": "jsdoc -c ../../jsdoc.js src"
   },
-  "peerDependencies": {
-    "@nftx/constants": "<1.0.0"
-  },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
   "sideEffects": false,
   "dependencies": {
+    "@nftx/constants": "^0.3.0",
     "deepmerge": "^4.2.2"
-  },
-  "nx": {
-    "implicitDependencies": [
-      "@nftx/constants"
-    ]
   }
 }
