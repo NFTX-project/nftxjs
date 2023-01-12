@@ -91,7 +91,7 @@ export const processSwaps = async (
         date: Number(swap.date),
         tokenId: nftId,
         swapTokenId: swap.mintedIds[i],
-        txId: swap.id.split('-')[0],
+        txId: swap.id.split('-')[1] ?? swap.id,
         amount: 1,
         ethAmount: BigNumber.from(swap?.zapAction?.ethAmount ?? 0),
         feeAmount: receipt.amount.div(swap.redeemedIds.length),

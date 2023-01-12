@@ -118,7 +118,7 @@ export const processMints = async (
         vaultAddress: mint.vault.id,
         date: Number(mint.date),
         tokenId: nftId,
-        txId: mint.id.split('-')[0],
+        txId: mint.id.split('-')[1] ?? mint.id,
         amount: Number(mint.amounts[i]),
         ethAmount: BigNumber.from(mint?.zapAction?.ethAmount ?? 0),
         feeAmount: receipt.amount.div(mint.nftIds.length),
