@@ -90,7 +90,8 @@ const fetch0xQuote = async (args: {
     const url = `${zeroUrl}/swap/v1/${type}?${query}`;
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${url}`);
+      const json = await response.json();
+      throw { ...json, status: response.status };
     }
     const data: ZeroXQuote = await response.json();
 
