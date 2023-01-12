@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/NFTX-project/nftxjs/compare/v0.3.3...v0.4.0) (2023-01-12)
+
+
+### Features
+
+* add subgraphs for 0x ([#8](https://github.com/NFTX-project/nftxjs/issues/8)) ([1e65a74](https://github.com/NFTX-project/nftxjs/commit/1e65a741bb6052d63a5a5296c4954ec0c67dcd16))
+
+
+
+
+
 ## [0.3.1](https://github.com/NFTX-project/nftxjs/compare/v0.3.0...v0.3.1) (2023-01-11)
 
 
