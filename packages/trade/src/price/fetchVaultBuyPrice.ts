@@ -49,13 +49,6 @@ const fetchVaultBuyPrice = async (args: {
     amount = amount.add(WeiPerEther);
   }
 
-  const hasLiquidity = vault.reserveVtoken.gt(amount);
-
-  // You can't buy anything if there isn't enough liquidity in the pool
-  if (!hasLiquidity) {
-    return { price: Zero };
-  }
-
   return fetchBuyPrice({
     network,
     provider,
