@@ -99,7 +99,7 @@ export const processRedeems = async (
         vaultId: redeem.vault.vaultId,
         vaultAddress: redeem.vault.id,
         date: Number(redeem.date),
-        txId: redeem.id,
+        txId: redeem.id.split('-')[1] ?? redeem.id,
         random: !target,
         type: isRedeemOrUnstake(redeem, receipt),
         amount: 1,
