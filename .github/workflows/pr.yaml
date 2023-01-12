@@ -17,7 +17,7 @@ jobs:
       - name: Setup
         run: yarn install
       - name: Lint
-        run: yarn tsc
+        run: yarn lint
       - name: Tests
         run: yarn test
       - name: Build
