@@ -1,6 +1,6 @@
 {
   "name": "nftx.js",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "Jack Ellis <jack.m.ellis@hotmail.co.uk>",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "@nftx/config": "^0.3.1",
     "@nftx/constants": "^0.3.0",
     "@nftx/subgraph": "^0.3.1",
-    "@nftx/trade": "^0.3.1",
+    "@nftx/trade": "^0.3.2",
     "@nftx/types": "^0.3.0",
     "@nftx/utils": "^0.3.1",
     "ethers": "^5.6.4"
