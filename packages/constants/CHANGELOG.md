@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/NFTX-project/nftxjs/compare/v0.4.0...v0.4.1) (2023-01-13)
+
+
+### Bug Fixes
+
+* add arbitrum 0x endpoints ([353c6dc](https://github.com/NFTX-project/nftxjs/commit/353c6dc66bf89f41d8cc5099fc10243d16d68aa2))
+
+
+
+
+
 # [0.4.0](https://github.com/NFTX-project/nftxjs/compare/v0.3.3...v0.4.0) (2023-01-12)
 
 

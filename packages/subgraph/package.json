@@ -1,6 +1,6 @@
 {
   "name": "@nftx/subgraph",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -28,7 +28,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@nftx/config": "^0.4.0",
-    "@nftx/constants": "^0.4.0"
+    "@nftx/config": "^0.4.1",
+    "@nftx/constants": "^0.4.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@nftx/api",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@nftx/config": "^0.4.0",
+    "@nftx/config": "^0.4.1",
     "@nftx/types": "^0.4.0"
   },
   "peerDependencies": {
