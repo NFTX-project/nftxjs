@@ -2,11 +2,13 @@ import { Network } from './networks';
 
 export const ZEROX_PRICE_URL = {
   [Network.Mainnet]: 'https://0x.nftx.xyz',
+  [Network.Arbitrum]: 'https://arbitrum.api.0x.org',
   [Network.Goerli]: 'https://goerli.api.0x.org',
 };
 
 export const ZEROX_QUOTE_URL = {
   [Network.Mainnet]: 'https://api.0x.org',
+  [Network.Arbitrum]: 'https://arbitrum.api.0x.org',
   [Network.Goerli]: 'https://goerli.api.0x.org',
 };
 
