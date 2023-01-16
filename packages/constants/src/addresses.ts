@@ -51,8 +51,8 @@ export const NFTX_STAKING_ZAP = {
 };
 
 export const NFTX_UNSTAKING_INVENTORY_ZAP = {
-  [Network.Mainnet]: '0x51d660Ba5c218b2Cf33FBAcA5e3aBb8aEff3543B',
-  [Network.Arbitrum]: '0x009e4110Fd68c603DD1F9189C4BaC3D12Cde8c70',
+  [Network.Mainnet]: '0x2374a32ab7b4f7BE058A69EA99cb214BFF4868d3',
+  [Network.Arbitrum]: '0xB25Ea886FcE4bfDC8750Cb2D4464FE3F7A67bc07',
   [Network.Goerli]: '0x8B9D81fF1845375379865c0997bcFf538513Eae1',
 };
 
