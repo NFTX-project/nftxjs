@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.2](https://github.com/NFTX-project/nftxjs/compare/v0.4.1...v0.4.2) (2023-01-16)
+
+
+### Bug Fixes
+
+* new unstaking zap ([22590bc](https://github.com/NFTX-project/nftxjs/commit/22590bc2a324343b527bf771521bbca14ced8f29))
+
+
+
+
+
 ## [0.4.1](https://github.com/NFTX-project/nftxjs/compare/v0.4.0...v0.4.1) (2023-01-13)
 
 
