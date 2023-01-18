@@ -2,18 +2,22 @@ import config from '@nftx/config';
 import type { Address, Collection } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
-type Response = {
+export type Response = {
   totalCount: number;
-  pageKey: string;
+  pageKey?: string;
   contracts: Collection[];
 };
+
+type Fetch = typeof fetch;
 
 const fetchUserCollectionsAlchemy = async ({
   network,
   userAddress,
+  fetch,
 }: {
   network: number;
   userAddress: Address;
+  fetch: Fetch;
 }) => {
   const baseUrl = getChainConstant(config.urls.ALCHEMY_URL, network);
   const apiKey = getChainConstant(config.keys.ALCHEMY, network);

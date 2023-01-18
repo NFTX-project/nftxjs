@@ -11,5 +11,6 @@ export { default as toEthersNumber } from './toEthersNumber';
 export { default as getContract } from './getContract';
 
 export const fetchBlockNumberByTimestamp = makeFetchBlockNumberByTimestamp({
-  fetch,
+  // Fun with possibly-undefined globals!
+  fetch: typeof fetch !== 'undefined' ? fetch : (undefined as any),
 });

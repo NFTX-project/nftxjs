@@ -1,14 +1,26 @@
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
-import type {
-  Address,
-  BigIntString,
-  NftxTokenType,
-  UserVaultBalance,
-} from '@nftx/types';
+import type { Address, NftxTokenType, UserVaultBalance } from '@nftx/types';
 import { getChainConstant } from '../web3';
 
 type QuerySubgraph = typeof querySubgraph;
+
+export type Response = {
+  account: {
+    ERC20balances: Array<{
+      contract: {
+        id: Address;
+        name: string;
+        symbol: string;
+        asVaultAsset: {
+          type: NftxTokenType;
+          vaultId: string;
+        };
+      };
+      valueExact: `${number}`;
+    }>;
+  };
+};
 
 export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
   /**
@@ -18,26 +30,9 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
     userAddress,
     network = config.network,
   }: {
-    userAddress: Address;
+    userAddress: string;
     network: number;
   }) {
-    type Response = {
-      account: {
-        ERC20balances: Array<{
-          contract: {
-            id: Address;
-            name: string;
-            symbol: string;
-            asVaultAsset: {
-              type: NftxTokenType;
-              vaultId: string;
-            };
-          };
-          valueExact: BigIntString;
-        }>;
-      };
-    };
-
     const query = gql<Response>`
       {
         account(id: $userAddress) {
@@ -68,8 +63,8 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
 
     const erc20Balances = data?.account?.ERC20balances ?? [];
 
-    const balances: Array<UserVaultBalance | null> = await Promise.all(
-      erc20Balances.map(async ({ valueExact, contract }) => {
+    const balances: Array<UserVaultBalance | null> = erc20Balances.map(
+      ({ valueExact, contract }) => {
         if (valueExact === '0') {
           return null;
         }
@@ -84,7 +79,7 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
           symbol: contract.symbol,
           balance,
         };
-      })
+      }
     );
 
     const vTokens: UserVaultBalance[] = [];

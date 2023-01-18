@@ -18,6 +18,7 @@
     "url": "git+https://github.com/NFTX-project/nftxjs.git"
   },
   "scripts": {
+    "test": "echo \"no tests\"",
     "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build"
   },

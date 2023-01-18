@@ -1,23 +1,29 @@
 import type { Asset, Provider, Vault } from '@nftx/types';
 import {
   addressEqual,
-  checkEligible,
-  fetchMerkleLeaves,
+  type checkEligible,
+  type fetchMerkleLeaves,
   isMerkleVault,
 } from '@nftx/utils';
 
 type Item = Pick<Asset, 'assetAddress' | 'tokenId' | 'quantity'>;
+type CheckEligible = typeof checkEligible;
+type FetchMerkleLeaves = typeof fetchMerkleLeaves;
 
 export const processAssetItems = async ({
   items,
   network,
   provider,
   vaults,
+  checkEligible,
+  fetchMerkleLeaves,
 }: {
   items: Item[];
   vaults: Pick<Vault, 'vaultId' | 'asset' | 'features' | 'eligibilityModule'>[];
   provider: Provider;
   network: number;
+  checkEligible: CheckEligible;
+  fetchMerkleLeaves: FetchMerkleLeaves;
 }) => {
   // Group all of the items by asset address
   const tokensByAsset = items.reduce((acc, item) => {
@@ -55,21 +61,24 @@ export const processAssetItems = async ({
               leaves.includes(item.tokenId)
             );
           } else if (vault.eligibilityModule?.id && provider != null) {
+            // If we have an upfront list of eligible ids, we can quickly filter them out
             if (vault.eligibilityModule.eligibleIds) {
               mintableItems = mintableItems.filter(({ tokenId }) =>
                 vault.eligibilityModule.eligibleIds.includes(tokenId)
               );
             }
-            // If the vault has an eligibility module, we need to verify they assets are eligible
-            const tokenIds = mintableItems.map((item) => item.tokenId);
-            const eligibleResults = await checkEligible({
-              provider,
-              tokenIds,
-              vault,
-            });
-            mintableItems = mintableItems.filter(
-              (_, i) => eligibleResults[i].eligible
-            );
+            if (mintableItems.length) {
+              // If the vault has an eligibility module, we need to verify they assets are eligible
+              const tokenIds = mintableItems.map((item) => item.tokenId);
+              const eligibleResults = await checkEligible({
+                provider,
+                tokenIds,
+                vault,
+              });
+              mintableItems = mintableItems.filter(
+                (_, i) => eligibleResults[i].eligible
+              );
+            }
           }
 
           return mintableItems.map((item) => {

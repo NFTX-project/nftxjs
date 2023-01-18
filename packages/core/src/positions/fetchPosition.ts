@@ -3,7 +3,7 @@ import { NFTX_LP_STAKING, Zero } from '@nftx/constants';
 import type { fetchLiquidityPool, LiquidityPool } from '../pools';
 import type { fetchClaimableTokens } from '../staking';
 import { t } from '../utils';
-import { fetchVault, fetchVaultFees } from '../vaults';
+import type { fetchVault, fetchVaultFees } from '../vaults';
 import {
   calculateClaimableEth,
   calculateInventoryBalance,
@@ -24,12 +24,12 @@ import type {
 } from '@nftx/types';
 import {
   addressEqual,
-  balanceOf,
-  fetchReservesForToken,
-  fetchUserVaultBalance,
-  fetchXTokenShare,
+  type balanceOf,
+  type fetchReservesForToken,
+  type fetchUserVaultBalance,
+  type fetchXTokenShare,
   getChainConstant,
-  totalSupply,
+  type totalSupply,
 } from '@nftx/utils';
 import type fetchVaultAprs from '../vaults/fetchVaultAprs';
 
@@ -41,6 +41,8 @@ type FetchVaultAprs = typeof fetchVaultAprs;
 type FetchXTokenShare = typeof fetchXTokenShare;
 type FetchTotalSupply = typeof totalSupply;
 type FetchReservesForToken = typeof fetchReservesForToken;
+type FetchVaultFees = typeof fetchVaultFees;
+type BalanceOf = typeof balanceOf;
 
 export default ({
   fetchClaimableTokens,
@@ -51,6 +53,8 @@ export default ({
   fetchVaultAprs,
   fetchXTokenShare,
   fetchReservesForToken,
+  fetchVaultFees,
+  balanceOf,
 }: {
   fetchPool: FetchPool;
   fetchClaimableTokens: FetchClaimableTokens;
@@ -60,6 +64,8 @@ export default ({
   fetchXTokenShare: FetchXTokenShare;
   fetchTotalSupply: FetchTotalSupply;
   fetchReservesForToken: FetchReservesForToken;
+  fetchVaultFees: FetchVaultFees;
+  balanceOf: BalanceOf;
 }) =>
   /** Fetch useful information about a user's position such as their inventory/liquidity balances, pool split, pool share */
   async function fetchPosition({

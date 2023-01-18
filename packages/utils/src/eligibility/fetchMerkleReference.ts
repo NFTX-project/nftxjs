@@ -1,9 +1,11 @@
 import type { Provider, Vault } from '@nftx/types';
+import type { getContract } from '../web3';
 import isMerkleVault from './isMerkleVault';
 import { NFTXENSMerkleEligibility } from '@nftx/abi';
-import getContract from '../web3/getContract';
 
-export default () =>
+type GetContract = typeof getContract;
+
+export default ({ getContract }: { getContract: GetContract }) =>
   async function fetchMerkleReference(args: {
     provider: Provider;
     vault: {

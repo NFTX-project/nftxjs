@@ -4,13 +4,16 @@ import { getChainConstant } from '@nftx/utils';
 
 type QuerySubgraph = typeof querySubgraph;
 
-// The aggregated fee value is a weird big number + decimal string
-// BigNumber can't parse decimals (the whole point is that you pass it a big number instead of a decimal number)
-// So we need to massage it first...
+/**
+ * The aggregated fee value is a weird big number + decimal string
+ * BigNumber can't parse decimal strings (the whole point is that you pass it a big number instead of a decimal number)
+ * So we need to massage it first...
+ */
 export const parseAggregatedFee = (value: `${number}` | undefined) => {
   return BigInt(Math.floor(Number(value || '0')).toString());
 };
 
+/** Creates the HEX equivalent of a vault id as some subgraphs store the vault id as a hex number instead */
 export const createHexVaultId = (vaultId: string) => {
   return ['0x', Number(vaultId).toString(16)].join('');
 };

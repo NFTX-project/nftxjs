@@ -1,9 +1,10 @@
 import { NFTXEligibility } from '@nftx/abi';
 import type { Provider, TokenId, Vault } from '@nftx/types';
-import { parseEther } from 'viem';
-import getContract from '../web3/getContract';
+import type { getContract } from '../web3';
 
-export default () =>
+type GetContract = typeof getContract;
+
+export default ({ getContract }: { getContract: GetContract }) =>
   /** Checks if a series of token ids are eligible for minting
    * This is based on the vault's eligibility module
    * Also bear in mind that this does not deal with unprocessed merkle vaults

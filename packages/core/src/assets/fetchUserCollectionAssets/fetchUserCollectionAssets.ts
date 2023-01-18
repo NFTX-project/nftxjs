@@ -26,6 +26,7 @@ const fetchUserCollectionAssets = async ({
         cursor,
         network,
         userAddress,
+        fetch,
       });
     } catch (e: any) {
       if (e.message?.includes?.('falling back to subgraph')) {

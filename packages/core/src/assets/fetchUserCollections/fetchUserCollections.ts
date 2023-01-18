@@ -15,7 +15,7 @@ const fetchUserCollections = async ({
     getChainConstant(config.keys.ALCHEMY, network, null)
   ) {
     console.debug('fetching collections from alchemy');
-    return fetchUserCollectionsAlchemy({ network, userAddress });
+    return fetchUserCollectionsAlchemy({ network, userAddress, fetch });
   }
   // @TODO do we need a painful and difficult opensea fallback?
   console.debug('no alchemy, no bueno');

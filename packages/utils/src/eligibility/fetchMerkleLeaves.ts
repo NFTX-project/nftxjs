@@ -1,8 +1,17 @@
-import type { Vault, Provider } from '@nftx/types';
 import { NFTXENSMerkleEligibility } from '@nftx/abi';
-import getContract from '../web3/getContract';
+import type { Provider, Vault } from '@nftx/types';
+import type { getContract } from '../web3';
 
-export default () =>
+type GetContract = typeof getContract;
+type Fetch = typeof fetch;
+
+export default ({
+  getContract,
+  fetch,
+}: {
+  getContract: GetContract;
+  fetch: Fetch;
+}) =>
   /**
    * Fetches a list of eligible token ids for a vault with merkle eligibility rules
    */

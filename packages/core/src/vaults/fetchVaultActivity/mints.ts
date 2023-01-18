@@ -1,9 +1,11 @@
 import { NFTX_MARKETPLACE_0X_ZAP, NFTX_STAKING_ZAP } from '@nftx/constants';
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
+import { buildWhere, gql, type querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './common';
 import config from '@nftx/config';
 import type { Address, TokenId, VaultActivity } from '@nftx/types';
 import { addressEqual, getChainConstant } from '@nftx/utils';
+
+type QuerySubgraph = typeof querySubgraph;
 
 export type Mint = {
   id: Address;
@@ -99,87 +101,91 @@ const isStakeOrMint = (
   return ['mint', undefined];
 };
 
-export const processMints = async ({
-  network,
-  response,
-  toTimestamp,
-  vaultAddresses,
-}: {
-  response: { mints: Mint[] };
-  network: number;
-  vaultAddresses?: Address[];
-  toTimestamp?: number;
-}) => {
-  let mints = response.mints.flatMap((mint): VaultActivity[] => {
-    const receipt = transformFeeReceipt(
-      mint.feeReceipt,
-      mint.vault.id,
-      mint.vault.vaultId
-    );
-    const [type, stakeType] = isStakeOrMint(mint, network);
-
-    return mint.nftIds.map((nftId, i): VaultActivity => {
-      return {
-        vaultId: mint.vault.vaultId,
-        vaultAddress: mint.vault.id,
-        date: Number(mint.date),
-        tokenId: nftId,
-        source: mint.source,
-        txId: (mint.id.split('-')[1] ?? mint.id) as Address,
-        amount: Number(mint.amounts[i]),
-        ethAmount: BigInt(mint?.zapAction?.ethAmount ?? '0'),
-        feeAmount: receipt.amount / BigInt(mint.nftIds.length),
-        type,
-        stakeType,
-      };
-    });
-  });
-
-  if (response.mints.length === 1000) {
-    const lastMint = mints[mints.length - 1];
-    const nextTimestamp = lastMint.date;
-    const moreMints = await getMints({
-      network,
-      vaultAddresses,
-      fromTimestamp: Number(nextTimestamp),
-      toTimestamp,
-    });
-    mints = [...mints, ...moreMints];
-  }
-
-  return mints;
-};
-
-export const getMints = async ({
-  network,
-  fromTimestamp,
-  toTimestamp,
-  vaultAddresses,
-}: {
-  network: number;
-  fromTimestamp: number;
-  toTimestamp?: number;
-  vaultAddresses?: Address[];
-}) => {
-  const where = buildWhere({
-    date_gt: fromTimestamp,
-    date_lte: toTimestamp,
-    vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
-    vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
-  });
-  const query = gql<{ mints: Mint[] }>`{ ${createMintsQuery(where)} }`;
-
-  const response = await querySubgraph({
-    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
-    query,
-  });
-
-  const mints = await processMints({
-    response,
+export const makeProcessMints = ({ fetchMints }: { fetchMints: FetchMints }) =>
+  async function processMints({
     network,
-    vaultAddresses,
+    response,
     toTimestamp,
-  });
+    vaultAddresses,
+  }: {
+    response: { mints: Mint[] };
+    network: number;
+    vaultAddresses?: Address[];
+    toTimestamp?: number;
+  }) {
+    let mints = response.mints.flatMap((mint): VaultActivity[] => {
+      const receipt = transformFeeReceipt(
+        mint.feeReceipt,
+        mint.vault.id,
+        mint.vault.vaultId
+      );
+      const [type, stakeType] = isStakeOrMint(mint, network);
 
-  return mints;
-};
+      return mint.nftIds.map((nftId, i): VaultActivity => {
+        return {
+          vaultId: mint.vault.vaultId,
+          vaultAddress: mint.vault.id,
+          date: Number(mint.date),
+          tokenId: nftId,
+          source: mint.source,
+          txId: (mint.id.split('-')[1] ?? mint.id) as Address,
+          amount: Number(mint.amounts[i]),
+          ethAmount: BigInt(mint?.zapAction?.ethAmount ?? '0'),
+          feeAmount: receipt.amount / BigInt(mint.nftIds.length),
+          type,
+          stakeType,
+        };
+      });
+    });
+
+    if (response.mints.length === 1000) {
+      const lastMint = mints[mints.length - 1];
+      const nextTimestamp = lastMint.date;
+      const response = await fetchMints({
+        network,
+        vaultAddresses,
+        fromTimestamp: Number(nextTimestamp),
+        toTimestamp,
+      });
+      const moreMints = await processMints({
+        response,
+        network,
+        vaultAddresses,
+        toTimestamp,
+      });
+      mints = [...mints, ...moreMints];
+    }
+
+    return mints;
+  };
+
+export type ProcessMints = ReturnType<typeof makeProcessMints>;
+
+export const makeFetchMints =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  async ({
+    network,
+    fromTimestamp,
+    toTimestamp,
+    vaultAddresses,
+  }: {
+    network: number;
+    fromTimestamp: number;
+    toTimestamp?: number;
+    vaultAddresses?: Address[];
+  }) => {
+    const where = buildWhere({
+      date_gt: fromTimestamp,
+      date_lte: toTimestamp,
+      vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
+      vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
+    });
+    const query = gql<{ mints: Mint[] }>`{ ${createMintsQuery(where)} }`;
+
+    return querySubgraph({
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
+      query,
+    });
+  };
+
+export type FetchMints = ReturnType<typeof makeFetchMints>;

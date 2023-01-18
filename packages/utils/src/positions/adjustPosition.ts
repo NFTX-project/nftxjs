@@ -53,13 +53,14 @@ const adjustPosition = (
   const adjustVToken = vToken != null && vToken !== 0n;
   const adjustSlp = slp != null && slp !== 0n;
   const adjustLp =
-    lpNft && lpEth && (lpNft > 0n || lpNft < 0n || lpEth > 0n || lpEth < 0n);
+    lpNft != null && lpEth != null && (lpNft !== 0n || lpEth !== 0n);
   const hasAdjustments = adjustLp || adjustSlp || adjustVToken;
 
   if (adjustVToken) {
     inventoryTokens = inventoryTokens + vToken;
 
     const newXTokens = (vToken * position.xTokenShare) / WeiPerEther;
+
     xTokenBalance = xTokenBalance + newXTokens;
     xTokenSupply = xTokenSupply + newXTokens;
     inventoryShare = calculateInventoryShare({

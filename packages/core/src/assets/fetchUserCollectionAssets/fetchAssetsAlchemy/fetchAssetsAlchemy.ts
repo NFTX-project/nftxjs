@@ -5,16 +5,20 @@ import { createCursor } from './cursor';
 import getNextSet from './getNextSet';
 import { BigNumber } from '@ethersproject/bignumber';
 
+type Fetch = typeof fetch;
+
 const fetchAssetsAlchemy = async ({
   assetAddresses,
   cursor,
   network,
   userAddress,
+  fetch,
 }: {
   assetAddresses: Address[];
   network: number;
   userAddress: Address;
   cursor?: string;
+  fetch: Fetch;
 }): Promise<{ assets: Asset[]; cursor?: string }> => {
   if (!assetAddresses.length) {
     return { assets: [] };
@@ -24,6 +28,7 @@ const fetchAssetsAlchemy = async ({
     cursor,
     network,
     userAddress,
+    fetch,
   });
 
   const assets = await processAssetItems({

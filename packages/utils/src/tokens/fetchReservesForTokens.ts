@@ -1,10 +1,12 @@
 import { WeiPerEther, WETH_TOKEN, Zero } from '@nftx/constants';
 import { addressEqual, getChainConstant } from '../web3';
-import { gql, querySubgraph } from '@nftx/subgraph';
+import { gql, type querySubgraph } from '@nftx/subgraph';
 import { compareByAlpha, toLowerCase } from '../utils';
 import config from '@nftx/config';
 import type { Address, BigIntString, TokenReserve } from '@nftx/types';
 import { parseEther } from 'viem';
+
+type QuerySubgraph = typeof querySubgraph;
 
 function midQuote(amountA: bigint, reserveA: bigint, reserveB: bigint) {
   if (amountA <= Zero) {
@@ -29,7 +31,7 @@ const calcMidPrice = (reserveVtoken: bigint, reserveWeth: bigint) => {
 
 const LIMIT = 1000;
 
-type TokenPair = {
+export type TokenPair = {
   id?: string;
   derivedETH: string;
   basePairs: {
@@ -56,7 +58,7 @@ type TokenPair = {
   }[];
 };
 
-type Response = {
+export type Response = {
   tokens: TokenPair[];
 };
 
@@ -124,12 +126,11 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
  * The reserves are pulled from the Sushi subgraph
  * @returns Promise<{@link @nftx/types!TokenReserve}[]>
  */
-const fetchReservesForTokens = async (args: {
-  network?: number;
-  tokenAddresses?: Address[];
-}) => {
-  const { network = config.network, tokenAddresses } = args;
-  const query = gql<Response>`{
+const fetchReservesForTokens =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  async (args: { network?: number; tokenAddresses?: Address[] }) => {
+    const { network = config.network, tokenAddresses } = args;
+    const query = gql<Response>`{
     tokens(
       first: ${LIMIT},
       where: {
@@ -162,24 +163,24 @@ const fetchReservesForTokens = async (args: {
       }
     }
   }`;
-  const response = await querySubgraph({
-    url: getChainConstant(config.subgraph.SUSHI_SUBGRAPH, network),
-    query,
-    variables: {
-      tokenAddresses: (tokenAddresses ?? [])
-        .map(toLowerCase)
-        .sort((a, b) => compareByAlpha(a, b)),
-    },
-  });
+    const response = await querySubgraph({
+      url: getChainConstant(config.subgraph.SUSHI_SUBGRAPH, network),
+      query,
+      variables: {
+        tokenAddresses: (tokenAddresses ?? [])
+          .map(toLowerCase)
+          .sort((a, b) => compareByAlpha(a, b)),
+      },
+    });
 
-  const reserves =
-    response?.tokens?.map(
-      (token): TokenReserve => formatTokenReserves(token, network)
-    ) ?? [];
+    const reserves =
+      response?.tokens?.map(
+        (token): TokenReserve => formatTokenReserves(token, network)
+      ) ?? [];
 
-  // TODO: handle cases where more than 1000 tokens are found
+    // TODO: handle cases where more than 1000 tokens are found
 
-  return reserves;
-};
+    return reserves;
+  };
 
 export default fetchReservesForTokens;

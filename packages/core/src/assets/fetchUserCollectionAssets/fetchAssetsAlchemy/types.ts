@@ -7,7 +7,7 @@ type OwnedNft = {
 };
 
 export type Response = {
-  pageKey: string;
+  pageKey?: string;
   totalCount: string;
   blockHash: string;
   ownedNfts: OwnedNft[];

@@ -1,39 +1,55 @@
-import config from '@nftx/config';
 import type { Address, Provider, Vault } from '@nftx/types';
-import fetchUserCollectionAssets from '../fetchUserCollectionAssets';
+import type { checkEligible, fetchMerkleLeaves } from '@nftx/utils';
+import type fetchUserCollectionAssets from '../fetchUserCollectionAssets';
 import { processAssetItems } from './utils';
 
-const fetchUserVaultAssets = async ({
-  network = config.network,
-  vaults,
-  userAddress,
-  cursor,
-  provider,
-}: {
-  network?: number;
-  userAddress: Address;
-  cursor?: string;
-  vaults: Pick<Vault, 'asset' | 'vaultId' | 'eligibilityModule' | 'features'>[];
-  provider: Provider;
-}) => {
-  const assetAddresses = [...new Set(vaults.map((v) => v.asset.id))];
+type FetchUserCollectionAssets = typeof fetchUserCollectionAssets;
+type CheckEligible = typeof checkEligible;
+type FetchMerkleLeaves = typeof fetchMerkleLeaves;
 
-  const { assets: allAssets, cursor: newCursor } =
-    await fetchUserCollectionAssets({
-      assetAddresses,
+export default ({
+  fetchUserCollectionAssets,
+  checkEligible,
+  fetchMerkleLeaves,
+}: {
+  fetchUserCollectionAssets: FetchUserCollectionAssets;
+  checkEligible: CheckEligible;
+  fetchMerkleLeaves: FetchMerkleLeaves;
+}) =>
+  async function fetchUserVaultAssets({
+    network,
+    vaults,
+    userAddress,
+    cursor,
+    provider,
+  }: {
+    network: number;
+    userAddress: Address;
+    cursor?: string;
+    vaults: Pick<
+      Vault,
+      'asset' | 'vaultId' | 'eligibilityModule' | 'features'
+    >[];
+    provider: Provider;
+  }) {
+    const assetAddresses = [...new Set(vaults.map((v) => v.asset.id))];
+
+    const { assets: allAssets, cursor: newCursor } =
+      await fetchUserCollectionAssets({
+        assetAddresses,
+        network,
+        userAddress,
+        cursor,
+      });
+
+    const assets = await processAssetItems({
+      items: allAssets,
       network,
-      userAddress,
-      cursor,
+      provider,
+      vaults,
+      checkEligible,
+      fetchMerkleLeaves,
     });
 
-  const assets = await processAssetItems({
-    items: allAssets,
-    network,
-    provider,
-    vaults,
-  });
-
-  return { assets, cursor: newCursor };
-};
-
-export default fetchUserVaultAssets;
+    return { assets, cursor: newCursor };
+  };

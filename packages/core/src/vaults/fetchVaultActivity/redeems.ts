@@ -1,6 +1,6 @@
 import config from '@nftx/config';
 import { Zero } from '@nftx/constants';
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
+import { buildWhere, gql, type querySubgraph } from '@nftx/subgraph';
 import type {
   Address,
   TokenId,
@@ -9,6 +9,8 @@ import type {
 } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { transformFeeReceipt } from './common';
+
+type QuerySubgraph = typeof querySubgraph;
 
 export type Redeem = {
   id: Address;
@@ -85,93 +87,100 @@ const isRedeemOrUnstake = (redeem: Redeem, receipt: VaultFeeReceipt) => {
   return 'redeem';
 };
 
-export const processRedeems = async ({
-  network,
-  response,
-  toTimestamp,
-  vaultAddresses,
+export const makeProcessRedeems = ({
+  fetchRedeems,
 }: {
-  response: { redeems: Redeem[] };
-  network: number;
-  vaultAddresses?: Address[];
-  toTimestamp?: number;
-}) => {
-  let redeems = response.redeems.flatMap((redeem) => {
-    const receipt = transformFeeReceipt(
-      redeem.feeReceipt,
-      redeem.vault.id,
-      redeem.vault.vaultId
-    );
-    return redeem.nftIds.map((nftId): VaultActivity => {
-      const target = redeem.specificIds?.includes(nftId);
-      // TODO: figure out a way to get msg.sender so we know if it's gem etc.
-
-      return {
-        tokenId: nftId,
-        vaultId: redeem.vault.vaultId,
-        vaultAddress: redeem.vault.id,
-        date: Number(redeem.date),
-        txId: (redeem.id.split('-')[1] ?? redeem.id) as Address,
-        random: !target,
-        type: isRedeemOrUnstake(redeem, receipt),
-        source: redeem.source,
-        amount: 1,
-        ethAmount: redeem?.zapAction?.ethAmount
-          ? BigInt(redeem.zapAction.ethAmount)
-          : (undefined as any),
-        feeAmount: receipt.amount / BigInt(redeem.nftIds.length),
-      };
-    });
-  });
-
-  if (response.redeems.length === 1000) {
-    const lastRedeem = redeems[redeems.length - 1];
-    const nextTimestamp = lastRedeem.date;
-    const moreRedeems = await getRedeems({
-      vaultAddresses,
-      network,
-      fromTimestamp: nextTimestamp,
-      toTimestamp,
-    });
-
-    redeems = [...redeems, ...moreRedeems];
-  }
-
-  return redeems;
-};
-
-export const getRedeems = async ({
-  network,
-  fromTimestamp,
-  toTimestamp,
-  vaultAddresses,
-}: {
-  network: number;
-  fromTimestamp: number;
-  toTimestamp?: number;
-  vaultAddresses?: Address[];
-}) => {
-  const where = buildWhere({
-    date_gt: fromTimestamp,
-    date_lte: toTimestamp,
-    vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
-    vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
-  });
-  const query = gql<{
-    redeems: Redeem[];
-  }>`{ ${createRedeemsQuery(where)} }`;
-
-  const response = await querySubgraph({
-    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
-    query,
-  });
-
-  const mints = await processRedeems({
-    response,
+  fetchRedeems: FetchRedeems;
+}) =>
+  async function processRedeems({
     network,
-    vaultAddresses,
+    response,
     toTimestamp,
-  });
+    vaultAddresses,
+  }: {
+    response: { redeems: Redeem[] };
+    network: number;
+    vaultAddresses?: Address[];
+    toTimestamp?: number;
+  }) {
+    let redeems = response.redeems.flatMap((redeem) => {
+      const receipt = transformFeeReceipt(
+        redeem.feeReceipt,
+        redeem.vault.id,
+        redeem.vault.vaultId
+      );
+      return redeem.nftIds.map((nftId): VaultActivity => {
+        const target = redeem.specificIds?.includes(nftId);
 
-  return mints;
-};
+        return {
+          tokenId: nftId,
+          vaultId: redeem.vault.vaultId,
+          vaultAddress: redeem.vault.id,
+          date: Number(redeem.date),
+          txId: (redeem.id.split('-')[1] ?? redeem.id) as Address,
+          random: !target,
+          type: isRedeemOrUnstake(redeem, receipt),
+          source: redeem.source,
+          amount: 1,
+          ethAmount: redeem?.zapAction?.ethAmount
+            ? BigInt(redeem.zapAction.ethAmount)
+            : (undefined as any),
+          feeAmount: receipt.amount / BigInt(redeem.nftIds.length),
+        };
+      });
+    });
+
+    if (response.redeems.length === 1000) {
+      const lastRedeem = redeems[redeems.length - 1];
+      const nextTimestamp = lastRedeem.date;
+      const response = await fetchRedeems({
+        vaultAddresses,
+        network,
+        fromTimestamp: nextTimestamp,
+        toTimestamp,
+      });
+      const moreRedeems = await processRedeems({
+        response,
+        network,
+        vaultAddresses,
+        toTimestamp,
+      });
+
+      redeems = [...redeems, ...moreRedeems];
+    }
+
+    return redeems;
+  };
+
+export type ProcessRedeems = ReturnType<typeof makeProcessRedeems>;
+
+export const makeFetchRedeems =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  async ({
+    network,
+    fromTimestamp,
+    toTimestamp,
+    vaultAddresses,
+  }: {
+    network: number;
+    fromTimestamp: number;
+    toTimestamp?: number;
+    vaultAddresses?: Address[];
+  }) => {
+    const where = buildWhere({
+      date_gt: fromTimestamp,
+      date_lte: toTimestamp,
+      vault: vaultAddresses?.length === 1 ? vaultAddresses[0] : null,
+      vault_in: vaultAddresses?.length === 1 ? null : vaultAddresses,
+    });
+    const query = gql<{
+      redeems: Redeem[];
+    }>`{ ${createRedeemsQuery(where)} }`;
+
+    return querySubgraph({
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
+      query,
+    });
+  };
+
+export type FetchRedeems = ReturnType<typeof makeFetchRedeems>;

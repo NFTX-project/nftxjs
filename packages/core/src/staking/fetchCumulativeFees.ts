@@ -13,7 +13,7 @@ import type { CumulativeFee } from './types';
 type QuerySubgraph = typeof querySubgraph;
 type FetchBlockNumberByTimestamp = typeof fetchBlockNumberByTimestamp;
 
-type Response = {
+export type Response = {
   userVaultFeeAggregates: Array<{
     vault: {
       id: Address;
@@ -108,6 +108,7 @@ const createQuery = () => {
   `;
 };
 
+// We want to group all of the fees by vaultId / timestamp / type
 const groupFeesByVaultTimeType = (
   earnings: Response['user']['earnings'],
   userVaultFeeAggregates: Response['userVaultFeeAggregates']
@@ -116,8 +117,8 @@ const groupFeesByVaultTimeType = (
 
   earnings.forEach((x) => {
     const vaultId = x.vault.vaultId;
+    // Round to the nearest minute
     const timestamp = Math.floor(Number(x.timestamp) / 60) * 60;
-    // const amount = BigNumber.from(Math.floor(Number(x.amount)).toString());
     const amount = parseAggregatedFee(x.amount);
     let vaultGroup = groups[vaultId];
 
