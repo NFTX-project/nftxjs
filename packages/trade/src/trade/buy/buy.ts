@@ -135,8 +135,7 @@ const buy0xErc721 = async ({
     buyToken: vaultAddress,
     buyAmount,
     sellToken: getChainConstant(WETH_TOKEN, network),
-    // slippagePercentage: slippage,
-    slippagePercentage: 0,
+    slippagePercentage: slippage,
   });
 
   const args = [vaultId, amount, specificIds, data, userAddress];
