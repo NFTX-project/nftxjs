@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.3](https://github.com/NFTX-project/nftxjs/compare/v0.4.2...v0.4.3) (2023-01-20)
+
+
+### Bug Fixes
+
+* **@nftx/trade:** pass given slippage to 0x ([14cfc0c](https://github.com/NFTX-project/nftxjs/commit/14cfc0cb5ddf1ca1e8d3e815045602d657a54b31))
+
+
+
+
+
 ## [0.4.2](https://github.com/NFTX-project/nftxjs/compare/v0.4.1...v0.4.2) (2023-01-16)
 
 **Note:** Version bump only for package @nftx/trade
