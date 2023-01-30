@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.4](https://github.com/NFTX-project/nftxjs/compare/v0.4.3...v0.4.4) (2023-01-30)
+
+
+### Bug Fixes
+
+* add totalFees and shutdownDate properties to vaults ([e1ae349](https://github.com/NFTX-project/nftxjs/commit/e1ae3493a146ff7e54bc307029d037e302e74244))
+
+
+
+
+
 ## [0.4.2](https://github.com/NFTX-project/nftxjs/compare/v0.4.1...v0.4.2) (2023-01-16)
 
 **Note:** Version bump only for package @nftx/core
