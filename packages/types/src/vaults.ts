@@ -38,6 +38,7 @@ export type Vault = {
   totalHoldings: number;
   totalMints: number;
   totalRedeems: number;
+  totalFees: BigNumber;
   holdings: VaultHolding[];
   is1155: boolean;
   isFinalized: boolean;
@@ -68,6 +69,7 @@ export type Vault = {
       symbol: string;
     };
   };
+  shutdownDate: number;
   // feeReceipts: Pick<VaultFeeReceipt, 'amount' | 'date' | 'transfers'>[];
   // activity: Pick<VaultActivity, 'vaultAddress' | 'vaultId'>;
 };
