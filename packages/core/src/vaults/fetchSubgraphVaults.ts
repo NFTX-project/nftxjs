@@ -20,6 +20,7 @@ export type Response = {
     totalHoldings: string;
     totalMints: string;
     totalRedeems: string;
+    totalFees: string;
     createdAt: string;
     holdings: Array<{
       id: string;
@@ -85,6 +86,7 @@ export type Response = {
         symbol: string;
       };
     };
+    shutdownDate: string;
   }>;
 };
 
@@ -145,7 +147,9 @@ const fetchSubgraphVaults = async ({
       totalHoldings
       totalMints
       totalRedeems
+      totalFees
       createdAt
+      shutdownDate
       holdings(
         first: 1000,
         orderBy: tokenId,

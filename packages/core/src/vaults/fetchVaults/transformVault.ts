@@ -38,6 +38,8 @@ const transformVault = ({
     totalHoldings: Number(x.totalHoldings),
     totalMints: Number(x.totalMints),
     totalRedeems: Number(x.totalRedeems),
+    totalFees: BigNumber.from(x.totalFees),
+    shutdownDate: Number(x.shutdownDate || '0'),
     holdings,
     fees,
     derivedETH,
