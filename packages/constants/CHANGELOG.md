@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.5](https://github.com/NFTX-project/nftxjs/compare/v0.4.4...v0.4.5) (2023-02-02)
+
+
+### Bug Fixes
+
+* update token balance subgraph url ([7bd6748](https://github.com/NFTX-project/nftxjs/commit/7bd674825b97a15b6d32b71b0a66c1e87b3ac9ed))
+
+
+
+
+
 ## [0.4.2](https://github.com/NFTX-project/nftxjs/compare/v0.4.1...v0.4.2) (2023-01-16)
 
 
