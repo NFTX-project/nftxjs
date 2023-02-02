@@ -103,11 +103,11 @@ export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
     // Gateway + Proxy + Cache
     `${GATEWAY_PROXY_ROOT}/FiFs5im99VCUNevp1XaF642uCcsYkbN6eoN3GMErE7wL?nocache`,
     // Indexer + Proxy
-    `${INDEXER_PROXY_ROOT}/Qma71JWFvKRiE2Pu1SMdyVuxcmcpHAB85mufpkAyYrk93g`,
+    `${INDEXER_PROXY_ROOT}/QmTExpkmZq5ebuSUyKKHwraEaGhDdi3p7vG98aoKjJE6tY`,
     // Gateway
     `${GATEWAY_ROOT}/FiFs5im99VCUNevp1XaF642uCcsYkbN6eoN3GMErE7wL`,
     // Indexer
-    `${INDEXER_ROOT}/Qma71JWFvKRiE2Pu1SMdyVuxcmcpHAB85mufpkAyYrk93g`,
+    `${INDEXER_ROOT}/QmTExpkmZq5ebuSUyKKHwraEaGhDdi3p7vG98aoKjJE6tY`,
     // Shared + Proxy
     `${SHARED_PROXY_ROOT}/nftx-project/nftx-vault-tokens-holdings`,
     // Shared
