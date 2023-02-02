@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/NFTX-project/nftxjs/compare/v0.4.5...v0.5.0) (2023-02-02)
+
+
+### Features
+
+* **@nftx/utils:** fetch collection metadata method ([acf4c1c](https://github.com/NFTX-project/nftxjs/commit/acf4c1cef76520421fae3e332f72507245528567))
+
+
+
+
+
 ## [0.4.5](https://github.com/NFTX-project/nftxjs/compare/v0.4.4...v0.4.5) (2023-02-02)
 
 **Note:** Version bump only for package @nftx/utils
