@@ -2,6 +2,11 @@ import { CRYPTOKITTIES, CRYPTOPUNKS } from '@nftx/constants';
 import { addressEqual } from '../web3';
 
 export { default as fetchAssetMetadata } from './fetchAssetMetadata';
+export {
+  default as fetchCollectionMetadata,
+  type CollectionMetadata,
+  type CollectionsMetadataResponse,
+} from './fetchCollectionMetadata';
 
 /** Returns whether a given address is for the CryptoPunk collection */
 export const isCryptoPunk = (address: string) => {
