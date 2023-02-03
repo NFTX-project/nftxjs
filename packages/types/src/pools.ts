@@ -41,3 +41,19 @@ export type Pool = {
   /** The vault creation date */
   createdAt: number;
 };
+
+export type CreatePoolFees = [
+  mint: number,
+  randomRedeem: number,
+  targetRedeem: number,
+  randomSwap: number,
+  targetSwap: number
+];
+
+export type CreatePoolFeatures = [
+  mint: boolean,
+  randomRedeem: boolean,
+  targetRedeem: boolean,
+  randomSwap: boolean,
+  targetSwap: boolean
+];

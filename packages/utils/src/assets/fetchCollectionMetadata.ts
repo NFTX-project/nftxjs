@@ -1,3 +1,6 @@
+import config from '@nftx/config';
+import { getChainConstant } from '../web3';
+
 export interface CollectionMetadata {
   name: string;
   symbol: string;
@@ -22,11 +25,19 @@ export interface CollectionsMetadataResponse {
 }
 
 /** Fetches metadata about a specific collection */
-const fetchCollectionMetadata = async (args: { address: string }) => {
-  const { address } = args;
+const fetchCollectionMetadata = async (args: {
+  address: string;
+  network?: number;
+}) => {
+  const { address, network = config.network } = args;
 
-  const uri = `https://eth-mainnet.g.alchemy.com/nft/v2/_nKylYxzcktTyMooyowPh7s5UfAsENKZ/getContractMetadata?contractAddress=${address}`;
-  const response = await fetch(uri);
+  const baseUrl = getChainConstant(config.urls.ALCHEMY_URL, network);
+  const apiKey = getChainConstant(config.keys.ALCHEMY, network);
+
+  const uri = new URL(`/nft/v2/${apiKey}/getContractMetadata`, baseUrl);
+  uri.searchParams.set('contractAddress', address);
+
+  const response = await fetch(uri.toString());
   if (!response.ok) {
     throw new Error(await response.text());
   }

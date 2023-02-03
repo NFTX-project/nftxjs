@@ -11,7 +11,7 @@ const fetchUserCollections = async ({
 }) => {
   if (
     getChainConstant(config.urls.ALCHEMY_URL, network, null) &&
-    config.keys.ALCHEMY
+    getChainConstant(config.keys.ALCHEMY, network, null)
   ) {
     console.debug('fetching collections from alchemy');
     return fetchUserCollectionsAlchemy({ network, userAddress });

@@ -14,9 +14,13 @@ const getNextSet = async ({
   assetAddresses: string[];
   cursor: string;
 }) => {
-  let url = `${getChainConstant(config.urls.ALCHEMY_URL, network)}/nftx/v2/${
-    config.keys.ALCHEMY
-  }/getNFTs`;
+  let url = [
+    getChainConstant(config.urls.ALCHEMY_URL, network),
+    'nftx/v2',
+    getChainConstant(config.keys.ALCHEMY, network),
+    'getNFTs',
+  ].join('/');
+
   const query: [string, string][] = [];
 
   query.push(['owner', userAddress]);

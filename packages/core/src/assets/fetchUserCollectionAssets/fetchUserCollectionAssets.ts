@@ -16,7 +16,7 @@ const fetchUserCollectionAssets = async ({
 }) => {
   if (
     getChainConstant(config.urls.ALCHEMY_URL, network, null) &&
-    config.keys.ALCHEMY
+    getChainConstant(config.keys.ALCHEMY, network, null)
   ) {
     console.debug('fetching assets from alchemy');
     try {

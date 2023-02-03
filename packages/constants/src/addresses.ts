@@ -91,3 +91,9 @@ export const ENS_REGISTRAR = {
   [Network.Arbitrum]: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
   [Network.Goerli]: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
 };
+
+export const VAULT_CREATION_ZAP = {
+  [Network.Mainnet]: '0xA42ecABB4ADEd01600d6e84A3Ee7785e3A506D37',
+  [Network.Arbitrum]: '0x4164C90589E596239a31579417775C980f446103',
+  [Network.Goerli]: '0x4Af99Db0DF1cb904933C6622C01b93496a567823',
+};

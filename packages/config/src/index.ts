@@ -64,7 +64,7 @@ export interface Config {
   keys: {
     /** Your specific nftx.js API key, this must be provided in order to use the library */
     NFTX_API: string;
-    ALCHEMY: string;
+    ALCHEMY: Record<string, string>;
   };
 }
 
@@ -97,7 +97,7 @@ const defaultConfig: Config = {
 
   keys: {
     NFTX_API: null,
-    ALCHEMY: null,
+    ALCHEMY: {},
   },
 };
 

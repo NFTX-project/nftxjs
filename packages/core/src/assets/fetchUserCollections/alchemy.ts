@@ -16,7 +16,7 @@ const fetchUserCollectionsAlchemy = async ({
   userAddress: string;
 }) => {
   const baseUrl = getChainConstant(config.urls.ALCHEMY_URL, network);
-  const apiKey = config.keys.ALCHEMY;
+  const apiKey = getChainConstant(config.keys.ALCHEMY, network);
 
   const ownedCollections: Collection[] = [];
 
