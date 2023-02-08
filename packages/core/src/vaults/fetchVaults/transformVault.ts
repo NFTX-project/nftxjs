@@ -44,6 +44,7 @@ const transformVault = ({
     fees,
     derivedETH,
     rawPrice,
+    buyPrice: null,
     reserveVtoken,
     reserveWeth,
     eligibilityModule: x.eligibilityModule
