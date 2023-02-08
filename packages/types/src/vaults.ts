@@ -1,4 +1,5 @@
 import type { BigNumber } from '@ethersproject/bignumber';
+import type { Price } from './price';
 import type { Token } from './tokens';
 
 export type VaultFeatures = {
@@ -32,6 +33,7 @@ export type Vault = {
   createdAt: number;
   derivedETH: string;
   rawPrice: BigNumber;
+  buyPrice: Price;
   reserveVtoken: BigNumber;
   reserveWeth: BigNumber;
   features: VaultFeatures;
