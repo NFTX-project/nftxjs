@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/NFTX-project/nftxjs/compare/v0.6.0...v0.7.0) (2023-02-08)
+
+
+### Features
+
+* **@nftx/core:** vault buyPrice property ([13598c7](https://github.com/NFTX-project/nftxjs/commit/13598c790f013c29856414df13d56f56c3812707))
+* **@nftx/types:** vault buyPrice property ([1013ae0](https://github.com/NFTX-project/nftxjs/commit/1013ae0bbf6c0a14837e6bac88da06820b1990ae))
+
+
+
+
+
 # [0.6.0](https://github.com/NFTX-project/nftxjs/compare/v0.5.0...v0.6.0) (2023-02-03)
 
 
