@@ -85,6 +85,7 @@ export type VaultActivity = {
   feeAmount: BigNumber;
   tokenId: string;
   txId: string;
+  source: string;
   type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'stake' | 'unstake';
   stakeType?: 'liquidity' | 'inventory';
   swapTokenId?: string;

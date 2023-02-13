@@ -19,6 +19,7 @@ export type Mint = {
     asset: { id: string };
     inventoryStakingPool: { id: string };
   };
+  source: string;
   user: { id: string };
   date: string;
   nftIds: string[];
@@ -41,6 +42,7 @@ export const createMintsQuery = (where: string) => {
       ethAmount
       id
     }
+    source
     vault {
       id
       vaultId
@@ -118,6 +120,7 @@ export const processMints = async (
         vaultAddress: mint.vault.id,
         date: Number(mint.date),
         tokenId: nftId,
+        source: mint.source,
         txId: mint.id.split('-')[1] ?? mint.id,
         amount: Number(mint.amounts[i]),
         ethAmount: BigNumber.from(mint?.zapAction?.ethAmount ?? 0),

@@ -19,6 +19,7 @@ export type Swap = {
     inventoryStakingPool: { id: string };
   };
   date: string;
+  source: string;
   mintedIds: string[];
   redeemedIds: string[];
   specificIds: string[];
@@ -42,6 +43,7 @@ export const createSwapsQuery = (where: string) => {
       ethAmount
       id
     }
+    source
     vault {
       id
       vaultId
@@ -90,6 +92,7 @@ export const processSwaps = async (
         vaultAddress: swap.vault.id,
         date: Number(swap.date),
         tokenId: nftId,
+        source: swap.source,
         swapTokenId: swap.mintedIds[i],
         txId: swap.id.split('-')[1] ?? swap.id,
         amount: 1,

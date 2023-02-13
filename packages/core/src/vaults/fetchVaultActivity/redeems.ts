@@ -14,6 +14,7 @@ export type Redeem = {
     token: { symbol: string };
     asset: { id: string };
   };
+  source: string;
   user: { id: string };
   date: string;
   nftIds: string[];
@@ -40,6 +41,7 @@ export const createRedeemsQuery = (where: string) => {
       ethAmount
       id
     }
+    source
     vault {
       id
       vaultId
@@ -102,6 +104,7 @@ export const processRedeems = async (
         txId: redeem.id.split('-')[1] ?? redeem.id,
         random: !target,
         type: isRedeemOrUnstake(redeem, receipt),
+        source: redeem.source,
         amount: 1,
         ethAmount: redeem?.zapAction?.ethAmount
           ? BigNumber.from(redeem.zapAction.ethAmount)
