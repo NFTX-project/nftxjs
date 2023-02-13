@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/NFTX-project/nftxjs/compare/v0.7.0...v0.8.0) (2023-02-13)
+
+
+### Features
+
+* add source to activity ([a75f76c](https://github.com/NFTX-project/nftxjs/commit/a75f76c80487308a0ee65044aab5892d6d45a983))
+
+
+
+
+
 # [0.7.0](https://github.com/NFTX-project/nftxjs/compare/v0.6.0...v0.7.0) (2023-02-08)
 
 
