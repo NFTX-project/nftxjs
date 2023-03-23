@@ -1,5 +1,6 @@
 import config from '@nftx/config';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
+import type { Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
 export type Response = {
@@ -14,7 +15,7 @@ export type Response = {
   }>;
   vaults: Array<{
     vaultId: string;
-    id: string;
+    id: Address;
     is1155: boolean;
     isFinalized: boolean;
     totalHoldings: string;
@@ -24,12 +25,12 @@ export type Response = {
     createdAt: string;
     holdings: Array<{
       id: string;
-      tokenId: string;
-      amount: string;
+      tokenId: `${number}`;
+      amount: `${number}`;
       dateAdded: string;
     }>;
     token: {
-      id: string;
+      id: Address;
       name: string;
       symbol: string;
     };
@@ -42,18 +43,18 @@ export type Response = {
     };
     usesFactoryFees: boolean;
     asset: {
-      id: string;
+      id: Address;
       name: string;
       symbol: string;
     };
     manager: {
-      id: string;
+      id: Address;
     };
     createdBy: {
-      id: string;
+      id: Address;
     };
     eligibilityModule: {
-      id: string;
+      id: Address;
       name: string;
       eligibleIds: string[];
       eligibleRange: [string, string];
@@ -66,22 +67,22 @@ export type Response = {
       enableTargetSwap: boolean;
     };
     inventoryStakingPool: {
-      id: string;
+      id: Address;
       dividendToken: {
-        id: string;
+        id: Address;
         name: string;
         symbol: string;
       };
     };
     lpStakingPool: {
-      id: string;
+      id: Address;
       stakingToken: {
-        id: string;
+        id: Address;
         name: string;
         symbol: string;
       };
       dividendToken: {
-        id: string;
+        id: Address;
         name: string;
         symbol: string;
       };
@@ -101,11 +102,11 @@ const fetchSubgraphVaults = async ({
   retryCount = 0,
 }: {
   network?: number;
-  vaultAddresses?: string[];
+  vaultAddresses?: Address[];
   vaultIds?: string[];
   includeEmptyVaults?: boolean;
   finalisedOnly?: boolean;
-  manager?: string;
+  manager?: Address;
   lastId?: number;
   retryCount?: number;
 }): Promise<Response> => {

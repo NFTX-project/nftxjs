@@ -3,16 +3,20 @@ import { getChainConstant } from '@nftx/utils';
 import { parseCursor } from './cursor';
 import type { Response } from './types';
 
+type Fetch = typeof fetch;
+
 const getNextSet = async ({
   assetAddresses,
   cursor,
   network,
   userAddress,
+  fetch,
 }: {
   network: number;
   userAddress: string;
   assetAddresses: string[];
-  cursor: string;
+  cursor?: string;
+  fetch: Fetch;
 }) => {
   let url = [
     getChainConstant(config.urls.ALCHEMY_URL, network),

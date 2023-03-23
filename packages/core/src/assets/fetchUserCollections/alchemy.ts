@@ -1,26 +1,30 @@
 import config from '@nftx/config';
-import type { Collection } from '@nftx/types';
+import type { Address, Collection } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
-type Response = {
+export type Response = {
   totalCount: number;
-  pageKey: string;
+  pageKey?: string;
   contracts: Collection[];
 };
+
+type Fetch = typeof fetch;
 
 const fetchUserCollectionsAlchemy = async ({
   network,
   userAddress,
+  fetch,
 }: {
   network: number;
-  userAddress: string;
+  userAddress: Address;
+  fetch: Fetch;
 }) => {
   const baseUrl = getChainConstant(config.urls.ALCHEMY_URL, network);
   const apiKey = getChainConstant(config.keys.ALCHEMY, network);
 
   const ownedCollections: Collection[] = [];
 
-  let cursor: string = null;
+  let cursor: string | undefined;
 
   do {
     const uri = new URL(`/nft/v2/${apiKey}/getContractsForOwner`, baseUrl);

@@ -1,7 +1,10 @@
-export const parseCursor = (cursor: string, assetAddresses: string[]) => {
+export const parseCursor = (
+  cursor: string | undefined,
+  assetAddresses: string[]
+) => {
   let source: string;
   let firstAssetId: string = assetAddresses[0];
-  let pageKey: string;
+  let pageKey: string | undefined;
   let startIndex = 0;
   let endIndex = Math.min(10, assetAddresses.length);
 
@@ -18,9 +21,9 @@ export const parseCursor = (cursor: string, assetAddresses: string[]) => {
 };
 
 export const createCursor = (
-  cursor: string,
+  cursor: string | undefined,
   assetAddresses: string[],
-  pageKey: string
+  pageKey: string | undefined
 ) => {
   const { endIndex, firstAssetId } = parseCursor(cursor, assetAddresses);
   const parts = ['a'];
@@ -30,7 +33,7 @@ export const createCursor = (
     if (nextAssetId) {
       parts[1] = nextAssetId;
     } else {
-      return null;
+      return undefined;
     }
   } else {
     parts[1] = firstAssetId;

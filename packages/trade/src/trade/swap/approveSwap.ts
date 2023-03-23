@@ -1,8 +1,11 @@
 import config from '@nftx/config';
-import { NFTX_MARKETPLACE_0X_ZAP, NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
-import type { Vault } from '@nftx/types';
+import {
+  NFTX_MARKETPLACE_0X_ZAP,
+  NFTX_MARKETPLACE_ZAP,
+  Zero,
+} from '@nftx/constants';
+import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
-import type { Signer } from 'ethers';
 import { doesNetworkSupport0x } from '../../price';
 import approve from '../approve';
 import { getTotalTokenIds } from '../utils';
@@ -20,14 +23,15 @@ const approveSwap = ({
   ...args
 }: {
   network?: number;
+  provider: Provider;
   signer: Signer;
-  tokenId?: string;
-  assetAddress: string;
-  mintTokenIds: string[] | [string, number][];
-  redeemTokenIds: string[] | [string, number][];
+  tokenId?: TokenId;
+  assetAddress: Address;
+  mintTokenIds: TokenId[] | [TokenId, number][];
+  redeemTokenIds: TokenId[] | [TokenId, number][];
   quote: 'ETH' | 'VTOKEN';
   vault: {
-    id: string;
+    id: Vault['id'];
     fees: {
       targetSwapFee: Vault['fees']['targetSwapFee'];
       randomSwapFee: Vault['fees']['randomSwapFee'];
@@ -39,8 +43,8 @@ const approveSwap = ({
   const targetCount = getTotalTokenIds(redeemTokenIds);
   const randomCount = totalCount - targetCount;
   const hasFee =
-    (targetCount > 0 && vault.fees.targetSwapFee.gt(0)) ||
-    (randomCount > 0 && vault.fees.randomSwapFee.gt(0));
+    (targetCount > 0 && vault.fees.targetSwapFee > Zero) ||
+    (randomCount > 0 && vault.fees.randomSwapFee > Zero);
   const supports0x = doesNetworkSupport0x(network);
 
   // The contract doing the swap can vary.
@@ -60,7 +64,6 @@ const approveSwap = ({
   return approve({
     spenderAddress,
     tokenAddress: assetAddress,
-    network,
     tokenIds: mintTokenIds,
     ...args,
   });

@@ -5,6 +5,7 @@ import useTransaction, { UseTransactionOptions } from '../useTransaction';
 const useStakeSlp = (opts?: UseTransactionOptions) => {
   const {
     network,
+    provider,
     signer,
     core: { stakeSlp, invalidateVault },
   } = useNftx();
@@ -12,7 +13,7 @@ const useStakeSlp = (opts?: UseTransactionOptions) => {
   type Args = TxnArgsOnly<typeof stakeSlp>;
 
   return useTransaction(
-    (args: Args) => stakeSlp({ network, signer, ...args }),
+    (args: Args) => stakeSlp({ network, provider, signer, ...args }),
     {
       description: 'Stake SLP',
       ...opts,

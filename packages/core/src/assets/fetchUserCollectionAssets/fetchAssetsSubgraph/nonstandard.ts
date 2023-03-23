@@ -1,8 +1,7 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import config from '@nftx/config';
 import { getChainConstant } from '@nftx/utils';
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
 import { processAssetItems } from '../utils';
 
 const LIMIT = 1000;
@@ -10,8 +9,8 @@ const LIMIT = 1000;
 type Response = {
   account: {
     tokens: Array<{
-      id: string;
-      identifier: string;
+      id: Address;
+      identifier: `${number}`;
     }>;
   };
 };
@@ -24,12 +23,12 @@ const nonstandard = async ({
   retryCount = 0,
 }: {
   network: number;
-  userAddress: string;
-  assetAddresses: string[];
+  userAddress: Address;
+  assetAddresses: Address[];
   lastId?: number;
   retryCount?: number;
-}): Promise<{ assets: Asset[]; nextId: number }> => {
-  let nextId: number;
+}): Promise<{ assets: Asset[]; nextId?: number }> => {
+  let nextId: number | undefined;
 
   if (!assetAddresses.length) {
     return { assets: [], nextId };
@@ -81,8 +80,8 @@ const nonstandard = async ({
     network,
     items:
       data?.account?.tokens?.map((x) => {
-        const [assetAddress] = x.id.split('-');
-        const tokenId = BigNumber.from(x.identifier).toString();
+        const [assetAddress] = x.id.split('-') as [`${Address}`];
+        const tokenId = BigInt(x.identifier).toString() as `${number}`;
         return { assetAddress, tokenId };
       }) ?? [],
   });

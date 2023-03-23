@@ -1,4 +1,5 @@
-import type { ContractReceipt, ContractTransaction, Signer } from 'ethers';
+import type { Provider, Signer, Transaction } from 'nftx.js';
+import type { TransactionReceipt } from 'viem';
 
 export type TransactionState =
   | 'None'
@@ -14,14 +15,19 @@ export type TransactionEvent = {
   description: string;
   createdAt: number;
   network: number;
-  transaction?: ContractTransaction;
-  receipt?: ContractReceipt;
+  transaction?: Transaction;
+  receipt?: TransactionReceipt;
   error?: any;
 };
 
-type TxnFn = (args: { network?: number; signer: Signer }) => any;
+type TxnArgs = {
+  network?: number;
+  provider: Provider;
+  signer: Signer;
+};
+type TxnFn<A extends TxnArgs> = (args: A) => any;
 /** Takes a transaction function, removes the network and signer, and returns the remaining args */
-export type TxnArgsOnly<T extends TxnFn> = Omit<
+export type TxnArgsOnly<T extends TxnFn<any>> = Omit<
   Parameters<T>[0],
-  'network' | 'signer'
+  'network' | 'signer' | 'provider'
 >;

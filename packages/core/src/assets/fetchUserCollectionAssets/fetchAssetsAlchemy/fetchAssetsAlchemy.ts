@@ -1,36 +1,41 @@
-import { parseEther } from '@ethersproject/units';
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
+import { parseEther } from 'viem';
 import { processAssetItems } from '../utils';
 import { createCursor } from './cursor';
 import getNextSet from './getNextSet';
 import { BigNumber } from '@ethersproject/bignumber';
+
+type Fetch = typeof fetch;
 
 const fetchAssetsAlchemy = async ({
   assetAddresses,
   cursor,
   network,
   userAddress,
+  fetch,
 }: {
-  assetAddresses: string[];
+  assetAddresses: Address[];
   network: number;
-  userAddress: string;
-  cursor: string;
-}): Promise<{ assets: Asset[]; cursor: string }> => {
+  userAddress: Address;
+  cursor?: string;
+  fetch: Fetch;
+}): Promise<{ assets: Asset[]; cursor?: string }> => {
   if (!assetAddresses.length) {
-    return { assets: [], cursor: null };
+    return { assets: [] };
   }
   const data = await getNextSet({
     assetAddresses,
     cursor,
     network,
     userAddress,
+    fetch,
   });
 
   const assets = await processAssetItems({
     network,
     items: data.ownedNfts.map((x) => ({
       assetAddress: x.contract.address,
-      tokenId: BigNumber.from(x.id.tokenId).toString(),
+      tokenId: BigInt(x.id.tokenId).toString() as `${number}`,
       quantity: parseEther(x.balance ?? '1'),
     })),
   });

@@ -1,5 +1,5 @@
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
+import type { Provider } from '@nftx/types';
 import fetchXTokenShare from './fetchXTokenShare';
 
 /**
@@ -27,7 +27,7 @@ const fetchXTokenShares = async ({
     })
   );
 
-  return shares.filter(Boolean);
+  return shares.filter((x): x is { vaultId: string; share: bigint } => !!x);
 };
 
 export default fetchXTokenShares;

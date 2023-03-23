@@ -1,87 +1,85 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import type { ContractTransaction } from '@ethersproject/contracts';
-import erc721Abi from '@nftx/constants/abis/ERC721.json';
-import punkAbi from '@nftx/constants/abis/CryptoPunks.json';
-import erc20Abi from '@nftx/constants/abis/ERC20.json';
-import { MaxUint256 } from '@ethersproject/constants';
-import type { Signer } from 'ethers';
-import config from '@nftx/config';
+import { ERC20, ERC721, CryptoPunks } from '@nftx/abi';
 import { getUniqueTokenIds } from './utils';
 import { getContract, isCryptoPunk } from '@nftx/utils';
+import type { Address, Provider, Signer, TokenId } from '@nftx/types';
+import { MaxUint256, Zero } from '@nftx/constants';
 
 function approvePunk({
   tokenId,
   tokenIds,
-  network,
   tokenAddress,
+  provider,
   signer,
   spenderAddress,
 }: {
-  tokenId: string;
-  tokenIds: string[];
-  network: number;
-  tokenAddress: string;
+  tokenId?: TokenId;
+  tokenIds?: TokenId[];
+  tokenAddress: Address;
+  provider: Provider;
   signer: Signer;
-  spenderAddress: string;
+  spenderAddress: Address;
 }) {
-  if (!tokenId && !tokenIds?.[0]) {
+  if (!tokenId) {
+    tokenId = tokenIds?.[0];
+  }
+  if (!tokenId) {
     throw new Error('To approve a punk you must provide the tokenID');
   }
   const contract = getContract({
-    network,
     address: tokenAddress,
+    provider,
     signer,
-    abi: punkAbi,
+    abi: CryptoPunks,
   });
-  return contract.offerPunkForSaleToAddress(
-    tokenIds?.[0] ?? tokenId,
-    0,
-    spenderAddress
-  );
+  return contract.write.offerPunkForSaleToAddress({
+    args: [BigInt(tokenId), Zero, spenderAddress],
+  });
 }
 
 function approveErc721({
-  network,
   tokenAddress,
+  provider,
   signer,
   spenderAddress,
 }: {
-  network: number;
-  tokenAddress: string;
+  tokenAddress: Address;
+  provider: Provider;
   signer: Signer;
-  spenderAddress: string;
+  spenderAddress: Address;
 }) {
   const contract = getContract({
-    network,
     address: tokenAddress,
+    provider,
     signer,
-    abi: erc721Abi,
+    abi: ERC721,
   });
-  return contract.setApprovalForAll(spenderAddress, true);
+  return contract.write.setApprovalForAll({ args: [spenderAddress, true] });
 }
 
 const approveErc1155 = approveErc721;
 
 function approveErc20({
-  network,
   tokenAddress,
+  provider,
   signer,
   spenderAddress,
   amount,
 }: {
-  network: number;
-  tokenAddress: string;
+  tokenAddress: Address;
+  provider: Provider;
   signer: Signer;
-  spenderAddress: string;
-  amount: BigNumber;
+  spenderAddress: Address;
+  amount?: bigint;
 }) {
   const contract = getContract({
-    network,
     address: tokenAddress,
+    provider,
     signer,
-    abi: erc20Abi,
+    abi: ERC20,
   });
-  return contract.approve(spenderAddress, amount ?? MaxUint256);
+  return contract.write.approve({
+    args: [spenderAddress, amount ?? MaxUint256],
+  });
 }
 
 /**
@@ -89,26 +87,26 @@ function approveErc20({
  * If you want to approve a standard sell or swap, use the relevant methods instead (approveSell/approveSwap)
  */
 async function approve(args: {
-  network?: number;
   /** The token we want to spend */
-  tokenAddress: string;
+  tokenAddress: Address;
   /** The smart contract address that will be spending the token */
-  spenderAddress: string;
+  spenderAddress: Address;
+  provider: Provider;
   signer: Signer;
-  tokenId?: string;
+  tokenId?: TokenId;
   /** For ERC721/ERC1155, provide the token id or tokenIds */
-  tokenIds?: string[] | [string, number][];
+  tokenIds?: TokenId[] | [TokenId, number][];
   /** For ERC20, provide the amount the spender can spend - if omitted it defaults to the max amount */
-  amount?: BigNumber;
+  amount?: bigint;
   /** If the standard is omitted, we will infer either ERC721 or ERC20 based on amount/tokenId/tokenIds parameters */
   standard?: 'ERC721' | 'ERC1155' | 'ERC20';
-}): Promise<ContractTransaction> {
+}) {
   const {
-    network = config.network,
     tokenAddress,
     spenderAddress,
     tokenId,
     tokenIds,
+    provider,
     signer,
     amount,
     standard = tokenId || tokenIds ? 'ERC721' : amount ? 'ERC20' : null,
@@ -118,22 +116,22 @@ async function approve(args: {
     if (isCryptoPunk(tokenAddress)) {
       return approvePunk({
         tokenId,
-        tokenIds: getUniqueTokenIds(tokenIds),
-        network,
+        tokenIds: getUniqueTokenIds(tokenIds ?? []),
         tokenAddress,
+        provider,
         signer,
         spenderAddress,
       });
     }
-    return approveErc721({ network, tokenAddress, signer, spenderAddress });
+    return approveErc721({ tokenAddress, provider, signer, spenderAddress });
   }
   if (standard === 'ERC1155') {
-    return approveErc1155({ network, signer, spenderAddress, tokenAddress });
+    return approveErc1155({ provider, signer, spenderAddress, tokenAddress });
   }
   if (standard === 'ERC20') {
     return approveErc20({
-      network,
       tokenAddress,
+      provider,
       signer,
       spenderAddress,
       amount,

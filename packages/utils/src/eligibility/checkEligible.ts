@@ -1,10 +1,10 @@
-import NFtxEligibilityAbi from '@nftx/constants/abis/NFTXEligibility.json';
-import type { Provider } from '@ethersproject/providers';
-import type { Vault } from '@nftx/types';
-import { getContract } from '../web3';
-import config from '@nftx/config';
+import { NFTXEligibility } from '@nftx/abi';
+import type { Provider, TokenId, Vault } from '@nftx/types';
+import type { getContract } from '../web3';
 
-export default () =>
+type GetContract = typeof getContract;
+
+export default ({ getContract }: { getContract: GetContract }) =>
   /** Checks if a series of token ids are eligible for minting
    * This is based on the vault's eligibility module
    * Also bear in mind that this does not deal with unprocessed merkle vaults
@@ -13,23 +13,20 @@ export default () =>
    * (Unprocessed assets will always just return false if passed in here first)
    */
   async function checkEligible(args: {
-    network?: number;
     vault: Pick<Vault, 'eligibilityModule'>;
     provider: Provider;
-    tokenIds: string[];
+    tokenIds: TokenId[];
   }) {
-    const { network = config.network, vault, provider, tokenIds } = args;
+    const { vault, provider, tokenIds } = args;
     if (!vault.eligibilityModule?.id) {
       return tokenIds.map((tokenId) => ({ tokenId, eligible: true }));
     }
-    const contract = getContract({
-      network,
-      provider,
-      abi: NFtxEligibilityAbi,
-      address: vault.eligibilityModule.id,
-    });
 
-    const results: boolean[] = await contract.checkEligible(tokenIds);
+    const results = await getContract({
+      abi: NFTXEligibility,
+      address: vault.eligibilityModule.id,
+      provider,
+    }).read.checkEligible({ args: [tokenIds.map(BigInt)] });
 
     return tokenIds.map((tokenId, i) => ({ tokenId, eligible: !!results[i] }));
   };

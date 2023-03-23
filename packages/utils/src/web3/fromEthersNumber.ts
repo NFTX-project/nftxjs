@@ -1,4 +1,4 @@
-import { parseUnits } from '@ethersproject/units';
+import { parseUnits } from 'viem';
 
 /** Takes a number and returns a BigNumber
  * Essentially the same as ethers.js's parseEther but accounts for things like decimal precision
@@ -22,7 +22,7 @@ const fromEthersNumber = (
   }
 
   try {
-    return parseUnits(value, precision);
+    return parseUnits(value as `${number}`, precision);
   } catch (e) {
     console.error(e);
     return null;

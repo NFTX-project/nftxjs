@@ -1,4 +1,3 @@
-import { estimateGasAndFees } from '../trade';
 import makeUnstakeLiquidity from './unstakeLiquidity';
 import makeUnstakeInventory from './unstakeInventory';
 import makeStakeLiquidity from './stakeLiquidity';
@@ -12,12 +11,10 @@ export const stakeVToken = makeStakeVToken({ getContract });
 export const stakeSlp = makeStakeSlp({ getContract });
 export const stakeLiquidity = makeStakeLiquidity({
   getContract,
-  estimateGasAndFees,
 });
 export const stakeInventory = makeStakeInventory({ getContract });
 export const claimRewards = makeClaimRewards({ getContract });
 export const unstakeLiquidity = makeUnstakeLiquidity({ getContract });
 export const unstakeInventory = makeUnstakeInventory({
-  estimateGasAndFees,
   getContract,
 });

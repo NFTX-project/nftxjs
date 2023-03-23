@@ -1,20 +1,25 @@
-import type { Provider } from '@ethersproject/providers';
-import abi from '@nftx/constants/abis/NFTXENSMerkleEligibility.json';
-import config from '@nftx/config';
-import type { Vault } from '@nftx/types';
-import { getContract } from '../web3';
+import { NFTXENSMerkleEligibility } from '@nftx/abi';
+import type { Provider, Vault } from '@nftx/types';
+import type { getContract } from '../web3';
 
-export default () =>
+type GetContract = typeof getContract;
+type Fetch = typeof fetch;
+
+export default ({
+  getContract,
+  fetch,
+}: {
+  getContract: GetContract;
+  fetch: Fetch;
+}) =>
   /**
    * Fetches a list of eligible token ids for a vault with merkle eligibility rules
    */
   async function fetchMerkleLeaves({
-    network = config.network,
     provider,
     vault,
   }: {
     provider: Provider;
-    network?: number;
     vault: {
       eligibilityModule?: {
         id: Vault['eligibilityModule']['id'];
@@ -33,14 +38,12 @@ export default () =>
     let leaves: string[] = [];
 
     try {
-      const contract = getContract({
-        network,
-        provider,
-        abi,
+      const uri = await getContract({
+        abi: NFTXENSMerkleEligibility,
         address: vault.eligibilityModule.id,
-      });
+        provider,
+      }).read.merkleLeavesURI({});
 
-      const uri: string = await contract.merkleLeavesURI();
       leaves = await (await fetch(uri)).json();
     } catch (e) {
       console.error(e);

@@ -1,4 +1,5 @@
 import config from '@nftx/config';
+import type { Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import fetchAssetsAlchemy from './fetchAssetsAlchemy';
 import fetchAssetsSubgraph from './fetchAssetsSubgraph';
@@ -10,9 +11,9 @@ const fetchUserCollectionAssets = async ({
   cursor,
 }: {
   network: number;
-  userAddress: string;
+  userAddress: Address;
   cursor?: string;
-  assetAddresses: string[];
+  assetAddresses: Address[];
 }) => {
   if (
     getChainConstant(config.urls.ALCHEMY_URL, network, null) &&
@@ -25,8 +26,9 @@ const fetchUserCollectionAssets = async ({
         cursor,
         network,
         userAddress,
+        fetch,
       });
-    } catch (e) {
+    } catch (e: any) {
       if (e.message?.includes?.('falling back to subgraph')) {
         console.info(e.message);
       } else if (cursor == null) {

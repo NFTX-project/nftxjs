@@ -1,4 +1,5 @@
 import config from '@nftx/config';
+import type { Address } from '@nftx/types';
 import { bustCache, queryApi } from '../utils';
 
 /**
@@ -9,7 +10,7 @@ const invalidateUser = async ({
   userAddress,
 }: {
   network?: number;
-  userAddress: string;
+  userAddress: Address;
 }) => {
   await queryApi({
     url: `/${network}/users/${userAddress}`,

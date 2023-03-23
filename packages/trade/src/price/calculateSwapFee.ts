@@ -1,4 +1,4 @@
-import { Zero } from '@ethersproject/constants';
+import { Zero } from '@nftx/constants';
 import type { Vault } from '@nftx/types';
 import {
   doesVaultHaveRandomSwapFee,
@@ -23,10 +23,10 @@ const calculateSwapFee = ({
 
   if (targetSwaps != null || randomSwaps != null) {
     if (targetSwaps) {
-      amount = amount.add(vault.fees.targetSwapFee.mul(targetSwaps));
+      amount = amount + vault.fees.targetSwapFee * BigInt(targetSwaps);
     }
     if (randomSwaps) {
-      amount = amount.add(vault.fees.randomSwapFee.mul(randomSwaps));
+      amount = amount + vault.fees.randomSwapFee * BigInt(randomSwaps);
     }
     /** If you don't specificy a number of swaps, we assume you want to know the price of
      * 1 random or 1 target swap (dependent on the vault)
@@ -35,9 +35,9 @@ const calculateSwapFee = ({
     doesVaultHaveRandomSwapFee(vault) &&
     !doesVaultHaveTargetSwapFee(vault)
   ) {
-    amount = amount.add(vault.fees.randomSwapFee);
+    amount = amount + vault.fees.randomSwapFee;
   } else if (doesVaultHaveTargetSwapFee(vault)) {
-    amount = amount.add(vault.fees.targetSwapFee);
+    amount = amount + vault.fees.targetSwapFee;
   }
 
   return amount;

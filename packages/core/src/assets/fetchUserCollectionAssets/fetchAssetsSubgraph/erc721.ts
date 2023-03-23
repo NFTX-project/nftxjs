@@ -2,7 +2,7 @@ import { Network } from '@nftx/constants';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import config from '@nftx/config';
 import { getChainConstant } from '@nftx/utils';
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
 import { processAssetItems } from '../utils';
 
 const LIMIT = 1000;
@@ -15,13 +15,13 @@ const erc721 = async ({
   retryCount = 0,
 }: {
   network: number;
-  userAddress: string;
-  assetAddresses: string[];
+  userAddress: Address;
+  assetAddresses: Address[];
   lastId?: string;
   retryCount?: number;
-}): Promise<{ assets: Asset[]; nextId: string }> => {
+}): Promise<{ assets: Asset[]; nextId?: string }> => {
   let assets: Asset[] = [];
-  let nextId: string;
+  let nextId: string | undefined;
 
   if (!assetAddresses.length) {
     return { assets, nextId };
@@ -31,12 +31,12 @@ const erc721 = async ({
     if (network === Network.Mainnet || network === Network.Goerli) {
       type Response = {
         account: {
-          id: string;
+          id: Address;
           tokens: Array<{
-            id: string;
-            identifier: string;
+            id: Address;
+            identifier: `${number}`;
             contract: {
-              id: string;
+              id: Address;
             };
           }>;
         };
@@ -81,12 +81,12 @@ const erc721 = async ({
     } else if (network === Network.Arbitrum) {
       type Response = {
         account: {
-          id: string;
+          id: Address;
           tokens: Array<{
-            id: string;
-            identifier: string;
+            id: Address;
+            identifier: `${number}`;
             contract: {
-              id: string;
+              id: Address;
             };
           }>;
         };
@@ -123,7 +123,7 @@ const erc721 = async ({
         assets = await processAssetItems({
           network,
           items: data.account.tokens.map((x) => {
-            const [assetAddress] = x.id.split('/');
+            const [assetAddress] = x.id.split('/') as [Address];
             const tokenId = x.identifier;
 
             return { assetAddress, tokenId };

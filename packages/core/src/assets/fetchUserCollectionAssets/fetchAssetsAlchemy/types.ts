@@ -1,11 +1,13 @@
+import type { Address } from '@nftx/types';
+
 type OwnedNft = {
-  contract: { address: string };
-  balance: string;
-  id: { tokenId: string };
+  contract: { address: Address };
+  balance: `${number}`;
+  id: { tokenId: `${number}` };
 };
 
 export type Response = {
-  pageKey: string;
+  pageKey?: string;
   totalCount: string;
   blockHash: string;
   ownedNfts: OwnedNft[];

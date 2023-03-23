@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
 import { queryApi } from '../../utils';
 import Stream, { type IStream } from '../Stream';
 
@@ -10,7 +10,7 @@ const getUrl = ({
   userAddress,
   vaultId,
 }: {
-  vaultId: string;
+  vaultId?: string;
   network: number;
   userAddress: string;
 }) => {
@@ -44,7 +44,7 @@ const streamUserVaultAssets = ({
   vaultId,
 }: {
   network?: number;
-  userAddress: string;
+  userAddress: Address;
   vaultId?: string;
 }): IStream<Asset[]> => {
   let cursor: string;

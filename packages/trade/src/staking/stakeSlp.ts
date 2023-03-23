@@ -1,10 +1,8 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import type { ContractTransaction } from '@ethersproject/contracts';
 import config from '@nftx/config';
 import { NFTX_LP_STAKING } from '@nftx/constants';
-import abi from '@nftx/constants/abis/NFTXLpStaking.json';
+import { NFTXLpStaking } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
-import type { Signer } from 'ethers';
+import type { Provider, Signer } from '@nftx/types';
 
 type GetContract = typeof getContract;
 
@@ -14,18 +12,25 @@ export default ({ getContract }: { getContract: GetContract }) =>
    */
   function stakeSlp(args: {
     vaultId: string;
-    amount: BigNumber;
+    amount: bigint;
     network?: number;
+    provider: Provider;
     signer: Signer;
-  }): Promise<ContractTransaction> {
-    const { vaultId, amount, network = config.network, signer } = args;
+  }) {
+    const {
+      vaultId,
+      amount,
+      network = config.network,
+      provider,
+      signer,
+    } = args;
 
     const contract = getContract({
-      network,
+      provider,
       signer,
       address: getChainConstant(NFTX_LP_STAKING, network),
-      abi,
+      abi: NFTXLpStaking,
     });
 
-    return contract.deposit(vaultId, amount);
+    return contract.write.deposit({ args: [BigInt(vaultId), amount] });
   };

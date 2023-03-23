@@ -32,12 +32,17 @@ async function querySubgraph({
   variables?: Record<string, any>;
   fetch?: Fetch;
 }) {
+  if (fetch == null) {
+    throw new Error(
+      'Could not find fetch api. You may need to import a polyfill'
+    );
+  }
   if (variables) {
     query = interpolateQuery(query, variables);
   }
 
   // Override the default api key with a custom one if set
-  const urls = [].concat(baseUrl).map((url: string) => {
+  const urls = [baseUrl].flat().map((url) => {
     if (
       config.subgraph.API_KEY &&
       url.includes(PUBLIC_GRAPH_API_KEY) &&
@@ -62,6 +67,9 @@ async function querySubgraph({
   while (urls.length) {
     try {
       const url = urls.shift();
+      if (url == null) {
+        continue;
+      }
       const response = await fetch(url, args);
 
       // The subgraph will return a 200 response even with an invalid request so if it fails it's probably gone horribly wrong

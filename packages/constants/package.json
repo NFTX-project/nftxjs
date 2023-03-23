@@ -19,18 +19,11 @@
   },
   "scripts": {
     "test": "echo \"no tests\"",
-    "gen-abi-types": "find abis -name '*.json' -exec yarn abi-types-generator {} --provider=ethers_v5 \\;",
-    "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly && yarn gen-abi-types",
+    "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build",
     "docs": "jsdoc -c ../../jsdoc.js src"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
-  },
-  "devDependencies": {
-    "ethereum-abi-types-generator": "^1.3.2"
-  },
-  "peeDependencies": {
-    "ethereum-abi-types-generator": "^1.3.2"
   }
 }

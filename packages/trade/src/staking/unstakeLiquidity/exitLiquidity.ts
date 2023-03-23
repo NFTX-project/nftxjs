@@ -1,26 +1,29 @@
 import { NFTX_LP_STAKING } from '@nftx/constants';
-import abi from '@nftx/constants/abis/NFTXLpStaking.json';
+import { NFTXLpStaking } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
-import type { Signer } from 'ethers';
+import type { Provider, Signer } from '@nftx/types';
+import config from '@nftx/config';
 
 type GetContract = typeof getContract;
 
 export default ({ getContract }: { getContract: GetContract }) =>
   function exitLiquidity({
-    network,
+    network = config.network,
+    provider,
     signer,
     vaultId,
   }: {
     network?: number;
+    provider: Provider;
     signer: Signer;
     vaultId: string;
   }) {
     const contract = getContract({
-      network,
+      provider,
       signer,
-      abi,
+      abi: NFTXLpStaking,
       address: getChainConstant(NFTX_LP_STAKING, network),
     });
 
-    return contract.exit(vaultId);
+    return contract.write.exit({ args: [BigInt(vaultId)] });
   };

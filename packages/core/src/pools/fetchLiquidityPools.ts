@@ -2,12 +2,12 @@ import { Network } from '@nftx/constants';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import type { LiquidityPool } from './types';
 import config from '@nftx/config';
-import type { Token, Vault } from '@nftx/types';
+import type { Address, Token, Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
 type Response = {
   pools: Array<{
-    id: string;
+    id: Address;
     vault: Pick<Vault, 'id' | 'vaultId'>;
     deployBlock: string;
     stakingToken: Token;

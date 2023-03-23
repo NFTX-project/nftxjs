@@ -1,8 +1,6 @@
 import type withdrawVToken from './withdrawVToken';
 import type withdrawNfts from './withdrawNfts';
-import type { Signer } from 'ethers';
-import type { BigNumber } from '@ethersproject/bignumber';
-import type { ContractTransaction } from '@ethersproject/contracts';
+import type { Provider, Signer } from '@nftx/types';
 
 type WithdrawVToken = ReturnType<typeof withdrawVToken>;
 type WithdrawNfts = ReturnType<typeof withdrawNfts>;
@@ -20,6 +18,7 @@ export default ({
    */
   function unstakeInventory(args: {
     network: number;
+    provider: Provider;
     signer: Signer;
     vaultId: string;
     /** The number of NFTs you want to redeem.
@@ -31,15 +30,16 @@ export default ({
     /** The amount of xToken to unstake into vToken
      * This must not be more than your balance but can be a fractional amount.
      */
-    xTokenAmount?: BigNumber;
+    xTokenAmount?: bigint;
     overrides?: Record<string, any>;
-  }): Promise<ContractTransaction> {
+  }) {
     const {
       network,
       signer,
+      provider,
       vaultId,
       nftsToRedeem,
-      withdrawRemaining,
+      withdrawRemaining = false,
       xTokenAmount,
       overrides,
     } = args;
@@ -47,6 +47,7 @@ export default ({
     if (nftsToRedeem) {
       return withdrawNfts({
         network,
+        provider,
         signer,
         vaultId,
         withdrawRemaining,
@@ -57,6 +58,7 @@ export default ({
     if (xTokenAmount) {
       return withdrawVToken({
         network,
+        provider,
         signer,
         vaultId,
         xTokenAmount,

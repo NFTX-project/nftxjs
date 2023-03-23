@@ -1,0 +1,18 @@
+[
+  "constructor(address _vaultFactory, address _inventoryStaking, address _lpStaking, address _sushiRouter, address _sushiHelper, address _weth)",
+  "event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)",
+  "function WETH() view returns (address)",
+  "function createVault(tuple(address assetAddress, bool is1155, bool allowAllItems, string name, string symbol) vaultData, uint256 vaultFeatures, tuple(uint32 mintFee, uint32 randomRedeemFee, uint32 targetRedeemFee, uint32 randomSwapFee, uint32 targetSwapFee) vaultFees, tuple(int256 moduleIndex, bytes initData) eligibilityStorage, tuple(uint256[] assetTokenIds, uint256[] assetTokenAmounts, uint256 minTokenIn, uint256 minWethIn, uint256 wethIn) assetTokens) payable returns (uint256 vaultId_)",
+  "function inventoryStaking() view returns (address)",
+  "function lpStaking() view returns (address)",
+  "function onERC1155BatchReceived(address, address, uint256[], uint256[], bytes) returns (bytes4)",
+  "function onERC1155Received(address, address, uint256, uint256, bytes) returns (bytes4)",
+  "function owner() view returns (address)",
+  "function pause(bool _paused)",
+  "function paused() view returns (bool)",
+  "function renounceOwnership()",
+  "function supportsInterface(bytes4 interfaceId) view returns (bool)",
+  "function sushiRouter() view returns (address)",
+  "function transferOwnership(address newOwner)",
+  "function vaultFactory() view returns (address)"
+]

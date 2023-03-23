@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
 import streamUserVaultAssets from './streamUserVaultAssets';
 
 /**
@@ -14,7 +14,7 @@ const fetchAllUserVaultAssets = ({
   vaultId,
 }: {
   network?: number;
-  userAddress: string;
+  userAddress: Address;
   vaultId?: string;
 }) => {
   return new Promise<Asset[]>((res, rej) => {

@@ -1,7 +1,7 @@
-export const parseCursor = (cursor: string) => {
-  let next721Id: string;
-  let next1155Id: string;
-  let nextNonStandardId: number;
+export const parseCursor = (cursor?: string) => {
+  let next721Id: string | undefined;
+  let next1155Id: string | undefined;
+  let nextNonStandardId: number | undefined;
 
   if (cursor) {
     const [source, n7, n1, nn] = cursor.split('__');
@@ -17,9 +17,9 @@ export const parseCursor = (cursor: string) => {
 };
 
 export const createCursor = (
-  next721Id: string,
-  next1155Id: string,
-  nextNonStandardId: number
+  next721Id?: string,
+  next1155Id?: string,
+  nextNonStandardId?: number
 ) => {
   if (next721Id || next1155Id || nextNonStandardId != null) {
     return [

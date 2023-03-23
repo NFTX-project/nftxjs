@@ -7,7 +7,7 @@ export const reduceObj = <T extends Record<string, any>>(
   ) => Array<[string, any]>
 ): any => {
   return Object.fromEntries(
-    Object.entries(obj).reduce((acc, [key, value]) => {
+    Object.entries(obj).reduce((acc: any, [key, value]) => {
       return fn(acc, key, value);
     }, [])
   ) as any;

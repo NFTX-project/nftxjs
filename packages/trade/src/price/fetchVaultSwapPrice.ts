@@ -1,6 +1,6 @@
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import type { Price, Vault } from '@nftx/types';
+import { Zero } from '@nftx/constants';
+import type { Price, Provider, Vault } from '@nftx/types';
 import calculateSwapFee from './calculateSwapFee';
 import fetchBuyPrice from './fetchBuyPrice';
 
@@ -10,7 +10,8 @@ import fetchBuyPrice from './fetchBuyPrice';
 const fetchVaultSwapPrice = async (args: {
   network?: number;
   provider: Provider;
-  vault: Pick<Vault, 'id'> & {
+  vault: {
+    id: Vault['id'];
     fees: Pick<Vault['fees'], 'randomSwapFee' | 'targetSwapFee'>;
   };
   targetSwaps?: number;
@@ -32,7 +33,7 @@ const fetchVaultSwapPrice = async (args: {
   const amount = calculateSwapFee({ vault, randomSwaps, targetSwaps });
 
   // No fees for this vault
-  if (amount.isZero()) {
+  if (amount === Zero) {
     return { price: amount };
   }
 

@@ -18,7 +18,7 @@ const useStakeLiquidity = (opts?: UseTransactionOptions) => {
 
   return useTransaction(
     async ({ vaultId, ...args }: Args) => {
-      const { gasPrice } = await provider.getFeeData();
+      const gasPrice = await provider.getGasPrice();
       const pool = await fetchPool({
         network,
         vaultId,
@@ -27,6 +27,7 @@ const useStakeLiquidity = (opts?: UseTransactionOptions) => {
 
       return stakeLiquidity({
         network,
+        provider,
         signer,
         gasPrice,
         isNewPool,

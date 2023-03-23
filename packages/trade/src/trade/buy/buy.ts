@@ -1,17 +1,12 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import type { ContractTransaction } from '@ethersproject/contracts';
-import NFTXMarketplaceZap from '@nftx/constants/abis/NFTXMarketplaceZap.json';
-import NftxMarketplace0xZap from '@nftx/constants/abis/NFTXMarketplace0xZap.json';
+import { NFTXMarketplace0xZap, NFTXMarketplaceZap } from '@nftx/abi';
 import {
   NFTX_MARKETPLACE_0X_ZAP,
   NFTX_MARKETPLACE_ZAP,
+  WeiPerEther,
   WETH_TOKEN,
 } from '@nftx/constants';
 import { getExactTokenIds, getTotalTokenIds } from '../utils';
-import estimateGasAndFees from '../estimateGasAndFees';
 import { omitNil } from '../../utils';
-import increaseGasLimit from '../increaseGasLimit';
-import type { Signer } from 'ethers';
 import config from '@nftx/config';
 import {
   doesNetworkSupport0x,
@@ -19,10 +14,9 @@ import {
   fetchVaultBuyPrice,
 } from '../../price';
 import calculateBuyFee from '../../price/calculateBuyFee';
-import { WeiPerEther } from '@ethersproject/constants';
-import { parseEther } from '@ethersproject/units';
-import type { Vault } from '@nftx/types';
+import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
+import { parseEther } from 'viem';
 
 type BuyVault = Pick<Vault, 'id' | 'vaultId' | 'reserveVtoken'> & {
   fees: Pick<Vault['fees'], 'randomRedeemFee' | 'targetRedeemFee'>;
@@ -34,6 +28,7 @@ type BuyVault = Pick<Vault, 'id' | 'vaultId' | 'reserveVtoken'> & {
 
 const buyErc721 = async ({
   network,
+  provider,
   signer,
   userAddress,
   vault,
@@ -43,10 +38,11 @@ const buyErc721 = async ({
   tokenIds,
 }: {
   network: number;
+  provider: Provider;
   signer: Signer;
-  userAddress: string;
+  userAddress: Address;
   vault: BuyVault;
-  tokenIds: string[] | [string, number][];
+  tokenIds: TokenId[] | [TokenId, number][];
   randomBuys: number;
   slippage: number;
 }) => {
@@ -55,50 +51,47 @@ const buyErc721 = async ({
   const amount = targetBuys + randomBuys;
   const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
   const contract = getContract({
-    network,
+    provider,
     signer,
     abi: NFTXMarketplaceZap,
     address,
   });
   const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
-  const args = [vaultId, amount, ids, path, userAddress];
-  let maxPrice: BigNumber = null;
+  const args = [
+    BigInt(vaultId),
+    BigInt(amount),
+    ids.map(BigInt),
+    path,
+    userAddress,
+  ] as const;
+  let maxPrice: bigint | undefined;
   if (slippage) {
     const { price } = await fetchVaultBuyPrice({
       vault,
-      provider: signer.provider,
+      provider,
       network,
       randomBuys,
       targetBuys,
     });
-    maxPrice = price
-      .mul(WeiPerEther.add(parseEther(`${slippage}`)))
-      .div(WeiPerEther);
+    maxPrice =
+      (price * (WeiPerEther + parseEther(`${slippage}`))) / WeiPerEther;
   }
 
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      contract,
-      method: 'buyAndRedeem',
-      args: args,
-      overrides: omitNil({ value: maxPrice?.toString() }),
-    });
-
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
   const overrides = omitNil({
-    value: maxPrice?.toString(),
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
+    value: maxPrice,
   });
 
   console.debug(address, 'buyAndRedeem', ...args, overrides);
 
-  return contract.buyAndRedeem(...args, overrides);
+  return contract.write.buyAndRedeem({
+    args,
+    ...overrides,
+  });
 };
 
 const buy0xErc721 = async ({
   network,
+  provider,
   signer,
   tokenIds,
   userAddress,
@@ -107,19 +100,20 @@ const buy0xErc721 = async ({
   slippage,
 }: {
   network: number;
+  provider: Provider;
   signer: Signer;
-  userAddress: string;
+  userAddress: Address;
   vault: BuyVault;
-  tokenIds: string[] | [string, number][];
+  tokenIds: TokenId[] | [TokenId, number][];
   randomBuys: number;
   slippage: number;
 }) => {
   const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
   const { vaultId, id: vaultAddress } = vault;
   const contract = getContract({
-    abi: NftxMarketplace0xZap,
+    abi: NFTXMarketplace0xZap,
     address,
-    network,
+    provider,
     signer,
   });
 
@@ -127,7 +121,7 @@ const buy0xErc721 = async ({
   const targetBuys = getTotalTokenIds(tokenIds);
   const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
   const amount = targetBuys + randomBuys;
-  const buyAmount = fee.add(WeiPerEther.mul(amount));
+  const buyAmount = fee + WeiPerEther * BigInt(amount);
 
   const { data, guaranteedPrice } = await fetch0xQuote({
     type: 'quote',
@@ -138,48 +132,26 @@ const buy0xErc721 = async ({
     slippagePercentage: slippage,
   });
 
-  const args = [vaultId, amount, specificIds, data, userAddress];
-  const slippageMultiplier = parseEther(`${slippage || 0}`).add(WeiPerEther);
-  const value = parseEther(guaranteedPrice)
-    .mul(buyAmount)
-    .div(WeiPerEther)
-    .mul(slippageMultiplier)
-    .div(WeiPerEther);
-
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      contract,
-      method: 'buyAndRedeem',
-      args: args,
-      overrides: omitNil({ value }),
-    });
-
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
+  const args = [
+    BigInt(vaultId),
+    BigInt(amount),
+    specificIds.map(BigInt),
+    data,
+    userAddress,
+  ] as const;
+  const slippageMultiplier = parseEther(`${slippage || 0}`) + WeiPerEther;
+  const value =
+    (((parseEther(guaranteedPrice) * buyAmount) / WeiPerEther) *
+      slippageMultiplier) /
+    WeiPerEther;
 
   const overrides = omitNil({
     value,
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
   });
 
   console.debug(address, 'buyAndRedeem', ...args, overrides);
 
-  // try {
-  return contract.buyAndRedeem(...args, overrides);
-  // } catch (e) {
-  //   if (e?.code === 4001) {
-  //     throw e;
-  //   }
-  //   if (Number(estimatedPriceImpact) > 20) {
-  //     // This most likely means there's not enough liquidity and we need a higher slippage rate
-  //     console.error(e);
-  //     throw new Error(
-  //       'Price impact was too high, you may need to increase your slippage tolerance to complete the transaction'
-  //     );
-  //   }
-  //   throw e;
-  // }
+  return contract.write.buyAndRedeem({ args, ...overrides });
 };
 
 const buyErc1155 = buyErc721;
@@ -206,23 +178,25 @@ const buy = async (args: {
   network?: number;
   /** The percentage amount of slippage you're willing to accept  */
   slippage?: number;
+  provider: Provider;
   signer: Signer;
   /** The address of the buyer */
-  userAddress: string;
+  userAddress: Address;
   /** The vault you're buying from */
   vault: BuyVault;
   /** Ids of the individual NFTs you want to buy.
    * For 721s you just pass a flat array of ids ['1','2','3'].
    * For 1155s if you're dealing with multiples, you pass a tuple of [tokenId, quantity] [['1', 2], ['2', 1], ['3', 2]]
    */
-  tokenIds?: string[] | [string, number][];
+  tokenIds?: TokenId[] | [TokenId, number][];
   /** If you want to do a random buy, enter the number of randoms you want (you can buy targets and randoms at the same time) */
   randomBuys?: number;
   standard?: 'ERC721' | 'ERC1155';
   quote?: 'ETH';
-}): Promise<ContractTransaction> => {
+}) => {
   const {
     network = config.network,
+    provider,
     signer,
     userAddress,
     vault,
@@ -244,6 +218,7 @@ const buy = async (args: {
   return fn({
     network,
     randomBuys,
+    provider,
     signer,
     tokenIds,
     userAddress,

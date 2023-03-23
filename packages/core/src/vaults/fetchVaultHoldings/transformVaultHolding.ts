@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import type { VaultHolding } from '@nftx/types';
 import type { Response } from '../fetchSubgraphVaults';
 
@@ -8,7 +7,7 @@ const transformVaultHolding = (
   return {
     id: holding.id,
     tokenId: holding.tokenId,
-    amount: BigNumber.from(holding.amount),
+    amount: BigInt(holding.amount),
     dateAdded: Number(holding.dateAdded),
   };
 };

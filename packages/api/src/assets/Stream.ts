@@ -57,7 +57,7 @@ export default class Stream<T> implements IStream<T> {
 
       const revert = () => {
         this.reading = false;
-        this.listeners.data = null;
+        this.listeners.data = undefined;
         this.listeners.error = onError;
         this.listeners.end = onEnd;
       };

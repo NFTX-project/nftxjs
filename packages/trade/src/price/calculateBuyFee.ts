@@ -1,4 +1,4 @@
-import { Zero } from '@ethersproject/constants';
+import { Zero } from '@nftx/constants';
 import type { Vault } from '@nftx/types';
 
 const calculateBuyFee = ({
@@ -28,12 +28,12 @@ const calculateBuyFee = ({
    */
   if (targetBuys != null || randomBuys != null) {
     if (targetBuys) {
-      const fee = targetPrice.mul(targetBuys);
-      amount = amount.add(fee);
+      const fee = targetPrice * BigInt(targetBuys);
+      amount = amount + fee;
     }
     if (randomBuys) {
-      const fee = randomPrice.mul(randomBuys);
-      amount = amount.add(fee);
+      const fee = randomPrice * BigInt(randomBuys);
+      amount = amount + fee;
     }
     /** if we haven't specified target/random buys,
      * we assume we're either getting the price for 1 random or 1 target redeem
@@ -42,9 +42,9 @@ const calculateBuyFee = ({
     vault.features.enableRandomRedeem &&
     !vault.features.enableTargetRedeem
   ) {
-    amount = amount.add(randomPrice);
+    amount = amount + randomPrice;
   } else {
-    amount = amount.add(targetPrice);
+    amount = amount + targetPrice;
   }
 
   return amount;

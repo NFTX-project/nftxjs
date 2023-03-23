@@ -1,9 +1,9 @@
 import config from '@nftx/config';
-import type { BigNumber } from '@ethersproject/bignumber';
+import type { Address } from '@nftx/types';
 import { queryApi } from '../utils';
 
 type Response = {
-  lifetimeYield: BigNumber;
+  lifetimeYield: bigint;
 };
 
 /**
@@ -14,7 +14,7 @@ const fetchUserYield = ({
   userAddress,
 }: {
   network?: number;
-  userAddress: string;
+  userAddress: Address;
 }) => {
   return queryApi<Response>({
     url: `/${network}/users/${userAddress}/yield`,

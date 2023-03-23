@@ -1,32 +1,23 @@
-import type { Provider } from '@ethersproject/providers';
-import type { BigNumber } from '@ethersproject/bignumber';
-import abi from '@nftx/constants/abis/ERC20.json';
+import { ERC20 } from '@nftx/abi';
 import getContract from './getContract';
-import config from '@nftx/config';
+import type { Address, Provider } from '@nftx/types';
 
 /** Return the user's balance of a given token */
 const balanceOf = async (args: {
-  network?: number;
   provider: Provider;
   /** The token address */
-  tokenAddress: string;
+  tokenAddress: Address;
   /** The owner (i.e. the user) whose balance we're fetching */
-  ownerAddress: string;
+  ownerAddress: Address;
 }) => {
-  const {
-    network = config.network,
-    ownerAddress,
-    provider,
-    tokenAddress,
-  } = args;
+  const { ownerAddress, provider, tokenAddress } = args;
   const contract = getContract({
-    network,
-    address: tokenAddress.toLowerCase(),
-    abi,
+    address: tokenAddress,
+    abi: ERC20,
     provider,
   });
 
-  const result: BigNumber = await contract.balanceOf(ownerAddress);
+  const result = await contract.read.balanceOf({ args: [ownerAddress] });
 
   return result;
 };

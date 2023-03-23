@@ -1,5 +1,4 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import { WeiPerEther, Zero } from '@ethersproject/constants';
+import { WeiPerEther, Zero } from '@nftx/constants';
 import type { Position } from '@nftx/types';
 import { calculateVaultApr } from '../vaults';
 import {
@@ -19,13 +18,13 @@ const adjustPosition = (
   position: Position,
   args: {
     /** Amount of vToken to stake as inventory */
-    vToken?: BigNumber;
+    vToken?: bigint;
     /** Amount of slp (vTokenWETH) to stake as liquidity */
-    slp?: BigNumber;
+    slp?: bigint;
     /** Amount of NFTs to stake (must be paired with lpEth) */
-    lpNft?: BigNumber;
+    lpNft?: bigint;
     /** Amount of ETH to stake (must be paired with lpNft) */
-    lpEth?: BigNumber;
+    lpEth?: bigint;
   }
 ): Position => {
   const { vToken, slp, lpEth, lpNft } = args;
@@ -51,20 +50,19 @@ const adjustPosition = (
     inventoryApr,
     liquidityApr,
   } = position;
-  const adjustVToken = vToken?.gt(0) || vToken?.lt(0);
-  const adjustSlp = slp?.gt(0) || slp?.lt(0);
+  const adjustVToken = vToken != null && vToken !== 0n;
+  const adjustSlp = slp != null && slp !== 0n;
   const adjustLp =
-    lpNft &&
-    lpEth &&
-    (lpNft.gt(0) || lpNft.lt(0) || lpEth.gt(0) || lpEth.lt(0));
+    lpNft != null && lpEth != null && (lpNft !== 0n || lpEth !== 0n);
   const hasAdjustments = adjustLp || adjustSlp || adjustVToken;
 
   if (adjustVToken) {
-    inventoryTokens = inventoryTokens.add(vToken);
+    inventoryTokens = inventoryTokens + vToken;
 
-    const newXTokens = vToken.mul(position.xTokenShare).div(WeiPerEther);
-    xTokenBalance = xTokenBalance.add(newXTokens);
-    xTokenSupply = xTokenSupply.add(newXTokens);
+    const newXTokens = (vToken * position.xTokenShare) / WeiPerEther;
+
+    xTokenBalance = xTokenBalance + newXTokens;
+    xTokenSupply = xTokenSupply + newXTokens;
     inventoryShare = calculateInventoryShare({
       xTokenSupply,
       xToken: xTokenBalance,
@@ -72,7 +70,7 @@ const adjustPosition = (
 
     [inventorySplit, liquiditySplit] = calculateStakeSplit({
       inventoryBalance: inventoryTokens,
-      liquidityBalance: liquidityTokens.mul(2),
+      liquidityBalance: liquidityTokens * 2n,
     });
 
     inventoryValue = calculateInventoryEth({
@@ -83,18 +81,26 @@ const adjustPosition = (
 
   if (adjustSlp) {
     const newXSlp = slp;
-    xSlpBalance = xSlpBalance.add(newXSlp);
-    xSlpSupply = xSlpSupply.add(newXSlp);
-    slpBalance = slpBalance.add(slp);
-    slpSupply = slpSupply.add(slp);
+    xSlpBalance = xSlpBalance + newXSlp;
+    xSlpSupply = xSlpSupply + newXSlp;
+    slpBalance = slpBalance + slp;
+    slpSupply = slpSupply + slp;
     liquidityShare = calculateLiquidityShare({ xSlp: xSlpBalance, xSlpSupply });
 
-    if (position.xSlpBalance.isZero()) {
-      liquidityTokens =
-        poolReserves?.reserveVtoken.mul(liquidityShare).div(WeiPerEther) ??
-        Zero;
-      liquidityEth =
-        poolReserves?.reserveWeth.mul(liquidityShare).div(WeiPerEther) ?? Zero;
+    if (position.xSlpBalance === 0n) {
+      if (
+        poolReserves?.reserveVtoken &&
+        poolReserves.reserveWeth &&
+        liquidityShare
+      ) {
+        liquidityTokens =
+          (poolReserves.reserveVtoken * liquidityShare) / WeiPerEther;
+        liquidityEth =
+          (poolReserves.reserveWeth * liquidityShare) / WeiPerEther;
+      } else {
+        liquidityTokens = Zero;
+        liquidityEth = Zero;
+      }
     } else {
       const balanceChange = calculatePercentageDifference(
         position.xSlpBalance,
@@ -111,7 +117,7 @@ const adjustPosition = (
 
     [inventorySplit, liquiditySplit] = calculateStakeSplit({
       inventoryBalance: inventoryTokens,
-      liquidityBalance: liquidityTokens.mul(2),
+      liquidityBalance: liquidityTokens * 2n,
     });
 
     poolReserves = {
@@ -126,29 +132,29 @@ const adjustPosition = (
       ),
     };
     const hasLiquidity =
-      poolReserves.reserveVtoken.gt(0) && poolReserves.reserveWeth.gt(0);
+      poolReserves.reserveVtoken > Zero && poolReserves.reserveWeth > Zero;
     // Recalculate the mid price: amount * reserveB / reserveA
     poolReserves.midPrice = hasLiquidity
-      ? WeiPerEther.mul(poolReserves.reserveWeth).div(
-          poolReserves.reserveVtoken
-        )
+      ? (WeiPerEther * poolReserves.reserveWeth) / poolReserves.reserveVtoken
       : Zero;
 
-    liquidityValue = liquidityEth.mul(2);
+    liquidityValue = liquidityEth * 2n;
   }
 
   if (adjustLp) {
-    liquidityTokens = liquidityTokens.add(lpNft);
-    liquidityEth = liquidityEth.add(lpEth);
+    liquidityTokens = liquidityTokens + lpNft;
+    liquidityEth = liquidityEth + lpEth;
 
-    if (position.liquidityTokens.isZero()) {
-      const slpToken = poolReserves?.reserveVtoken?.gt(0)
-        ? lpNft.mul(slpSupply).div(poolReserves.reserveVtoken)
-        : lpNft;
-      const slpWeth = poolReserves?.reserveWeth?.gt(0)
-        ? lpEth.mul(slpSupply).div(poolReserves.reserveWeth)
-        : lpEth;
-      const slpAdded = slpToken.lt(slpWeth) ? slpToken : slpWeth;
+    if (position.liquidityTokens === Zero) {
+      const slpToken =
+        (poolReserves.reserveVtoken ?? Zero) > Zero
+          ? (lpNft * slpSupply) / poolReserves.reserveVtoken
+          : lpNft;
+      const slpWeth =
+        (poolReserves.reserveWeth ?? Zero) > Zero
+          ? (lpEth * slpSupply) / poolReserves.reserveWeth
+          : lpEth;
+      const slpAdded = slpToken < slpWeth ? slpToken : slpWeth;
 
       xSlpBalance = slpAdded;
     } else {
@@ -159,10 +165,10 @@ const adjustPosition = (
       xSlpBalance = increaseByPercentage(xSlpBalance, balanceChange);
     }
 
-    const xSlpDiff = xSlpBalance.sub(position.xSlpBalance);
-    xSlpSupply = xSlpSupply.add(xSlpDiff);
-    slpSupply = slpSupply.add(xSlpDiff);
-    slpBalance = slpBalance.add(xSlpDiff);
+    const xSlpDiff = xSlpBalance - position.xSlpBalance;
+    xSlpSupply = xSlpSupply + xSlpDiff;
+    slpSupply = slpSupply + xSlpDiff;
+    slpBalance = slpBalance + xSlpDiff;
 
     const supplyChange = calculatePercentageDifference(
       position.xSlpSupply,
@@ -183,25 +189,23 @@ const adjustPosition = (
       ),
     };
     const hasLiquidity =
-      poolReserves.reserveVtoken.gt(0) && poolReserves.reserveWeth.gt(0);
+      poolReserves.reserveVtoken > Zero && poolReserves.reserveWeth > Zero;
     // Recalculate the mid price: amount * reserveB / reserveA
     poolReserves.midPrice = hasLiquidity
-      ? WeiPerEther.mul(poolReserves.reserveWeth).div(
-          poolReserves.reserveVtoken
-        )
+      ? (WeiPerEther * poolReserves.reserveWeth) / poolReserves.reserveVtoken
       : Zero;
 
-    liquidityValue = liquidityEth.mul(2);
+    liquidityValue = liquidityEth * 2n;
 
     [inventorySplit, liquiditySplit] = calculateStakeSplit({
       inventoryBalance: inventoryTokens,
-      liquidityBalance: liquidityTokens.mul(2),
+      liquidityBalance: liquidityTokens * 2n,
     });
   }
 
   if (hasAdjustments) {
-    valueStaked = liquidityValue.add(inventoryValue);
-    totalValue = valueStaked.add(position.claimableValue);
+    valueStaked = liquidityValue + inventoryValue;
+    totalValue = valueStaked + position.claimableValue;
 
     const newApr = calculateVaultApr({
       periodFees: position.periodFees,

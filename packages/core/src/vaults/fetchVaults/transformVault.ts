@@ -1,9 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import { mapObj } from '../../utils';
 import type { Response } from '../fetchSubgraphVaults';
 import transformVaultReserves from './transformVaultReserves';
 import transformVaultHolding from '../fetchVaultHoldings/transformVaultHolding';
-import type { TokenReserve, Vault, VaultHolding } from '@nftx/types';
+import type { Price, TokenReserve, Vault, VaultHolding } from '@nftx/types';
 
 const transformVault = ({
   reserves,
@@ -15,7 +14,7 @@ const transformVault = ({
   reserves: TokenReserve[];
   vault: Response['vaults'][0];
   globalFees: Response['globals'][0]['fees'];
-  merkleReference: string;
+  merkleReference?: string;
   moreHoldings?: VaultHolding[];
 }) => {
   const reserve = reserves.find(({ tokenId }) => tokenId === x.id);
@@ -26,7 +25,7 @@ const transformVault = ({
 
   const rawFees = (x.usesFactoryFees && globalFees ? globalFees : x.fees) ?? {};
   const fees: Vault['fees'] = mapObj(rawFees, (key, value) => {
-    return [key, BigNumber.from(value)];
+    return [key, BigInt(value)];
   });
 
   const { derivedETH, rawPrice, reserveVtoken, reserveWeth } =
@@ -38,13 +37,13 @@ const transformVault = ({
     totalHoldings: Number(x.totalHoldings),
     totalMints: Number(x.totalMints),
     totalRedeems: Number(x.totalRedeems),
-    totalFees: BigNumber.from(x.totalFees),
+    totalFees: BigInt(x.totalFees),
     shutdownDate: Number(x.shutdownDate || '0'),
     holdings,
     fees,
     derivedETH,
     rawPrice,
-    buyPrice: null,
+    buyPrice: null as unknown as Price,
     reserveVtoken,
     reserveWeth,
     eligibilityModule: x.eligibilityModule
@@ -52,7 +51,7 @@ const transformVault = ({
           ...x.eligibilityModule,
           merkleReference,
         }
-      : undefined,
+      : (undefined as any),
   };
 
   return vault;

@@ -1,7 +1,5 @@
-import type {
-  ContractReceipt,
-  ContractTransaction,
-} from '@ethersproject/contracts';
+import type { Transaction } from 'nftx.js';
+import type { TransactionReceipt } from 'viem';
 
 export class TransactionExceptionError extends Error {
   status = 'Exception';
@@ -22,8 +20,8 @@ export class TransactionFailedError extends Error {
   constructor(
     public error: any,
     public network: number,
-    public transaction: ContractTransaction,
-    public receipt: ContractReceipt
+    public transaction: Transaction,
+    public receipt: TransactionReceipt
   ) {
     super(
       error?.error?.message ??

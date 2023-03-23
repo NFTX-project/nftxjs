@@ -1,6 +1,6 @@
-import type { BigNumber } from '@ethersproject/bignumber';
 import type { Price } from './price';
 import type { Token } from './tokens';
+import type { Address, TokenId } from './web3';
 
 export type VaultFeatures = {
   enableMint: boolean;
@@ -12,62 +12,62 @@ export type VaultFeatures = {
 
 export type VaultHolding = {
   id: string;
-  tokenId: string;
-  amount: BigNumber;
+  tokenId: TokenId;
+  amount: bigint;
   dateAdded: number;
 };
 
 export type VaultFees = {
-  mintFee: BigNumber;
-  randomRedeemFee: BigNumber;
-  targetRedeemFee: BigNumber;
-  targetSwapFee: BigNumber;
-  randomSwapFee: BigNumber;
+  mintFee: bigint;
+  randomRedeemFee: bigint;
+  targetRedeemFee: bigint;
+  targetSwapFee: bigint;
+  randomSwapFee: bigint;
 };
 
 export type Vault = {
   vaultId: string;
-  id: string;
+  id: Address;
   asset: Token;
-  createdBy: { id: string };
+  createdBy: { id: Address };
   createdAt: number;
   derivedETH: string;
-  rawPrice: BigNumber;
+  rawPrice: bigint;
   buyPrice: Price;
-  reserveVtoken: BigNumber;
-  reserveWeth: BigNumber;
+  reserveVtoken: bigint;
+  reserveWeth: bigint;
   features: VaultFeatures;
   totalHoldings: number;
   totalMints: number;
   totalRedeems: number;
-  totalFees: BigNumber;
+  totalFees: bigint;
   holdings: VaultHolding[];
   is1155: boolean;
   isFinalized: boolean;
   usesFactoryFees: boolean;
   fees: VaultFees;
-  manager: { id: string };
+  manager: { id: Address };
   token: Token;
   eligibilityModule: {
-    id: string;
+    id: Address;
     name: string;
     eligibleIds: string[];
     eligibleRange: [string, string];
     merkleReference: string;
   };
   lpStakingPool: {
-    id: string;
+    id: Address;
     stakingToken: {
-      id: string;
+      id: Address;
     };
     dividendToken: {
-      id: string;
+      id: Address;
     };
   };
   inventoryStakingPool: {
-    id: string;
+    id: Address;
     dividendToken: {
-      id: string;
+      id: Address;
       symbol: string;
     };
   };
@@ -78,22 +78,22 @@ export type Vault = {
 
 export type VaultActivity = {
   vaultId: string;
-  vaultAddress: string;
+  vaultAddress: Address;
   amount: number;
-  ethAmount: BigNumber;
+  ethAmount: bigint;
   date: number;
-  feeAmount: BigNumber;
-  tokenId: string;
-  txId: string;
+  feeAmount: bigint;
+  tokenId: TokenId;
+  txId: Address;
   source: string;
   type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'stake' | 'unstake';
   stakeType?: 'liquidity' | 'inventory';
-  swapTokenId?: string;
+  swapTokenId?: TokenId;
   random?: boolean;
 };
 
 export type VaultFeeTransfer = {
-  amount: BigNumber;
+  amount: bigint;
   to: string;
 };
 
@@ -101,6 +101,6 @@ export type VaultFeeReceipt = {
   vaultId: string;
   vaultAddress: string;
   transfers: VaultFeeTransfer[];
-  amount: BigNumber;
+  amount: bigint;
   date: number;
 };
