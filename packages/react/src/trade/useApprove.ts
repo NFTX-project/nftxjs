@@ -7,15 +7,18 @@ type Args = TxnArgsOnly<typeof approve>;
 
 const useApprove = (opts?: UseTransactionOptions) => {
   const {
-    network,
+    provider,
     signer,
     core: { approve },
   } = useNftx();
 
-  return useTransaction((args: Args) => approve({ ...args, network, signer }), {
-    description: 'Approve',
-    ...opts,
-  });
+  return useTransaction(
+    (args: Args) => approve({ ...args, provider, signer }),
+    {
+      description: 'Approve',
+      ...opts,
+    }
+  );
 };
 
 export default useApprove;

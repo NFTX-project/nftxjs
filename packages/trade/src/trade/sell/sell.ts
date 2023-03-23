@@ -1,15 +1,12 @@
-import type { ContractTransaction } from '@ethersproject/contracts';
 import config from '@nftx/config';
 import {
   NFTX_MARKETPLACE_0X_ZAP,
   NFTX_MARKETPLACE_ZAP,
+  WeiPerEther,
   WETH_TOKEN,
 } from '@nftx/constants';
-import nftxMarketplaceZap from '@nftx/constants/abis/NFTXMarketplaceZap.json';
-import nftxMarketplace0xZap from '@nftx/constants/abis/NFTXMarketplace0xZap.json';
-import type { Signer } from 'ethers';
+import { NFTXMarketplace0xZap, NFTXMarketplaceZap } from '@nftx/abi';
 import { omitNil } from '../../utils';
-import estimateGasAndFees from '../estimateGasAndFees';
 import increaseGasLimit from '../increaseGasLimit';
 import {
   getTokenIdAmounts,
@@ -21,11 +18,10 @@ import {
   fetch0xQuote,
   fetchVaultSellPrice,
 } from '../../price';
-import { parseEther } from '@ethersproject/units';
 import calculateSellFee from '../../price/calculateSellFee';
-import { WeiPerEther } from '@ethersproject/constants';
-import type { Vault } from '@nftx/types';
+import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
+import { parseEther } from 'viem';
 
 type SellVault = Pick<Vault, 'id' | 'vaultId'> & {
   fees: Pick<Vault['fees'], 'mintFee'>;
@@ -36,21 +32,23 @@ const sell0xErc721 = async ({
   vault,
   tokenIds,
   network,
+  provider,
   signer,
   slippage,
   userAddress,
 }: {
   vault: SellVault;
-  tokenIds: string[] | [string, number][];
+  tokenIds: TokenId[] | [TokenId, number][];
   network: number;
+  provider: Provider;
   signer: Signer;
   quote: 'ETH';
   slippage: number;
-  userAddress: string;
+  userAddress: Address;
 }) => {
   const amount = getTotalTokenIds(tokenIds);
   const fee = calculateSellFee({ vault, amount });
-  const sellAmount = parseEther(`${amount}`).sub(fee);
+  const sellAmount = parseEther(`${amount}`) - fee;
   const ids = getUniqueTokenIds(tokenIds);
   const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
 
@@ -63,26 +61,19 @@ const sell0xErc721 = async ({
     type: 'quote',
   });
 
-  const args = [vaultId, ids, data, userAddress];
+  const args = [BigInt(vaultId), ids.map(BigInt), data, userAddress] as const;
   const contract = getContract({
-    network,
+    provider,
     signer,
     address,
-    abi: nftxMarketplace0xZap,
+    abi: NFTXMarketplace0xZap,
   });
 
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      contract,
-      method: 'mintAndSell721',
-      args,
-    });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
+  console.debug(address, 'mintAndSell721', ...args);
 
-  const overrides = omitNil({ gasLimit, maxFeePerGas, maxPriorityFeePerGas });
-  console.debug(address, 'mintAndSell721', ...args, overrides);
-
-  return contract.mintAndSell721(...args, overrides);
+  return contract.write.mintAndSell721({
+    args,
+  });
 };
 
 const sellErc721 = async ({
@@ -92,50 +83,48 @@ const sellErc721 = async ({
   path,
   userAddress,
   network,
+  provider,
   signer,
   slippage,
 }: {
   vault: SellVault;
-  path: [string, string];
-  userAddress: string;
-  tokenIds: string[] | [string, number][];
+  path: readonly [Address, Address];
+  userAddress: Address;
+  tokenIds: TokenId[] | [TokenId, number][];
   network: number;
+  provider: Provider;
   signer: Signer;
   slippage: number;
 }) => {
   const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
   const contract = getContract({
-    network,
+    provider,
     signer,
-    abi: nftxMarketplaceZap,
+    abi: NFTXMarketplaceZap,
     address,
   });
   const ids = getUniqueTokenIds(tokenIds);
   let { price: minPrice } = await fetchVaultSellPrice({
     vault,
-    provider: signer.provider,
+    provider,
     network,
     amount: ids.length,
   });
   if (slippage) {
-    minPrice = minPrice
-      .mul(WeiPerEther.sub(parseEther(`${slippage}`)))
-      .div(WeiPerEther);
+    minPrice =
+      (minPrice * (WeiPerEther - parseEther(`${slippage}`))) / WeiPerEther;
   }
-  const args = [vaultId, ids, minPrice, path, userAddress];
+  const args = [
+    BigInt(vaultId),
+    ids.map(BigInt),
+    minPrice,
+    path,
+    userAddress,
+  ] as const;
 
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      contract,
-      method: 'mintAndSell721',
-      args,
-    });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
-  const overrides = omitNil({ gasLimit, maxFeePerGas, maxPriorityFeePerGas });
+  console.debug(address, 'mintAndSell721', ...args);
 
-  console.debug(address, 'mintAndSell721', ...args, overrides);
-
-  return contract.mintAndSell721(...args, overrides);
+  return contract.write.mintAndSell721({ args });
 };
 
 const sellErc1155 = async ({
@@ -146,50 +135,49 @@ const sellErc1155 = async ({
   path,
   userAddress,
   network,
+  provider,
   signer,
 }: {
-  tokenIds: string[] | [string, number][];
+  tokenIds: TokenId[] | [TokenId, number][];
   vault: SellVault;
   slippage: number;
-  path: [string, string];
-  userAddress: string;
+  path: readonly [Address, Address];
+  userAddress: Address;
   network: number;
+  provider: Provider;
   signer: Signer;
 }) => {
   const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
   const contract = getContract({
-    network,
+    provider,
     signer,
-    abi: nftxMarketplaceZap,
+    abi: NFTXMarketplaceZap,
     address,
   });
   const ids = getUniqueTokenIds(tokenIds);
   const amounts = getTokenIdAmounts(tokenIds);
   let { price: minPrice } = await fetchVaultSellPrice({
     vault,
-    provider: signer.provider,
+    provider,
     network,
     amount: ids.length,
   });
   if (slippage) {
-    minPrice = minPrice
-      .mul(WeiPerEther.sub(parseEther(`${slippage}`)))
-      .div(WeiPerEther);
+    minPrice =
+      (minPrice * (WeiPerEther - parseEther(`${slippage}`))) / WeiPerEther;
   }
-  const args = [vaultId, ids, amounts, minPrice, path, userAddress];
+  const args = [
+    BigInt(vaultId),
+    ids.map(BigInt),
+    amounts.map(BigInt),
+    minPrice,
+    path,
+    userAddress,
+  ] as const;
 
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({ contract, method: 'mintAndSell1155', args });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
-  const overrides = omitNil({
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-  });
+  console.debug(address, 'mintAndSell1155', ...args);
 
-  console.debug(address, 'mintAndSell1155', ...args, overrides);
-
-  return contract.mintAndSell1155(...args, overrides);
+  return contract.write.mintAndSell1155({ args });
 };
 
 const sell0xErc1155 = async ({
@@ -197,23 +185,25 @@ const sell0xErc1155 = async ({
   vault: { vaultId, id: vaultAddress },
   tokenIds,
   network,
+  provider,
   signer,
   slippage,
   userAddress,
 }: {
   vault: SellVault;
-  tokenIds: string[] | [string, number][];
+  tokenIds: TokenId[] | [TokenId, number][];
   network: number;
+  provider: Provider;
   signer: Signer;
   quote: 'ETH';
   slippage: number;
-  userAddress: string;
+  userAddress: Address;
 }) => {
   const ids = getUniqueTokenIds(tokenIds);
   const amounts = getTokenIdAmounts(tokenIds);
   const amount = getTotalTokenIds(tokenIds);
   const fee = calculateSellFee({ vault, amount });
-  const sellAmount = parseEther(`${amount}`).sub(fee);
+  const sellAmount = parseEther(`${amount}`) - fee;
   const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
 
   const { data } = await fetch0xQuote({
@@ -226,25 +216,22 @@ const sell0xErc1155 = async ({
   });
 
   const contract = getContract({
-    network,
     signer,
     address,
-    abi: nftxMarketplace0xZap,
+    provider,
+    abi: NFTXMarketplace0xZap,
   });
 
-  const args = [vaultId, ids, amounts, data, userAddress];
+  const args = [
+    BigInt(vaultId),
+    ids.map(BigInt),
+    amounts.map(BigInt),
+    data,
+    userAddress,
+  ] as const;
 
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({ contract, method: 'mintAndSell1155', args });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
-  const overrides = omitNil({
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-  });
-
-  console.debug(address, 'mintAndSell1155', args, overrides);
-  return contract.mintAndSell1155(...args, overrides);
+  console.debug(address, 'mintAndSell1155', args);
+  return contract.write.mintAndSell1155({ args });
 };
 
 const matrix = {
@@ -267,32 +254,34 @@ const sell = async (args: {
   slippage?: number;
   /** The vault you're selling into */
   vault: SellVault;
+  provider: Provider;
   signer: Signer;
   /** The address of the seller */
-  userAddress: string;
+  userAddress: Address;
   /** Ids of the individual NFTs you want to sell.
    * For 721s you just pass a flat array of ids ['1', '2'].
    * For 1155s if you're dealing with multiples, you pass a tuple of [tokenId, quantity] [['1', 2], ['2', 1]]
    */
-  tokenIds: string[] | [string, number][];
+  tokenIds: TokenId[] | [TokenId, number][];
   standard?: 'ERC721' | 'ERC1155';
   quote?: 'ETH';
-}): Promise<ContractTransaction> => {
+}) => {
   const {
     network = config.network,
+    provider,
     signer,
     tokenIds,
     userAddress,
     vault,
     slippage = 0,
     quote = 'ETH',
-    standard = Array.isArray(tokenIds?.[0]) ? 'ERC1155' : 'ERC721',
+    standard: givenStandard,
   } = args;
 
-  const path = [vault.id, getChainConstant(WETH_TOKEN, network)] as [
-    string,
-    string
-  ];
+  const standard =
+    givenStandard || (tokenIds?.some((x) => x?.[1] > 1) ? 'ERC1155' : 'ERC721');
+
+  const path = [vault.id, getChainConstant(WETH_TOKEN, network)] as const;
 
   const supports0x = doesNetworkSupport0x(network);
 
@@ -308,6 +297,7 @@ const sell = async (args: {
     network,
     path,
     quote,
+    provider,
     signer,
     tokenIds,
     userAddress,

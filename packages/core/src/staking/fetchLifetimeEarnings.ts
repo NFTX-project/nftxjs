@@ -1,8 +1,7 @@
-import { WeiPerEther, Zero } from '@ethersproject/constants';
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
+import { WeiPerEther, Zero } from '@nftx/constants';
 import { gql, type querySubgraph } from '@nftx/subgraph';
-import type { Vault } from '@nftx/types';
+import type { Address, Provider, Vault } from '@nftx/types';
 import { addressEqual, getChainConstant } from '@nftx/utils';
 import type { fetchVaults } from '../vaults';
 import { parseAggregatedFee } from './fetchLifetimeFees';
@@ -24,18 +23,18 @@ export default ({
   }: {
     lastId?: string;
     network: number;
-    userAddress: string;
+    userAddress: Address;
   }) => {
     type Response = {
       userVaultFeeAggregates: Array<{
         id: string;
-        aggregatedVaultFees: string;
+        aggregatedVaultFees: `${number}`;
         vault: {
-          address: string;
+          address: Address;
         };
       }>;
     };
-    type Vars = { lastId: string; userAddress: string };
+    type Vars = { lastId: string; userAddress: Address };
 
     const query = gql<Response, Vars>`
       {
@@ -66,7 +65,7 @@ export default ({
     let fees = response?.userVaultFeeAggregates ?? [];
 
     if (fees.length === 1000) {
-      const lastId = response.userVaultFeeAggregates.slice().pop().id;
+      const lastId = response?.userVaultFeeAggregates?.slice?.()?.pop?.()?.id;
       const moreFees = await fetchFeesFromSubgraph({
         lastId,
         network,
@@ -86,7 +85,7 @@ export default ({
     network = config.network,
     provider,
   }: {
-    userAddress: string;
+    userAddress: Address;
     vaults?: Pick<Vault, 'reserveWeth' | 'rawPrice' | 'id'>[];
     network?: number;
     provider: Provider;
@@ -99,21 +98,21 @@ export default ({
     }
 
     return fees.reduce((total, fee) => {
-      const vault = vaults.find((vault) =>
+      const vault = vaults?.find((vault) =>
         addressEqual(vault.id, fee.vault.address)
       );
       if (vault == null) {
         return total;
       }
-      if (vault.reserveWeth.lt(WeiPerEther)) {
+      if (vault.reserveWeth < WeiPerEther) {
         return total;
       }
 
       const spotPrice = vault.rawPrice;
       const amount = parseAggregatedFee(fee.aggregatedVaultFees);
-      const value = amount.mul(spotPrice).div(WeiPerEther);
+      const value = (amount * spotPrice) / WeiPerEther;
 
-      return total.add(value);
+      return total + value;
     }, Zero);
   };
 };

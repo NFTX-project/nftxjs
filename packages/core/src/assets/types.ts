@@ -1,11 +1,11 @@
-import type { BigNumber } from '@ethersproject/bignumber';
+import type { Address } from '@nftx/types';
 
 export type Asset = {
   id: string;
-  tokenId: string;
-  assetAddress: string;
+  tokenId: `${number}`;
+  assetAddress: Address;
   metaUrl: string;
-  quantity?: BigNumber;
+  quantity?: bigint;
   vaultId?: string;
 };
 
@@ -13,7 +13,7 @@ export type AssetMetadata = {
   name: string;
   traits: Record<string, string | string[]>;
   api: 'covalent' | 'opensea';
-  tokenId: string;
+  tokenId: `${number}`;
   assetName: string;
   openseaSlug: string;
   openseaBlocked: boolean;

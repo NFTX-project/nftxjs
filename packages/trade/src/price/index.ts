@@ -8,3 +8,7 @@ export { default as fetchSpread } from './fetchSpread';
 export { default as fetchVaultBuyPrice } from './fetchVaultBuyPrice';
 export { default as fetchVaultSellPrice } from './fetchVaultSellPrice';
 export { default as fetchVaultSwapPrice } from './fetchVaultSwapPrice';
+export { default as calculateBuyFee } from './calculateBuyFee';
+export { default as calculateSellFee } from './calculateSellFee';
+export { default as calculateSwapFee } from './calculateSwapFee';
+export * from './types';

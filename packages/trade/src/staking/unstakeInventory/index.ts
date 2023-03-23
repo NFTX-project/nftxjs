@@ -1,21 +1,12 @@
 import makeWithdrawNfts from './withdrawNfts';
 import makeWithdrawVToken from './withdrawVToken';
 import makeUnstakeInventory from './unstakeInventory';
-import type { estimateGasAndFees } from '../../trade';
 import type { getContract } from '@nftx/utils';
 
-type EstimateGasAndFees = typeof estimateGasAndFees;
 type GetContract = typeof getContract;
 
-export default ({
-  estimateGasAndFees,
-  getContract,
-}: {
-  estimateGasAndFees: EstimateGasAndFees;
-  getContract: GetContract;
-}) => {
+export default ({ getContract }: { getContract: GetContract }) => {
   const withdrawNfts = makeWithdrawNfts({
-    estimateGasAndFees,
     getContract,
   });
   const withdrawVToken = makeWithdrawVToken({ getContract });

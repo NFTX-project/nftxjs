@@ -1,47 +1,48 @@
-import { WeiPerEther, Zero } from '@ethersproject/constants';
-import type { BigNumber } from '@ethersproject/bignumber';
-import { formatEther } from '@ethersproject/units';
+import { WeiPerEther, Zero } from '@nftx/constants';
 import type { TokenReserve } from '@nftx/types';
+import { formatEther } from 'viem';
 
 export const calculateLiquidityBalance = ({
   liquidityShare,
   reserves,
 }: {
-  liquidityShare: BigNumber;
+  liquidityShare: bigint;
   reserves: TokenReserve;
 }) => {
-  return liquidityShare.mul(reserves?.reserveVtoken ?? '0').div(WeiPerEther);
+  return (liquidityShare * (reserves?.reserveVtoken ?? Zero)) / WeiPerEther;
 };
 
 export const calculateLiquidityEth = ({
   liquidityShare,
   reserves,
 }: {
-  liquidityShare: BigNumber;
+  liquidityShare: bigint;
   reserves: TokenReserve;
 }) => {
-  return liquidityShare.mul(reserves?.reserveWeth ?? '0').div(WeiPerEther);
+  return (
+    ((liquidityShare ?? Zero) * (reserves?.reserveWeth ?? Zero)) / WeiPerEther
+  );
 };
 
 export const calculateInventoryBalance = ({
   xTokenShare,
   xToken,
 }: {
-  xTokenShare: BigNumber;
-  xToken: BigNumber;
+  xTokenShare: bigint;
+  xToken: bigint;
 }) => {
-  return xTokenShare?.mul(xToken ?? '0').div(WeiPerEther) ?? Zero;
+  return ((xTokenShare ?? Zero) * (xToken ?? Zero)) / WeiPerEther;
 };
 
 export const calculateInventoryEth = ({
   inventoryBalance,
   reserves,
 }: {
-  inventoryBalance: BigNumber;
+  inventoryBalance: bigint;
   reserves: TokenReserve;
 }) => {
   return (
-    inventoryBalance.mul(reserves?.midPrice ?? '0').div(WeiPerEther) ?? Zero
+    ((inventoryBalance ?? Zero) * (reserves?.midPrice ?? Zero)) / WeiPerEther
   );
 };
 
@@ -50,28 +51,27 @@ export function calculateClaimableEth({
   claimableTokens,
   stakedTokens,
 }: {
-  stakedEth: BigNumber;
-  claimableTokens: BigNumber;
-  stakedTokens: BigNumber;
+  stakedEth: bigint;
+  claimableTokens: bigint;
+  stakedTokens: bigint;
 }) {
-  return stakedEth
-    .mul(claimableTokens)
-    .div(stakedTokens.gt(0) ? stakedTokens : '1');
+  return (
+    (stakedEth * claimableTokens) / (stakedTokens > Zero ? stakedTokens : 1n)
+  );
 }
 
 export const calculateStakeSplit = ({
   inventoryBalance,
   liquidityBalance,
 }: {
-  inventoryBalance: BigNumber;
-  liquidityBalance: BigNumber;
+  inventoryBalance: bigint;
+  liquidityBalance: bigint;
 }) => {
-  const totalVTokens = inventoryBalance.add(liquidityBalance);
+  const totalVTokens = inventoryBalance + liquidityBalance;
   const inventorySplit = Number(
     formatEther(
-      inventoryBalance
-        .mul(WeiPerEther)
-        .div(totalVTokens.gt(0) ? totalVTokens : '1')
+      (inventoryBalance * WeiPerEther) /
+        (totalVTokens > Zero ? totalVTokens : 1n)
     )
   );
   const liquiditySplit = 1 - inventorySplit;
@@ -83,45 +83,48 @@ export const calculateInventoryShare = ({
   xToken,
   xTokenSupply,
 }: {
-  xToken: BigNumber;
-  xTokenSupply: BigNumber;
+  xToken: bigint;
+  xTokenSupply: bigint;
 }) => {
-  if (!xToken?.gt(0)) {
+  if ((xToken ?? Zero) <= Zero) {
     return Zero;
   }
-  if (!xTokenSupply?.gt(0)) {
+  if ((xTokenSupply ?? Zero) <= Zero) {
     return Zero;
   }
-  return xToken.mul(WeiPerEther).div(xTokenSupply);
+  return (xToken * WeiPerEther) / xTokenSupply;
 };
 
 export const calculateLiquidityShare = ({
   xSlp,
   xSlpSupply,
 }: {
-  xSlp: BigNumber;
-  xSlpSupply: BigNumber;
+  xSlp: bigint;
+  xSlpSupply: bigint;
 }) => {
-  if (!xSlp?.gt(0) || !xSlpSupply?.gt(0)) {
+  if ((xSlp ?? Zero) <= Zero) {
     return Zero;
   }
-  return xSlp.mul(WeiPerEther).div(xSlpSupply);
+  if ((xSlpSupply ?? Zero) <= Zero) {
+    return Zero;
+  }
+  return (xSlp * WeiPerEther) / xSlpSupply;
 };
 
-export const calculatePercentageDifference = (a: BigNumber, b: BigNumber) => {
-  if ((a.eq(0) && b.gt(0)) || (b.eq(0) && a.lt(0))) {
+export const calculatePercentageDifference = (a: bigint, b: bigint) => {
+  if ((a === Zero && b > Zero) || (b === Zero && a < Zero)) {
     return WeiPerEther;
-  } else if ((a.eq(0) && b.lt(0)) || (b.eq(0) && a.gt(0))) {
-    return Zero.sub(WeiPerEther);
-  } else if (a.eq(0) && b.eq(0)) {
+  } else if ((a === Zero && b < Zero) || (b === Zero && a > Zero)) {
+    return Zero - WeiPerEther;
+  } else if (a === Zero && b === Zero) {
     return Zero;
   }
 
-  const diff = b.sub(a);
-  const frac = diff.mul(WeiPerEther).div(a);
+  const diff = b - a;
+  const frac = (diff * WeiPerEther) / a;
   return frac;
 };
 
-export const increaseByPercentage = (a: BigNumber, perc: BigNumber) => {
-  return a.add(a.mul(perc).div(WeiPerEther));
+export const increaseByPercentage = (a: bigint, perc: bigint) => {
+  return a + (a * perc) / WeiPerEther;
 };

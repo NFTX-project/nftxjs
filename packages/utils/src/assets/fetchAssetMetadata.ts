@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { AssetMetadata } from '@nftx/types';
+import type { Address, AssetMetadata } from '@nftx/types';
 
 export type Response = {
   animation_url: null | string;
@@ -30,7 +30,7 @@ export type Response = {
  * @returns Promise<{@link @nftx/types!AssetMetadata}>
  */
 const fetchAssetMetadata = async (args: {
-  assetAddress: string;
+  assetAddress: Address;
   tokenId: string;
   network?: number;
 }) => {
@@ -49,12 +49,10 @@ const fetchAssetMetadata = async (args: {
     id: `${assetAddress}/${tokenId}`,
     assetAddress,
     metaUrl,
-    vaultId: null,
-    quantity: null,
-    name: data.name,
+    name: data.name ?? undefined,
     api: data.api_response,
     traits: data.traits,
-    tokenId: data.token_id,
+    tokenId: data.token_id as `${number}`,
     assetName: data.asset_contract.name,
     openseaSlug: data.collection?.slug,
     imageUrl: data.image_url,
@@ -62,8 +60,10 @@ const fetchAssetMetadata = async (args: {
     openseaBlocked: data.supports_wyvern === false,
     animationUrl: data.animation_url?.includes('.mp4')
       ? data.animation_url
-      : null,
-    backgroundColor: data.background_color ? `#${data.background_color}` : null,
+      : undefined,
+    backgroundColor: data.background_color
+      ? `#${data.background_color}`
+      : undefined,
     detailUrl:
       data.api_response === 'covalent'
         ? `https://looksrare.org/collections/${data.asset_contract.address.toLowerCase()}/${

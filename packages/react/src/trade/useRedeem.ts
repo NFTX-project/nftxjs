@@ -6,13 +6,14 @@ import useTransaction from '../useTransaction';
 const useRedeem = (opts: UseTransactionOptions) => {
   const {
     network,
+    provider,
     signer,
     core: { redeem, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof redeem>;
 
-  return useTransaction((args: Args) => redeem({ ...args, network, signer }), {
+  return useTransaction((args: Args) => redeem({ ...args, provider, signer }), {
     description: 'Redeem',
     ...opts,
     async onSuccess(data, args) {

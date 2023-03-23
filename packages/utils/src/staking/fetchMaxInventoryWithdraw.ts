@@ -1,9 +1,7 @@
-import abi from '@nftx/constants/abis/NFTXUnstakingInventoryZap.json';
-import { parseEther } from '@ethersproject/units';
 import { getChainConstant, getContract } from '../web3';
-import type { Provider } from '@ethersproject/providers';
 import { NFTX_UNSTAKING_INVENTORY_ZAP } from '@nftx/constants';
-import type { BigNumber } from '@ethersproject/bignumber';
+import { NFTXUnstakingInventoryZap } from '@nftx/abi';
+import type { Address, Provider } from '@nftx/types';
 
 type GetContract = typeof getContract;
 
@@ -16,25 +14,22 @@ export default ({ getContract }: { getContract: GetContract }) =>
     network: number;
     provider: Provider;
     vaultId: string;
-    userAddress: string;
-    xToken: string;
+    userAddress: Address;
+    xToken: Address;
   }) {
     const { network, provider, xToken, userAddress, vaultId } = args;
     const contract = getContract({
-      network,
       provider,
-      abi,
+      abi: NFTXUnstakingInventoryZap,
       address: getChainConstant(NFTX_UNSTAKING_INVENTORY_ZAP, network),
     });
 
-    const response = await contract.maxNftsUsingXToken(
-      vaultId,
-      userAddress,
-      xToken
-    );
+    const response = await contract.read.maxNftsUsingXToken({
+      args: [BigInt(vaultId), userAddress, xToken],
+    });
 
-    const numNfts: BigNumber = parseEther(`${response.numNfts}`);
-    const shortByTinyAmount: boolean = response.shortByTinyAmount;
+    const numNfts = response[0];
+    const shortByTinyAmount: boolean = response[1];
 
     return { numNfts, shortByTinyAmount };
   };

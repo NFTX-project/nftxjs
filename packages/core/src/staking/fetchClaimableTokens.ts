@@ -1,10 +1,8 @@
-import { Zero } from '@ethersproject/constants';
-import NftxRewardDistributionTokenAbi from '@nftx/constants/abis/NFTXRewardDistributionTokenUpgradeable.json';
-import type { Provider } from '@ethersproject/providers';
-import type { BigNumber } from '@ethersproject/bignumber';
+import { NFTXRewardDistributionTokenUpgradeable } from '@nftx/abi';
 import type { LiquidityPool } from '../pools';
-import config from '@nftx/config';
 import type { getContract } from '@nftx/utils';
+import type { Address, Provider } from '@nftx/types';
+import { Zero } from '@nftx/constants';
 
 type GetContract = typeof getContract;
 
@@ -12,14 +10,12 @@ export default ({ getContract }: { getContract: GetContract }) =>
   /** Returns the amount of tokens the user is able to claim for a liquidity pool */
   async function fetchClaimableTokens({
     pool,
-    network = config.network,
     provider,
     userAddress,
   }: {
     pool: { dividendToken?: { id: LiquidityPool['dividendToken']['id'] } };
-    network?: number;
     provider: Provider;
-    userAddress: string;
+    userAddress: Address;
   }) {
     const address = pool?.dividendToken?.id;
     if (!address) {
@@ -27,13 +23,12 @@ export default ({ getContract }: { getContract: GetContract }) =>
     }
 
     const contract = getContract({
-      network,
       provider,
-      abi: NftxRewardDistributionTokenAbi,
-      address: pool.dividendToken.id,
+      abi: NFTXRewardDistributionTokenUpgradeable,
+      address,
     });
 
-    const tokens: BigNumber = await contract.dividendOf(userAddress);
+    const tokens = await contract.read.dividendOf({ args: [userAddress] });
 
     return tokens;
   };

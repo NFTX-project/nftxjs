@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { TokenReserve } from '@nftx/types';
+import type { Address, TokenReserve } from '@nftx/types';
 import { queryApi } from '../utils';
 
 /** Get token reserves for a contract address */
@@ -8,7 +8,7 @@ const fetchReserve = ({
   address,
 }: {
   network?: number;
-  address: string;
+  address: Address;
 }) => {
   return queryApi<TokenReserve>({
     url: `/${network}/reserves/${address}`,

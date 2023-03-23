@@ -1,13 +1,12 @@
-import abi from '@nftx/constants/abis/NFTXENSMerkleEligibility.json';
-import type { Provider } from '@ethersproject/providers';
-import type { Vault } from '@nftx/types';
-import { getContract } from '../web3';
-import config from '@nftx/config';
+import type { Provider, Vault } from '@nftx/types';
+import type { getContract } from '../web3';
 import isMerkleVault from './isMerkleVault';
+import { NFTXENSMerkleEligibility } from '@nftx/abi';
 
-export default () =>
+type GetContract = typeof getContract;
+
+export default ({ getContract }: { getContract: GetContract }) =>
   async function fetchMerkleReference(args: {
-    network: number;
     provider: Provider;
     vault: {
       eligibilityModule?: {
@@ -16,19 +15,21 @@ export default () =>
       };
     };
   }) {
-    const { network = config.network, provider, vault } = args;
+    const { provider, vault } = args;
     if (!isMerkleVault(vault)) {
+      return null;
+    }
+    if (!vault.eligibilityModule?.id) {
       return null;
     }
 
     const contract = getContract({
-      network,
+      abi: NFTXENSMerkleEligibility,
+      address: vault.eligibilityModule?.id,
       provider,
-      abi,
-      address: vault.eligibilityModule.id,
     });
 
-    const reference: string = await contract.merkleReference();
+    const reference = await contract.read.merkleReference({});
 
     return reference;
   };

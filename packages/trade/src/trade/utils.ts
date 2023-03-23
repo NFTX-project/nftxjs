@@ -1,18 +1,30 @@
+import type { TokenId } from '@nftx/types';
+
+export const normalizeTokenIds = (
+  tokenIds: Array<TokenId> | Array<[TokenId, number]>
+): Array<[TokenId, number]> => {
+  return (tokenIds as any[]).reduce((acc, item) => {
+    if (Array.isArray(item) && item[0]) {
+      return [...acc, [item[0], item[1] ?? 1]];
+    }
+    if (item) {
+      return [...acc, [item, 1]];
+    }
+    return acc;
+  }, [] as Array<[TokenId, number]>);
+};
+
 /** Extracts the ids given an array of target ids.
  * If an id has multiple quantities, the id is included multiple times in the output
  * @example ['1', '2', '3'] -> ['1', '2', '3']
  * @example [['1', 1], ['2', 2], ['3', 3]] -> ['1', '2', '2', '3', '3', '3']
  */
 export const getExactTokenIds = (
-  tokenIds: Array<string> | Array<[string, number]>
-): string[] => {
-  return tokenIds
-    .map((item: string | [string, number]) => {
-      if (Array.isArray(item)) {
-        const [id, quantity] = item;
-        return Array(quantity ?? 1).fill(id);
-      }
-      return item;
+  tokenIds: Array<TokenId> | Array<[TokenId, number]>
+): TokenId[] => {
+  return normalizeTokenIds(tokenIds)
+    .map(([id, quantity]) => {
+      return Array<TokenId>(quantity).fill(id);
     })
     .flat();
 };
@@ -23,16 +35,9 @@ export const getExactTokenIds = (
  * @example [['1', 1], ['2', 2], ['3', 3]] -> ['1', '2', '3']
  */
 export const getUniqueTokenIds = (
-  tokenIds: Array<string> | Array<[string, number]>
-): string[] => {
-  return tokenIds
-    .map((item: string | [string, number]) => {
-      if (Array.isArray(item)) {
-        return item[0];
-      }
-      return item;
-    })
-    .filter((x) => x != null);
+  tokenIds: Array<TokenId> | Array<[TokenId, number]>
+): TokenId[] => {
+  return normalizeTokenIds(tokenIds).map(([id]) => id);
 };
 
 /** Returns an array of amounts for each token id
@@ -40,13 +45,10 @@ export const getUniqueTokenIds = (
  * @example [['1', 1], ['2', 2], ['3', 3]] -> [1, 2, 3]
  */
 export const getTokenIdAmounts = (
-  tokenIds: Array<string> | Array<[string, number]>
+  tokenIds: Array<TokenId> | Array<[TokenId, number]>
 ): number[] => {
-  return tokenIds.map((item: string | [string, number]) => {
-    if (Array.isArray(item)) {
-      return item[1] ?? 1;
-    }
-    return 1;
+  return normalizeTokenIds(tokenIds).map(([, amount]) => {
+    return amount;
   });
 };
 
@@ -56,7 +58,7 @@ export const getTokenIdAmounts = (
  * @example [['1', 1], ['2', 2], ['3', 3]] -> 6
  */
 export const getTotalTokenIds = (
-  tokenIds: Array<string> | Array<[string, number]>
+  tokenIds: Array<TokenId> | Array<[TokenId, number]>
 ): number => {
   return getExactTokenIds(tokenIds).length;
 };

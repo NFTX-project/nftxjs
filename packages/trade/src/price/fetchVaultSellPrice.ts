@@ -1,7 +1,6 @@
-import { WeiPerEther } from '@ethersproject/constants';
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import type { Vault } from '@nftx/types';
+import { WeiPerEther } from '@nftx/constants';
+import type { Provider, Vault } from '@nftx/types';
 import calculateSellFee from './calculateSellFee';
 import fetchSellPrice from './fetchSellPrice';
 
@@ -9,7 +8,7 @@ import fetchSellPrice from './fetchSellPrice';
  * Unlike fetchSellPrice, this method accounts for vault fees
  */
 const fetchVaultSellPrice = async (args: {
-  vault: Pick<Vault, 'id'> & { fees: Pick<Vault['fees'], 'mintFee'> };
+  vault: { id: Vault['id']; fees: Pick<Vault['fees'], 'mintFee'> };
   network?: number;
   provider: Provider;
   amount?: number;
@@ -28,7 +27,7 @@ const fetchVaultSellPrice = async (args: {
    * and trade 0.95 PUNKs for ETH
    */
   const fee = calculateSellFee({ vault, amount: sells });
-  const amount = WeiPerEther.mul(sells).sub(fee);
+  const amount = WeiPerEther * BigInt(sells) - fee;
 
   return fetchSellPrice({
     network,

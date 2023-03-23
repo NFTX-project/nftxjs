@@ -1,10 +1,8 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import { NFTX_INVENTORY_STAKING, NFTX_LP_STAKING } from '@nftx/constants';
-import NftxInventoryStakingAbi from '@nftx/constants/abis/NFTXInventoryStaking.json';
-import NftxLpStakingAbi from '@nftx/constants/abis/NFTXLpStaking.json';
+import { NFTXInventoryStaking, NFTXLpStaking } from '@nftx/abi';
 import { getChainConstant, getContract } from '../web3';
+import type { Address, Provider } from '@nftx/types';
 
 /**
  * For a given vault, returns the date that the user is locked in for staking
@@ -17,34 +15,36 @@ const fetchUserTimelock = async ({
 }: {
   network?: number;
   provider: Provider;
-  userAddress: string;
+  userAddress: Address;
   vaultId: string;
 }) => {
   const ipContract = getContract({
-    network,
     provider,
-    abi: NftxInventoryStakingAbi,
+    abi: NFTXInventoryStaking,
     address: getChainConstant(NFTX_INVENTORY_STAKING, network),
   });
-  let inventoryTimelock: number = null;
+  let inventoryTimelock = 0;
 
   try {
-    const x: BigNumber = await ipContract.timelockUntil(vaultId, userAddress);
+    const x = await ipContract.read.timelockUntil({
+      args: [BigInt(vaultId), userAddress],
+    });
     inventoryTimelock = Number(`${x}`);
   } catch {
     // Failed to fetch the timelock
   }
 
   const lpContract = getContract({
-    network,
     provider,
-    abi: NftxLpStakingAbi,
+    abi: NFTXLpStaking,
     address: getChainConstant(NFTX_LP_STAKING, network),
   });
-  let liquidityTimelock: number = null;
+  let liquidityTimelock = 0;
 
   try {
-    const x: BigNumber = await lpContract.lockedUntil(vaultId, userAddress);
+    const x = await lpContract.read.lockedUntil({
+      args: [BigInt(vaultId), userAddress],
+    });
     liquidityTimelock = Number(`${x}`);
   } catch {
     // Failed to fetch timelock

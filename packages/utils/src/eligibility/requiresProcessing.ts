@@ -1,9 +1,7 @@
-import type { Provider } from '@ethersproject/providers';
-import config from '@nftx/config';
-import abi from '@nftx/constants/abis/NFTXENSMerkleEligibility.json';
-import type { Vault } from '@nftx/types';
-import { getContract } from '../web3';
+import type { Address, Provider, Vault } from '@nftx/types';
 import type fetchMerkleLeaves from './fetchMerkleLeaves';
+import { NFTXENSMerkleEligibility } from '@nftx/abi';
+import getContract from '../web3/getContract';
 
 type FetchMerkleLeaves = ReturnType<typeof fetchMerkleLeaves>;
 
@@ -17,7 +15,6 @@ export default ({
    * For each token that returns true, you will need to call {@link processTokens}
    */
   async function requiresProcessing(args: {
-    network?: number;
     provider: Provider;
     tokenIds: string[];
     vault: {
@@ -29,7 +26,7 @@ export default ({
     /** Merkle eligibility leaves. If this parameter is omitted, they will be fetched as part of this method */
     leaves?: string[];
   }) {
-    const { tokenIds, network = config.network, provider, vault } = args;
+    const { tokenIds, provider, vault } = args;
     let { leaves } = args;
     if (!tokenIds.length) {
       return [];
@@ -42,13 +39,12 @@ export default ({
     }
 
     if (!leaves) {
-      leaves = await fetchMerkleLeaves({ provider, vault, network });
+      leaves = await fetchMerkleLeaves({ provider, vault });
     }
 
     const contract = getContract({
-      network,
       provider,
-      abi,
+      abi: NFTXENSMerkleEligibility,
       address: vault.eligibilityModule.id,
     });
 
@@ -76,10 +72,9 @@ export default ({
     const result = await Promise.all(
       tokenIds.map(async (tokenId, i) => {
         const proof = proofs[i];
-        const result: boolean = await contract.requiresProcessing(
-          tokenId,
-          proof
-        );
+        const result: boolean = await contract.read.requiresProcessing({
+          args: [BigInt(tokenId), proof as Address[]],
+        });
         return {
           tokenId,
           requiresProcessing: result,

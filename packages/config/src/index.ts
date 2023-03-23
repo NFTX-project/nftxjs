@@ -66,7 +66,42 @@ export interface Config {
     NFTX_API: string;
     ALCHEMY: Record<string, string>;
   };
+  /** Internal config settings managed by nftx.js */
+  internal: {
+    source: 'api' | 'live';
+    requiredBlockNumber: number;
+    apiBlockNumber: number;
+    cacheKey: string;
+  };
 }
+
+const storeSetting = <T, K extends keyof T>(obj: T, name: K) => {
+  if (
+    typeof window === 'undefined' ||
+    typeof window?.localStorage?.getItem !== 'function'
+  ) {
+    return;
+  }
+  let defaultValue = JSON.stringify(obj[name]);
+  const key = `nftxjs_itl_${String(name)}`;
+  Object.defineProperty(obj, name, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return JSON.parse(window.localStorage.getItem(key) ?? defaultValue);
+    },
+    set(v) {
+      const formatted = JSON.stringify(v);
+      defaultValue = formatted;
+      window.localStorage.setItem(key, formatted);
+    },
+  });
+};
+const storeSettings = <T extends Record<string, any>>(obj: T) => {
+  Object.keys(obj).forEach((key: keyof T) => {
+    storeSetting(obj, key);
+  });
+};
 
 const defaultConfig: Config = {
   network: Network.Mainnet,
@@ -96,8 +131,15 @@ const defaultConfig: Config = {
   },
 
   keys: {
-    NFTX_API: null,
+    NFTX_API: null as unknown as string,
     ALCHEMY: {},
+  },
+
+  internal: {
+    source: 'api',
+    requiredBlockNumber: 0,
+    apiBlockNumber: 0,
+    cacheKey: '',
   },
 };
 
@@ -129,9 +171,13 @@ const config: Config & {
   configure(opts: DeepPartial<Config>) {
     const merged = merge(config, opts, { arrayMerge: (_, arr) => arr });
     Object.entries(merged).forEach(([key, value]) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       config[key] = value;
     });
   },
 };
+
+storeSettings(config.internal);
 
 export default config;

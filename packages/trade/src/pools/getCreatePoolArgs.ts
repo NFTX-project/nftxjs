@@ -1,13 +1,21 @@
-import { parseEther, parseUnits } from '@ethersproject/units';
-import { defaultAbiCoder } from '@ethersproject/abi';
-import { WeiPerEther } from '@ethersproject/constants';
-import type { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import type { CreatePoolFeatures, CreatePoolFees } from '@nftx/types';
+import {
+  encodeAbiParameters,
+  parseAbiParameters,
+  parseEther,
+  parseUnits,
+} from 'viem';
+import type {
+  Address,
+  CreatePoolFeatures,
+  CreatePoolFees,
+  TokenId,
+} from '@nftx/types';
 import {
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
 } from '../trade';
+import { WeiPerEther, Zero } from '@nftx/constants';
 
 const getEligibilityArgs = ({
   eligibilityList,
@@ -15,30 +23,32 @@ const getEligibilityArgs = ({
   eligibilityRange,
 }: {
   eligibilityModule: 'list' | 'range' | false;
-  eligibilityRange: [BigNumberish, BigNumberish];
-  eligibilityList: BigNumberish[];
-}): { allowAllItems: boolean; moduleIndex: number; initData: unknown } => {
+  eligibilityRange: [bigint, bigint];
+  eligibilityList: bigint[];
+}): { allowAllItems: boolean; moduleIndex: bigint; initData: Address } => {
   switch (eligibilityModule) {
     case 'list':
       return {
         allowAllItems: false,
-        moduleIndex: 0,
-        initData: defaultAbiCoder.encode(['uint256[]'], [eligibilityList]),
+        moduleIndex: 0n,
+        initData: encodeAbiParameters(parseAbiParameters('uint256[]'), [
+          eligibilityList,
+        ]),
       };
     case 'range':
       return {
         allowAllItems: false,
-        moduleIndex: 1,
-        initData: defaultAbiCoder.encode(
-          ['uint256', 'uint256'],
-          [eligibilityRange[0], eligibilityRange[1]]
-        ),
+        moduleIndex: 1n,
+        initData: encodeAbiParameters(parseAbiParameters('uint256, uint256'), [
+          eligibilityRange[0],
+          eligibilityRange[1],
+        ]),
       };
     default:
       return {
         allowAllItems: true,
-        moduleIndex: -1,
-        initData: 0,
+        moduleIndex: -1n,
+        initData: 0 as unknown as Address,
       };
   }
 };
@@ -46,16 +56,22 @@ const getEligibilityArgs = ({
 const getVaultFeatures = (features: CreatePoolFeatures) => {
   // Features are sent as a binary digit
   // i.e. [true, false, true, false, true] = 10101 = 21
-  const vaultFeatures = parseInt(
-    features.map((enabled) => (enabled ? '1' : '0')).join(''),
-    2
+  const vaultFeatures = BigInt(
+    parseInt(features.map((enabled) => (enabled ? '1' : '0')).join(''), 2)
   );
 
   return vaultFeatures;
 };
 
 const getVaultFees = (fees: CreatePoolFees) => {
-  const feeKeys = [
+  type Key =
+    | 'mintFee'
+    | 'randomRedeemFee'
+    | 'targetRedeemFee'
+    | 'randomSwapFee'
+    | 'targetSwapFee';
+
+  const feeKeys: Key[] = [
     'mintFee',
     'randomRedeemFee',
     'targetRedeemFee',
@@ -64,44 +80,46 @@ const getVaultFees = (fees: CreatePoolFees) => {
   ];
 
   const vaultFees = feeKeys.reduce((acc, key, i) => {
-    const value = parseUnits(`${fees[i]}`, '8');
+    const value = parseUnits(`${fees[i]}`, 8);
 
     return { ...acc, [key]: value };
-  }, {});
+  }, {} as Record<Key, number>);
 
   return vaultFees;
 };
 
 const getMintAndStake = (
   liquiditySplit: number,
-  tokenIds: Array<[string, number]>,
-  spotPrice: BigNumber
-) => {
+  tokenIds: Array<[TokenId, number]>,
+  spotPrice: bigint
+): {
+  assetTokenIds: bigint[];
+  assetTokenAmounts: bigint[];
+  minTokenIn: bigint;
+  minWethIn: bigint;
+  wethIn: bigint;
+} => {
   if (!tokenIds.length || !spotPrice) {
     return {
       assetTokenIds: [],
       assetTokenAmounts: [],
-      minTokenIn: 0,
-      minWethIn: 0,
-      wethIn: 0,
+      minTokenIn: Zero,
+      minWethIn: Zero,
+      wethIn: Zero,
     };
   }
   // The amount of token we're going to be adding as liquidity
   // (so remove the inventory % of the selected assets)
   const split = parseEther(`${liquiditySplit / 100}`);
-  const minTokenIn = split.mul(getTotalTokenIds(tokenIds));
+  const minTokenIn = split * BigInt(getTotalTokenIds(tokenIds));
   // The amount of weth we're going to be pairing with the liquidity
   // So spot price * # of tokens
-  // const slippage = 0.05;
-  const minWethIn = spotPrice.mul(minTokenIn).div(WeiPerEther);
+  const minWethIn = (spotPrice * minTokenIn) / WeiPerEther;
   const wethIn = minWethIn;
-  // const wethIn = parseEther(`${1 + slippage}`)
-  //   .mul(minWethIn)
-  //   .div(WeiPerEther);
 
   const mintAndStake = {
-    assetTokenIds: getUniqueTokenIds(tokenIds),
-    assetTokenAmounts: getTokenIdAmounts(tokenIds),
+    assetTokenIds: getUniqueTokenIds(tokenIds).map(BigInt),
+    assetTokenAmounts: getTokenIdAmounts(tokenIds).map(BigInt),
     minTokenIn,
     minWethIn,
     wethIn,
@@ -126,15 +144,15 @@ export default function getCreatePoolArgs({
 }: {
   name: string;
   symbol: string;
-  assetAddress: string;
+  assetAddress: Address;
   standard: 'ERC1155' | 'ERC721';
   fees: CreatePoolFees;
   features: CreatePoolFeatures;
   eligibilityModule: 'list' | 'range' | false;
-  eligibilityRange: [BigNumberish, BigNumberish];
-  eligibilityList: BigNumberish[];
-  tokenIds: Array<[string, number]>;
-  spotPrice: BigNumber;
+  eligibilityRange: [bigint, bigint];
+  eligibilityList: bigint[];
+  tokenIds: Array<[TokenId, number]>;
+  spotPrice: bigint;
   liquiditySplit: number;
 }) {
   const { allowAllItems, initData, moduleIndex } = getEligibilityArgs({

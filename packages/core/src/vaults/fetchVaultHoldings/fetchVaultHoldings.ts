@@ -1,6 +1,6 @@
 import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
-import type { VaultHolding } from '@nftx/types';
+import type { Address, VaultHolding } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import transformVaultHolding from './transformVaultHolding';
 
@@ -13,12 +13,17 @@ const fetchVaultHoldings = async ({
   lastId = '0',
 }: {
   network?: number;
-  vaultAddress: string;
+  vaultAddress: Address;
   lastId?: string;
 }): Promise<VaultHolding[]> => {
   const query = gql<{
     vault: {
-      holdings: Array<{ id: string; tokenId: string; dateAdded: string }>;
+      holdings: Array<{
+        id: string;
+        tokenId: `${number}`;
+        dateAdded: `${number}`;
+        amount: `${number}`;
+      }>;
     };
   }>`{
     vault(id: $vaultAddress) {

@@ -6,6 +6,7 @@ import useTransaction from '../useTransaction';
 const useApproveSell = (opts?: UseTransactionOptions) => {
   const {
     network,
+    provider,
     signer,
     core: { approveSell },
   } = useNftx();
@@ -13,7 +14,7 @@ const useApproveSell = (opts?: UseTransactionOptions) => {
   type Args = TxnArgsOnly<typeof approveSell>;
 
   return useTransaction(
-    (args: Args) => approveSell({ network, signer, ...args }),
+    (args: Args) => approveSell({ network, provider, signer, ...args }),
     {
       description: 'Approve Sell',
       ...opts,

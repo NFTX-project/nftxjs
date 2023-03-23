@@ -1,25 +1,24 @@
-import type { Log } from '@ethersproject/providers';
+import type { Abi } from 'abitype';
+import type { Log } from 'viem';
 import parseLogEvents from './parseLogEvents';
 
 /** Searches an array of transaction logs, parses the found log, and returns its args */
-const parseLogEvent = <T>({
-  interface: iface,
+const parseLogEvent = <T extends Abi>({
   logs,
   signature,
   filter,
+  abi,
 }: {
   logs: Log[];
   /** The starting characters of the encoded topic i.e. 0x1234 */
   signature: string;
-  /** A string representation of the event's interface
-   * i.e. event Transfer(address indexed from, address indexed to, uint value) */
-  interface: string;
   /** Optionally filter out logs */
   filter?: (log: Log) => boolean;
-}): T => {
+  abi: T;
+}) => {
   try {
-    const events = parseLogEvents<T[]>({
-      interface: iface,
+    const events = parseLogEvents({
+      abi,
       logs,
       signature,
       filter,

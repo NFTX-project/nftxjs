@@ -1,29 +1,18 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import { WeiPerEther } from '@ethersproject/constants';
-import type { Contract, ContractTransaction } from '@ethersproject/contracts';
-import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
-import { NFTX_STAKING_ZAP } from '@nftx/constants';
-import abi from '@nftx/constants/abis/NFTXStakingZap.json';
+import { NFTX_STAKING_ZAP, WeiPerEther } from '@nftx/constants';
+import { NFTXStakingZap } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
-import type { Signer } from 'ethers';
 import {
-  estimateGasAndFees,
   getTokenIdAmounts,
   getUniqueTokenIds,
   increaseGasLimit,
 } from '../trade';
+import type { Contract, Provider, Signer, TokenId } from '@nftx/types';
+import { parseEther } from 'viem';
 
-type EstimateGasAndFees = typeof estimateGasAndFees;
 type GetContract = typeof getContract;
 
-export default ({
-  estimateGasAndFees,
-  getContract,
-}: {
-  estimateGasAndFees: EstimateGasAndFees;
-  getContract: GetContract;
-}) => {
+export default ({ getContract }: { getContract: GetContract }) => {
   const stake721 = async ({
     vaultId,
     pairedEth,
@@ -33,64 +22,30 @@ export default ({
     minEthIn,
     contract,
   }: {
-    pairedEth: BigNumber;
+    pairedEth: bigint;
     vaultId: string;
-    tokenIds: string[] | [string, number][];
+    tokenIds: TokenId[] | [TokenId, number][];
     isNewPool: boolean;
-    gasPrice: BigNumber;
-    minEthIn: BigNumber;
-    contract: Contract;
+    gasPrice?: bigint;
+    minEthIn: bigint;
+    contract: Contract<typeof NFTXStakingZap>;
   }) => {
-    const method = 'addLiquidity721ETH' as const;
     const tokenIds = getUniqueTokenIds(tokensAndQuantities);
-    const args = [vaultId, tokenIds, minEthIn];
-    // try to fetch the estimate, if it succeeds, you can afford it and have a 1559-capable wallet
-    const { maxFeePerGas, gasEstimate, maxPriorityFeePerGas } =
-      await estimateGasAndFees({
-        contract,
-        method,
+    const args = [BigInt(vaultId), tokenIds.map(BigInt), minEthIn] as const;
+
+    if (isNewPool) {
+      return contract.write.addLiquidity721ETH({
         args,
-        overrides: {
-          value: pairedEth,
-        },
-      });
-    const gasLimit = increaseGasLimit({
-      estimate: gasEstimate,
-      amount: 7,
-    });
-    const can1559 = !!(maxFeePerGas && maxPriorityFeePerGas);
-
-    // Only do EIP-1559 fees on existing pools, no need for next-block-speed when creating new one
-    if (can1559 && isNewPool) {
-      console.info('Attempting non-EIP-1559 tx');
-      return contract[method](...args, {
-        value: pairedEth,
-        gasLimit,
+        gasPrice: gasPrice
+          ? increaseGasLimit({ estimate: gasPrice, amount: 7 })
+          : undefined,
       });
     }
 
-    if (can1559) {
-      console.info('Attempting EIP-1559 tx');
-      return contract[method](...args, {
-        value: pairedEth,
-        maxPriorityFeePerGas,
-        maxFeePerGas,
-        gasLimit,
-      });
-    }
-
-    console.info('Attempting legacy tx');
-    // if we cannot calculate gas estimate it is because:
-    // - they cannot afford it (gas estimate fails)
-    // - their wallet does not support EIP-1559
-
-    // sending the transaction with only gasPrice set allows them to
-    // see that they cannot afford the tx rather than an unhelpful execution reverted modal
-    return contract[method](...args, {
+    return contract.write.addLiquidity721ETH({
+      args,
       value: pairedEth,
-      gasLimit,
-      // bump gas by 25% if not a new pool
-      gasPrice: !isNewPool && gasPrice ? gasPrice.mul(125).div(100) : null,
+      gasPrice,
     });
   };
 
@@ -103,45 +58,33 @@ export default ({
     minEthIn,
     contract,
   }: {
-    pairedEth: BigNumber;
+    pairedEth: bigint;
     slippage: number;
     vaultId: string;
-    tokenIds: string[] | [string, number][];
+    tokenIds: TokenId[] | [TokenId, number][];
     isNewPool: boolean;
-    gasPrice: BigNumber;
-    minEthIn: BigNumber;
-    contract: Contract;
+    gasPrice?: bigint;
+    minEthIn: bigint;
+    contract: Contract<typeof NFTXStakingZap>;
   }) => {
-    const method = 'addLiquidity1155ETH' as const;
     const tokenIds = getUniqueTokenIds(tokensAndQuantities);
     const amounts = getTokenIdAmounts(tokensAndQuantities);
-    const args = [vaultId, tokenIds, amounts, minEthIn];
-    // try to fetch the estimate, if it succeeds, you can afford it and have a 1559-capable wallet
-    const { maxFeePerGas, maxPriorityFeePerGas } = await estimateGasAndFees({
-      contract,
-      method,
-      overrides: { value: pairedEth },
-      args,
-    });
+    const args = [
+      BigInt(vaultId),
+      tokenIds.map(BigInt),
+      amounts.map(BigInt),
+      minEthIn,
+    ] as const;
 
-    if (maxPriorityFeePerGas && maxFeePerGas && !isNewPool) {
-      console.info('Attempting ERC-1155 staking EIP-1559 transaction');
-      return contract[method](...args, {
-        value: pairedEth,
-        maxPriorityFeePerGas,
-        maxFeePerGas,
-      });
-    }
-
-    console.info('Attempting ERC-1155 staking non-EIP-1559 transaction');
     // if we cannot calculate gas estimate it is because:
     // - they cannot afford it (gas estimate fails)
     // - their wallet does not support EIP-1559
     // - it's a new pool
-    return contract[method](...args, {
+    return contract.write.addLiquidity1155ETH({
+      args,
+      maxFeePerGas:
+        !isNewPool && gasPrice ? (gasPrice * 125n) / 100n : undefined,
       value: pairedEth,
-      // pump gas by 25% on existing pools
-      gasPrice: !isNewPool && gasPrice ? gasPrice.mul(125).div(100) : null,
     });
   };
 
@@ -151,42 +94,42 @@ export default ({
    */
   return function stakeLiquidity(args: {
     network?: number;
+    provider: Provider;
     signer: Signer;
     /** The vault you are staking into */
     vaultId: string;
     /** Token IDs for the NFTs you want to stake */
-    tokenIds: string[] | [string, number][];
+    tokenIds: TokenId[] | [TokenId, number][];
     /** The amount of ETH to pair with your NFTs */
-    pairedEth: BigNumber;
+    pairedEth: bigint;
     /** A percentage value for the maximum amount of slippage you are willing to accept */
     slippage: number;
     /** If you are staking into a brand new pool, there will be a slightly higher gas cost due to setting up the pools, this option helps to accomodate for this */
     isNewPool?: boolean;
-    gasPrice?: BigNumber;
+    gasPrice?: bigint;
     standard?: 'ERC721' | 'ERC1155';
-  }): Promise<ContractTransaction> {
+  }) {
     const {
       network = config.network,
       signer,
+      provider,
       vaultId,
       pairedEth,
       slippage,
       tokenIds,
-      isNewPool,
+      isNewPool = false,
       gasPrice,
       standard = 'ERC721',
     } = args;
 
     const contract = getContract({
-      network,
-      abi,
+      abi: NFTXStakingZap,
+      provider,
       signer,
       address: getChainConstant(NFTX_STAKING_ZAP, network),
     });
     // use slippage settings to calculate min eth allowed before cancelation
-    const minEthIn = parseEther(`${1 - slippage}`)
-      .mul(pairedEth)
-      .div(WeiPerEther);
+    const minEthIn = (parseEther(`${1 - slippage}`) * pairedEth) / WeiPerEther;
 
     if (standard === 'ERC721') {
       return stake721({

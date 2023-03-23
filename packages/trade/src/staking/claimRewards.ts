@@ -1,9 +1,8 @@
-import type { ContractTransaction } from '@ethersproject/contracts';
 import config from '@nftx/config';
 import { NFTX_LP_STAKING } from '@nftx/constants';
-import abi from '@nftx/constants/abis/NFTXLpStaking.json';
+import { NFTXLpStaking } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
-import type { Signer } from 'ethers';
+import type { Provider, Signer } from '@nftx/types';
 
 type GetContract = typeof getContract;
 
@@ -12,20 +11,23 @@ export default ({ getContract }: { getContract: GetContract }) =>
   function claimRewards(args: {
     vaultIds: string[];
     network?: number;
+    provider: Provider;
     signer: Signer;
-  }): Promise<ContractTransaction> {
-    const { vaultIds, network = config.network, signer } = args;
+  }) {
+    const { vaultIds, network = config.network, provider, signer } = args;
 
     const contract = getContract({
       address: getChainConstant(NFTX_LP_STAKING, network),
-      network,
-      abi,
+      abi: NFTXLpStaking,
+      provider,
       signer,
     });
 
     if (vaultIds.length > 1) {
-      return contract.claimMultipleRewards(vaultIds);
+      return contract.write.claimMultipleRewards({
+        args: [vaultIds.map(BigInt)],
+      });
     } else {
-      return contract.claimRewards(vaultIds[0]);
+      return contract.write.claimRewards({ args: [BigInt(vaultIds[0])] });
     }
   };

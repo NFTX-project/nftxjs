@@ -1,21 +1,13 @@
 import { VAULT_CREATION_ZAP } from '@nftx/constants';
-import abi from '@nftx/constants/abis/VaultCreationZap.json';
+import { VaultCreationZap } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
-import type { estimateGasAndFees } from '../trade';
 import type createPool from './createPool';
 import getCreatePoolArgs from './getCreatePoolArgs';
 
 type GetContract = typeof getContract;
-type EstimateGasAndFees = typeof estimateGasAndFees;
 type Args = Parameters<ReturnType<typeof createPool>>[0];
 
-export default ({
-  estimateGasAndFees,
-  getContract,
-}: {
-  estimateGasAndFees: EstimateGasAndFees;
-  getContract: GetContract;
-}) =>
+export default ({ getContract }: { getContract: GetContract }) =>
   async function estimatePoolGas({
     assetAddress,
     eligibilityList,
@@ -27,6 +19,7 @@ export default ({
     name,
     network,
     signer,
+    provider,
     spotPrice,
     standard,
     symbol,
@@ -60,18 +53,13 @@ export default ({
     }
 
     const contract = getContract({
-      network,
-      abi,
+      abi: VaultCreationZap,
       address: getChainConstant(VAULT_CREATION_ZAP, network),
+      provider,
       signer,
     });
 
-    return estimateGasAndFees({
-      method: 'createVault',
-      contract,
+    return contract.estimate.createVault({
       args: [vaultDetails, vaultFeatures, vaultFees, eligibility, mintAndStake],
-      overrides: {
-        value,
-      },
     });
   };

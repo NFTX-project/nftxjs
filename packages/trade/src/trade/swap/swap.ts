@@ -1,32 +1,32 @@
 import {
   NFTX_MARKETPLACE_0X_ZAP,
   NFTX_MARKETPLACE_ZAP,
+  WeiPerEther,
   WETH_TOKEN,
+  Zero,
 } from '@nftx/constants';
-import type { Signer } from 'ethers';
 import {
   getExactTokenIds,
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
 } from '../utils';
-import nftxMarketplaceZap from '@nftx/constants/abis/NFTXMarketplaceZap.json';
-import nftxMarketplace0xZap from '@nftx/constants/abis/NFTXMarketplace0xZap.json';
-import vaultAbi from '@nftx/constants/abis/NFTXVaultUpgradeable.json';
-import estimateGasAndFees from '../estimateGasAndFees';
+import {
+  NFTXMarketplace0xZap,
+  NFTXMarketplaceZap,
+  NFTXVaultUpgradeable,
+} from '@nftx/abi';
 import { omitNil } from '../../utils';
-import increaseGasLimit from '../increaseGasLimit';
 import config from '@nftx/config';
 import {
   doesNetworkSupport0x,
   fetch0xQuote,
   fetchVaultSwapPrice,
 } from '../../price';
-import { WeiPerEther } from '@ethersproject/constants';
-import { parseEther } from '@ethersproject/units';
 import calculateSwapFee from '../../price/calculateSwapFee';
-import type { Vault } from '@nftx/types';
+import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
+import { parseEther } from 'viem';
 
 type SwapVault = Pick<Vault, 'id' | 'vaultId'> & {
   fees: Pick<Vault['fees'], 'targetSwapFee' | 'randomSwapFee'>;
@@ -37,6 +37,7 @@ const swapErc721WithEth = async ({
   mintTokenIds,
   network,
   redeemTokenIds,
+  provider,
   signer,
   userAddress,
   vault,
@@ -44,10 +45,11 @@ const swapErc721WithEth = async ({
   slippage,
 }: {
   network: number;
+  provider: Provider;
   signer: Signer;
-  userAddress: string;
-  mintTokenIds: string[] | [string, number][];
-  redeemTokenIds: string[] | [string, number][];
+  userAddress: Address;
+  mintTokenIds: TokenId[] | [TokenId, number][];
+  redeemTokenIds: TokenId[] | [TokenId, number][];
   slippage: number;
   vault: SwapVault;
 }) => {
@@ -56,76 +58,71 @@ const swapErc721WithEth = async ({
   const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
 
   const contract = getContract({
-    network,
+    provider,
     signer,
     address,
-    abi: nftxMarketplaceZap,
+    abi: NFTXMarketplaceZap,
   });
 
-  const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
-  const args = [vaultId, mintIds, redeemIds, path, userAddress];
+  const path = [getChainConstant(WETH_TOKEN, network), vaultAddress] as const;
+  const args = [
+    BigInt(vaultId),
+    mintIds.map(BigInt),
+    redeemIds.map(BigInt),
+    path,
+    userAddress,
+  ] as const;
   const method = 'buyAndSwap721';
 
   let { price: maxPrice } = await fetchVaultSwapPrice({
-    provider: signer.provider,
+    provider,
     network,
     vault,
     randomSwaps: mintIds.length - redeemIds.length,
     targetSwaps: redeemIds.length,
   });
   if (slippage) {
-    maxPrice = maxPrice
-      .mul(WeiPerEther.add(parseEther(`${slippage}`)))
-      .div(WeiPerEther);
+    maxPrice =
+      (maxPrice * (WeiPerEther + parseEther(`${slippage}`))) / WeiPerEther;
   }
-
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      contract,
-      args,
-      method,
-      overrides: omitNil({ value: maxPrice }),
-    });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
 
   const overrides = omitNil({
     value: maxPrice,
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
   });
 
   console.debug(address, method, args, overrides);
-  return contract[method](...args, overrides);
+  return contract.write.buyAndSwap721({ args, ...overrides });
 };
 
 const swapErc721Direct = async ({
   mintTokenIds,
-  network,
   redeemTokenIds,
+  provider,
   signer,
   vault: { id: vaultAddress },
 }: {
-  network: number;
+  provider: Provider;
   signer: Signer;
   vault: SwapVault;
-  mintTokenIds: string[] | [string, number][];
-  redeemTokenIds: string[] | [string, number][];
+  mintTokenIds: TokenId[] | [TokenId, number][];
+  redeemTokenIds: TokenId[] | [TokenId, number][];
 }) => {
   const mintIds = getUniqueTokenIds(mintTokenIds);
   const amounts = getTokenIdAmounts(mintTokenIds);
   const redeemIds = getExactTokenIds(redeemTokenIds);
 
   const contract = getContract({
-    network,
+    provider,
     signer,
     address: vaultAddress,
-    abi: vaultAbi,
+    abi: NFTXVaultUpgradeable,
   });
 
   console.debug(vaultAddress, 'swap', mintIds, amounts, redeemIds);
 
-  return contract.swap(mintIds, amounts, redeemIds);
+  return contract.write.swap({
+    args: [mintIds.map(BigInt), amounts.map(BigInt), redeemIds.map(BigInt)],
+  });
 };
 
 const swap0xErc721 = async ({
@@ -133,17 +130,19 @@ const swap0xErc721 = async ({
   network,
   redeemTokenIds,
   userAddress,
+  provider,
   signer,
   vault,
   vault: { id: vaultAddress, vaultId },
   slippage,
 }: {
   network: number;
+  provider: Provider;
   signer: Signer;
   vault: SwapVault;
-  userAddress: string;
-  mintTokenIds: string[] | [string, number][];
-  redeemTokenIds: string[] | [string, number][];
+  userAddress: Address;
+  mintTokenIds: TokenId[] | [TokenId, number][];
+  redeemTokenIds: TokenId[] | [TokenId, number][];
   quote: 'ETH';
   slippage: number;
 }) => {
@@ -154,8 +153,8 @@ const swap0xErc721 = async ({
   const buyAmount = calculateSwapFee({ vault, randomSwaps, targetSwaps });
   const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
   const contract = getContract({
-    network,
-    abi: nftxMarketplace0xZap,
+    abi: NFTXMarketplace0xZap,
+    provider,
     signer,
     address,
   });
@@ -177,33 +176,28 @@ const swap0xErc721 = async ({
     slippagePercentage: slippage,
   });
 
-  const args = [vaultId, mintIds, redeemIds, data, userAddress];
-
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      args,
-      contract,
-      method: 'buyAndSwap721',
-      overrides: omitNil({ value }),
-    });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
+  const args = [
+    BigInt(vaultId),
+    mintIds.map(BigInt),
+    redeemIds.map(BigInt),
+    data,
+    userAddress,
+  ] as const;
 
   const overrides = omitNil({
     value,
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
   });
 
   console.debug(address, 'buyAndSwap721', args, overrides);
 
-  return contract.buyAndSwap721(...args, overrides);
+  return contract.write.buyAndSwap721({ args, value: BigInt(value) });
 };
 
 const swapErc1155WithEth = async ({
   mintTokenIds,
   network,
   redeemTokenIds,
+  provider,
   signer,
   userAddress,
   slippage,
@@ -211,11 +205,12 @@ const swapErc1155WithEth = async ({
   vault: { id: vaultAddress, vaultId },
 }: {
   network: number;
+  provider: Provider;
   signer: Signer;
   vault: SwapVault;
-  userAddress: string;
-  mintTokenIds: string[] | [string, number][];
-  redeemTokenIds: string[] | [string, number][];
+  userAddress: Address;
+  mintTokenIds: TokenId[] | [TokenId, number][];
+  redeemTokenIds: TokenId[] | [TokenId, number][];
   slippage: number;
 }) => {
   const mintIds = getUniqueTokenIds(mintTokenIds);
@@ -224,47 +219,41 @@ const swapErc1155WithEth = async ({
   const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
 
   let { price: maxPrice } = await fetchVaultSwapPrice({
-    provider: signer.provider,
+    provider,
     network,
     vault,
     randomSwaps: mintIds.length - redeemIds.length,
     targetSwaps: redeemIds.length,
   });
   if (slippage) {
-    maxPrice = maxPrice
-      .mul(WeiPerEther.add(parseEther(`${slippage}`)))
-      .div(WeiPerEther);
+    maxPrice =
+      (maxPrice * (WeiPerEther + parseEther(`${slippage}`))) / WeiPerEther;
   }
 
   const contract = getContract({
-    network,
+    provider,
     signer,
-    abi: nftxMarketplaceZap,
+    abi: NFTXMarketplaceZap,
     address,
   });
 
-  const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
-  const args = [vaultId, mintIds, amounts, redeemIds, path, userAddress];
-  const method = 'buyAndSwap1155';
+  const path = [getChainConstant(WETH_TOKEN, network), vaultAddress] as const;
+  const args = [
+    BigInt(vaultId),
+    mintIds.map(BigInt),
+    amounts.map(BigInt),
+    redeemIds.map(BigInt),
+    path,
+    userAddress,
+  ] as const;
 
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      args,
-      contract,
-      method,
-      overrides: omitNil({ value: maxPrice }),
-    });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
   const overrides = omitNil({
     value: maxPrice,
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
   });
 
   console.debug(address, 'buyAndSwap1155', ...args, overrides);
 
-  return contract[method](...args, overrides);
+  return contract.write.buyAndSwap1155({ args, ...overrides });
 };
 
 const swapErc1155Direct = swapErc721Direct;
@@ -273,6 +262,7 @@ const swap0xErc1155 = async ({
   mintTokenIds,
   network,
   redeemTokenIds,
+  provider,
   signer,
   vault,
   vault: { id: vaultAddress, vaultId },
@@ -280,13 +270,14 @@ const swap0xErc1155 = async ({
   userAddress,
 }: {
   network: number;
+  provider: Provider;
   signer: Signer;
   vault: SwapVault;
-  mintTokenIds: string[] | [string, number][];
-  redeemTokenIds: string[] | [string, number][];
+  mintTokenIds: TokenId[] | [TokenId, number][];
+  redeemTokenIds: TokenId[] | [TokenId, number][];
   quote: 'ETH';
   slippage: number;
-  userAddress: string;
+  userAddress: Address;
 }) => {
   const mintIds = getUniqueTokenIds(mintTokenIds);
   const amounts = getTokenIdAmounts(mintTokenIds);
@@ -297,8 +288,8 @@ const swap0xErc1155 = async ({
   const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
 
   const contract = getContract({
-    network,
-    abi: nftxMarketplace0xZap,
+    abi: NFTXMarketplace0xZap,
+    provider,
     signer,
     address,
   });
@@ -320,26 +311,18 @@ const swap0xErc1155 = async ({
     slippagePercentage: slippage,
   });
 
-  const args = [vaultId, mintIds, amounts, redeemIds, data, userAddress];
+  const args = [
+    BigInt(vaultId),
+    mintIds.map(BigInt),
+    amounts.map(BigInt),
+    redeemIds.map(BigInt),
+    data,
+    userAddress,
+  ] as const;
 
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      args,
-      contract,
-      method: 'buyAndSwap1155',
-      overrides: omitNil({ value }),
-    });
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
-  const overrides = omitNil({
-    value,
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-  });
+  console.debug(address, 'buyAndSwap1155', args, value);
 
-  console.debug(address, 'buyAndSwap1155', args, overrides);
-
-  return contract.buyAndSwap1155(...args, overrides);
+  return contract.write.buyAndSwap1155({ args, value: BigInt(value) });
 };
 
 const matrix = {
@@ -367,12 +350,14 @@ const matrix = {
   },
   VTOKEN: {
     ERC721: {
+      true: null,
       false: {
         true: swapErc721Direct,
         false: swapErc721Direct,
       },
     },
     ERC1155: {
+      true: null,
       false: {
         true: swapErc1155Direct,
         false: swapErc1155Direct,
@@ -388,14 +373,15 @@ const matrix = {
  */
 const swap = (args: {
   network?: number;
+  provider: Provider;
   signer: Signer;
   /** Token IDs of the NFTs you want to put into the vault */
-  mintTokenIds: string[] | [string, number][];
+  mintTokenIds: TokenId[] | [TokenId, number][];
   /** Token IDs of the NFTs you want to take out of the vault */
-  redeemTokenIds: string[] | [string, number][];
+  redeemTokenIds: TokenId[] | [TokenId, number][];
   /** The vault you are swapping in */
   vault: SwapVault;
-  userAddress: string;
+  userAddress: Address;
   /** The percentage amount of slippage you're willing to accept */
   slippage?: number;
   quote?: 'ETH' | 'VTOKEN';
@@ -403,6 +389,7 @@ const swap = (args: {
 }) => {
   const {
     network = config.network,
+    provider,
     signer,
     vault,
     mintTokenIds,
@@ -418,8 +405,8 @@ const swap = (args: {
   const randomCount = totalCount - targetCount;
   const requiresEth =
     quote === 'ETH' &&
-    ((targetCount > 0 && vault.fees.targetSwapFee.gt(0)) ||
-      (randomCount > 0 && vault.fees.randomSwapFee.gt(0)));
+    ((targetCount > 0 && vault.fees.targetSwapFee > Zero) ||
+      (randomCount > 0 && vault.fees.randomSwapFee > Zero));
   const supports0x = doesNetworkSupport0x(network);
 
   const fn = matrix[quote]?.[standard][`${requiresEth}`]?.[`${supports0x}`];
@@ -432,8 +419,9 @@ const swap = (args: {
   return fn({
     mintTokenIds,
     network,
-    quote,
+    quote: quote as any,
     redeemTokenIds,
+    provider,
     signer,
     userAddress,
     slippage,

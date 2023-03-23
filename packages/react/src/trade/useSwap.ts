@@ -6,20 +6,24 @@ import useTransaction from '../useTransaction';
 const useSwap = (opts?: UseTransactionOptions) => {
   const {
     network,
+    provider,
     signer,
     core: { swap, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof swap>;
 
-  return useTransaction((args: Args) => swap({ ...args, network, signer }), {
-    description: 'Swap',
-    ...opts,
-    async onSuccess(data, args) {
-      await invalidateVault({ vaultId: args.vault.vaultId, network });
-      return opts?.onSuccess?.(data, args);
-    },
-  });
+  return useTransaction(
+    (args: Args) => swap({ ...args, network, provider, signer }),
+    {
+      description: 'Swap',
+      ...opts,
+      async onSuccess(data, args) {
+        await invalidateVault({ vaultId: args.vault.vaultId, network });
+        return opts?.onSuccess?.(data, args);
+      },
+    }
+  );
 };
 
 export default useSwap;

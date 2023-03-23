@@ -1,4 +1,3 @@
-import type { ContractReceipt, ContractTransaction } from 'ethers';
 import { useCallback, useReducer } from 'react';
 import type { TransactionState } from '../types';
 import {
@@ -7,13 +6,15 @@ import {
   TransactionFailedError,
 } from '../errors';
 import useWrapTransaction from './useWrapTransaction';
+import type { Transaction } from 'nftx.js';
+import type { TransactionReceipt } from 'viem';
 
-type Fn = (args: any) => Promise<ContractTransaction>;
+type Fn = (args: any) => Promise<Transaction>;
 
 export type UseTransactionOptions<A = Record<string, any>> = {
   description?: string;
   onSuccess?: (
-    data: { transaction: ContractTransaction; receipt: ContractReceipt },
+    data: { transaction: Transaction; receipt: TransactionReceipt },
     args: A
   ) => void | Promise<any>;
   onError?: (error: any) => void;
@@ -36,8 +37,8 @@ const useTransaction = <F extends Fn>(
     status: TransactionState;
     error: any;
     data: {
-      transaction?: ContractTransaction;
-      receipt?: ContractReceipt;
+      transaction?: Transaction;
+      receipt?: TransactionReceipt;
     };
   };
   const [{ status, data, error }, dispatch] = useReducer(
@@ -46,8 +47,8 @@ const useTransaction = <F extends Fn>(
       action:
         | { status: 'None' }
         | { status: 'PendingSignature' }
-        | { status: 'Mining'; transaction: ContractTransaction }
-        | { status: 'Success'; receipt: ContractReceipt }
+        | { status: 'Mining'; transaction: Transaction }
+        | { status: 'Success'; receipt: TransactionReceipt }
         | { status: 'Exception' | 'Fail'; error: any }
     ) => {
       switch (action?.status) {
@@ -128,7 +129,7 @@ const useTransaction = <F extends Fn>(
 
       dispatch({ status: 'Success', receipt });
       const maybePromise = opts?.onSuccess?.({ transaction, receipt }, args);
-      if (maybePromise && maybePromise.then) {
+      if (maybePromise && typeof maybePromise.then === 'function') {
         await maybePromise;
       }
       return receipt;

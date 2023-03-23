@@ -1,6 +1,6 @@
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { WeiPerEther } from '@ethersproject/constants';
 import config from '@nftx/config';
+import { WeiPerEther } from '@nftx/constants';
+import type { Address, BigIntish } from '@nftx/types';
 import { Network } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
 
@@ -11,29 +11,29 @@ const API_KEYS = {
 };
 
 export type ZeroXQuote = {
-  price: string;
-  guaranteedPrice: string;
-  to: string;
-  data: string;
-  value: string;
-  gasPrice: string;
-  gas: string;
-  estimatedGas: string;
-  protocolFee: string;
-  estimatedPriceImpact: string;
-  minimumProtocolFee: string;
-  buyAmount: string;
-  sellAmount: string;
+  price: `${number}`;
+  guaranteedPrice: `${number}`;
+  to: Address;
+  data: Address;
+  value: `${number}`;
+  gasPrice: `${number}`;
+  gas: `${number}`;
+  estimatedGas: `${number}`;
+  protocolFee: `${number}`;
+  estimatedPriceImpact: `${number}`;
+  minimumProtocolFee: `${number}`;
+  buyAmount: `${number}`;
+  sellAmount: `${number}`;
   sources: Array<{
     name: string;
-    proportion: string;
+    proportion: `${number}`;
   }>;
-  buyTokenAddress: string;
-  sellTokenAddress: string;
-  allowanceTarget: string;
+  buyTokenAddress: Address;
+  sellTokenAddress: Address;
+  allowanceTarget: Address;
   orders: unknown;
-  sellTokenToEthRate: string;
-  buyTokenToEthRate: string;
+  sellTokenToEthRate: `${number}`;
+  buyTokenToEthRate: `${number}`;
 };
 
 /** Fetch a quote price from the 0x api.
@@ -45,13 +45,13 @@ export type ZeroXQuote = {
 const fetch0xQuote = async (args: {
   network?: number;
   /** The address of the token you're buying */
-  buyToken: string;
+  buyToken: QuoteToken;
   /** the amount of buyToken you want to buy */
-  buyAmount?: BigNumberish;
+  buyAmount?: BigIntish;
   /** The address of the token you're selling */
-  sellToken: string;
+  sellToken: QuoteToken;
   /** The amount of sellToken you want to sell */
-  sellAmount?: BigNumberish;
+  sellAmount?: BigIntish;
   /** The percentage amount of acceptable slippage on either sellAmount or buyAmount. Defaults to 1%. If you don't want to allow any slippage, you must explicitly pass 0 */
   slippagePercentage?: number;
   /** If a "critical" quote, the response will be fetched from 0x directly. For non-critical requests (such as "price" calls), the response is fetched from NFTX's fork which implements additional caching layers and a higher rate limiting threshold */
@@ -75,9 +75,9 @@ const fetch0xQuote = async (args: {
     searchParams.append('buyToken', buyToken);
     searchParams.append('sellToken', sellToken);
     if (buyAmount) {
-      searchParams.append('buyAmount', BigNumber.from(buyAmount).toString());
+      searchParams.append('buyAmount', BigInt(buyAmount).toString());
     } else if (sellAmount) {
-      searchParams.append('sellAmount', BigNumber.from(sellAmount).toString());
+      searchParams.append('sellAmount', BigInt(sellAmount).toString());
     } else {
       // Default to just buying 1
       searchParams.append('buyAmount', WeiPerEther.toString());

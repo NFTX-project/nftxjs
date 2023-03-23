@@ -12,7 +12,7 @@ const fetchVaultActivity = ({
   fromTimestamp?: number;
   vaultId: string;
 }) => {
-  if (fromTimestamp) {
+  if (fromTimestamp != null) {
     // Round timestamps to the nearest 60m
     fromTimestamp = Math.floor(Math.round(fromTimestamp / 3600) * 3600);
   }

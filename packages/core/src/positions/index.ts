@@ -1,4 +1,5 @@
 import {
+  balanceOf,
   fetchReservesForToken,
   fetchReservesForTokens,
   fetchUserVaultBalance,
@@ -9,7 +10,7 @@ import {
 } from '@nftx/utils';
 import { fetchLiquidityPool, fetchLiquidityPools } from '../pools';
 import { fetchClaimableTokens } from '../staking';
-import { fetchVault, fetchVaults } from '../vaults';
+import { fetchVault, fetchVaultFees, fetchVaults } from '../vaults';
 import fetchVaultAprs from '../vaults/fetchVaultAprs';
 import makeFetchPosition from './fetchPosition';
 import makeFetchPositions from './fetchPositions';
@@ -25,6 +26,8 @@ export const fetchPosition = makeFetchPosition({
   fetchVault,
   fetchVaultAprs,
   fetchXTokenShare,
+  balanceOf,
+  fetchVaultFees,
 });
 
 export const fetchPositions = makeFetchPositions({

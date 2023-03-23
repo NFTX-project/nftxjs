@@ -1,26 +1,26 @@
-import type { BigNumber } from 'ethers';
+import type { Address, BigIntString, TokenId } from './web3';
 
 /**
  * An ERC721 or ERC1155 asset
  */
 export type Asset = {
   id: string;
-  tokenId: string;
-  assetAddress: string;
+  tokenId: TokenId;
+  assetAddress: Address;
   /**
    * URL path to fetch the asset's metadata
    * {@link AssetMetadata}
    */
   metaUrl: string;
-  vaultId: string;
-  quantity?: BigNumber;
+  vaultId?: string;
+  quantity?: bigint;
 };
 
 /**
  * Metadata about an ERC asset pulled from covalent or opensea
  */
 export type AssetMetadata = Asset & {
-  name: string;
+  name?: string;
   traits: Record<string, string | string[]>;
   api: 'covalent' | 'opensea';
   assetName: string;
@@ -29,13 +29,13 @@ export type AssetMetadata = Asset & {
   imageUrl: string;
   imagePreviewUrl: string;
   detailUrl: string;
-  animationUrl: string;
-  backgroundColor: string;
+  animationUrl?: string;
+  backgroundColor?: string;
 };
 
 /** Metadata bouat an ERC collection */
 export type Collection = {
-  address: string;
+  address: Address;
   isSpam: boolean;
   media: [
     {
@@ -57,8 +57,8 @@ export type Collection = {
     lastIngestedAt: string;
   };
   symbol: string;
-  tokenId: string;
+  tokenId: TokenId;
   tokenType: 'ERC721' | 'ERC1155' | 'UNKNOWN';
   totalBalance: number;
-  totalSupply: string;
+  totalSupply: BigIntString;
 };

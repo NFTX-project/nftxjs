@@ -3,14 +3,13 @@ import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
 import fetchVaultHoldings from '../fetchVaultHoldings';
 import config from '@nftx/config';
-import type { Provider } from '@ethersproject/providers';
 import {
   addressEqual,
   fetchMerkleReference,
   fetchReservesForTokens,
   isMerkleVault,
 } from '@nftx/utils';
-import type { Vault } from '@nftx/types';
+import type { Address, Provider, Vault } from '@nftx/types';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
@@ -39,7 +38,10 @@ const fetchMoreHoldings = async ({
   network,
 }: {
   network: number;
-  vault: { id: string; holdings: Array<{ tokenId: string }> };
+  vault: {
+    id: Address;
+    holdings: Array<{ tokenId: string }>;
+  };
 }) => {
   if (vault.holdings.length === 1000) {
     const lastId = vault.holdings[vault.holdings.length - 1].tokenId;
@@ -67,12 +69,12 @@ const fetchVaults = async ({
 }: {
   network?: number;
   provider: Provider;
-  vaultAddresses?: string[];
+  vaultAddresses?: Address[];
   vaultIds?: string[];
   includeEmptyVaults?: boolean;
   finalisedOnly?: boolean;
   enabledOnly?: boolean;
-  manager?: string;
+  manager?: Address;
   lastId?: number;
   retryCount?: number;
 }): Promise<Vault[]> => {
@@ -103,9 +105,10 @@ const fetchVaults = async ({
   const vaultPromises =
     vaultData.map(async (x) => {
       const moreHoldings = await fetchMoreHoldings({ network, vault: x });
-      const merkleReference = isMerkleVault(x)
-        ? await fetchMerkleReference({ network, provider, vault: x })
-        : null;
+      const merkleReference =
+        (isMerkleVault(x)
+          ? await fetchMerkleReference({ provider, vault: x })
+          : null) ?? undefined;
 
       return transformVault({
         globalFees,
