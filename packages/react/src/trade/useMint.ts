@@ -6,18 +6,19 @@ import useTransaction from '../useTransaction';
 const useMint = (opts?: UseTransactionOptions) => {
   const {
     network,
+    provider,
     signer,
     core: { mint, invalidateVault },
   } = useNftx();
 
   type Args = TxnArgsOnly<typeof mint>;
 
-  return useTransaction((args: Args) => mint({ ...args, network, signer }), {
+  return useTransaction((args: Args) => mint({ ...args, provider, signer }), {
     description: 'Mint',
     ...opts,
     async onSuccess(data, args) {
       await invalidateVault({ vaultId: args.vaultId, network });
-      return opts?.onSuccess(data, args);
+      return opts?.onSuccess?.(data, args);
     },
   });
 };

@@ -1,17 +1,17 @@
-import type { Provider } from '@ethersproject/providers';
-import type { Vault } from '@nftx/types';
+import config from '@nftx/config';
+import type { Address, Provider, Vault } from '@nftx/types';
 import fetchUserCollectionAssets from '../fetchUserCollectionAssets';
 import { processAssetItems } from './utils';
 
 const fetchUserVaultAssets = async ({
-  network,
+  network = config.network,
   vaults,
   userAddress,
   cursor,
   provider,
 }: {
-  network: number;
-  userAddress: string;
+  network?: number;
+  userAddress: Address;
   cursor?: string;
   vaults: Pick<Vault, 'asset' | 'vaultId' | 'eligibilityModule' | 'features'>[];
   provider: Provider;

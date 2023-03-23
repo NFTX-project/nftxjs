@@ -1,7 +1,6 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 
-let cacheKey: string;
+let cacheKey: string | null;
 
 (() => {
   if (typeof window !== 'undefined' && window?.localStorage?.getItem) {
@@ -12,8 +11,8 @@ let cacheKey: string;
 const parseResponse = (str: string) => {
   return JSON.parse(str, (key, value) => {
     if (typeof value === 'string' && value.startsWith('BigNumber(')) {
-      const [, v] = value.match(/BigNumber\((.+)?\)/);
-      return BigNumber.from(v);
+      const [, v] = value.match(/BigNumber\((.+)?\)/) ?? [];
+      return BigInt(v);
     }
     return value;
   });

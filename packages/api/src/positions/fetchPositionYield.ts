@@ -1,11 +1,11 @@
-import type { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
+import type { Address } from '@nftx/types';
 import { queryApi } from '../utils';
 
 type Response = Array<{
   type: 'inventory' | 'liquidity';
-  amount: BigNumber;
-  ethValue: BigNumber;
+  amount: bigint;
+  ethValue: bigint;
 }>;
 
 /** Get the lifetime yield amount for a specific position */
@@ -15,7 +15,7 @@ const fetchPositionYield = ({
   network = config.network,
 }: {
   network?: number;
-  userAddress: string;
+  userAddress: Address;
   vaultId: string;
 }) => {
   return queryApi<Response>({

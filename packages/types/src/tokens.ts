@@ -1,10 +1,10 @@
-import type { BigNumber } from '@ethersproject/bignumber';
+import type { Address } from './web3';
 
 /**
  * Common token metadata
  */
 export type Token = {
-  id: string;
+  id: Address;
   name: string;
   symbol: string;
 };
@@ -13,9 +13,9 @@ export type Token = {
  * A token reserve
  */
 export type TokenReserve = {
-  tokenId: string;
+  tokenId: Address;
   derivedEth: string;
-  reserveVtoken: BigNumber;
-  reserveWeth: BigNumber;
-  midPrice: BigNumber;
+  reserveVtoken: bigint;
+  reserveWeth: bigint;
+  midPrice: bigint;
 };

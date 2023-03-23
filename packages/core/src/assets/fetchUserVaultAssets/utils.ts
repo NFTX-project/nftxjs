@@ -1,5 +1,4 @@
-import type { Provider } from '@ethersproject/providers';
-import type { Asset, Vault } from '@nftx/types';
+import type { Asset, Provider, Vault } from '@nftx/types';
 import {
   addressEqual,
   checkEligible,
@@ -51,7 +50,6 @@ export const processAssetItems = async ({
             const leaves = await fetchMerkleLeaves({
               provider,
               vault,
-              network,
             });
             mintableItems = mintableItems.filter((item) =>
               leaves.includes(item.tokenId)
@@ -68,7 +66,6 @@ export const processAssetItems = async ({
               provider,
               tokenIds,
               vault,
-              network,
             });
             mintableItems = mintableItems.filter(
               (_, i) => eligibleResults[i].eligible

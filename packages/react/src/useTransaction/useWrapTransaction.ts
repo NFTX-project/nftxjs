@@ -1,4 +1,3 @@
-import { ContractTransaction, errors } from 'ethers';
 import { useNftx } from '../contexts/nftx';
 import {
   TransactionCancelledError,
@@ -7,12 +6,13 @@ import {
 } from '../errors';
 import { t } from '../utils';
 import { useAddEvent } from '../contexts/events';
+import type { Transaction } from 'nftx.js';
 
-type Fn = (...args: any) => Promise<ContractTransaction>;
+type Fn = (...args: any) => Promise<Transaction>;
 
 function isDroppedAndReplaced(e: any) {
   return (
-    e?.code === errors.TRANSACTION_REPLACED &&
+    e?.code === 'TRANSACTION_REPLACED' &&
     e?.replacement &&
     (e?.reason === 'repriced' || e?.cancelled === false)
   );
@@ -56,12 +56,11 @@ export default function useWrapTransaction<F extends Fn>(
       description,
     });
 
-    const transaction: ContractTransaction = {
+    const transaction: Transaction = {
       ...tx,
-      chainId: network,
       // we also want to wrap the wait behaviour
-      wait: async (confirmations?: number) => {
-        const [receiptErr, receipt] = await t(tx.wait(confirmations));
+      wait: async () => {
+        const [receiptErr, receipt] = await t(tx.wait());
 
         if (receiptErr) {
           if (isDroppedAndReplaced(receiptErr)) {

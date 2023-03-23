@@ -1,4 +1,5 @@
 import config from '@nftx/config';
+import type { Address } from '@nftx/types';
 import { getAll } from './getAll';
 
 function fetchVaultActivity({
@@ -9,8 +10,8 @@ function fetchVaultActivity({
   toTimestamp,
 }: {
   network?: number;
-  vaultAddress?: string;
-  vaultAddresses?: string[];
+  vaultAddress?: Address;
+  vaultAddresses?: Address[];
   fromTimestamp?: number;
   toTimestamp?: number;
 }) {

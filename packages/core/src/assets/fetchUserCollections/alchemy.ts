@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Collection } from '@nftx/types';
+import type { Address, Collection } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
 type Response = {
@@ -13,14 +13,14 @@ const fetchUserCollectionsAlchemy = async ({
   userAddress,
 }: {
   network: number;
-  userAddress: string;
+  userAddress: Address;
 }) => {
   const baseUrl = getChainConstant(config.urls.ALCHEMY_URL, network);
   const apiKey = getChainConstant(config.keys.ALCHEMY, network);
 
   const ownedCollections: Collection[] = [];
 
-  let cursor: string = null;
+  let cursor: string | undefined;
 
   do {
     const uri = new URL(`/nft/v2/${apiKey}/getContractsForOwner`, baseUrl);

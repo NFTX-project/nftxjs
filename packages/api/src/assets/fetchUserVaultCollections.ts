@@ -1,4 +1,5 @@
 import config from '@nftx/config';
+import type { Address } from '@nftx/types';
 import { queryApi } from '../utils';
 
 type Response = { vaultId: string; assetAddress: string }[];
@@ -9,7 +10,7 @@ const fetchUserVaultCollections = ({
   userAddress,
 }: {
   network?: number;
-  userAddress: string;
+  userAddress: Address;
 }) => {
   const url = `/${network}/users/${userAddress}/vault-collections`;
   return queryApi<Response>({

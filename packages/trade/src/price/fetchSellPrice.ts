@@ -1,13 +1,11 @@
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { WeiPerEther } from '@ethersproject/constants';
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import { SUSHISWAP_ROUTER, WETH_TOKEN } from '@nftx/constants';
-import routerAbi from '@nftx/constants/abis/UniswapV2Router.json';
-import type { Price } from '@nftx/types';
+import { SUSHISWAP_ROUTER, WeiPerEther, WETH_TOKEN } from '@nftx/constants';
+import { UniswapV2Router } from '@nftx/abi';
+import type { Address, BigIntish, Price, Provider } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0xPrice';
+import type { QuoteToken } from './types';
 
 const fetchSellPriceFromApi = async ({
   network,
@@ -17,9 +15,9 @@ const fetchSellPriceFromApi = async ({
   critical,
 }: {
   network: number;
-  tokenAddress: string;
-  amount: BigNumberish;
-  quote: 'ETH';
+  tokenAddress: Address;
+  amount: BigIntish;
+  quote: QuoteToken;
   critical: boolean;
 }) => {
   const { buyAmount, estimatedGas, gasPrice, sources, estimatedPriceImpact } =
@@ -32,9 +30,9 @@ const fetchSellPriceFromApi = async ({
     });
 
   const price: Price = {
-    price: BigNumber.from(buyAmount),
-    estimatedGas: BigNumber.from(estimatedGas),
-    gasPrice: BigNumber.from(gasPrice),
+    price: BigInt(buyAmount),
+    estimatedGas: BigInt(estimatedGas),
+    gasPrice: BigInt(gasPrice),
     sources,
     priceImpact: Number(estimatedPriceImpact) / 100,
   };
@@ -50,14 +48,13 @@ const fetchSellPriceFromWeb3 = async ({
 }: {
   network: number;
   provider: Provider;
-  tokenAddress: string;
-  amount: BigNumberish;
-  quote: 'ETH';
+  tokenAddress: Address;
+  amount: BigIntish;
+  quote: QuoteToken;
 }) => {
   const contract = getContract({
-    network,
     address: getChainConstant(SUSHISWAP_ROUTER, network),
-    abi: routerAbi,
+    abi: UniswapV2Router,
     provider,
   });
 
@@ -65,10 +62,9 @@ const fetchSellPriceFromWeb3 = async ({
   const tokenOut = getChainConstant(WETH_TOKEN, network);
 
   const [, quotePrice] =
-    ((await contract.getAmountsOut(amount, [
-      tokenIn,
-      tokenOut,
-    ])) as BigNumber[]) || [];
+    (await contract.read.getAmountsOut({
+      args: [BigInt(amount), [tokenIn, tokenOut]],
+    })) || [];
 
   const price: Price = {
     price: quotePrice,
@@ -83,9 +79,9 @@ const fetchSellPriceFromWeb3 = async ({
 const fetchSellPrice = (args: {
   network?: number;
   provider: Provider;
-  tokenAddress: string;
-  amount?: BigNumberish;
-  quote?: 'ETH';
+  tokenAddress: Address;
+  amount?: BigIntish;
+  quote?: QuoteToken;
   critical?: boolean;
 }) => {
   const {
@@ -94,7 +90,7 @@ const fetchSellPrice = (args: {
     tokenAddress,
     amount = WeiPerEther,
     quote = 'ETH',
-    critical,
+    critical = false,
   } = args;
 
   const apiSupported = doesNetworkSupport0x(network);

@@ -1,20 +1,19 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import { WeiPerEther, Zero } from '@ethersproject/constants';
-import { parseEther } from '@ethersproject/units';
+import { WeiPerEther, Zero } from '@nftx/constants';
 import type { Vault } from '@nftx/types';
+import { parseEther } from 'viem';
 import { toEthersNumber } from '../web3';
 
 const calculatePercentageStaked = ({
   balance,
   supply,
 }: {
-  balance: BigNumber;
-  supply: BigNumber;
+  balance: bigint;
+  supply: bigint;
 }) => {
-  if (!balance || !supply || balance.eq(0) || supply.eq(0)) {
+  if (!balance || !supply || balance === Zero || supply === Zero) {
     return Zero;
   }
-  return balance.mul(WeiPerEther).div(supply);
+  return (balance * WeiPerEther) / supply;
 };
 
 const calculateLiquidityPoolSize = ({
@@ -22,20 +21,20 @@ const calculateLiquidityPoolSize = ({
   slpSupply,
   slpBalance,
 }: {
-  reserveVToken: BigNumber;
-  slpSupply: BigNumber;
-  slpBalance: BigNumber;
+  reserveVToken: bigint;
+  slpSupply: bigint;
+  slpBalance: bigint;
 }) => {
   const percentageStaked = calculatePercentageStaked({
     balance: slpBalance,
     supply: slpSupply,
   });
 
-  if (reserveVToken.eq(0) || percentageStaked.eq(0)) {
+  if (reserveVToken === Zero || percentageStaked === Zero) {
     return Zero;
   }
 
-  const vToken = reserveVToken.mul(percentageStaked).div(WeiPerEther);
+  const vToken = (reserveVToken * percentageStaked) / WeiPerEther;
 
   return vToken;
 };
@@ -44,10 +43,10 @@ const calculateInventoryPoolSize = ({
   xTokenSupply,
   xTokenShare,
 }: {
-  xTokenSupply: BigNumber;
-  xTokenShare: BigNumber;
+  xTokenSupply: bigint;
+  xTokenShare: bigint;
 }) => {
-  const vToken = xTokenSupply.mul(xTokenShare).div(WeiPerEther);
+  const vToken = (xTokenSupply * xTokenShare) / WeiPerEther;
 
   return vToken;
 };
@@ -68,25 +67,24 @@ const calculateApr = ({
   multiplier,
   createdAt,
 }: {
-  vToken: BigNumber;
-  periodFees: BigNumber;
+  vToken: bigint;
+  periodFees: bigint;
   share: number;
   multiplier: number;
   createdAt: number;
 }) => {
   let apr = 0;
 
-  if (vToken.gt(0) && periodFees.gt(0)) {
+  if (vToken > Zero && periodFees > Zero) {
     const periodMultiplier = getPeriodMultiplier(createdAt);
     // yearly return
-    const numerator = periodFees
-      .mul(periodMultiplier)
-      .mul(parseEther(`${share}`))
-      .div(WeiPerEther)
-      .mul(12);
-    const denominator = vToken.mul(multiplier);
-    const result = numerator.mul(WeiPerEther).div(denominator);
-    apr = toEthersNumber(result);
+    const numerator =
+      ((periodFees * BigInt(periodMultiplier) * parseEther(`${share}`)) /
+        WeiPerEther) *
+      12n;
+    const denominator = vToken * BigInt(multiplier);
+    const result = (numerator * WeiPerEther) / denominator;
+    apr = toEthersNumber(result) ?? 0;
   }
 
   return apr;
@@ -99,11 +97,11 @@ const calculateApr = ({
  */
 const calculateVaultApr = (args: {
   vault: Pick<Vault, 'reserveVtoken' | 'createdAt'>;
-  slpSupply: BigNumber;
-  slpBalance: BigNumber;
-  xTokenSupply: BigNumber;
-  xTokenShare: BigNumber;
-  periodFees: BigNumber;
+  slpSupply: bigint;
+  slpBalance: bigint;
+  xTokenSupply: bigint;
+  xTokenShare: bigint;
+  periodFees: bigint;
 }) => {
   const {
     vault,

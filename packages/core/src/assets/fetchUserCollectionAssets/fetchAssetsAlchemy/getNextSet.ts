@@ -12,7 +12,7 @@ const getNextSet = async ({
   network: number;
   userAddress: string;
   assetAddresses: string[];
-  cursor: string;
+  cursor?: string;
 }) => {
   let url = [
     getChainConstant(config.urls.ALCHEMY_URL, network),

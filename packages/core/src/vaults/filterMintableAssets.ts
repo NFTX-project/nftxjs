@@ -1,7 +1,6 @@
 import type { Asset } from '../assets';
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
-import type { Vault } from '@nftx/types';
+import type { Provider, Vault } from '@nftx/types';
 import {
   addressEqual,
   checkEligible,
@@ -42,7 +41,7 @@ const filterMintableAssets = async ({
         return;
       }
       if (isMerkleVault(vault)) {
-        const leaves = await fetchMerkleLeaves({ provider, network, vault });
+        const leaves = await fetchMerkleLeaves({ provider, vault });
         vaultAssets = vaultAssets.filter((asset) =>
           leaves.includes(asset.tokenId)
         );
@@ -51,7 +50,6 @@ const filterMintableAssets = async ({
           provider,
           tokenIds: vaultAssets.map((x) => x.tokenId),
           vault,
-          network,
         });
         vaultAssets = vaultAssets.filter((_, i) => eligible[i].eligible);
       }

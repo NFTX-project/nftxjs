@@ -1,27 +1,22 @@
-import type { Provider } from '@ethersproject/providers';
-import type { BigNumber } from '@ethersproject/bignumber';
 import getContract from './getContract';
-import abi from '@nftx/constants/abis/ERC20.json';
-import config from '@nftx/config';
+import { ERC20 } from '@nftx/abi';
+import type { Address, Provider } from '@nftx/types';
 
 /** Return the total supply of a given token */
 const totalSupply = async ({
-  network = config.network,
   provider,
   tokenAddress,
 }: {
-  network?: number;
   provider: Provider;
-  tokenAddress: string;
+  tokenAddress: Address;
 }) => {
   const contract = getContract({
-    network,
-    address: tokenAddress.toLowerCase(),
+    address: tokenAddress,
     provider,
-    abi,
+    abi: ERC20,
   });
 
-  const supply: BigNumber = await contract.totalSupply();
+  const supply = await contract.read.totalSupply({});
 
   return supply;
 };

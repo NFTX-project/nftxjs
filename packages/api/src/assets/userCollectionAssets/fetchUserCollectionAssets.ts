@@ -1,10 +1,10 @@
 import config from '@nftx/config';
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
 import streamUserCollectionAssets from './streamUserCollectionAssets';
 
 type Result = {
   assets: Asset[];
-  next: () => Promise<Result>;
+  next?: () => Promise<Result>;
 };
 
 /**
@@ -27,8 +27,8 @@ const fetchUserCollectionAssets = async ({
   assetAddress,
 }: {
   network?: number;
-  userAddress: string;
-  assetAddress: string;
+  userAddress: Address;
+  assetAddress: Address;
 }) => {
   const stream = streamUserCollectionAssets({
     userAddress,

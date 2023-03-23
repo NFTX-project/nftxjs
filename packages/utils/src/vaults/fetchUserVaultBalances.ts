@@ -1,7 +1,11 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
-import type { NftxTokenType, UserVaultBalance } from '@nftx/types';
+import type {
+  Address,
+  BigIntString,
+  NftxTokenType,
+  UserVaultBalance,
+} from '@nftx/types';
 import { getChainConstant } from '../web3';
 
 type QuerySubgraph = typeof querySubgraph;
@@ -14,14 +18,14 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
     userAddress,
     network = config.network,
   }: {
-    userAddress: string;
+    userAddress: Address;
     network: number;
   }) {
     type Response = {
       account: {
         ERC20balances: Array<{
           contract: {
-            id: string;
+            id: Address;
             name: string;
             symbol: string;
             asVaultAsset: {
@@ -29,7 +33,7 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
               vaultId: string;
             };
           };
-          valueExact: string;
+          valueExact: BigIntString;
         }>;
       };
     };
@@ -64,13 +68,13 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
 
     const erc20Balances = data?.account?.ERC20balances ?? [];
 
-    const balances: UserVaultBalance[] = await Promise.all(
+    const balances: Array<UserVaultBalance | null> = await Promise.all(
       erc20Balances.map(async ({ valueExact, contract }) => {
         if (valueExact === '0') {
           return null;
         }
 
-        const balance = BigNumber.from(valueExact);
+        const balance = BigInt(valueExact);
 
         return {
           type: contract.asVaultAsset.type,

@@ -1,3 +1,4 @@
+import type { Address, Vault } from '@nftx/types';
 import { addressEqual } from '@nftx/utils';
 import fetchErc20Contracts from './fetchErc20Contracts';
 
@@ -6,16 +7,18 @@ const fetchUsers = async ({
 }: {
   vaults: Array<{
     vaultId: string;
-    inventoryStakingPool?: { id: string };
-    lpStakingPool?: { dividendToken?: { id?: string } };
+    inventoryStakingPool?: { id: Vault['inventoryStakingPool']['id'] };
+    lpStakingPool?: {
+      dividendToken?: { id?: Vault['lpStakingPool']['dividendToken']['id'] };
+    };
   }>;
 }): Promise<Array<{ vaultId: string; users: string[] }>> => {
   const xTokenAddresses = vaults
     .map((vault) => vault.inventoryStakingPool?.id)
-    .filter(Boolean);
+    .filter((x): x is Address => !!x);
   const xSlpAddresses = vaults
     .map((vault) => vault.lpStakingPool?.dividendToken?.id)
-    .filter(Boolean);
+    .filter((x): x is Address => !!x);
   const contractAddresses = [
     ...new Set([...xTokenAddresses, ...xSlpAddresses]),
   ];
@@ -33,6 +36,9 @@ const fetchUsers = async ({
         addressEqual(vault.lpStakingPool?.dividendToken?.id, contract.id)
       );
     });
+    if (!vault) {
+      return;
+    }
     const { vaultId } = vault;
 
     let users = groupedUsers[vaultId]?.users;

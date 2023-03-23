@@ -1,5 +1,5 @@
-import type { BigNumber } from '@ethersproject/bignumber';
 import type { TokenReserve } from './tokens';
+import type { Address } from './web3';
 
 /**
  * An NFTX pool
@@ -7,17 +7,17 @@ import type { TokenReserve } from './tokens';
  */
 export type Pool = {
   vaultId: string;
-  vaultAddress: string;
-  liquidityPoolId: string;
-  stakingTokenId: string;
+  vaultAddress: Address;
+  liquidityPoolId: Address;
+  stakingTokenId: Address;
   liquidityApr: number;
   inventoryApr: number;
   /** The total amount of inventory (xToken) in the pool, in ETH */
-  inventoryStaked: BigNumber;
+  inventoryStaked: bigint;
   /** The total amount of liquidity (xSlp) in the pool, in ETH */
-  liquidityStaked: BigNumber;
+  liquidityStaked: bigint;
   /** The total value staked (xToken + xSlp) in the pool, in ETH */
-  totalValueStaked: BigNumber;
+  totalValueStaked: bigint;
   inventoryLockTime: number;
   liquidityLockTime: number;
   /** The % of the pool that is LP */
@@ -27,17 +27,17 @@ export type Pool = {
 
   poolReserves: TokenReserve;
   /** The total amount of xToken in the inventory contract */
-  xTokenSupply: BigNumber;
+  xTokenSupply: bigint;
   /** The amount of xToken per vToken */
-  xTokenShare: BigNumber;
+  xTokenShare: bigint;
   /** The total amount of xSlp in the dividend token contract */
-  xSlpSupply: BigNumber;
+  xSlpSupply: bigint;
   /** The total supply of SLP on the staking token contract */
-  slpSupply: BigNumber;
+  slpSupply: bigint;
   /** The SLP balance of the staking contract */
-  slpBalance: BigNumber;
+  slpBalance: bigint;
   /** The total number of fees generated in the last 30 days */
-  periodFees: BigNumber;
+  periodFees: bigint;
   /** The vault creation date */
   createdAt: number;
 };

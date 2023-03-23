@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 import { gql, type querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '@nftx/utils';
@@ -8,8 +7,8 @@ type QuerySubgraph = typeof querySubgraph;
 // The aggregated fee value is a weird big number + decimal string
 // BigNumber can't parse decimals (the whole point is that you pass it a big number instead of a decimal number)
 // So we need to massage it first...
-export const parseAggregatedFee = (value: string) => {
-  return BigNumber.from(Math.floor(Number(value || '0')).toString());
+export const parseAggregatedFee = (value: `${number}` | undefined) => {
+  return BigInt(Math.floor(Number(value || '0')).toString());
 };
 
 export const createHexVaultId = (vaultId: string) => {
@@ -41,10 +40,10 @@ export default ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
   }) {
     type Response = {
       inventory: {
-        aggregatedVaultFees: string;
+        aggregatedVaultFees: `${number}`;
       };
       liquidity: {
-        aggregatedVaultFees: string;
+        aggregatedVaultFees: `${number}`;
       };
     };
 

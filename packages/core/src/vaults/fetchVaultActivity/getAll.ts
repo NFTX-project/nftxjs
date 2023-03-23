@@ -1,5 +1,6 @@
 import config from '@nftx/config';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
+import type { Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { createMintsQuery, Mint, processMints } from './mints';
 import { createRedeemsQuery, processRedeems, Redeem } from './redeems';
@@ -12,7 +13,7 @@ export const getAll = async ({
   network,
 }: {
   network: number;
-  vaultAddresses?: string[];
+  vaultAddresses?: Address[];
   fromTimestamp?: number;
   toTimestamp?: number;
 }) => {
@@ -37,24 +38,24 @@ export const getAll = async ({
     query,
   });
 
-  const mints = await processMints(
+  const mints = await processMints({
     response,
     network,
     vaultAddresses,
-    toTimestamp
-  );
-  const redeems = await processRedeems(
+    toTimestamp,
+  });
+  const redeems = await processRedeems({
     response,
     network,
     vaultAddresses,
-    toTimestamp
-  );
-  const swaps = await processSwaps(
+    toTimestamp,
+  });
+  const swaps = await processSwaps({
     response,
     network,
     vaultAddresses,
-    toTimestamp
-  );
+    toTimestamp,
+  });
   const activity = [...mints, ...redeems, ...swaps].sort(
     (a, b) => a.date - b.date
   );

@@ -1,12 +1,12 @@
-import type { BigNumber } from '@ethersproject/bignumber';
+import type { Address } from '@nftx/types';
 
 export type CumulativeFee = {
   vaultId: string;
-  vaultAddress: string;
+  vaultAddress: Address;
   txnId: string;
   symbol: string;
   timestamp: number;
   type: string;
-  amount: BigNumber;
-  toDate: BigNumber;
+  amount: bigint;
+  toDate: bigint;
 };

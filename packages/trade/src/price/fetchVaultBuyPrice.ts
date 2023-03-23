@@ -1,8 +1,7 @@
-import { WeiPerEther, Zero } from '@ethersproject/constants';
-import type { Provider } from '@ethersproject/providers';
-import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
-import type { Price, Vault } from '@nftx/types';
+import { WeiPerEther } from '@nftx/constants';
+import type { Price, Provider, Vault } from '@nftx/types';
+import { parseEther } from 'viem';
 import calculateBuyFee from './calculateBuyFee';
 import fetchBuyPrice from './fetchBuyPrice';
 
@@ -40,13 +39,13 @@ const fetchVaultBuyPrice = async (args: {
 
   if (targetBuys || randomBuys) {
     if (targetBuys) {
-      amount = amount.add(parseEther(`${targetBuys}`));
+      amount = amount + parseEther(`${targetBuys}`);
     }
     if (randomBuys) {
-      amount = amount.add(parseEther(`${randomBuys}`));
+      amount = amount + parseEther(`${randomBuys}`);
     }
   } else {
-    amount = amount.add(WeiPerEther);
+    amount = amount + WeiPerEther;
   }
 
   return fetchBuyPrice({

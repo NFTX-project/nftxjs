@@ -1,4 +1,4 @@
-import type { BigNumber } from '@ethersproject/bignumber';
+import type { Address } from './web3';
 
 // export type NftxTokenType = 'xTokenWETH' | 'xToken' | 'vToken' | 'vTokenWETH';
 export enum NftxTokenType {
@@ -16,9 +16,9 @@ export enum NftxTokenType {
  * This could be
  */
 export type UserVaultBalance = {
-  balance: BigNumber;
+  balance: bigint;
   symbol: string;
-  address: string;
+  address: Address;
   name: string;
   type: NftxTokenType;
   vaultId: string;

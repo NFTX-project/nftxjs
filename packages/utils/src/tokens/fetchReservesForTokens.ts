@@ -1,31 +1,25 @@
-import { parseEther } from '@ethersproject/units';
-import { WETH_TOKEN } from '@nftx/constants';
+import { WeiPerEther, WETH_TOKEN, Zero } from '@nftx/constants';
 import { addressEqual, getChainConstant } from '../web3';
 import { gql, querySubgraph } from '@nftx/subgraph';
-import type { BigNumber } from '@ethersproject/bignumber';
-import { WeiPerEther, Zero } from '@ethersproject/constants';
 import { compareByAlpha, toLowerCase } from '../utils';
 import config from '@nftx/config';
-import type { TokenReserve } from '@nftx/types';
+import type { Address, BigIntString, TokenReserve } from '@nftx/types';
+import { parseEther } from 'viem';
 
-function midQuote(
-  amountA: BigNumber,
-  reserveA: BigNumber,
-  reserveB: BigNumber
-) {
-  if (!amountA.gt(0)) {
+function midQuote(amountA: bigint, reserveA: bigint, reserveB: bigint) {
+  if (amountA <= Zero) {
     return Zero;
   }
-  if (!reserveA.gt(0) || !reserveB.gt(0)) {
+  if (reserveA <= Zero || reserveB <= Zero) {
     return Zero;
   }
 
-  const amountB = amountA.mul(reserveB).div(reserveA);
+  const amountB = (amountA * reserveB) / reserveA;
 
   return amountB;
 }
 
-const calcMidPrice = (reserveVtoken: BigNumber, reserveWeth: BigNumber) => {
+const calcMidPrice = (reserveVtoken: bigint, reserveWeth: bigint) => {
   if (reserveVtoken && reserveWeth) {
     return midQuote(WeiPerEther, reserveVtoken, reserveWeth);
   }
@@ -40,24 +34,24 @@ type TokenPair = {
   derivedETH: string;
   basePairs: {
     id: string;
-    reserve0: string;
-    reserve1: string;
+    reserve0: BigIntString;
+    reserve1: BigIntString;
     token0: {
-      id: string;
+      id: Address;
     };
     token1: {
-      id: string;
+      id: Address;
     };
   }[];
   quotePairs: {
     id: string;
-    reserve0: string;
-    reserve1: string;
+    reserve0: BigIntString;
+    reserve1: BigIntString;
     token0: {
-      id: string;
+      id: Address;
     };
     token1: {
-      id: string;
+      id: Address;
     };
   }[];
 };
@@ -76,12 +70,16 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
     );
 
     if (wethPair) {
-      const reserveVtoken = parseEther(wethPair.reserve0 || '0');
-      const reserveWeth = parseEther(wethPair.reserve1 || '0');
+      const reserveVtoken = parseEther(
+        (wethPair.reserve0 as BigIntString) || '0'
+      );
+      const reserveWeth = parseEther(
+        (wethPair.reserve1 as BigIntString) || '0'
+      );
       const midPrice = calcMidPrice(reserveVtoken, reserveWeth);
 
       return {
-        tokenId: token.id,
+        tokenId: token.id as Address,
         derivedEth: token.derivedETH || '0',
         reserveVtoken,
         reserveWeth,
@@ -103,7 +101,7 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
       const midPrice = calcMidPrice(reserveVtoken, reserveWeth);
 
       return {
-        tokenId: token.id,
+        tokenId: token.id as Address,
         derivedEth: token.derivedETH || '0',
         reserveVtoken,
         reserveWeth,
@@ -113,10 +111,10 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
   }
 
   return {
-    tokenId: token?.id,
+    tokenId: token?.id as Address,
     derivedEth: token?.derivedETH,
-    reserveVtoken: null,
-    reserveWeth: null,
+    reserveVtoken: null as any,
+    reserveWeth: null as any,
     midPrice: Zero,
   };
 }
@@ -128,7 +126,7 @@ function formatTokenReserves(token: TokenPair, network: number): TokenReserve {
  */
 const fetchReservesForTokens = async (args: {
   network?: number;
-  tokenAddresses?: string[];
+  tokenAddresses?: Address[];
 }) => {
   const { network = config.network, tokenAddresses } = args;
   const query = gql<Response>`{
@@ -168,7 +166,7 @@ const fetchReservesForTokens = async (args: {
     url: getChainConstant(config.subgraph.SUSHI_SUBGRAPH, network),
     query,
     variables: {
-      tokenAddresses: tokenAddresses
+      tokenAddresses: (tokenAddresses ?? [])
         .map(toLowerCase)
         .sort((a, b) => compareByAlpha(a, b)),
     },

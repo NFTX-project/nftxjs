@@ -1,8 +1,9 @@
 import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
+import type { Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
-type Account = { id: string };
+type Account = { id: Address };
 type Balance = {
   id: string;
   account: Account;
@@ -15,7 +16,7 @@ type Response = {
   erc20Contract: Erc20Contract;
 };
 type Args = {
-  id: string;
+  id: Address;
   lastId: string;
 };
 
@@ -24,7 +25,7 @@ const fetchContractBalances = async ({
   lastId = '0',
   network = config.network,
 }: {
-  id: string;
+  id: Address;
   lastId?: string;
   retryCount?: number;
   network?: number;

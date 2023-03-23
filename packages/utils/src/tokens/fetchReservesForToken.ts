@@ -1,3 +1,4 @@
+import type { Address } from '@nftx/types';
 import fetchReservesForTokens from './fetchReservesForTokens';
 
 /**
@@ -10,7 +11,7 @@ const fetchReservesForToken = async ({
   tokenAddress,
 }: {
   network: number;
-  tokenAddress: string;
+  tokenAddress: Address;
 }) => {
   const results = await fetchReservesForTokens({
     network,

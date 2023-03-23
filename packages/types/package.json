@@ -24,10 +24,8 @@
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
-  "peerDependencies": {
-    "@ethersproject/bignumber": "^5.6.0"
-  },
-  "devDependencies": {
-    "@ethersproject/bignumber": "^5.6.0"
+  "dependencies": {
+    "abitype": "^0.7.1",
+    "viem": "0.1.19"
   }
 }

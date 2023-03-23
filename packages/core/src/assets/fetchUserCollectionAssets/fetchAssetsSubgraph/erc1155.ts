@@ -1,23 +1,22 @@
-import { BigNumber } from '@ethersproject/bignumber';
-import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
+import { parseEther } from 'viem';
 import { processAssetItems } from '../utils';
 
 const LIMIT = 1000;
 
 type Response = {
   account: {
-    id: string;
+    id: Address;
     balances: Array<{
-      id: string;
-      contract: { id: string };
+      id: Address;
+      contract: { id: Address };
       token: {
-        identifier: string;
+        identifier: `${number}`;
       };
-      value: string;
+      value: `${number}`;
     }>;
   };
 };
@@ -34,8 +33,8 @@ const erc1155 = async ({
   assetAddresses: string[];
   lastId?: string;
   retryCount?: number;
-}): Promise<{ assets: Asset[]; nextId: string }> => {
-  let nextId: string;
+}): Promise<{ assets: Asset[]; nextId?: string }> => {
+  let nextId: string | undefined;
 
   if (!assetAddresses.length) {
     return { assets: [], nextId };
@@ -90,9 +89,9 @@ const erc1155 = async ({
     items:
       data?.account?.balances?.map((x) => {
         const assetAddress = x.contract.id;
-        const tokenId = BigNumber.from(x.token.identifier).toString();
+        const tokenId = BigInt(x.token.identifier).toString() as `${number}`;
         const quantity =
-          Number(x.value) < 1 ? parseEther(x.value) : BigNumber.from(x.value);
+          Number(x.value) < 1 ? parseEther(x.value) : BigInt(x.value);
 
         return { assetAddress, tokenId, quantity };
       }) ?? [],

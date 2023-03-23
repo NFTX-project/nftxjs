@@ -7,6 +7,8 @@ export const reduceObj = <T extends Record<string, any>>(
   ) => Array<[string, any]>
 ): any => {
   return Object.fromEntries(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     Object.entries(obj).reduce((acc, [key, value]) => {
       return fn(acc, key, value);
     }, [])

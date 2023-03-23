@@ -1,8 +1,7 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import { Zero } from '@ethersproject/constants';
 import config from '@nftx/config';
-import { NFTX_FEE_TRACKER_SUBGRAPH } from '@nftx/constants';
+import { NFTX_FEE_TRACKER_SUBGRAPH, Zero } from '@nftx/constants';
 import { gql, type querySubgraph } from '@nftx/subgraph';
+import type { Address } from '@nftx/types';
 import { fetchBlockNumberByTimestamp, getChainConstant } from '@nftx/utils';
 import {
   createHexVaultId,
@@ -17,22 +16,22 @@ type FetchBlockNumberByTimestamp = typeof fetchBlockNumberByTimestamp;
 type Response = {
   userVaultFeeAggregates: Array<{
     vault: {
-      id: string;
+      id: Address;
       vaultId: string;
     };
-    aggregatedVaultFees: string;
+    aggregatedVaultFees: `${number}`;
   }>;
   user: {
     earnings: Array<{
       vault: {
-        id: string;
+        id: Address;
         vaultId: string;
         ticker: string;
-        address: string;
+        address: Address;
       };
       action: { id: string; label: string };
       timestamp: string;
-      amount: string;
+      amount: `${number}`;
     }>;
   };
 };
@@ -40,11 +39,11 @@ type Response = {
 type GroupedFees = Record<
   string,
   {
-    id: string;
+    id: Address;
     vaultId: string;
     ticker: string;
-    initial: BigNumber;
-    toDate: BigNumber;
+    initial: bigint;
+    toDate: bigint;
     earnings: Record<
       string,
       Record<
@@ -53,8 +52,8 @@ type GroupedFees = Record<
           txnId: string;
           type: string;
           timestamp: number;
-          amount: BigNumber;
-          toDate: BigNumber;
+          amount: bigint;
+          toDate: bigint;
         }
       >
     >;
@@ -67,7 +66,7 @@ const createQuery = () => {
     ids: string[];
     vaultHexIds: string[];
     timestampFrom: number;
-    userAddress: string;
+    userAddress: Address;
   };
 
   return gql<Response, Variables>`
@@ -156,9 +155,9 @@ const groupFeesByVaultTimeType = (
       };
     }
 
-    earning.amount = earning.amount.add(amount);
-    earning.toDate = earning.toDate.add(amount);
-    vaultGroup.toDate = vaultGroup.toDate.add(amount);
+    earning.amount = earning.amount + amount;
+    earning.toDate = earning.toDate + amount;
+    vaultGroup.toDate = vaultGroup.toDate + amount;
   });
 
   return groups;
@@ -203,7 +202,7 @@ export default ({
   }: {
     network?: number;
     timestampFrom: number;
-    userAddress: string;
+    userAddress: Address;
     vaultIds: string[];
   }) {
     const blockFrom = await fetchBlockNumberByTimestamp({

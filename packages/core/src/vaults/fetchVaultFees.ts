@@ -2,7 +2,7 @@ import { compareByAlpha, toLowerCase } from '../utils';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './fetchVaultActivity/common';
 import config from '@nftx/config';
-import type { VaultFeeReceipt } from '@nftx/types';
+import type { Address, VaultFeeReceipt } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
 const fetchSingleVaultFees = async ({
@@ -11,7 +11,7 @@ const fetchSingleVaultFees = async ({
   network,
   retryCount = 0,
 }: {
-  vaultAddress: string;
+  vaultAddress: Address;
   fromTimestamp: number;
   network: number;
   retryCount?: number;
@@ -20,8 +20,8 @@ const fetchSingleVaultFees = async ({
     vault: {
       vaultId: string;
       feeReceipts: Array<{
-        transfers: Array<{ amount: string; to: string }>;
-        date: string;
+        transfers: Array<{ amount: `${number}`; to: Address }>;
+        date: `${number}`;
       }>;
     };
   }>`
@@ -88,21 +88,21 @@ const fetchMultiVaultFees = async ({
   retryCount = 0,
 }: {
   network: number;
-  vaultAddresses: string[];
+  vaultAddresses: Address[];
   fromTimestamp: number;
   lastId?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]> => {
   type Response = {
     vaults: Array<{
-      id: string;
+      id: Address;
       vaultId: string;
       feeReceipts: Array<{
         transfers: Array<{
-          amount: string;
-          to: string;
+          amount: `${number}`;
+          to: Address;
         }>;
-        date: string;
+        date: `${number}`;
       }>;
     }>;
   };
@@ -178,13 +178,13 @@ const fetchMultiVaultFees = async ({
 
 function fetchVaultFees(args: {
   network?: number;
-  vaultAddress: string;
+  vaultAddress: Address;
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
 function fetchVaultFees(args: {
   network?: number;
-  vaultAddresses: string[];
+  vaultAddresses: Address[];
   fromTimestamp?: number;
   retryCount?: number;
 }): Promise<VaultFeeReceipt[]>;
@@ -192,16 +192,16 @@ async function fetchVaultFees({
   network = config.network,
   vaultAddress,
   vaultAddresses,
-  fromTimestamp = 0,
+  fromTimestamp,
 }: {
   network?: number;
-  vaultAddress?: string;
-  vaultAddresses?: string[];
+  vaultAddress?: Address;
+  vaultAddresses?: Address[];
   fromTimestamp?: number;
 }) {
-  const roundedTimestamp = fromTimestamp
-    ? Math.floor(Math.round(fromTimestamp / 3600) * 3600)
-    : undefined;
+  const roundedTimestamp = Math.floor(
+    Math.round((fromTimestamp ?? 0) / 3600) * 3600
+  );
 
   if (vaultAddress) {
     return fetchSingleVaultFees({
@@ -217,7 +217,7 @@ async function fetchVaultFees({
       network,
     });
   }
-  if (vaultAddresses?.length > 1) {
+  if (vaultAddresses && vaultAddresses.length > 1) {
     return fetchMultiVaultFees({
       vaultAddresses,
       fromTimestamp: roundedTimestamp,

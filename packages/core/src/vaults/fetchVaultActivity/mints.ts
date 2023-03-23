@@ -1,32 +1,31 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import { NFTX_MARKETPLACE_0X_ZAP, NFTX_STAKING_ZAP } from '@nftx/constants';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './common';
 import config from '@nftx/config';
-import type { VaultActivity } from '@nftx/types';
+import type { Address, TokenId, VaultActivity } from '@nftx/types';
 import { addressEqual, getChainConstant } from '@nftx/utils';
 
 export type Mint = {
-  id: string;
+  id: Address;
   zapAction: {
     ethAmount: string;
     id: string;
   };
   vault: {
-    id: string;
+    id: Address;
     vaultId: string;
     token: { symbol: string };
-    asset: { id: string };
-    inventoryStakingPool: { id: string };
+    asset: { id: Address };
+    inventoryStakingPool: { id: Address };
   };
   source: string;
-  user: { id: string };
-  date: string;
-  nftIds: string[];
-  amounts: string[];
+  user: { id: Address };
+  date: `${number}`;
+  nftIds: TokenId[];
+  amounts: `${number}`[];
   feeReceipt: {
-    transfers: Array<{ amount: string; to: string }>;
-    date: string;
+    transfers: Array<{ amount: `${number}`; to: Address }>;
+    date: `${number}`;
   };
 };
 
@@ -100,12 +99,17 @@ const isStakeOrMint = (
   return ['mint', undefined];
 };
 
-export const processMints = async (
-  response: { mints: Mint[] },
-  network: number,
-  vaultAddresses: string[],
-  toTimestamp: number
-) => {
+export const processMints = async ({
+  network,
+  response,
+  toTimestamp,
+  vaultAddresses,
+}: {
+  response: { mints: Mint[] };
+  network: number;
+  vaultAddresses?: Address[];
+  toTimestamp?: number;
+}) => {
   let mints = response.mints.flatMap((mint): VaultActivity[] => {
     const receipt = transformFeeReceipt(
       mint.feeReceipt,
@@ -121,10 +125,10 @@ export const processMints = async (
         date: Number(mint.date),
         tokenId: nftId,
         source: mint.source,
-        txId: mint.id.split('-')[1] ?? mint.id,
+        txId: (mint.id.split('-')[1] ?? mint.id) as Address,
         amount: Number(mint.amounts[i]),
-        ethAmount: BigNumber.from(mint?.zapAction?.ethAmount ?? 0),
-        feeAmount: receipt.amount.div(mint.nftIds.length),
+        ethAmount: BigInt(mint?.zapAction?.ethAmount ?? '0'),
+        feeAmount: receipt.amount / BigInt(mint.nftIds.length),
         type,
         stakeType,
       };
@@ -154,8 +158,8 @@ export const getMints = async ({
 }: {
   network: number;
   fromTimestamp: number;
-  toTimestamp: number;
-  vaultAddresses: string[];
+  toTimestamp?: number;
+  vaultAddresses?: Address[];
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
@@ -170,12 +174,12 @@ export const getMints = async ({
     query,
   });
 
-  const mints = await processMints(
+  const mints = await processMints({
     response,
     network,
     vaultAddresses,
-    toTimestamp
-  );
+    toTimestamp,
+  });
 
   return mints;
 };

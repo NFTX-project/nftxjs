@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Pool } from '@nftx/types';
+import type { Address, Pool } from '@nftx/types';
 import { queryApi } from '../utils';
 
 /** Get all pools that match the given criteria. If no arguments are given, it will return all pools */
@@ -18,9 +18,9 @@ const fetchPools = ({
   /** Get pools that match the given liquidity pool addresses */
   liquidityPoolIds?: string[];
   /** Get a pool that matches the given vault address */
-  vaultAddress?: string;
+  vaultAddress?: Address;
   /** Get pools that match the given vault addresses */
-  vaultAddresses?: string[];
+  vaultAddresses?: Address[];
   /** Get a pool for a specific vault id */
   vaultId?: string;
   /** Get pools that match the given vault ids */

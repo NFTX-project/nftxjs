@@ -1,12 +1,11 @@
-import { WeiPerEther, Zero } from '@ethersproject/constants';
-import type { Provider } from '@ethersproject/providers';
-import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
-import type { Price } from '@nftx/types';
+import { WeiPerEther, Zero } from '@nftx/constants';
+import type { Address, Price, Provider } from '@nftx/types';
 import { fetchReservesForToken } from '@nftx/utils';
-import { BigNumber } from 'ethers';
+import { parseEther } from 'viem';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0xPrice';
+import type { QuoteToken } from './types';
 
 const fetchSpotPriceFromApi = async ({
   network,
@@ -15,8 +14,8 @@ const fetchSpotPriceFromApi = async ({
   critical,
 }: {
   network: number;
-  tokenAddress: string;
-  quote: 'ETH';
+  tokenAddress: Address;
+  quote: QuoteToken;
   critical: boolean;
 }) => {
   const {
@@ -32,13 +31,11 @@ const fetchSpotPriceFromApi = async ({
     critical,
   });
 
-  const spotPrice = WeiPerEther.mul(WeiPerEther).div(
-    parseEther(buyTokenToEthRate)
-  );
+  const spotPrice = (WeiPerEther * WeiPerEther) / parseEther(buyTokenToEthRate);
 
   const price: Price = {
-    estimatedGas: BigNumber.from(estimatedGas),
-    gasPrice: BigNumber.from(gasPrice),
+    estimatedGas: BigInt(estimatedGas),
+    gasPrice: BigInt(gasPrice),
     price: spotPrice,
     sources,
     priceImpact: Number(estimatedPriceImpact) / 100,
@@ -52,8 +49,8 @@ const fetchSpotPriceFromSubgraph = async ({
 }: {
   network: number;
   provider: Provider;
-  tokenAddress: string;
-  quote: 'ETH';
+  tokenAddress: Address;
+  quote: QuoteToken;
 }) => {
   const reserves = await fetchReservesForToken({ network, tokenAddress });
 
@@ -71,8 +68,8 @@ const fetchSpotPriceFromSubgraph = async ({
 const fetchSpotPrice = (args: {
   network?: number;
   provider: Provider;
-  tokenAddress: string;
-  quote?: 'ETH';
+  tokenAddress: Address;
+  quote?: QuoteToken;
   critical?: boolean;
 }) => {
   const {
@@ -80,7 +77,7 @@ const fetchSpotPrice = (args: {
     provider,
     tokenAddress,
     quote = 'ETH',
-    critical,
+    critical = false,
   } = args;
 
   const apiSupported = doesNetworkSupport0x(network);

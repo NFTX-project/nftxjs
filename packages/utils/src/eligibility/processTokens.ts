@@ -1,10 +1,7 @@
-import abi from '@nftx/constants/abis/NFTXENSMerkleEligibility.json';
-import type { Provider } from '@ethersproject/providers';
-import config from '@nftx/config';
-import { getContract } from '../web3';
+import { NFTXENSMerkleEligibility } from '@nftx/abi';
 import type fetchMerkleLeaves from './fetchMerkleLeaves';
-import type { Signer } from 'ethers';
-import type { Vault } from '@nftx/types';
+import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
+import getContract from '../web3/getContract';
 
 type FetchMerkleLeaves = ReturnType<typeof fetchMerkleLeaves>;
 
@@ -19,7 +16,6 @@ export default ({
    * Do not call this method on a vault that doesn't implement a merkle module
    */
   async function processTokens(args: {
-    network?: number;
     provider: Provider;
     signer: Signer;
     vault: {
@@ -28,32 +24,19 @@ export default ({
         'id' | 'merkleReference'
       >;
     };
-    tokenIds: string[];
+    tokenIds: TokenId[];
     /** Merkle eligibility leaves. If this parameter is omitted, they will be fetched as part of this method */
     leaves?: string[];
   }) {
-    const {
-      network = config.network,
-      provider,
-      signer,
-      vault,
-      tokenIds,
-    } = args;
+    const { provider, signer, vault, tokenIds } = args;
     let { leaves } = args;
     if (!vault?.eligibilityModule?.merkleReference) {
       throw new Error('Not a valid eligibility module');
     }
 
     if (!leaves) {
-      leaves = await fetchMerkleLeaves({ provider, vault, network });
+      leaves = await fetchMerkleLeaves({ provider, vault });
     }
-
-    const contract = getContract({
-      network,
-      signer,
-      abi,
-      address: vault.eligibilityModule.id,
-    });
 
     const { default: keccak256 } = await import('keccak256');
     const { default: MerkleTree } = await import('merkletreejs');
@@ -66,7 +49,15 @@ export default ({
 
     const proofs = tokenIds.map((tokenId) => {
       return tree.getHexProof(keccak256(tokenId));
-    });
+    }) as readonly Address[][];
 
-    return contract.processTokens(tokenIds, proofs);
+    const contract = getContract({
+      abi: NFTXENSMerkleEligibility,
+      address: vault.eligibilityModule.id,
+      provider,
+      signer,
+    });
+    return contract.write.processTokens({
+      args: [tokenIds.map(BigInt), proofs],
+    });
   };

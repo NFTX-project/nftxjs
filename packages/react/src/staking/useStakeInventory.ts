@@ -6,6 +6,7 @@ import useTransaction from '../useTransaction';
 const useStakeInventory = (opts?: UseTransactionOptions) => {
   const {
     network,
+    provider,
     signer,
     core: { stakeInventory, invalidateVault },
   } = useNftx();
@@ -13,7 +14,7 @@ const useStakeInventory = (opts?: UseTransactionOptions) => {
   type Args = TxnArgsOnly<typeof stakeInventory>;
 
   return useTransaction(
-    (args: Args) => stakeInventory({ network, signer, ...args }),
+    (args: Args) => stakeInventory({ network, provider, signer, ...args }),
     {
       description: 'Stake Inventory',
       ...opts,

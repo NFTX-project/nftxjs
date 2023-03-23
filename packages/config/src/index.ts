@@ -96,7 +96,7 @@ const defaultConfig: Config = {
   },
 
   keys: {
-    NFTX_API: null,
+    NFTX_API: null as unknown as string,
     ALCHEMY: {},
   },
 };
@@ -129,6 +129,8 @@ const config: Config & {
   configure(opts: DeepPartial<Config>) {
     const merged = merge(config, opts, { arrayMerge: (_, arr) => arr });
     Object.entries(merged).forEach(([key, value]) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       config[key] = value;
     });
   },

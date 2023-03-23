@@ -1,4 +1,4 @@
-import type { Asset } from '@nftx/types';
+import type { Address, Asset } from '@nftx/types';
 import { createCursor, parseCursor } from './cursor';
 import erc1155 from './erc1155';
 import erc721 from './erc721';
@@ -11,10 +11,10 @@ const fetchAssetsSubgraph = async ({
   userAddress,
 }: {
   cursor?: string;
-  assetAddresses: string[];
+  assetAddresses: Address[];
   network: number;
-  userAddress: string;
-}): Promise<{ cursor: string; assets: Asset[] }> => {
+  userAddress: Address;
+}): Promise<{ cursor?: string; assets: Asset[] }> => {
   let { next1155Id, next721Id, nextNonStandardId } = parseCursor(cursor);
 
   const allAssets: Asset[] = [];

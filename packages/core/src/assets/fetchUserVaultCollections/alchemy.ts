@@ -1,4 +1,4 @@
-import type { Vault } from '@nftx/types';
+import type { Address, Vault } from '@nftx/types';
 import { addressEqual, isCryptoKitty } from '@nftx/utils';
 import fetchUserCollections from '../fetchUserCollections';
 
@@ -8,7 +8,7 @@ const fetchUserVaultCollectionsAlchemy = async ({
   vaults,
 }: {
   network: number;
-  userAddress: string;
+  userAddress: Address;
   vaults: Pick<Vault, 'asset' | 'vaultId'>[];
 }) => {
   const contracts = await fetchUserCollections({ network, userAddress });

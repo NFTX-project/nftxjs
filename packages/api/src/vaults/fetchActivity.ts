@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { VaultActivity } from '@nftx/types';
+import type { Address, VaultActivity } from '@nftx/types';
 import { queryApi } from '../utils';
 
 /** Get recent vault activity across all vaults */
@@ -14,12 +14,12 @@ const fetchActivity = ({
   network?: number;
   /** Timestamp (in seconds). The given timestamp will be rounded to the nearest hour */
   fromTimestamp?: number;
-  vaultAddress?: string;
-  vaultAddresses?: string[];
+  vaultAddress?: Address;
+  vaultAddresses?: Address[];
   vaultId?: string;
   vaultIds?: string[];
 }) => {
-  if (fromTimestamp) {
+  if (fromTimestamp != null) {
     // Round timestamps to the nearest 60m
     fromTimestamp = Math.floor(Math.round(fromTimestamp / 3600) * 3600);
   }

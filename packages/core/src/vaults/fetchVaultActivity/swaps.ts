@@ -1,33 +1,32 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import type { VaultActivity } from '@nftx/types';
+import type { Address, TokenId, VaultActivity } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { transformFeeReceipt } from './common';
 
 export type Swap = {
-  id: string;
+  id: Address;
   zapAction: {
     ethAmount: string;
     id: string;
   };
   vault: {
-    id: string;
+    id: Address;
     vaultId: string;
     token: { symbol: string };
-    asset: { id: string };
-    inventoryStakingPool: { id: string };
+    asset: { id: Address };
+    inventoryStakingPool: { id: Address };
   };
-  date: string;
+  date: `${number}`;
   source: string;
-  mintedIds: string[];
-  redeemedIds: string[];
-  specificIds: string[];
-  randomCount: string;
-  targetCount: string;
+  mintedIds: TokenId[];
+  redeemedIds: TokenId[];
+  specificIds: TokenId[];
+  randomCount: `${number}`;
+  targetCount: `${number}`;
   feeReceipt: {
-    transfers: Array<{ amount: string; to: string }>;
-    date: string;
+    transfers: Array<{ amount: `${number}`; to: Address }>;
+    date: `${number}`;
   };
 };
 
@@ -73,12 +72,17 @@ export const createSwapsQuery = (where: string) => {
   }`;
 };
 
-export const processSwaps = async (
-  response: { swaps: Swap[] },
-  network: number,
-  vaultAddresses: string[],
-  toTimestamp: number
-) => {
+export const processSwaps = async ({
+  network,
+  response,
+  toTimestamp,
+  vaultAddresses,
+}: {
+  response: { swaps: Swap[] };
+  network: number;
+  vaultAddresses?: Address[];
+  toTimestamp?: number;
+}) => {
   let swaps = response.swaps.flatMap((swap): VaultActivity[] => {
     const receipt = transformFeeReceipt(
       swap.feeReceipt,
@@ -94,10 +98,10 @@ export const processSwaps = async (
         tokenId: nftId,
         source: swap.source,
         swapTokenId: swap.mintedIds[i],
-        txId: swap.id.split('-')[1] ?? swap.id,
+        txId: (swap.id.split('-')[1] ?? swap.id) as Address,
         amount: 1,
-        ethAmount: BigNumber.from(swap?.zapAction?.ethAmount ?? 0),
-        feeAmount: receipt.amount.div(swap.redeemedIds.length),
+        ethAmount: BigInt(swap?.zapAction?.ethAmount ?? '0'),
+        feeAmount: receipt.amount / BigInt(swap.redeemedIds.length),
         type: 'swap',
       };
     });
@@ -126,8 +130,8 @@ export const getSwaps = async ({
 }: {
   network: number;
   fromTimestamp: number;
-  toTimestamp: number;
-  vaultAddresses: string[];
+  toTimestamp?: number;
+  vaultAddresses?: Address[];
 }) => {
   const where = buildWhere({
     date_gt: fromTimestamp,
@@ -142,12 +146,12 @@ export const getSwaps = async ({
     query,
   });
 
-  const swaps = await processSwaps(
+  const swaps = await processSwaps({
     response,
     network,
     vaultAddresses,
-    toTimestamp
-  );
+    toTimestamp,
+  });
 
   return swaps;
 };

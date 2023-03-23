@@ -1,10 +1,7 @@
-import type { BigNumber } from '@ethersproject/bignumber';
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import type { fetchLiquidityPools, LiquidityPool } from '../pools';
 import { fetchVaultFees, fetchVaults } from '../vaults';
 import type fetchPosition from './fetchPosition';
-import { Zero } from '@ethersproject/constants';
 import {
   addressEqual,
   fetchReservesForTokens,
@@ -12,12 +9,15 @@ import {
   fetchXTokenShares,
 } from '@nftx/utils';
 import type {
+  Address,
+  Provider,
   TokenReserve,
   UserVaultBalance,
   Vault,
   VaultFeeReceipt,
 } from '@nftx/types';
 import type fetchVaultAprs from '../vaults/fetchVaultAprs';
+import { Zero } from '@nftx/constants';
 
 type FetchPools = typeof fetchLiquidityPools;
 type FetchReservesForTokens = typeof fetchReservesForTokens;
@@ -52,12 +52,12 @@ export default ({
     minimumBalance = Zero,
     ...args
   }: {
-    userAddress: string;
+    userAddress: Address;
     network?: number;
     provider: Provider;
     vaults?: Vault[];
     aprs?: {
-      vaultAddress: string;
+      vaultAddress: Address;
       liquidityApr: string;
       inventoryApr: string;
     }[];
@@ -67,9 +67,9 @@ export default ({
       xSlp: UserVaultBalance[];
       xTokens: UserVaultBalance[];
     };
-    xTokenShares?: { share: BigNumber; vaultId: string }[];
+    xTokenShares?: { share: bigint; vaultId: string }[];
     feeReceipts?: VaultFeeReceipt[];
-    minimumBalance?: BigNumber;
+    minimumBalance?: bigint;
   }) {
     const allVaults = args.vaults ?? (await fetchVaults({ network, provider }));
     const balances =
@@ -77,7 +77,7 @@ export default ({
     const userVaultIds = [
       ...new Set(
         [...balances.xTokens, ...balances.xSlp]
-          .filter(({ balance }) => balance.gte(minimumBalance))
+          .filter(({ balance }) => balance >= minimumBalance)
           .map(({ vaultId }) => vaultId)
       ),
     ];

@@ -1,9 +1,8 @@
-import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
 import { NFTX_STAKING_ZAP } from '@nftx/constants';
-import abi from '@nftx/constants/abis/NFTXStakingZap.json';
+import { NFTXStakingZap } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
-import type { BigNumber } from '@ethersproject/bignumber';
+import type { Provider } from '@nftx/types';
 
 /** Returns the standard time that a position is locked in when you stake inventory or liquidity */
 const fetchLockTime = async ({
@@ -14,10 +13,10 @@ const fetchLockTime = async ({
   provider: Provider;
 }) => {
   const address = getChainConstant(NFTX_STAKING_ZAP, network);
-  const contract = getContract({ abi, address, network, provider });
+  const contract = getContract({ abi: NFTXStakingZap, address, provider });
 
-  const ipLockTime: BigNumber = await contract.inventoryLockTime();
-  const lpLockTime: BigNumber = await contract.lpLockTime();
+  const ipLockTime = await contract.read.inventoryLockTime({});
+  const lpLockTime = await contract.read.lpLockTime({});
 
   const inventoryLockTime = Number(ipLockTime);
   const liquidityLockTime = Number(lpLockTime);

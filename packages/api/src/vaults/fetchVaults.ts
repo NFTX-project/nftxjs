@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Vault } from '@nftx/types';
+import type { Address, Vault } from '@nftx/types';
 import { queryApi } from '../utils';
 
 const fetchVaults = ({
@@ -16,9 +16,9 @@ const fetchVaults = ({
   network?: number;
   vaultId?: string;
   vaultIds?: string[];
-  vaultAddress?: string;
-  vaultAddresses?: string[];
-  manager?: string;
+  vaultAddress?: Address;
+  vaultAddresses?: Address[];
+  manager?: Address;
   includeEmptyVaults?: boolean;
   finalisedOnly?: boolean;
   enabledOnly?: boolean;

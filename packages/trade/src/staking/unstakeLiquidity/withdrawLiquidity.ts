@@ -1,29 +1,30 @@
-import type { BigNumber } from '@ethersproject/bignumber';
 import { NFTX_LP_STAKING } from '@nftx/constants';
-import abi from '@nftx/constants/abis/NFTXLpStaking.json';
+import { NFTXLpStaking } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
-import type { Signer } from 'ethers';
+import type { Provider, Signer } from '@nftx/types';
 
 type GetContract = typeof getContract;
 
 export default ({ getContract }: { getContract: GetContract }) =>
   function withdrawLiquidity({
     network,
+    provider,
     signer,
     vaultId,
     slpAmount,
   }: {
     network: number;
+    provider: Provider;
     signer: Signer;
     vaultId: string;
-    slpAmount: BigNumber;
+    slpAmount: bigint;
   }) {
     const contract = getContract({
-      network,
+      provider,
       signer,
-      abi,
+      abi: NFTXLpStaking,
       address: getChainConstant(NFTX_LP_STAKING, network),
     });
 
-    return contract.withdraw(vaultId, slpAmount);
+    return contract.write.withdraw({ args: [BigInt(vaultId), slpAmount] });
   };
