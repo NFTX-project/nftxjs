@@ -6,7 +6,7 @@ import {
 } from '../errors';
 import { t } from '../utils';
 import { useAddEvent } from '../contexts/events';
-import type { Transaction } from 'nftx.js';
+import { config, Transaction } from 'nftx.js';
 
 type Fn = (...args: any) => Promise<Transaction>;
 
@@ -111,6 +111,8 @@ export default function useWrapTransaction<F extends Fn>(
           transaction,
           description,
         });
+
+        config.internal.requiredBlockNumber = Number(receipt.blockNumber);
 
         return receipt;
       },

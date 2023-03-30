@@ -1,12 +1,5 @@
 import config from '@nftx/config';
-
-let cacheKey: string | null;
-
-(() => {
-  if (typeof window !== 'undefined' && window?.localStorage?.getItem) {
-    cacheKey = window.localStorage.getItem('NFTXJS_CACHE_KEY');
-  }
-})();
+import { checkApiBlock } from './nsync';
 
 const parseResponse = (str: string) => {
   return JSON.parse(str, (key, value) => {
@@ -18,14 +11,7 @@ const parseResponse = (str: string) => {
   });
 };
 
-export const bustCache = () => {
-  cacheKey = Math.floor(Math.random() * 100000).toString(16);
-  if (typeof window !== 'undefined') {
-    window.localStorage?.setItem?.('NFTXJS_CACHE_KEY', cacheKey);
-  }
-};
-
-export const queryApi = async <T>({
+const queryApi = async <T>({
   url,
   query = {},
   method = 'GET',
@@ -34,8 +20,11 @@ export const queryApi = async <T>({
   query?: Record<string, any>;
   method?: string;
 }) => {
+  checkApiBlock();
   const uri = new URL(url, config.urls.NFTX_API_URL);
+  // Tell the api to wrap all big numbers in an identifier so we can find and deserialise them
   uri.searchParams.set('ebn', 'true');
+  // Add all query params
   Object.entries(query).forEach(([key, value]) => {
     if (value == null) {
       return;
@@ -51,18 +40,29 @@ export const queryApi = async <T>({
       uri.searchParams.set(key, value);
     }
   });
+  // Append a cache-busting key to the query
+  const { cacheKey } = config.internal;
   if (cacheKey) {
     uri.searchParams.set('_c', cacheKey);
   }
+  // Set the source
+  if (config.internal.source !== 'api') {
+    uri.searchParams.set('source', config.internal.source);
+  }
+  // Add the api key header
   const headers: Record<string, string> = {};
   if (config.keys.NFTX_API) {
     headers['Authorization'] = config.keys.NFTX_API;
+  } else {
+    console.warn('No NFTX API key found');
   }
 
+  // Send the request
   const response = await fetch(uri.toString(), { method, headers });
   if (!response.ok) {
     throw new Error(`Failed to fetch ${uri}`);
   }
+  // We get the text response as we need to manually parse big numbers in the payload
   const text = await response.text();
   const contentType = response.headers.get('Content-Type');
   if (!contentType?.includes('application/json')) {
@@ -75,3 +75,5 @@ export const queryApi = async <T>({
 
   return data as T;
 };
+
+export default queryApi;

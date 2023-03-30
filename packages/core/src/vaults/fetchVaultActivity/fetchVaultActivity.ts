@@ -5,7 +5,7 @@ import type { GetAll } from './getAll';
 export default ({ getAll }: { getAll: GetAll }) =>
   function fetchVaultActivity({
     network = config.network,
-    fromTimestamp,
+    fromTimestamp = 0,
     vaultAddress,
     vaultAddresses = vaultAddress ? [vaultAddress] : undefined,
     toTimestamp,
@@ -16,9 +16,9 @@ export default ({ getAll }: { getAll: GetAll }) =>
     fromTimestamp?: number;
     toTimestamp?: number;
   }) {
-    const roundedTimestamp = fromTimestamp
-      ? Math.floor(Math.round(fromTimestamp / 3600) * 3600)
-      : undefined;
+    const roundedTimestamp = Math.floor(
+      Math.round(fromTimestamp / 3600) * 3600
+    );
     return getAll({
       network,
       vaultAddresses,
