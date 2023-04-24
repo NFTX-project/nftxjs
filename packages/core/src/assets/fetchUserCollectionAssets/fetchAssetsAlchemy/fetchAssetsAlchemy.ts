@@ -3,6 +3,7 @@ import type { Asset } from '@nftx/types';
 import { processAssetItems } from '../utils';
 import { createCursor } from './cursor';
 import getNextSet from './getNextSet';
+import { BigNumber } from '@ethersproject/bignumber';
 
 const fetchAssetsAlchemy = async ({
   assetAddresses,
@@ -29,7 +30,7 @@ const fetchAssetsAlchemy = async ({
     network,
     items: data.ownedNfts.map((x) => ({
       assetAddress: x.contract.address,
-      tokenId: parseInt(x.id.tokenId, 16).toString(),
+      tokenId: BigNumber.from(x.id.tokenId).toString(),
       quantity: parseEther(x.balance ?? '1'),
     })),
   });
