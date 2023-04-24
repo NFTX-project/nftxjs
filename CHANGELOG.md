@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.8.1](https://github.com/NFTX-project/nftxjs/compare/v0.8.0...v0.8.1) (2023-04-24)
+
+
+### Bug Fixes
+
+* **@nftx/core:** tokenId parsing was failing for ENS assets ([e679187](https://github.com/NFTX-project/nftxjs/commit/e679187ea786a3212b3b840aea87a116240a438f))
+
+
+
+
+
 # [0.8.0](https://github.com/NFTX-project/nftxjs/compare/v0.7.0...v0.8.0) (2023-02-13)
 
 
