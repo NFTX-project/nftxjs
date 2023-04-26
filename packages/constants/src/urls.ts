@@ -25,4 +25,4 @@ export const ALCHEMY_URL = {
   [Network.Arbitrum]: 'https://arb-mainnet.g.alchemy.com',
 };
 
-export const NFTX_API_URL = 'https://api-v4.nftx.xyz';
+export const NFTX_API_URL = 'https://api-v3.nftx.xyz';
