@@ -26,7 +26,7 @@ function getContract<T extends Abi>({
 }) {
   const read = new Proxy({} as Contract<T>['read'], {
     get(_target, functionName: any) {
-      return (...args: any[]) => {
+      return ({ args = [] }: { args?: any[] }) => {
         return provider.readContract({
           abi,
           address,
@@ -49,8 +49,8 @@ function getContract<T extends Abi>({
           address,
           abi,
           functionName,
-          args,
           account,
+          ...args,
         } as any);
         const hash = await signer.writeContract(request as any);
 
@@ -76,8 +76,8 @@ function getContract<T extends Abi>({
             address,
             abi,
             functionName,
-            args,
             account,
+            ...args,
           } as any);
 
           return { gasEstimate };
