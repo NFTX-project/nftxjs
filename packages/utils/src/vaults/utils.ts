@@ -44,7 +44,8 @@ export const matchVault = (
     vault.asset.name.toLowerCase().includes(s) ||
     vault.asset.symbol.toLowerCase().includes(s) ||
     addressEqual(vault.id, s) ||
-    vault.vaultId === s
+    vault.vaultId === s ||
+    addressEqual(vault.asset.id, s)
   );
 };
 
