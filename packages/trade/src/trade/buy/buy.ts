@@ -1,7 +1,6 @@
-import { NFTXMarketplace0xZap, NFTXMarketplaceZap } from '@nftx/abi';
+import { NFTXMarketplace0xZap } from '@nftx/abi';
 import {
   NFTX_MARKETPLACE_0X_ZAP,
-  NFTX_MARKETPLACE_ZAP,
   WeiPerEther,
   WETH_TOKEN,
 } from '@nftx/constants';
@@ -10,13 +9,14 @@ import { omitNil } from '../../utils';
 import config from '@nftx/config';
 import {
   doesNetworkSupport0x,
+  doesNetworkSupportNftxRouter,
   fetch0xQuote,
-  fetchVaultBuyPrice,
 } from '../../price';
 import calculateBuyFee from '../../price/calculateBuyFee';
 import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
 import { parseEther } from 'viem';
+import fetchNftxQuote from '../../price/fetchNftxQuote';
 
 type BuyVault = Pick<Vault, 'id' | 'vaultId' | 'reserveVtoken'> & {
   fees: Pick<Vault['fees'], 'randomRedeemFee' | 'targetRedeemFee'>;
@@ -26,16 +26,15 @@ type BuyVault = Pick<Vault, 'id' | 'vaultId' | 'reserveVtoken'> & {
   >;
 };
 
-const buyErc721 = async ({
+const buyNftxErc721 = async ({
   network,
-  provider,
-  signer,
-  userAddress,
-  vault,
-  vault: { id: vaultAddress, vaultId },
-  slippage,
-  randomBuys,
+  // provider,
+  // signer,
   tokenIds,
+  userAddress,
+  randomBuys,
+  vault,
+  slippage,
 }: {
   network: number;
   provider: Provider;
@@ -46,47 +45,53 @@ const buyErc721 = async ({
   randomBuys: number;
   slippage: number;
 }) => {
-  const ids = getExactTokenIds(tokenIds);
+  const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
+  const { vaultId, id: vaultAddress } = vault;
+  // const contract = getContract({
+  //   abi: NFTXMarketplace0xZap,
+  //   address,
+  //   provider,
+  //   signer,
+  // });
+
+  const specificIds = getExactTokenIds(tokenIds);
   const targetBuys = getTotalTokenIds(tokenIds);
+  const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
   const amount = targetBuys + randomBuys;
-  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
-  const contract = getContract({
-    provider,
-    signer,
-    abi: NFTXMarketplaceZap,
-    address,
+  const buyAmount = fee + WeiPerEther * BigInt(amount);
+
+  const {
+    methodParameters: { calldata },
+    quote,
+  } = await fetchNftxQuote({
+    network,
+    buyToken: vaultAddress,
+    buyAmount,
+    sellToken: getChainConstant(WETH_TOKEN, network),
+    slippagePercentage: slippage,
+    userAddress,
   });
-  const path = [getChainConstant(WETH_TOKEN, network), vaultAddress];
+
   const args = [
     BigInt(vaultId),
     BigInt(amount),
-    ids.map(BigInt),
-    path,
+    specificIds.map(BigInt),
+    calldata,
     userAddress,
   ] as const;
-  let maxPrice: bigint | undefined;
-  if (slippage) {
-    const { price } = await fetchVaultBuyPrice({
-      vault,
-      provider,
-      network,
-      randomBuys,
-      targetBuys,
-    });
-    maxPrice =
-      (price * (WeiPerEther + parseEther(`${slippage}`))) / WeiPerEther;
-  }
+  const slippageMultiplier = parseEther(`${slippage || 0}`) + WeiPerEther;
+  const value =
+    ((BigInt(quote) / WeiPerEther) * slippageMultiplier) / WeiPerEther;
 
   const overrides = omitNil({
-    value: maxPrice,
+    value,
   });
 
   console.debug(address, 'buyAndRedeem', ...args, overrides);
 
-  return contract.write.buyAndRedeem({
-    args,
-    ...overrides,
-  });
+  // TODO: implement
+  // return contract.write.buyAndRedeem({ args, ...overrides });
+  throw new Error('Not implemented');
 };
 
 const buy0xErc721 = async ({
@@ -154,19 +159,19 @@ const buy0xErc721 = async ({
   return contract.write.buyAndRedeem({ args, ...overrides });
 };
 
-const buyErc1155 = buyErc721;
+const buyNftxErc1155 = buyNftxErc721;
 
 const buy0xErc1155 = buy0xErc721;
 
 const matrix = {
   ETH: {
     ERC721: {
-      true: buy0xErc721,
-      false: buyErc721,
+      zeroX: buy0xErc721,
+      nftx: buyNftxErc721,
     },
     ERC1155: {
-      true: buy0xErc1155,
-      false: buyErc1155,
+      zeroX: buy0xErc1155,
+      nftx: buyNftxErc1155,
     },
   },
 };
@@ -208,8 +213,13 @@ const buy = async (args: {
   } = args;
 
   const supports0x = doesNetworkSupport0x(network);
+  const supportsNftx = doesNetworkSupportNftxRouter(network);
+  const router = supportsNftx ? 'nftx' : supports0x ? 'zeroX' : 'unknown';
+  if (router === 'unknown') {
+    throw new Error(`buyFromVault is not supported for ${standard} / ${quote}`);
+  }
 
-  const fn = matrix[quote]?.[standard]?.[`${supports0x}`];
+  const fn = matrix[quote]?.[standard]?.[router];
 
   if (!fn) {
     throw new Error(`buyFromVault is not supported for ${standard} / ${quote}`);

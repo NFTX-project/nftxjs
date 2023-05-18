@@ -34,6 +34,12 @@ export type Vault = {
   derivedETH: string;
   rawPrice: bigint;
   buyPrice: Price;
+  prices: {
+    mint: bigint;
+    redeem: bigint;
+    swap: bigint;
+    spot: bigint;
+  };
   reserveVtoken: bigint;
   reserveWeth: bigint;
   features: VaultFeatures;

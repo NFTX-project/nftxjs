@@ -55,7 +55,7 @@ function getContract<T extends Abi>({
         const hash = await signer.writeContract(request as any);
 
         return {
-          transactionHash: hash,
+          hash,
           wait: () => provider.waitForTransactionReceipt({ hash }),
         };
       };
