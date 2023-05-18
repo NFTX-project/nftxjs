@@ -1,13 +1,6 @@
 import config from '@nftx/config';
-import {
-  NFTX_MARKETPLACE_0X_ZAP,
-  NFTX_MARKETPLACE_ZAP,
-  WeiPerEther,
-  WETH_TOKEN,
-} from '@nftx/constants';
-import { NFTXMarketplace0xZap, NFTXMarketplaceZap } from '@nftx/abi';
-import { omitNil } from '../../utils';
-import increaseGasLimit from '../increaseGasLimit';
+import { NFTX_MARKETPLACE_0X_ZAP, WETH_TOKEN } from '@nftx/constants';
+import { NFTXMarketplace0xZap } from '@nftx/abi';
 import {
   getTokenIdAmounts,
   getUniqueTokenIds,
@@ -15,16 +8,70 @@ import {
 } from '../utils';
 import {
   doesNetworkSupport0x,
+  doesNetworkSupportNftxRouter,
   fetch0xQuote,
-  fetchVaultSellPrice,
 } from '../../price';
 import calculateSellFee from '../../price/calculateSellFee';
 import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
 import { parseEther } from 'viem';
+import fetchNftxQuote from '../../price/fetchNftxQuote';
 
 type SellVault = Pick<Vault, 'id' | 'vaultId'> & {
   fees: Pick<Vault['fees'], 'mintFee'>;
+};
+
+const sellNftxErc721 = async ({
+  vault: { vaultId, id: vaultAddress },
+  vault,
+  tokenIds,
+  network,
+  // provider,
+  // signer,
+  slippage,
+  userAddress,
+}: {
+  vault: SellVault;
+  tokenIds: TokenId[] | [TokenId, number][];
+  network: number;
+  provider: Provider;
+  signer: Signer;
+  quote: 'ETH';
+  slippage: number;
+  userAddress: Address;
+}) => {
+  const amount = getTotalTokenIds(tokenIds);
+  const fee = calculateSellFee({ vault, amount });
+  const sellAmount = parseEther(`${amount}`) - fee;
+  const ids = getUniqueTokenIds(tokenIds);
+  const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
+
+  const {
+    methodParameters: { calldata: data },
+  } = await fetchNftxQuote({
+    network,
+    sellToken: vaultAddress,
+    sellAmount,
+    buyToken: getChainConstant(WETH_TOKEN, network),
+    slippagePercentage: slippage,
+    userAddress,
+  });
+
+  const args = [BigInt(vaultId), ids.map(BigInt), data, userAddress] as const;
+  // const contract = getContract({
+  //   provider,
+  //   signer,
+  //   address,
+  //   abi: NFTXMarketplace0xZap,
+  // });
+
+  console.debug(address, 'mintAndSell721', ...args);
+
+  // TODO: implement
+  throw new Error('Not implemented');
+  // return contract.write.mintAndSell721({
+  //   args,
+  // });
 };
 
 const sell0xErc721 = async ({
@@ -76,109 +123,7 @@ const sell0xErc721 = async ({
   });
 };
 
-const sellErc721 = async ({
-  vault,
-  vault: { vaultId },
-  tokenIds,
-  path,
-  userAddress,
-  network,
-  provider,
-  signer,
-  slippage,
-}: {
-  vault: SellVault;
-  path: readonly [Address, Address];
-  userAddress: Address;
-  tokenIds: TokenId[] | [TokenId, number][];
-  network: number;
-  provider: Provider;
-  signer: Signer;
-  slippage: number;
-}) => {
-  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
-  const contract = getContract({
-    provider,
-    signer,
-    abi: NFTXMarketplaceZap,
-    address,
-  });
-  const ids = getUniqueTokenIds(tokenIds);
-  let { price: minPrice } = await fetchVaultSellPrice({
-    vault,
-    provider,
-    network,
-    amount: ids.length,
-  });
-  if (slippage) {
-    minPrice =
-      (minPrice * (WeiPerEther - parseEther(`${slippage}`))) / WeiPerEther;
-  }
-  const args = [
-    BigInt(vaultId),
-    ids.map(BigInt),
-    minPrice,
-    path,
-    userAddress,
-  ] as const;
-
-  console.debug(address, 'mintAndSell721', ...args);
-
-  return contract.write.mintAndSell721({ args });
-};
-
-const sellErc1155 = async ({
-  vault,
-  vault: { vaultId },
-  tokenIds,
-  slippage,
-  path,
-  userAddress,
-  network,
-  provider,
-  signer,
-}: {
-  tokenIds: TokenId[] | [TokenId, number][];
-  vault: SellVault;
-  slippage: number;
-  path: readonly [Address, Address];
-  userAddress: Address;
-  network: number;
-  provider: Provider;
-  signer: Signer;
-}) => {
-  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
-  const contract = getContract({
-    provider,
-    signer,
-    abi: NFTXMarketplaceZap,
-    address,
-  });
-  const ids = getUniqueTokenIds(tokenIds);
-  const amounts = getTokenIdAmounts(tokenIds);
-  let { price: minPrice } = await fetchVaultSellPrice({
-    vault,
-    provider,
-    network,
-    amount: ids.length,
-  });
-  if (slippage) {
-    minPrice =
-      (minPrice * (WeiPerEther - parseEther(`${slippage}`))) / WeiPerEther;
-  }
-  const args = [
-    BigInt(vaultId),
-    ids.map(BigInt),
-    amounts.map(BigInt),
-    minPrice,
-    path,
-    userAddress,
-  ] as const;
-
-  console.debug(address, 'mintAndSell1155', ...args);
-
-  return contract.write.mintAndSell1155({ args });
-};
+const sellNftxErc1155 = sell0xErc721;
 
 const sell0xErc1155 = async ({
   vault,
@@ -237,12 +182,12 @@ const sell0xErc1155 = async ({
 const matrix = {
   ETH: {
     ERC721: {
-      true: sell0xErc721,
-      false: sellErc721,
+      zeroX: sell0xErc721,
+      nftx: sellNftxErc721,
     },
     ERC1155: {
-      true: sell0xErc1155,
-      false: sellErc1155,
+      zeroX: sell0xErc1155,
+      nftx: sellNftxErc1155,
     },
   },
 };
@@ -279,13 +224,21 @@ const sell = async (args: {
   } = args;
 
   const standard =
-    givenStandard || (tokenIds?.some((x) => x?.[1] > 1) ? 'ERC1155' : 'ERC721');
-
-  const path = [vault.id, getChainConstant(WETH_TOKEN, network)] as const;
+    givenStandard ||
+    (tokenIds?.some((x) => typeof x?.[1] === 'number' && x?.[1] > 1)
+      ? 'ERC1155'
+      : 'ERC721');
 
   const supports0x = doesNetworkSupport0x(network);
+  const supportsNftx = doesNetworkSupportNftxRouter(network);
+  const router = supportsNftx ? 'nftx' : supports0x ? 'zeroX' : 'unknown';
+  if (router === 'unknown') {
+    throw new Error(
+      `sellIntoVault is not supported for ${standard} / ${quote}`
+    );
+  }
 
-  const fn = matrix[quote]?.[standard]?.[`${supports0x}`];
+  const fn = matrix[quote]?.[standard]?.[router];
 
   if (!fn) {
     throw new Error(
@@ -295,7 +248,6 @@ const sell = async (args: {
 
   return fn({
     network,
-    path,
     quote,
     provider,
     signer,

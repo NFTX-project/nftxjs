@@ -1,13 +1,35 @@
 import config from '@nftx/config';
-import { SUSHISWAP_ROUTER, WeiPerEther, WETH_TOKEN } from '@nftx/constants';
-import { UniswapV2Router } from '@nftx/abi';
-import type { Address, BigIntish, Price, Provider } from '@nftx/types';
-import { getChainConstant, getContract } from '@nftx/utils';
+import { WeiPerEther } from '@nftx/constants';
+import type { Address, BigIntish, Price } from '@nftx/types';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0xPrice';
 import type { QuoteToken } from './types';
+import fetchNftxQuote from './fetchNftxQuote';
+import doesNetworkSupportNftxRouter from './doesNetworkSupportNftxRouter';
+import nftxQuoteToPrice from './nftxQuoteToPrice';
 
-const fetchSellPriceFromApi = async ({
+const fetchSellPriceNftxrouter = async ({
+  network,
+  tokenAddress: sellToken,
+  amount: sellAmount,
+  quote: buyToken,
+}: {
+  network: number;
+  tokenAddress: Address;
+  amount: BigIntish;
+  quote: QuoteToken;
+}) => {
+  const quote = await fetchNftxQuote({
+    buyToken,
+    sellToken,
+    sellAmount,
+    network,
+  });
+
+  return nftxQuoteToPrice(quote);
+};
+
+const fetchSellPriceFrom0x = async ({
   network,
   tokenAddress,
   amount,
@@ -40,45 +62,12 @@ const fetchSellPriceFromApi = async ({
   return price;
 };
 
-const fetchSellPriceFromWeb3 = async ({
-  network,
-  provider,
-  tokenAddress,
-  amount,
-}: {
-  network: number;
-  provider: Provider;
-  tokenAddress: Address;
-  amount: BigIntish;
-  quote: QuoteToken;
-}) => {
-  const contract = getContract({
-    address: getChainConstant(SUSHISWAP_ROUTER, network),
-    abi: UniswapV2Router,
-    provider,
-  });
-
-  const tokenIn = tokenAddress;
-  const tokenOut = getChainConstant(WETH_TOKEN, network);
-
-  const [, quotePrice] =
-    (await contract.read.getAmountsOut({
-      args: [BigInt(amount), [tokenIn, tokenOut]],
-    })) || [];
-
-  const price: Price = {
-    price: quotePrice,
-  };
-  return price;
-};
-
 /** Fetches a sell price for a given token.
  * If possible, the price is fetched from the 0x api, otherwise it uses sushiswap.
  * If you're looking to sell an item into a vault, use fetchVaultSellPrice.
  */
 const fetchSellPrice = (args: {
   network?: number;
-  provider: Provider;
   tokenAddress: Address;
   amount?: BigIntish;
   quote?: QuoteToken;
@@ -86,16 +75,18 @@ const fetchSellPrice = (args: {
 }) => {
   const {
     network = config.network,
-    provider,
     tokenAddress,
     amount = WeiPerEther,
     quote = 'ETH',
     critical = false,
   } = args;
 
-  const apiSupported = doesNetworkSupport0x(network);
-  if (apiSupported) {
-    return fetchSellPriceFromApi({
+  if (doesNetworkSupportNftxRouter(network)) {
+    return fetchSellPriceNftxrouter({ amount, network, quote, tokenAddress });
+  }
+
+  if (doesNetworkSupport0x(network)) {
+    return fetchSellPriceFrom0x({
       network,
       tokenAddress,
       amount,
@@ -103,13 +94,8 @@ const fetchSellPrice = (args: {
       critical,
     });
   }
-  return fetchSellPriceFromWeb3({
-    network,
-    tokenAddress,
-    amount,
-    provider,
-    quote,
-  });
+
+  throw new Error(`fetchSellPrice is not available for network ${network}`);
 };
 
 export default fetchSellPrice;

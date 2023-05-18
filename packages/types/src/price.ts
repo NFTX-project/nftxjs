@@ -1,3 +1,5 @@
+import type { Token } from './tokens';
+
 /** A price object returned by all pricing methods (@nftx/trade) */
 export type Price = {
   price: bigint;
@@ -5,8 +7,20 @@ export type Price = {
   gasPrice?: bigint;
   /**
    * A list of sources providing liquidity for the given price
-   * This will only be provided if 0x pricing is enabled
    */
   sources?: Array<{ name: string; proportion: string }>;
+  route?: Array<{
+    type: string;
+    proportion: string;
+    amountIn: bigint;
+    amountOut: bigint;
+    tokenIn: Token;
+    tokenOut: Token;
+    path: Array<{
+      tokenIn: Token;
+      tokenOut: Token;
+      amount: bigint;
+    }>;
+  }>;
   priceImpact?: number;
 };

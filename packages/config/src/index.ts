@@ -13,6 +13,7 @@ import {
   NFTX_FEE_TRACKER_SUBGRAPH,
   ALCHEMY_URL,
   NFTX_API_URL,
+  NFTX_ROUTER_URL,
 } from '@nftx/constants';
 import merge from 'deepmerge';
 
@@ -47,16 +48,13 @@ export interface Config {
   urls: {
     ZEROX_PRICE_URL: Record<string, string>;
     ZEROX_QUOTE_URL: Record<string, string>;
+    NFTX_ROUTER_URL: Record<string, string>;
     NFTX_APR_URL: Record<string, string>;
     ALCHEMY_URL: Record<string, string>;
     NFTX_API_URL: string;
   };
   /** Contract configuration options */
   contracts: {
-    /** Whether to batch read calls together to reduce the number of network requests */
-    multicall: boolean;
-    /** Whether to use 0x for pricing and transactions */
-    use0xApi: boolean;
     /** It's necessary to hardcode the price of ETH on some test networks */
     ethPrice: Record<string, string>;
   };
@@ -118,13 +116,12 @@ const defaultConfig: Config = {
   urls: {
     ZEROX_PRICE_URL,
     ZEROX_QUOTE_URL,
+    NFTX_ROUTER_URL,
     NFTX_APR_URL,
     ALCHEMY_URL,
     NFTX_API_URL,
   },
   contracts: {
-    multicall: true,
-    use0xApi: true,
     ethPrice: {
       [Network.Rinkeby]: '2500000000', // $2.5k
     },

@@ -1,13 +1,31 @@
 import config from '@nftx/config';
-import { WeiPerEther, Zero } from '@nftx/constants';
-import type { Address, Price, Provider } from '@nftx/types';
-import { fetchReservesForToken } from '@nftx/utils';
+import { WeiPerEther } from '@nftx/constants';
+import type { Address, Price } from '@nftx/types';
 import { parseEther } from 'viem';
 import doesNetworkSupport0x from './doesNetworkSupport0x';
 import fetch0xPrice from './fetch0xPrice';
 import type { QuoteToken } from './types';
+import fetchBuyPrice from './fetchBuyPrice';
+import doesNetworkSupportNftxRouter from './doesNetworkSupportNftxRouter';
 
-const fetchSpotPriceFromApi = async ({
+const fetchSpotPriceFromNftxRouter = async ({
+  network,
+  tokenAddress,
+  quote,
+}: {
+  network: number;
+  tokenAddress: Address;
+  quote: QuoteToken;
+}) => {
+  return fetchBuyPrice({
+    tokenAddress,
+    quote,
+    network,
+    amount: WeiPerEther,
+  });
+};
+
+const fetchSpotPriceFrom0x = async ({
   network,
   tokenAddress,
   quote,
@@ -43,58 +61,34 @@ const fetchSpotPriceFromApi = async ({
   return price;
 };
 
-const fetchSpotPriceFromSubgraph = async ({
-  network,
-  tokenAddress,
-}: {
-  network: number;
-  provider: Provider;
-  tokenAddress: Address;
-  quote: QuoteToken;
-}) => {
-  const reserves = await fetchReservesForToken({ network, tokenAddress });
-
-  const spotPrice = reserves?.midPrice ?? Zero;
-
-  const price: Price = {
-    price: spotPrice,
-  };
-  return price;
-};
-
 /** Fetches a spot price for a given token.
  * If possible, the price is fetched from the 0x service, otherwise it uses pool reserves
  */
 const fetchSpotPrice = (args: {
   network?: number;
-  provider: Provider;
   tokenAddress: Address;
   quote?: QuoteToken;
   critical?: boolean;
 }) => {
   const {
     network = config.network,
-    provider,
     tokenAddress,
     quote = 'ETH',
     critical = false,
   } = args;
 
-  const apiSupported = doesNetworkSupport0x(network);
-  if (apiSupported) {
-    return fetchSpotPriceFromApi({
+  if (doesNetworkSupportNftxRouter(network)) {
+    return fetchSpotPriceFromNftxRouter({ network, quote, tokenAddress });
+  }
+  if (doesNetworkSupport0x(network)) {
+    return fetchSpotPriceFrom0x({
       network,
       tokenAddress,
       quote,
       critical,
     });
   }
-  return fetchSpotPriceFromSubgraph({
-    network,
-    tokenAddress,
-    provider,
-    quote,
-  });
+  throw new Error(`fetchSpotPrice is not supported for network ${network}`);
 };
 
 export default fetchSpotPrice;

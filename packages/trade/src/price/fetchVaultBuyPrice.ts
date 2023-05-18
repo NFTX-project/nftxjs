@@ -1,6 +1,6 @@
 import config from '@nftx/config';
 import { WeiPerEther } from '@nftx/constants';
-import type { Price, Provider, Vault } from '@nftx/types';
+import type { Price, Vault } from '@nftx/types';
 import { parseEther } from 'viem';
 import calculateBuyFee from './calculateBuyFee';
 import fetchBuyPrice from './fetchBuyPrice';
@@ -17,7 +17,6 @@ const fetchVaultBuyPrice = async (args: {
     >;
   };
   network?: number;
-  provider: Provider;
   /** The number of target buys we are doing */
   targetBuys?: number;
   /** The number of random buys we are doing */
@@ -27,7 +26,6 @@ const fetchVaultBuyPrice = async (args: {
   const {
     vault,
     network = config.network,
-    provider,
     targetBuys,
     randomBuys,
     critical,
@@ -50,7 +48,6 @@ const fetchVaultBuyPrice = async (args: {
 
   return fetchBuyPrice({
     network,
-    provider,
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,

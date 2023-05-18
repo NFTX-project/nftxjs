@@ -102,3 +102,13 @@ export const VAULT_CREATION_ZAP = {
   [Network.Arbitrum]: '0x4164C90589E596239a31579417775C980f446103' as Address,
   [Network.Goerli]: '0x4Af99Db0DF1cb904933C6622C01b93496a567823' as Address,
 };
+
+export const NFTX_ROUTER = {
+  [Network.Goerli]: '0x9a9ac6e79E7750d6cFb847971370574Ca3CcB8e9' as Address,
+};
+
+export const ZEROX_ROUTER = {
+  [Network.Mainnet]: '0xdef1c0ded9bec7f1a1670819833240f027b25eff' as Address,
+  [Network.Arbitrum]: '0xdef1c0ded9bec7f1a1670819833240f027b25eff' as Address,
+  [Network.Goerli]: '0xf91bb752490473b8342a3e964e855b9f9a2a668e' as Address,
+};
