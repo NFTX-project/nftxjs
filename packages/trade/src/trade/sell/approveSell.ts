@@ -19,6 +19,7 @@ const approveSell = (_args: {
 }) => {
   const { network = config.network, assetAddress, ...args } = _args;
 
+  // TODO: implement NFTX Router
   const supports0x = doesNetworkSupport0x(network);
   const zap = supports0x ? NFTX_MARKETPLACE_0X_ZAP : NFTX_MARKETPLACE_ZAP;
   const spenderAddress = getChainConstant(zap, network);

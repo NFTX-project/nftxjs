@@ -14,6 +14,7 @@ type Args = Omit<
 const isSellApproved = (_args: Args) => {
   const { network = config.network, assetAddress, ...args } = _args;
 
+  // TODO: implement NFTX Router
   const supports0x = doesNetworkSupport0x(network);
   const spenderAddress = getChainConstant(
     supports0x ? NFTX_MARKETPLACE_0X_ZAP : NFTX_MARKETPLACE_ZAP,

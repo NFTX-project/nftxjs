@@ -1,6 +1,6 @@
 import config from '@nftx/config';
 import { Zero } from '@nftx/constants';
-import type { Price, Provider, Vault } from '@nftx/types';
+import type { Price, Vault } from '@nftx/types';
 import calculateSwapFee from './calculateSwapFee';
 import fetchBuyPrice from './fetchBuyPrice';
 
@@ -9,7 +9,6 @@ import fetchBuyPrice from './fetchBuyPrice';
  */
 const fetchVaultSwapPrice = async (args: {
   network?: number;
-  provider: Provider;
   vault: {
     id: Vault['id'];
     fees: Pick<Vault['fees'], 'randomSwapFee' | 'targetSwapFee'>;
@@ -20,7 +19,6 @@ const fetchVaultSwapPrice = async (args: {
 }): Promise<Price> => {
   const {
     network = config.network,
-    provider,
     vault,
     targetSwaps,
     randomSwaps,
@@ -39,7 +37,6 @@ const fetchVaultSwapPrice = async (args: {
 
   return fetchBuyPrice({
     network,
-    provider,
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,

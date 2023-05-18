@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "echo \"no tests\"",
-    "build": "rm -rf dist && node generate && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
+    "build": "rm -rf dist && node generate && node gen-hr && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build",
     "docs": "jsdoc -c ../../jsdoc.js src"
   },

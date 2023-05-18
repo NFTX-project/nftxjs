@@ -47,6 +47,7 @@ const approveSwap = ({
     (randomCount > 0 && vault.fees.randomSwapFee > Zero);
   const supports0x = doesNetworkSupport0x(network);
 
+  // TODO: implement NFTX Router
   // The contract doing the swap can vary.
   // If there are no fees involved, we can do the swap directly on the vault contract (which is cheaper)
   // If we're using the 0x api we need the 0x Zap contract
