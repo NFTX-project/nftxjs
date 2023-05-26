@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/NFTX-project/nftxjs/compare/v0.8.1...v0.9.0) (2023-05-26)
+
+
+### Features
+
+* add 0x headers ([6546ac6](https://github.com/NFTX-project/nftxjs/commit/6546ac6c19afdf53416480ae7de7cb8bf148d4f1))
+
+
+
+
+
 # [0.8.0](https://github.com/NFTX-project/nftxjs/compare/v0.7.0...v0.8.0) (2023-02-13)
 
 **Note:** Version bump only for package @nftx/trade
