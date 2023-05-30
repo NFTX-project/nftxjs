@@ -89,7 +89,7 @@ const fetch0xQuote = async (args: {
     }
     const url = `${zeroUrl}/swap/v1/${type}?${query}&affiliateAddress=0xaA29881aAc939A025A3ab58024D7dd46200fB93D`;
     const zeroApiKey = 'ee990c3a-309a-4859-b5eb-60e0d5ef43b8';
-    const response = await fetch(url, { headers: { "0x-api-key": zeroApiKey } });
+    const response = await fetch(url);
     if (!response.ok) {
       const json = await response.json();
       throw { ...json, status: response.status };
