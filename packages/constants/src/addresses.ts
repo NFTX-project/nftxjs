@@ -67,12 +67,6 @@ export const NFTX_MARKETPLACE_ZAP = {
   [Network.Goerli]: '0x528bDBe1DB8452bD4643F85695eE0628D900C195' as Address,
 };
 
-export const NFTX_MARKETPLACE_0X_ZAP = {
-  [Network.Mainnet]: '0x941A6d105802CCCaa06DE58a13a6F49ebDCD481C' as Address,
-  [Network.Arbitrum]: '0x3BD7512966CbC3406962f8877edbE80aea8A2904' as Address,
-  [Network.Goerli]: '0x177246Adb119ed83f982d1e3c4859F354578D5eF' as Address,
-};
-
 export const NFTX_VAULT_FACTORY = {
   [Network.Mainnet]: '0xBE86f647b167567525cCAAfcd6f881F1Ee558216' as Address,
   [Network.Arbitrum]: '0xE77b89FEc41A7b7dC74eb33602e82F0672FbB33C' as Address,
@@ -105,10 +99,4 @@ export const VAULT_CREATION_ZAP = {
 
 export const NFTX_ROUTER = {
   [Network.Goerli]: '0x9a9ac6e79E7750d6cFb847971370574Ca3CcB8e9' as Address,
-};
-
-export const ZEROX_ROUTER = {
-  [Network.Mainnet]: '0xdef1c0ded9bec7f1a1670819833240f027b25eff' as Address,
-  [Network.Arbitrum]: '0xdef1c0ded9bec7f1a1670819833240f027b25eff' as Address,
-  [Network.Goerli]: '0xf91bb752490473b8342a3e964e855b9f9a2a668e' as Address,
 };

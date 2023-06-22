@@ -11,24 +11,16 @@ const fetchVaultSwapPrice = async (args: {
   network?: number;
   vault: {
     id: Vault['id'];
-    fees: Pick<Vault['fees'], 'randomSwapFee' | 'targetSwapFee'>;
+    fees: Pick<Vault['fees'], 'targetSwapFee'>;
   };
   targetSwaps?: number;
-  randomSwaps?: number;
-  critical?: boolean;
 }): Promise<Price> => {
-  const {
-    network = config.network,
-    vault,
-    targetSwaps,
-    randomSwaps,
-    critical,
-  } = args;
+  const { network = config.network, vault, targetSwaps } = args;
 
   /** For swaps the price is purely for the swap fee
-   * so we just have to work out the total fees for the intended target/random counts
+   * so we just have to work out the total fees for the intended target counts
    */
-  const amount = calculateSwapFee({ vault, randomSwaps, targetSwaps });
+  const amount = calculateSwapFee({ vault, targetSwaps });
 
   // No fees for this vault
   if (amount === Zero) {
@@ -40,7 +32,6 @@ const fetchVaultSwapPrice = async (args: {
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,
-    critical,
   });
 };
 
