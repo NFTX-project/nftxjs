@@ -12,22 +12,19 @@ const fetchSpread = async (args: {
   network?: number;
   tokenAddress: Address;
   quote?: QuoteToken;
-  critical?: boolean;
 }): Promise<bigint> => {
-  const { network = config.network, tokenAddress, quote, critical } = args;
+  const { network = config.network, tokenAddress, quote } = args;
 
   try {
     const { price: buyPrice } = await fetchBuyPrice({
       network,
       tokenAddress,
       quote,
-      critical,
     });
     const { price: sellPrice } = await fetchSellPrice({
       network,
       tokenAddress,
       quote,
-      critical,
     });
 
     return buyPrice - sellPrice;

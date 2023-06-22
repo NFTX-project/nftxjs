@@ -1,17 +1,35 @@
-import config from '@nftx/config';
 import type { Address, Vault } from '@nftx/types';
-import fetchUserVaultCollectionsAlchemy from './alchemy';
+import { addressEqual, isCryptoKitty } from '@nftx/utils';
+import fetchUserCollections from '../fetchUserCollections';
+import config from '@nftx/config';
 
-const fetchUserVaultCollections = async ({
+const fetchUserVaultCollectionsAlchemy = async ({
   network = config.network,
   userAddress,
   vaults,
 }: {
   network?: number;
   userAddress: Address;
-  vaults: Pick<Vault, 'asset' | 'vaultId' | 'features' | 'eligibilityModule'>[];
+  vaults: Pick<Vault, 'asset' | 'vaultId'>[];
 }) => {
-  return fetchUserVaultCollectionsAlchemy({ network, userAddress, vaults });
+  const contracts = await fetchUserCollections({ network, userAddress });
+
+  return (
+    contracts?.flatMap((collection) => {
+      return vaults
+        .filter(
+          (v) =>
+            addressEqual(v.asset.id, collection.address) &&
+            !isCryptoKitty(v.asset.id)
+        )
+        .map((vault) => {
+          return {
+            ...collection,
+            vaultId: vault.vaultId,
+          };
+        });
+    }) ?? []
+  );
 };
 
-export default fetchUserVaultCollections;
+export default fetchUserVaultCollectionsAlchemy;

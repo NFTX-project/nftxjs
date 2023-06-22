@@ -17,10 +17,8 @@ const redeem = async (args: {
    * For 1155s if you're dealing with multiples, you pass a tuple of [tokenId, quantity] [['1', 2], ['2', 1], ['3', 2]]
    */
   targetIds: Array<TokenId> | Array<[TokenId, number]>;
-  /** If you want to do a random redeem, enter the number of randoms you want to carry out */
-  randomRedeems?: number;
 }) => {
-  const { provider, signer, targetIds, vaultAddress, randomRedeems } = args;
+  const { provider, signer, targetIds, vaultAddress } = args;
 
   const contract = getContract({
     provider,
@@ -33,7 +31,7 @@ const redeem = async (args: {
 
   // the total amount to redeem, if you try to redeem more than the total specific ids
   // it will fill out the rest with randoms
-  const amount = specificIds.length + (randomRedeems ?? 0);
+  const amount = specificIds.length;
 
   return contract.write.redeem({
     args: [BigInt(amount), specificIds.map(BigInt)],

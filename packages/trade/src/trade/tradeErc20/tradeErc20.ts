@@ -1,11 +1,6 @@
 import fetchNftxQuote from '../../price/fetchNftxQuote';
-import type { BigIntish, Provider, Signer, Transaction } from '@nftx/types';
-import {
-  QuoteToken,
-  doesNetworkSupport0x,
-  doesNetworkSupportNftxRouter,
-  fetch0xQuote,
-} from '../../price';
+import type { BigIntish, Provider, Signer } from '@nftx/types';
+import type { QuoteToken } from '../../price';
 import { getAccount } from 'viem';
 import config from '@nftx/config';
 
@@ -50,45 +45,6 @@ const tradeNftx = async ({
   return { hash, wait: () => provider.waitForTransactionReceipt({ hash }) };
 };
 
-const trade0x = async ({
-  buyAmount,
-  buyToken,
-  network,
-  provider,
-  sellAmount,
-  sellToken,
-  signer,
-}: {
-  provider: Provider;
-  signer: Signer;
-  network: number;
-  buyToken: QuoteToken;
-  sellToken: QuoteToken;
-  buyAmount: BigIntish;
-  sellAmount: BigIntish;
-}): Promise<Transaction> => {
-  const { data, to, value } = await fetch0xQuote({
-    network,
-    buyToken,
-    sellToken,
-    buyAmount,
-    critical: true,
-    sellAmount,
-    type: 'quote',
-  });
-  const [address] = await signer.getAddresses();
-  const account = getAccount(address);
-
-  const hash = await signer.sendTransaction({
-    to,
-    data,
-    value: BigInt(value),
-    account,
-  });
-
-  return { hash, wait: () => provider.waitForTransactionReceipt({ hash }) };
-};
-
 const tradeErc20 = ({
   buyAmount,
   buyToken,
@@ -106,30 +62,15 @@ const tradeErc20 = ({
   buyAmount: BigIntish;
   sellAmount: BigIntish;
 }) => {
-  if (doesNetworkSupportNftxRouter(network)) {
-    return tradeNftx({
-      buyAmount,
-      buyToken,
-      network,
-      provider,
-      sellAmount,
-      sellToken,
-      signer,
-    });
-  }
-  if (doesNetworkSupport0x(network)) {
-    return trade0x({
-      buyAmount,
-      buyToken,
-      network,
-      provider,
-      sellAmount,
-      sellToken,
-      signer,
-    });
-  }
-
-  throw new Error(`tradeErc20 is not supported for network ${network}`);
+  return tradeNftx({
+    buyAmount,
+    buyToken,
+    network,
+    provider,
+    sellAmount,
+    sellToken,
+    signer,
+  });
 };
 
 export default tradeErc20;

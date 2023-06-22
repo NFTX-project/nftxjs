@@ -1,63 +1,29 @@
 import config from '@nftx/config';
 import { WeiPerEther } from '@nftx/constants';
-import type { Address, Price } from '@nftx/types';
-import { parseEther } from 'viem';
-import doesNetworkSupport0x from './doesNetworkSupport0x';
-import fetch0xPrice from './fetch0xPrice';
+import type { Address } from '@nftx/types';
 import type { QuoteToken } from './types';
 import fetchBuyPrice from './fetchBuyPrice';
-import doesNetworkSupportNftxRouter from './doesNetworkSupportNftxRouter';
 
 const fetchSpotPriceFromNftxRouter = async ({
   network,
   tokenAddress,
-  quote,
+  quote: quoteToken,
+  amount = WeiPerEther,
 }: {
   network: number;
   tokenAddress: Address;
+  amount?: bigint;
   quote: QuoteToken;
 }) => {
-  return fetchBuyPrice({
+  const price = await fetchBuyPrice({
     tokenAddress,
-    quote,
+    quote: quoteToken,
     network,
-    amount: WeiPerEther,
-  });
-};
-
-const fetchSpotPriceFrom0x = async ({
-  network,
-  tokenAddress,
-  quote,
-  critical,
-}: {
-  network: number;
-  tokenAddress: Address;
-  quote: QuoteToken;
-  critical: boolean;
-}) => {
-  const {
-    buyTokenToEthRate,
-    sources,
-    estimatedGas,
-    gasPrice,
-    estimatedPriceImpact,
-  } = await fetch0xPrice({
-    network,
-    sellToken: quote,
-    buyToken: tokenAddress,
-    critical,
+    amount: BigInt(1),
   });
 
-  const spotPrice = (WeiPerEther * WeiPerEther) / parseEther(buyTokenToEthRate);
+  price.price = price.price * amount;
 
-  const price: Price = {
-    estimatedGas: BigInt(estimatedGas),
-    gasPrice: BigInt(gasPrice),
-    price: spotPrice,
-    sources,
-    priceImpact: Number(estimatedPriceImpact) / 100,
-  };
   return price;
 };
 
@@ -68,27 +34,16 @@ const fetchSpotPrice = (args: {
   network?: number;
   tokenAddress: Address;
   quote?: QuoteToken;
-  critical?: boolean;
+  amount?: bigint;
 }) => {
   const {
     network = config.network,
     tokenAddress,
     quote = 'ETH',
-    critical = false,
+    amount,
   } = args;
 
-  if (doesNetworkSupportNftxRouter(network)) {
-    return fetchSpotPriceFromNftxRouter({ network, quote, tokenAddress });
-  }
-  if (doesNetworkSupport0x(network)) {
-    return fetchSpotPriceFrom0x({
-      network,
-      tokenAddress,
-      quote,
-      critical,
-    });
-  }
-  throw new Error(`fetchSpotPrice is not supported for network ${network}`);
+  return fetchSpotPriceFromNftxRouter({ network, quote, tokenAddress, amount });
 };
 
 export default fetchSpotPrice;

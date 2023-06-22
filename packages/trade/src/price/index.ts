@@ -1,6 +1,3 @@
-export { default as doesNetworkSupport0x } from './doesNetworkSupport0x';
-export { default as doesNetworkSupportNftxRouter } from './doesNetworkSupportNftxRouter';
-export { default as fetch0xQuote, type ZeroXQuote } from './fetch0xQuote';
 export { default as fetchBuyPrice } from './fetchBuyPrice';
 export { default as fetchEthPrice } from './fetchEthPrice';
 export { default as fetchSellPrice } from './fetchSellPrice';
@@ -13,4 +10,5 @@ export { default as calculateBuyFee } from './calculateBuyFee';
 export { default as calculateSellFee } from './calculateSellFee';
 export { default as calculateSwapFee } from './calculateSwapFee';
 export { default as parseQuoteToken } from './parseQuoteToken';
+export { default as fetchVaultSpotPrice } from './fetchVaultSpotPrice';
 export * from './types';

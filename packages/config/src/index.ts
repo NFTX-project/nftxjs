@@ -6,8 +6,6 @@ import {
   NON_STANDARD_SUBGRAPH,
   NFTX_TOKEN_BALANCE_SUBGRAPH,
   PUBLIC_GRAPH_API_KEY,
-  ZEROX_PRICE_URL,
-  ZEROX_QUOTE_URL,
   NFTX_APR_URL,
   Network,
   NFTX_FEE_TRACKER_SUBGRAPH,
@@ -46,8 +44,6 @@ export interface Config {
    * Each item should be an object keyed by network
    */
   urls: {
-    ZEROX_PRICE_URL: Record<string, string>;
-    ZEROX_QUOTE_URL: Record<string, string>;
     NFTX_ROUTER_URL: Record<string, string>;
     NFTX_APR_URL: Record<string, string>;
     ALCHEMY_URL: Record<string, string>;
@@ -63,6 +59,7 @@ export interface Config {
     /** Your specific nftx.js API key, this must be provided in order to use the library */
     NFTX_API: string;
     ALCHEMY: Record<string, string>;
+    RESERVOIR: Record<string, string>;
   };
   /** Internal config settings managed by nftx.js */
   internal: {
@@ -114,8 +111,6 @@ const defaultConfig: Config = {
     NFTX_FEE_TRACKER_SUBGRAPH,
   },
   urls: {
-    ZEROX_PRICE_URL,
-    ZEROX_QUOTE_URL,
     NFTX_ROUTER_URL,
     NFTX_APR_URL,
     ALCHEMY_URL,
@@ -130,6 +125,7 @@ const defaultConfig: Config = {
   keys: {
     NFTX_API: null as unknown as string,
     ALCHEMY: {},
+    RESERVOIR: {},
   },
 
   internal: {
