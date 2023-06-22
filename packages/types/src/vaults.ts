@@ -47,7 +47,7 @@ export type Vault = {
   totalMints: number;
   totalRedeems: number;
   totalFees: bigint;
-  holdings: VaultHolding[];
+  tokenIds: string[];
   is1155: boolean;
   isFinalized: boolean;
   usesFactoryFees: boolean;

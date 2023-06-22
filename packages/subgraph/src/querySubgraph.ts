@@ -1,6 +1,7 @@
 import config from '@nftx/config';
 import { PUBLIC_GRAPH_API_KEY } from '@nftx/constants';
 import { type GraphQueryString, interpolateQuery } from './utils';
+import sendQuery from './query';
 
 type Fetch = typeof fetch;
 const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
@@ -32,11 +33,6 @@ async function querySubgraph({
   variables?: Record<string, any>;
   fetch?: Fetch;
 }) {
-  if (fetch == null) {
-    throw new Error(
-      'Could not find fetch api. You may need to import a polyfill'
-    );
-  }
   if (variables) {
     query = interpolateQuery(query, variables);
   }
@@ -53,38 +49,24 @@ async function querySubgraph({
     return url;
   });
 
-  const args = {
-    method: 'POST' as const,
-    cache: 'no-cache' as const,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query,
-    }),
-  };
-
   while (urls.length) {
     try {
       const url = urls.shift();
       if (url == null) {
         continue;
       }
-      const response = await fetch(url, args);
 
-      // The subgraph will return a 200 response even with an invalid request so if it fails it's probably gone horribly wrong
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${url} with query ${query}`);
-      }
-
-      // Response should be application/json, if not we've received some weird malformed response
-      // Sometimes we get back a html page for example
-      const contentType = response.headers.get('Content-Type');
-      if (contentType !== 'application/json') {
-        throw new Error(await response.text());
-      }
-
-      const { data, errors } = await response.json();
+      const { data, errors } = await sendQuery<{
+        errors: { message: string }[] & { message: string };
+        data: any;
+      }>({
+        url,
+        cache: 'no-cache',
+        fetch,
+        headers: { 'Content-Type': 'application/json' },
+        query: { query },
+        method: 'POST',
+      });
 
       // If there was an error with the query, we'll receive an array of errors
       if (errors?.[0]?.message) {

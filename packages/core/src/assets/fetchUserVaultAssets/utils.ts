@@ -6,13 +6,12 @@ import {
   isMerkleVault,
 } from '@nftx/utils';
 
-type Item = Pick<Asset, 'assetAddress' | 'tokenId' | 'quantity'>;
+type Item = Asset;
 type CheckEligible = typeof checkEligible;
 type FetchMerkleLeaves = typeof fetchMerkleLeaves;
 
 export const processAssetItems = async ({
   items,
-  network,
   provider,
   vaults,
   checkEligible,
@@ -21,7 +20,6 @@ export const processAssetItems = async ({
   items: Item[];
   vaults: Pick<Vault, 'vaultId' | 'asset' | 'features' | 'eligibilityModule'>[];
   provider: Provider;
-  network: number;
   checkEligible: CheckEligible;
   fetchMerkleLeaves: FetchMerkleLeaves;
 }) => {
@@ -83,12 +81,8 @@ export const processAssetItems = async ({
 
           return mintableItems.map((item) => {
             const asset: Asset = {
-              id: `${item.assetAddress}/${item.tokenId}`,
-              assetAddress: item.assetAddress,
-              tokenId: item.tokenId,
+              ...item,
               vaultId: vault.vaultId,
-              metaUrl: `https://metadata-api.nftx.xyz/asset/${item.assetAddress}/${item.tokenId}?chainId=${network}`,
-              quantity: item.quantity,
             };
             return asset;
           });

@@ -1,10 +1,7 @@
 import config from '@nftx/config';
 import { WeiPerEther } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
-import doesNetworkSupport0x from './doesNetworkSupport0x';
-import fetch0xPrice from './fetch0xPrice';
 import fetchNftxQuote from './fetchNftxQuote';
-import doesNetworkSupportNftxRouter from './doesNetworkSupportNftxRouter';
 
 const fetchEthPriceFromNftxRouter = async ({
   network,
@@ -19,17 +16,6 @@ const fetchEthPriceFromNftxRouter = async ({
   });
 
   return BigInt(quote);
-};
-
-const fetchEthPriceFrom0x = async ({ network }: { network: number }) => {
-  const { sellAmount } = await fetch0xPrice({
-    network,
-    buyToken: 'ETH',
-    sellToken: 'USDC',
-    buyAmount: WeiPerEther,
-  });
-
-  return BigInt(sellAmount);
 };
 
 /** Fetches the current ETH price in $ terms.
@@ -47,13 +33,7 @@ const fetchEthPrice = (args: { network?: number }) => {
     return BigInt(hardcodedPrice);
   }
 
-  if (doesNetworkSupportNftxRouter(network)) {
-    return fetchEthPriceFromNftxRouter({ network });
-  }
-  if (doesNetworkSupport0x(network)) {
-    return fetchEthPriceFrom0x({ network });
-  }
-  throw new Error(`fetchEthPrice is not supported for network ${network}`);
+  return fetchEthPriceFromNftxRouter({ network });
 };
 
 export default fetchEthPrice;

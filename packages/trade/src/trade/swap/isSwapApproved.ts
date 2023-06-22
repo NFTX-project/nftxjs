@@ -1,12 +1,7 @@
 import config from '@nftx/config';
-import {
-  NFTX_MARKETPLACE_0X_ZAP,
-  NFTX_MARKETPLACE_ZAP,
-  Zero,
-} from '@nftx/constants';
+import { NFTX_MARKETPLACE_ZAP, Zero } from '@nftx/constants';
 import type { Address, TokenId, Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
-import { doesNetworkSupport0x } from '../../price';
 import isApproved from '../isApproved';
 import { getExactTokenIds, getTotalTokenIds } from '../utils';
 
@@ -22,7 +17,6 @@ type Args = Omit<
     id: Vault['id'];
     fees: {
       targetSwapFee: Vault['fees']['targetSwapFee'];
-      randomSwapFee: Vault['fees']['randomSwapFee'];
     };
   };
 };
@@ -41,13 +35,8 @@ const isSwapApproved = (_args: Args) => {
     ...args
   } = _args;
 
-  const totalCount = getTotalTokenIds(mintTokenIds);
   const targetCount = getTotalTokenIds(redeemTokenIds);
-  const randomCount = totalCount - targetCount;
-  const hasFee =
-    (targetCount > 0 && vault.fees.targetSwapFee > Zero) ||
-    (randomCount > 0 && vault.fees.randomSwapFee > Zero);
-  const supports0x = doesNetworkSupport0x(network);
+  const hasFee = targetCount > 0 && vault.fees.targetSwapFee > Zero;
 
   // TODO: implement NFTX Router
   // The contract doing the swap can vary.
@@ -57,9 +46,6 @@ const isSwapApproved = (_args: Args) => {
   const spenderAddress = (() => {
     if (!hasFee || quote === 'VTOKEN') {
       return vault.id;
-    }
-    if (supports0x) {
-      return getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
     }
     return getChainConstant(NFTX_MARKETPLACE_ZAP, network);
   })();

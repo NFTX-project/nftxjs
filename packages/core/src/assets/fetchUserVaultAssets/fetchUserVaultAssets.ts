@@ -44,7 +44,6 @@ export default ({
 
     const assets = await processAssetItems({
       items: allAssets,
-      network,
       provider,
       vaults,
       checkEligible,

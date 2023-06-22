@@ -1,8 +1,7 @@
 import config from '@nftx/config';
-import { NFTX_MARKETPLACE_0X_ZAP, NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
+import { NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
 import type { Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
-import { doesNetworkSupport0x } from '../../price';
 import isApproved from '../isApproved';
 
 type Args = Omit<
@@ -15,11 +14,7 @@ const isSellApproved = (_args: Args) => {
   const { network = config.network, assetAddress, ...args } = _args;
 
   // TODO: implement NFTX Router
-  const supports0x = doesNetworkSupport0x(network);
-  const spenderAddress = getChainConstant(
-    supports0x ? NFTX_MARKETPLACE_0X_ZAP : NFTX_MARKETPLACE_ZAP,
-    network
-  );
+  const spenderAddress = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
 
   return isApproved({
     network,

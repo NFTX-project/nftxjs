@@ -10,6 +10,12 @@ import {
   isMerkleVault,
 } from '@nftx/utils';
 import type { Address, Provider, Vault } from '@nftx/types';
+import {
+  fetchVaultBuyPrice,
+  fetchVaultSellPrice,
+  fetchVaultSpotPrice,
+  fetchVaultSwapPrice,
+} from '@nftx/trade';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
@@ -110,13 +116,35 @@ const fetchVaults = async ({
           ? await fetchMerkleReference({ provider, vault: x })
           : null) ?? undefined;
 
-      return transformVault({
+      const vault = transformVault({
         globalFees,
         reserves,
         vault: x,
         moreHoldings,
         merkleReference,
       });
+
+      const prices = await (async () => {
+        try {
+          const buyPrice = await fetchVaultBuyPrice({ network, vault });
+          const sellPrice = await fetchVaultSellPrice({ network, vault });
+          const spotPrice = await fetchVaultSpotPrice({ network, vault });
+          const swapPrice = await fetchVaultSwapPrice({ network, vault });
+
+          const prices = {
+            redeem: buyPrice.price,
+            mint: sellPrice.price,
+            spot: spotPrice.price,
+            swap: swapPrice.price,
+          };
+
+          return prices;
+        } catch {
+          return {} as Vault['prices'];
+        }
+      })();
+
+      return { ...vault, prices };
     }) ?? [];
 
   const vaults = await Promise.all(vaultPromises);

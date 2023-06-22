@@ -23,11 +23,7 @@ import {
 import makeFetchVaultActivity from '../fetchVaultActivity';
 import makeGetAll from '../getAll';
 import { getChainConstant } from '@nftx/utils';
-import {
-  NFTX_MARKETPLACE_0X_ZAP,
-  NFTX_STAKING_ZAP,
-  Zero,
-} from '@nftx/constants';
+import { NFTX_STAKING_ZAP, Zero } from '@nftx/constants';
 import { parseEther } from 'viem';
 
 let processRedeems: ProcessRedeems;
@@ -248,20 +244,6 @@ describe('mints', () => {
 
       expect(mints[0].type).toBe('stake');
       expect(mints[0].stakeType).toBe('inventory');
-    });
-  });
-  describe('when mint was made by the 0x marketplace zap', () => {
-    beforeEach(() => {
-      queryResponse.mints[0].user.id = getChainConstant(
-        NFTX_MARKETPLACE_0X_ZAP,
-        1
-      );
-    });
-
-    it('is a sell', async () => {
-      const { mints } = await run();
-
-      expect(mints[0].type).toBe('sell');
     });
   });
   describe('when mint was not made by any zaps', () => {

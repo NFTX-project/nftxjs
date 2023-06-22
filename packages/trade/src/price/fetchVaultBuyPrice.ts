@@ -6,42 +6,25 @@ import calculateBuyFee from './calculateBuyFee';
 import fetchBuyPrice from './fetchBuyPrice';
 
 /** Fetches the buy price for a vault.
- * Unlike fetchBuyPrice, this method accounts for vault fees and buying multiple targets/randoms
+ * Unlike fetchBuyPrice, this method accounts for vault fees and buying multiple targets
  */
 const fetchVaultBuyPrice = async (args: {
   vault: Pick<Vault, 'id' | 'reserveVtoken'> & {
-    fees: Pick<Vault['fees'], 'randomRedeemFee' | 'targetRedeemFee'>;
-    features: Pick<
-      Vault['features'],
-      'enableRandomRedeem' | 'enableTargetRedeem'
-    >;
+    fees: Pick<Vault['fees'], 'targetRedeemFee'>;
+    features: Pick<Vault['features'], 'enableTargetRedeem'>;
   };
   network?: number;
   /** The number of target buys we are doing */
   targetBuys?: number;
-  /** The number of random buys we are doing */
-  randomBuys?: number;
-  critical?: boolean;
 }): Promise<Price> => {
-  const {
-    vault,
-    network = config.network,
-    targetBuys,
-    randomBuys,
-    critical,
-  } = args;
+  const { vault, network = config.network, targetBuys } = args;
 
-  const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
+  const fee = calculateBuyFee({ vault, targetBuys });
 
   let amount = fee;
 
-  if (targetBuys || randomBuys) {
-    if (targetBuys) {
-      amount = amount + parseEther(`${targetBuys}`);
-    }
-    if (randomBuys) {
-      amount = amount + parseEther(`${randomBuys}`);
-    }
+  if (targetBuys) {
+    amount = amount + parseEther(`${targetBuys}`);
   } else {
     amount = amount + WeiPerEther;
   }
@@ -51,7 +34,6 @@ const fetchVaultBuyPrice = async (args: {
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,
-    critical,
   });
 };
 
