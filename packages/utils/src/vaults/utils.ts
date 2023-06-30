@@ -4,27 +4,16 @@ import { addressEqual } from '../web3';
 
 /** Returns whether a vault has swaps enabled (either random or target swaps count) */
 export const isVaultSwappable = (vault: {
-  features?: Pick<Vault['features'], 'enableRandomSwap' | 'enableTargetSwap'>;
+  features?: Pick<Vault['features'], 'enableSwap'>;
 }) => {
-  return (
-    vault?.features?.enableTargetSwap ||
-    vault?.features?.enableRandomSwap ||
-    false
-  );
+  return vault?.features?.enableSwap || false;
 };
 
 /** Returns whether a vault charges a fee for a target swap */
 export const doesVaultHaveTargetSwapFee = (vault: {
-  fees: Pick<Vault['fees'], 'targetSwapFee'>;
+  fees: Pick<Vault['fees'], 'swapFee'>;
 }) => {
-  return (vault?.fees?.targetSwapFee ?? Zero) !== Zero;
-};
-
-/** Returns whether a vault charges a fee for a random swap */
-export const doesVaultHaveRandomSwapFee = (vault: {
-  fees: Pick<Vault['fees'], 'randomSwapFee'>;
-}) => {
-  return (vault?.fees?.randomSwapFee ?? Zero) !== Zero;
+  return (vault?.fees?.swapFee ?? Zero) !== Zero;
 };
 
 /**

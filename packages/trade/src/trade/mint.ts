@@ -18,7 +18,7 @@ const mint = async (args: {
    */
   tokenIds: TokenId[] | [TokenId, number][];
 }) => {
-  const { provider, signer, tokenIds, vaultAddress } = args;
+  const { provider, signer, tokenIds, vaultAddress, userAddress } = args;
 
   const ids = getUniqueTokenIds(tokenIds);
   const amounts = getTokenIdAmounts(tokenIds);
@@ -30,7 +30,10 @@ const mint = async (args: {
     address: vaultAddress,
   });
 
-  return contract.write.mint({ args: [ids.map(BigInt), amounts.map(BigInt)] });
+  // Not sure if vaultAddress is correct
+  return contract.write.mint({
+    args: [ids.map(BigInt), amounts.map(BigInt), userAddress, vaultAddress],
+  });
 };
 
 export default mint;

@@ -7,13 +7,16 @@ export type Asset = {
   id: string;
   tokenId: TokenId;
   assetAddress: Address;
-  vaultId?: string;
+  vaultIds: string[];
   quantity?: bigint;
   name: string;
   traits: Record<string, string>;
   isFlagged: boolean;
   imageUrl: string;
   imagePreviewUrl: string;
+  rarity: number;
+  rarityRank: number;
+  mintable: boolean;
   animationUrl?: string;
   backgroundColor?: string;
 };

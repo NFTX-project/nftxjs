@@ -1,4 +1,4 @@
-import { VaultCreationZap } from '@nftx/abi';
+import { CreateVaultZap } from '@nftx/abi';
 import type {
   Address,
   CreatePoolFeatures,
@@ -8,8 +8,9 @@ import type {
   TokenId,
 } from '@nftx/types';
 import getCreatePoolArgs from './getCreatePoolArgs';
-import { VAULT_CREATION_ZAP } from '@nftx/constants';
 import { getChainConstant, type getContract } from '@nftx/utils';
+import { CREATE_VAULT_ZAP } from '@nftx/constants';
+import { parseEther } from 'viem';
 
 type GetContract = typeof getContract;
 
@@ -21,15 +22,20 @@ export default ({ getContract }: { getContract: GetContract }) =>
     eligibilityRange,
     features,
     fees,
-    liquiditySplit,
     name,
     network,
     signer,
-    spotPrice,
     standard,
     symbol,
     tokenIds,
     provider,
+    currentNftPriceInEth,
+    deadline,
+    fee,
+    lowerNftPriceInEth,
+    upperNftPriceInEth,
+    vTokenMin,
+    wethMin,
   }: {
     name: string;
     symbol: string;
@@ -44,55 +50,55 @@ export default ({ getContract }: { getContract: GetContract }) =>
     eligibilityRange: [bigint, bigint];
     eligibilityList: bigint[];
     tokenIds: Array<[TokenId, number]>;
-    spotPrice: bigint;
-    liquiditySplit: number;
+    currentNftPriceInEth: bigint;
+    deadline: bigint;
+    fee: number;
+    lowerNftPriceInEth: bigint;
+    upperNftPriceInEth: bigint;
+    vTokenMin: bigint;
+    wethMin: bigint;
   }) {
-    const {
-      eligibility,
-      mintAndStake,
-      vaultDetails,
-      vaultFeatures,
-      vaultFees,
-    } = getCreatePoolArgs({
+    const args = getCreatePoolArgs({
       assetAddress,
       eligibilityList,
       eligibilityModule,
       eligibilityRange,
       features,
       fees,
-      liquiditySplit,
       name,
-      spotPrice,
       standard,
       symbol,
       tokenIds,
+      currentNftPriceInEth,
+      deadline,
+      fee,
+      lowerNftPriceInEth,
+      upperNftPriceInEth,
+      vTokenMin,
+      wethMin,
     });
 
+    const address = getChainConstant(CREATE_VAULT_ZAP, network);
+
     const contract = getContract({
-      abi: VaultCreationZap,
-      address: getChainConstant(VAULT_CREATION_ZAP, network),
+      abi: CreateVaultZap,
+      address,
       provider,
       signer,
     });
 
     // amount of eth required
-    const value = mintAndStake?.wethIn;
+    // TODO: this needs to be uniswap magic fn
+    // https://github.com/NFTX-project/uni-v3-helpers
+    const value = parseEther('0.1');
 
-    console.debug(
-      getChainConstant(VAULT_CREATION_ZAP, network),
-      'createVault',
-      [
-        vaultDetails,
-        vaultFeatures,
-        vaultFees,
-        eligibility,
-        mintAndStake,
-        { value },
-      ]
-    );
+    console.debug(getChainConstant(CREATE_VAULT_ZAP, network), 'createVault', [
+      args,
+      { value },
+    ]);
 
     return contract.write.createVault({
-      args: [vaultDetails, vaultFeatures, vaultFees, eligibility, mintAndStake],
+      args: [args],
       value,
     });
   };

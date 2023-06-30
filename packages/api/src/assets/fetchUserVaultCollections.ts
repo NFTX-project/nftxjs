@@ -12,9 +12,10 @@ const fetchUserVaultCollections = ({
   network?: number;
   userAddress: Address;
 }) => {
-  const url = `/${network}/users/${userAddress}/vault-collections`;
+  const url = `${network}/collections`;
   return queryApi<Response>({
     url,
+    query: { userAddress, mintable: true },
   });
 };
 

@@ -1,6 +1,5 @@
 import { Network } from './networks';
 
-// TODO: create a public api key as well as a dev api key
 export const PUBLIC_GRAPH_API_KEY = '690cf8d6987a151008c2536454bd3d7a';
 // Locked down to nftx.io
 export const NFTX_GRAPH_API_KEY = '690cf8d6987a151008c2536454bd3d7a';
@@ -58,19 +57,7 @@ export const ERC1155_SUBGRAPH = {
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/odyssy-automaton/erc1155-goerli-subgraph`,
 };
 
-export const SUSHI_SUBGRAPH = {
-  [Network.Mainnet]: [
-    // Gateway + Proxy + Cache
-    `${GATEWAY_CACHE_PROXY_ROOT}/D7azkFFPFT5H8i32ApXLr34UQyBfxDAfKoCEK4M832M6`,
-    // Shared + Proxy
-    `${SHARED_PROXY_ROOT}/sushiswap/exchange`,
-    // Shared
-    `${SHARED_ROOT}/sushiswap/exchange`,
-  ],
-  [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/sushiswap/arbitrum-exchange`,
-  [Network.Goerli]: `${SHARED_PROXY_ROOT}/sushiswap/exchange-goerli`,
-};
-
+// TODO: update to the v3 subgraph urls
 export const NFTX_SUBGRAPH_MAINNET_URLS = {
   GATEWAY_PROXY: `${GATEWAY_CACHE_PROXY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
   GATEWAY: `${GATEWAY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
@@ -98,6 +85,7 @@ export const NFTX_SUBGRAPH = {
   [Network.Goerli]: `${SHARED_ROOT}/nftx-project/nftx-v2-1-goerli`,
 };
 
+// TODO: will this still be a separate graph for v3 or part of the NFT graph?
 export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
   [Network.Mainnet]: [
     // Gateway + Proxy + Cache
@@ -117,8 +105,6 @@ export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
   [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-v2-1-token-holdings-goerl?nocache`,
 };
 
-export const NFTX_FEE_TRACKER_SUBGRAPH = {
-  [Network.Mainnet]: `${GATEWAY_CACHE_PROXY_ROOT}/GxcjoGUi6UwLtWtWZzEaUDzN1pYJ24EhC9uSkK8uBfLi`,
-  [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-fee-tracker-arbitrum`,
-  [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-project/nftx-fee-tracker-goerli-v2-1`,
+export const NFTX_UNISWAP_SUBGRAPH = {
+  [Network.Goerli]: `${SHARED_ROOT}/nftx-project/nftx-v3-uniswap-goerli`,
 };

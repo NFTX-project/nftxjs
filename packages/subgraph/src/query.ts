@@ -17,17 +17,21 @@ type Args = {
   headers?: Record<string, string>;
   cache?: RequestCache;
   method?: string;
+  retries?: number;
   fetch?: Fetch;
 };
 
-const query = async <T>({
-  url,
-  query = {},
-  headers = {},
-  method = 'GET',
-  cache,
-  fetch = globalFetch,
-}: Args) => {
+const query = async <T>(args: Args): Promise<T> => {
+  const {
+    url,
+    query: queryData = {},
+    headers = {},
+    method = 'GET',
+    cache,
+    retries = 0,
+    fetch = globalFetch,
+  } = args;
+
   if (fetch == null) {
     throw new Error(
       'Could not find fetch api. You may need to import a polyfill'
@@ -37,7 +41,7 @@ const query = async <T>({
   const uri = new URL(url);
 
   if (method === 'GET') {
-    Object.entries(query).forEach(([key, value]) => {
+    Object.entries(queryData).forEach(([key, value]) => {
       if (value == null) {
         return;
       }
@@ -53,7 +57,7 @@ const query = async <T>({
       }
     });
   }
-  const body = method === 'GET' ? undefined : JSON.stringify(query);
+  const body = method === 'GET' ? undefined : JSON.stringify(queryData);
 
   const response = await fetch(uri.toString(), {
     method,
@@ -61,13 +65,20 @@ const query = async <T>({
     body,
     cache,
   });
+  // If we get a 5xx response we want to retry the request 3 times
+  if (response.status >= 500 && response.status <= 599 && retries < 3) {
+    await new Promise((res) => setTimeout(res, 1000));
+    return query({ ...args, retries: retries + 1 });
+  }
+  // Any other error we want to immediately throw
   if (!response.ok) {
     throw new Error(`Failed to fetch ${uri}`);
   }
 
-  // We get the text response as we need to manually parse big numbers
+  // Get the text response as we need to manually parse big numbers
   const text = await response.text();
   const contentType = response.headers.get('Content-Type');
+  // We should always be receiving a json response, if not then something's gone wrong
   if (!contentType?.includes('application/json')) {
     throw new Error(
       `Incorrect response type. Expected application/json but received ${contentType}`

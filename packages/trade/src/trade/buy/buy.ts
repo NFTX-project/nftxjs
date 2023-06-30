@@ -1,4 +1,4 @@
-import { NFTX_MARKETPLACE_ZAP, WeiPerEther, WETH_TOKEN } from '@nftx/constants';
+import { MARKETPLACE_ZAP, WeiPerEther, WETH_TOKEN } from '@nftx/constants';
 import { getExactTokenIds, getTotalTokenIds } from '../utils';
 import { omitNil } from '../../utils';
 import config from '@nftx/config';
@@ -8,9 +8,9 @@ import { getChainConstant } from '@nftx/utils';
 import { parseEther } from 'viem';
 import fetchNftxQuote from '../../price/fetchNftxQuote';
 
-type BuyVault = Pick<Vault, 'id' | 'vaultId' | 'reserveVtoken'> & {
-  fees: Pick<Vault['fees'], 'targetRedeemFee'>;
-  features: Pick<Vault['features'], 'enableTargetRedeem'>;
+type BuyVault = Pick<Vault, 'id' | 'vaultId'> & {
+  fees: Pick<Vault['fees'], 'redeemFee'>;
+  features: Pick<Vault['features'], 'enableRedeem'>;
 };
 
 const buyNftxErc721 = async ({
@@ -30,7 +30,7 @@ const buyNftxErc721 = async ({
   tokenIds: TokenId[] | [TokenId, number][];
   slippage: number;
 }) => {
-  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
+  const address = getChainConstant(MARKETPLACE_ZAP, network);
   const { vaultId, id: vaultAddress } = vault;
   // const contract = getContract({
   //   abi: NFTXMarketplace0xZap,

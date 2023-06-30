@@ -1,6 +1,5 @@
 import config from '@nftx/config';
 import { query as sendQuery } from '@nftx/subgraph';
-import { checkApiBlock } from './nsync';
 
 const queryApi = async <T>({
   url,
@@ -11,7 +10,6 @@ const queryApi = async <T>({
   query?: Record<string, any>;
   method?: string;
 }) => {
-  checkApiBlock();
   const uri = new URL(url, config.urls.NFTX_API_URL);
   const query: Record<string, any> = {
     ...givenQuery,

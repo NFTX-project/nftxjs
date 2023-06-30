@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import { NFTX_MARKETPLACE_ZAP, Zero } from '@nftx/constants';
+import { MARKETPLACE_ZAP, Zero } from '@nftx/constants';
 import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import approve from '../approve';
@@ -28,13 +28,13 @@ const approveSwap = ({
   vault: {
     id: Vault['id'];
     fees: {
-      targetSwapFee: Vault['fees']['targetSwapFee'];
+      swapFee: Vault['fees']['swapFee'];
     };
   };
   standard?: 'ERC721' | 'ERC1155';
 }) => {
   const targetCount = getTotalTokenIds(redeemTokenIds);
-  const hasFee = targetCount > 0 && vault.fees.targetSwapFee > Zero;
+  const hasFee = targetCount > 0 && vault.fees.swapFee > Zero;
 
   // TODO: implement NFTX Router
   // The contract doing the swap can vary.
@@ -45,7 +45,7 @@ const approveSwap = ({
     if (!hasFee || quote === 'VTOKEN') {
       return vault.id;
     }
-    return getChainConstant(NFTX_MARKETPLACE_ZAP, network);
+    return getChainConstant(MARKETPLACE_ZAP, network);
   })();
 
   return approve({

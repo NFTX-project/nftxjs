@@ -1,11 +1,11 @@
 import type { Address, Provider, Vault } from '@nftx/types';
-import type fetchMerkleLeaves from './fetchMerkleLeaves';
+import fetchMerkleLeaves from './fetchMerkleLeaves';
 import { NFTXENSMerkleEligibility } from '@nftx/abi';
 import getContract from '../web3/getContract';
 
-type FetchMerkleLeaves = ReturnType<typeof fetchMerkleLeaves>;
+type FetchMerkleLeaves = typeof fetchMerkleLeaves;
 
-export default ({
+export const makeRequiresProcessing = ({
   fetchMerkleLeaves,
 }: {
   fetchMerkleLeaves: FetchMerkleLeaves;
@@ -84,3 +84,5 @@ export default ({
 
     return result;
   };
+
+export default makeRequiresProcessing({ fetchMerkleLeaves });

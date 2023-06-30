@@ -1,8 +1,8 @@
 import config from '@nftx/config';
-import { NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
 import type { Address, Provider, Signer, TokenId } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import approve from '../approve';
+import { MARKETPLACE_ZAP } from '@nftx/constants';
 
 /**
  * Approves the NFTX Zap contract to sell your NFTs
@@ -19,7 +19,7 @@ const approveSell = (_args: {
   const { network = config.network, assetAddress, ...args } = _args;
 
   // TODO: implement NFTX Router
-  const zap = NFTX_MARKETPLACE_ZAP;
+  const zap = MARKETPLACE_ZAP;
   const spenderAddress = getChainConstant(zap, network);
 
   return approve({

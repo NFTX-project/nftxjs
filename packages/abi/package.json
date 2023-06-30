@@ -1,7 +1,7 @@
 {
   "name": "@nftx/abi",
-  "version": "0.8.0",
-  "description": "> TODO: description",
+  "version": "0.9.0",
+  "description": "",
   "author": "Jack Ellis <jack.m.ellis@hotmail.co.uk>",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "echo \"no tests\"",
-    "build": "rm -rf dist && node generate && node gen-hr && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
+    "build": "rm -rf dist && node gen-hr && node generate && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build",
     "docs": "jsdoc -c ../../jsdoc.js src"
   },

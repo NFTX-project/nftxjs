@@ -2,16 +2,15 @@ import {
   ERC1155_SUBGRAPH,
   ERC721_SUBGRAPH,
   NFTX_SUBGRAPH,
-  SUSHI_SUBGRAPH,
   NON_STANDARD_SUBGRAPH,
   NFTX_TOKEN_BALANCE_SUBGRAPH,
   PUBLIC_GRAPH_API_KEY,
   NFTX_APR_URL,
   Network,
-  NFTX_FEE_TRACKER_SUBGRAPH,
   ALCHEMY_URL,
   NFTX_API_URL,
   NFTX_ROUTER_URL,
+  NFTX_UNISWAP_SUBGRAPH,
 } from '@nftx/constants';
 import merge from 'deepmerge';
 
@@ -35,10 +34,9 @@ export interface Config {
     ERC1155_SUBGRAPH: Record<string, string | string[]>;
     ERC721_SUBGRAPH: Record<string, string | string[]>;
     NFTX_SUBGRAPH: Record<string, string | string[]>;
-    SUSHI_SUBGRAPH: Record<string, string | string[]>;
     NON_STANDARD_SUBGRAPH: Record<string, string | string[]>;
     NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string | string[]>;
-    NFTX_FEE_TRACKER_SUBGRAPH: Record<string, string | string[]>;
+    NFTX_UNISWAP_SUBGRAPH: Record<string, string | string[]>;
   };
   /** External & 3rd party URLs used by nftx.js
    * Each item should be an object keyed by network
@@ -107,8 +105,7 @@ const defaultConfig: Config = {
     NFTX_SUBGRAPH,
     NFTX_TOKEN_BALANCE_SUBGRAPH,
     NON_STANDARD_SUBGRAPH,
-    SUSHI_SUBGRAPH,
-    NFTX_FEE_TRACKER_SUBGRAPH,
+    NFTX_UNISWAP_SUBGRAPH,
   },
   urls: {
     NFTX_ROUTER_URL,
