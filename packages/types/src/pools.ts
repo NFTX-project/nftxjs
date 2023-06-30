@@ -1,45 +1,70 @@
-import type { TokenReserve } from './tokens';
+import type { Token } from './tokens';
 import type { Address } from './web3';
 
 /**
- * An NFTX pool
- * This interface contains details on both inventory staking and liquidity staking
+ * A Liquidity pool allows you to stake liquidity for a vault.
+ * There can be multiple pools per vault - though usually only 2 or 3 will be available.
  */
-export type Pool = {
+export type LiquidityPool = {
+  /** A unique identifier for the liquidity pool */
+  id: string;
   vaultId: string;
   vaultAddress: Address;
-  liquidityPoolId: Address;
-  stakingTokenId: Address;
-  liquidityApr: number;
-  inventoryApr: number;
-  /** The total amount of inventory (xToken) in the pool, in ETH */
-  inventoryStaked: bigint;
-  /** The total amount of liquidity (xSlp) in the pool, in ETH */
-  liquidityStaked: bigint;
-  /** The total value staked (xToken + xSlp) in the pool, in ETH */
-  totalValueStaked: bigint;
-  inventoryLockTime: number;
-  liquidityLockTime: number;
-  /** The % of the pool that is LP */
-  liquiditySplit: number;
-  /** The % of the pool that is IP */
-  inventorySplit: number;
-
-  poolReserves: TokenReserve;
-  /** The total amount of xToken in the inventory contract */
-  xTokenSupply: bigint;
-  /** The amount of xToken per vToken */
-  xTokenShare: bigint;
-  /** The total amount of xSlp in the dividend token contract */
-  xSlpSupply: bigint;
-  /** The total supply of SLP on the staking token contract */
-  slpSupply: bigint;
-  /** The SLP balance of the staking contract */
-  slpBalance: bigint;
+  /** The fee tier for this pool, 0.3, 0.5, 1 */
+  feeTier: 0.3 | 0.5 | 1;
+  /** A list of all of the applicable fees for this pool */
+  fees: {
+    id: Address;
+    feeType: 'FIXED_PROTOCOL_FEE' | 'FIXED_LP_FEE' | 'FIXED_TRADING_FEE';
+    /** A percentage in decimal format */
+    feePercentage: number;
+  }[];
+  /** The current tick that the pool is operating at */
+  tick: bigint;
+  totalLiquidity: bigint;
+  activeLiquidity: bigint;
+  /** The token pair that makes up the pool */
+  tokens: Token[];
+  /** Whether or not the pool actually exists or if it needs creating */
+  exists: boolean;
+  name: string;
   /** The total number of fees generated in the last 30 days */
-  periodFees: bigint;
-  /** The vault creation date */
-  createdAt: number;
+  periodFees: {
+    '24h': bigint;
+    '7d': bigint;
+    '1m': bigint;
+    all: bigint;
+  };
+  apr: {
+    '24h': bigint;
+    '7d': bigint;
+    '1m': bigint;
+    all: bigint;
+  };
+};
+
+export type InventoryPool = {
+  vaultId: string;
+  vaultAddress: Address;
+  /** The total amount of inventory staked (in vToken terms) */
+  vToken: bigint;
+  /** The ETH value of the total inventory staked */
+  vTokenValue: bigint;
+  /** The total number of unique xNFTs staked on this pool */
+  xNFTCount: number;
+  /** The total number of fees generated in the last 30 days */
+  periodFees: {
+    '24h': bigint;
+    '7d': bigint;
+    '1m': bigint;
+    all: bigint;
+  };
+  apr: {
+    '24h': bigint;
+    '7d': bigint;
+    '1m': bigint;
+    all: bigint;
+  };
 };
 
 export type CreatePoolFees = [

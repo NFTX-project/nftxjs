@@ -1,24 +1,22 @@
+import { Zero } from '@nftx/constants';
 import { mapObj } from '../../utils';
 import type { Response } from '../fetchSubgraphVaults';
-import transformVaultReserves from './transformVaultReserves';
 import transformVaultHolding from '../fetchVaultHoldings/transformVaultHolding';
-import type { Price, TokenReserve, Vault, VaultHolding } from '@nftx/types';
+import type { Vault, VaultHolding } from '@nftx/types';
 
 const transformVault = ({
-  reserves,
   vault: x,
   globalFees,
   merkleReference,
   moreHoldings = [],
+  vTokenToEth,
 }: {
-  reserves: TokenReserve[];
   vault: Response['vaults'][0];
   globalFees: Response['globals'][0]['fees'];
   merkleReference?: string;
   moreHoldings?: VaultHolding[];
+  vTokenToEth: bigint;
 }) => {
-  const reserve = reserves.find(({ tokenId }) => tokenId === x.id);
-
   const holdings = x.holdings
     .map((holding) => transformVaultHolding(holding))
     .concat(moreHoldings);
@@ -28,8 +26,7 @@ const transformVault = ({
     return [key, BigInt(value)];
   });
 
-  const { derivedETH, rawPrice, reserveVtoken, reserveWeth } =
-    transformVaultReserves(reserve);
+  const defaultPrice = { mint: Zero, redeem: Zero, swap: Zero };
 
   const vault: Vault = {
     ...x,
@@ -41,18 +38,21 @@ const transformVault = ({
     shutdownDate: Number(x.shutdownDate || '0'),
     tokenIds: holdings.map((x) => x.tokenId),
     fees,
-    derivedETH,
-    rawPrice,
-    buyPrice: null as unknown as Price,
-    prices: {} as any,
-    reserveVtoken,
-    reserveWeth,
+    // We'll be calculating the price further down the line
+    prices: [
+      defaultPrice,
+      defaultPrice,
+      defaultPrice,
+      defaultPrice,
+      defaultPrice,
+    ],
     eligibilityModule: x.eligibilityModule
       ? {
           ...x.eligibilityModule,
           merkleReference,
         }
       : (undefined as any),
+    vTokenToEth,
   };
 
   return vault;

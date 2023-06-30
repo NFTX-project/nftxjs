@@ -7,7 +7,7 @@ const calculateSwapFee = ({
   targetSwaps,
 }: {
   vault: {
-    fees: Pick<Vault['fees'], 'targetSwapFee'>;
+    fees: Pick<Vault['fees'], 'swapFee'>;
   };
   targetSwaps?: number;
 }) => {
@@ -17,9 +17,9 @@ const calculateSwapFee = ({
   let amount = Zero;
 
   if (targetSwaps != null) {
-    amount = amount + vault.fees.targetSwapFee * BigInt(targetSwaps);
+    amount = amount + vault.fees.swapFee * BigInt(targetSwaps);
   } else if (doesVaultHaveTargetSwapFee(vault)) {
-    amount = amount + vault.fees.targetSwapFee;
+    amount = amount + vault.fees.swapFee;
   }
 
   return amount;

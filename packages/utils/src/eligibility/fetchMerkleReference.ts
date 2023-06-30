@@ -1,11 +1,15 @@
 import type { Provider, Vault } from '@nftx/types';
-import type { getContract } from '../web3';
+import { getContract } from '../web3';
 import isMerkleVault from './isMerkleVault';
 import { NFTXENSMerkleEligibility } from '@nftx/abi';
 
 type GetContract = typeof getContract;
 
-export default ({ getContract }: { getContract: GetContract }) =>
+export const makeFetchMerkleReference = ({
+  getContract,
+}: {
+  getContract: GetContract;
+}) =>
   async function fetchMerkleReference(args: {
     provider: Provider;
     vault: {
@@ -33,3 +37,5 @@ export default ({ getContract }: { getContract: GetContract }) =>
 
     return reference;
   };
+
+export default makeFetchMerkleReference({ getContract });

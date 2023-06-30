@@ -11,7 +11,7 @@ const fetchVaultSwapPrice = async (args: {
   network?: number;
   vault: {
     id: Vault['id'];
-    fees: Pick<Vault['fees'], 'targetSwapFee'>;
+    fees: Pick<Vault['fees'], 'swapFee'>;
   };
   targetSwaps?: number;
 }): Promise<Price> => {

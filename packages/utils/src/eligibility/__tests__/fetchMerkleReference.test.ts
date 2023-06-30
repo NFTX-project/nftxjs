@@ -1,4 +1,4 @@
-import makeFetchMerkleReference from '../fetchMerkleReference';
+import { makeFetchMerkleReference } from '../fetchMerkleReference';
 
 let fetchMerkleReference: ReturnType<typeof makeFetchMerkleReference>;
 let run: () => ReturnType<typeof fetchMerkleReference>;

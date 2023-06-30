@@ -1,14 +1,13 @@
-import type { Price } from './price';
 import type { Token } from './tokens';
 import type { Address, TokenId } from './web3';
 
 export type VaultFeatures = {
   enableMint: boolean;
-  enableRandomRedeem: boolean;
-  enableTargetRedeem: boolean;
-  enableRandomSwap: boolean;
-  enableTargetSwap: boolean;
+  enableRedeem: boolean;
+  enableSwap: boolean;
 };
+
+type VaultPrice = { mint: bigint; redeem: bigint; swap: bigint };
 
 export type VaultHolding = {
   id: string;
@@ -19,10 +18,8 @@ export type VaultHolding = {
 
 export type VaultFees = {
   mintFee: bigint;
-  randomRedeemFee: bigint;
-  targetRedeemFee: bigint;
-  targetSwapFee: bigint;
-  randomSwapFee: bigint;
+  redeemFee: bigint;
+  swapFee: bigint;
 };
 
 export type Vault = {
@@ -31,17 +28,8 @@ export type Vault = {
   asset: Token;
   createdBy: { id: Address };
   createdAt: number;
-  derivedETH: string;
-  rawPrice: bigint;
-  buyPrice: Price;
-  prices: {
-    mint: bigint;
-    redeem: bigint;
-    swap: bigint;
-    spot: bigint;
-  };
-  reserveVtoken: bigint;
-  reserveWeth: bigint;
+  /** An array of prices for buying n items from the vault. The [0] indexed price is for buying 1 item. The [4] indexed price is for buying 5 items. */
+  prices: [VaultPrice, VaultPrice, VaultPrice, VaultPrice, VaultPrice];
   features: VaultFeatures;
   totalHoldings: number;
   totalMints: number;
@@ -61,42 +49,85 @@ export type Vault = {
     eligibleRange: [string, string];
     merkleReference: string;
   };
-  lpStakingPool: {
-    id: Address;
-    stakingToken: {
-      id: Address;
-    };
-    dividendToken: {
-      id: Address;
-    };
-  };
-  inventoryStakingPool: {
-    id: Address;
-    dividendToken: {
-      id: Address;
-      symbol: string;
-    };
-  };
   shutdownDate: number;
+  /** The ETH price of 1 vToken (comes from vaultContract.vTokenToETH(WeiPerEther)) */
+  vTokenToEth: bigint;
   // feeReceipts: Pick<VaultFeeReceipt, 'amount' | 'date' | 'transfers'>[];
   // activity: Pick<VaultActivity, 'vaultAddress' | 'vaultId'>;
 };
 
-export type VaultActivity = {
+export type VaultActivityType =
+  | 'buy'
+  | 'sell'
+  | 'swap'
+  | 'mint'
+  | 'redeem'
+  | 'stake'
+  | 'unstake'
+  | 'create'
+  | 'update'
+  | 'shutdown';
+type VaultActivityEventType =
+  | 'Swap'
+  | 'Redeem'
+  | 'Mint'
+  | 'Deposit'
+  | 'Withdrawal'
+  | 'LPDeposit'
+  | 'LPWithdrawal'
+  | 'ZapSell'
+  | 'ZapSwap'
+  | 'ZapBuy'
+  | 'UnstakeInventory'
+  | 'VaultCreated'
+  | 'VaultPublished'
+  | 'VaultNameChange'
+  | 'VaultShutdown'
+  | 'VaultFeeUpdate';
+
+type CommonVaultActivity<T extends VaultActivityType> = {
   vaultId: string;
   vaultAddress: Address;
-  amount: number;
-  ethAmount: bigint;
   date: number;
-  feeAmount: bigint;
-  tokenId: TokenId;
+  type: T;
   txId: Address;
   source: string;
-  type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'stake' | 'unstake';
-  stakeType?: 'liquidity' | 'inventory';
-  swapTokenId?: TokenId;
-  random?: boolean;
+  eventType: VaultActivityEventType;
 };
+type SellVaultActivity = CommonVaultActivity<'sell' | 'mint'> & {
+  tokenIds: `${number}`[];
+  feeAmount: bigint;
+};
+type BuyVaultActivity = CommonVaultActivity<'redeem' | 'buy'> & {
+  tokenIds: `${number}`[];
+  feeAmount: bigint;
+};
+type SwapVaultActivity = CommonVaultActivity<'swap'> & {
+  tokenIds: `${number}`[];
+  swapTokenIds: `${number}`[];
+  feeAmount: bigint;
+};
+type StakeVaultActivity = CommonVaultActivity<'stake'> & {
+  stakeType: 'liquidity' | 'inventory';
+  amount: bigint;
+};
+type UnstakeVaultActivity = CommonVaultActivity<'unstake'> & {
+  stakeType: 'inventory' | 'liquidity';
+  amount: bigint;
+};
+type CreateVaultActivity = CommonVaultActivity<'create'>;
+type UpdateVaultActivity = CommonVaultActivity<'update'>;
+type ShudownVaultActivity = CommonVaultActivity<'shutdown'>;
+
+export type VaultActivity =
+  | SellVaultActivity
+  | BuyVaultActivity
+  | SwapVaultActivity
+  | StakeVaultActivity
+  | UnstakeVaultActivity
+  | CreateVaultActivity
+  | UpdateVaultActivity
+  | ShudownVaultActivity;
 
 export type VaultFeeTransfer = {
   amount: bigint;

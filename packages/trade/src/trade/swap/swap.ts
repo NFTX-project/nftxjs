@@ -1,4 +1,4 @@
-import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN, Zero } from '@nftx/constants';
+import { MARKETPLACE_ZAP, WETH_TOKEN, Zero } from '@nftx/constants';
 import {
   getExactTokenIds,
   getTokenIdAmounts,
@@ -14,8 +14,8 @@ import { getChainConstant, getContract } from '@nftx/utils';
 import fetchNftxQuote from '../../price/fetchNftxQuote';
 
 type SwapVault = Pick<Vault, 'id' | 'vaultId'> & {
-  fees: Pick<Vault['fees'], 'targetSwapFee'>;
-  features: Pick<Vault['features'], 'enableTargetSwap'>;
+  fees: Pick<Vault['fees'], 'swapFee'>;
+  features: Pick<Vault['features'], 'enableSwap'>;
 };
 
 const swapNftxErc721 = async ({
@@ -43,7 +43,7 @@ const swapNftxErc721 = async ({
   const redeemIds = getExactTokenIds(redeemTokenIds);
   const targetSwaps = getTotalTokenIds(redeemTokenIds);
   const buyAmount = calculateSwapFee({ vault, targetSwaps });
-  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
+  const address = getChainConstant(MARKETPLACE_ZAP, network);
   // const contract = getContract({
   //   abi: NFTXMarketplace0xZap,
   //   provider,
@@ -89,12 +89,14 @@ const swapErc721Direct = async ({
   provider,
   signer,
   vault: { id: vaultAddress },
+  userAddress,
 }: {
   provider: Provider;
   signer: Signer;
   vault: SwapVault;
   mintTokenIds: TokenId[] | [TokenId, number][];
   redeemTokenIds: TokenId[] | [TokenId, number][];
+  userAddress: Address;
 }) => {
   const mintIds = getUniqueTokenIds(mintTokenIds);
   const amounts = getTokenIdAmounts(mintTokenIds);
@@ -109,8 +111,17 @@ const swapErc721Direct = async ({
 
   console.debug(vaultAddress, 'swap', mintIds, amounts, redeemIds);
 
+  // TODO: not sure if vaultAddress is correct for the to arg
+  // TODO: not sure if forceFees should be true or false
   return contract.write.swap({
-    args: [mintIds.map(BigInt), amounts.map(BigInt), redeemIds.map(BigInt)],
+    args: [
+      mintIds.map(BigInt),
+      amounts.map(BigInt),
+      redeemIds.map(BigInt),
+      userAddress,
+      vaultAddress,
+      false,
+    ],
   });
 };
 
@@ -178,7 +189,7 @@ const swap = (args: {
 
   const targetCount = getTotalTokenIds(redeemTokenIds);
   const requiresEth =
-    quote === 'ETH' && targetCount > 0 && vault.fees.targetSwapFee > Zero;
+    quote === 'ETH' && targetCount > 0 && vault.fees.swapFee > Zero;
   const withFee = requiresEth ? 'withFee' : 'noFee';
 
   const fn = matrix[quote]?.[standard][withFee];

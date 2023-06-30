@@ -1,4 +1,4 @@
-export { default as fetchPosition } from './fetchPosition';
-export { default as fetchPositionYield } from './fetchPositionYield';
-export { default as fetchUserPositions } from './fetchUserPositions';
-export { default as fetchVaultPositions } from './fetchVaultPositions';
+export { default as fetchInventoryPosition } from './fetchInventoryPosition';
+export { default as fetchInventoryPositions } from './fetchInventoryPositions';
+export { default as fetchLiquidityPosition } from './fetchLiquidityPosition';
+export { default as fetchLiquidityPositions } from './fetchLiquidityPositions';

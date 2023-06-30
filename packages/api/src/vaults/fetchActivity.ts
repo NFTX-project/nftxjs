@@ -25,11 +25,11 @@ const fetchActivity = ({
   }
 
   return queryApi<VaultActivity[]>({
-    url: `/${network}/vault-activity`,
+    url: `/${network}/activity`,
     query: {
       fromTimestamp,
-      id: vaultAddress ?? vaultAddresses,
-      vaultId: vaultId ?? vaultIds,
+      ids: vaultAddress ? [vaultAddress] : vaultAddresses,
+      vaultIds: vaultId ? [vaultId] : vaultIds,
     },
   });
 };

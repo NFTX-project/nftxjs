@@ -9,9 +9,9 @@ import fetchBuyPrice from './fetchBuyPrice';
  * Unlike fetchBuyPrice, this method accounts for vault fees and buying multiple targets
  */
 const fetchVaultBuyPrice = async (args: {
-  vault: Pick<Vault, 'id' | 'reserveVtoken'> & {
-    fees: Pick<Vault['fees'], 'targetRedeemFee'>;
-    features: Pick<Vault['features'], 'enableTargetRedeem'>;
+  vault: Pick<Vault, 'id'> & {
+    fees: Pick<Vault['fees'], 'redeemFee'>;
+    features: Pick<Vault['features'], 'enableRedeem'>;
   };
   network?: number;
   /** The number of target buys we are doing */

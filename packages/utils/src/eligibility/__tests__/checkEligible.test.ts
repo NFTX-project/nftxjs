@@ -1,4 +1,4 @@
-import makeCheckEligible from '../checkEligible';
+import { makeCheckEligible } from '../checkEligible';
 import type { getContract as _getContract } from '../../web3';
 import type { TokenId } from '@nftx/types';
 

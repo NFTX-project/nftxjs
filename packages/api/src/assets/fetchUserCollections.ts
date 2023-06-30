@@ -10,9 +10,10 @@ const fetchUserCollections = ({
   network?: number;
   userAddress: Address;
 }) => {
-  const url = `/${network}/users/${userAddress}/collections`;
+  const url = `/${network}/collections`;
   return queryApi<Collection[]>({
     url,
+    query: { userAddress },
   });
 };
 

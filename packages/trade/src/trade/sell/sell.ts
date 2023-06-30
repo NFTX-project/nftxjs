@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
+import { MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import { getUniqueTokenIds, getTotalTokenIds } from '../utils';
 import calculateSellFee from '../../price/calculateSellFee';
 import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
@@ -34,7 +34,7 @@ const sellNftxErc721 = async ({
   const fee = calculateSellFee({ vault, amount });
   const sellAmount = parseEther(`${amount}`) - fee;
   const ids = getUniqueTokenIds(tokenIds);
-  const address = getChainConstant(NFTX_MARKETPLACE_ZAP, network);
+  const address = getChainConstant(MARKETPLACE_ZAP, network);
 
   const {
     methodParameters: { calldata: data },

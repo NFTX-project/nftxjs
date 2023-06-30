@@ -1,11 +1,11 @@
 import { NFTXENSMerkleEligibility } from '@nftx/abi';
-import type fetchMerkleLeaves from './fetchMerkleLeaves';
+import fetchMerkleLeaves from './fetchMerkleLeaves';
 import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
 import getContract from '../web3/getContract';
 
-type FetchMerkleLeaves = ReturnType<typeof fetchMerkleLeaves>;
+type FetchMerkleLeaves = typeof fetchMerkleLeaves;
 
-export default ({
+export const makeProcessTokens = ({
   fetchMerkleLeaves,
 }: {
   fetchMerkleLeaves: FetchMerkleLeaves;
@@ -61,3 +61,5 @@ export default ({
       args: [tokenIds.map(BigInt), proofs],
     });
   };
+
+export default makeProcessTokens({ fetchMerkleLeaves });
