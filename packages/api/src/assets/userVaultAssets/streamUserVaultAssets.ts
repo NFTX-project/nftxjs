@@ -5,19 +5,8 @@ import Stream, { type IStream } from '../Stream';
 
 type Response = { assets: Asset[]; cursor: string };
 
-const getUrl = ({
-  network,
-  userAddress,
-  vaultId,
-}: {
-  vaultId?: string;
-  network: number;
-  userAddress: string;
-}) => {
-  if (vaultId) {
-    return `/${network}/users/${userAddress}/vaults/${vaultId}/assets`;
-  }
-  return `/${network}/users/${userAddress}/assets`;
+const getUrl = ({ network }: { network: number }) => {
+  return `/${network}/assets`;
 };
 
 /**
@@ -53,11 +42,11 @@ const streamUserVaultAssets = ({
 
   stream.on('read', async () => {
     try {
-      const url = getUrl({ network, userAddress, vaultId });
+      const url = getUrl({ network });
 
       const result = await queryApi<Response>({
         url,
-        query: { cursor },
+        query: { cursor, userAddress, vaultId },
       });
       cursor = result.cursor;
       if (cursor) {

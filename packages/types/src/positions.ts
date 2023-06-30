@@ -1,49 +1,58 @@
-import type { Pool } from './pools';
 import type { Address } from './web3';
 
-/**
- * A given user's NFTX position in a given a pool
- */
-export type Position = Pool & {
+/** A user's Liquidity Position */
+export type LiquidityPosition = {
+  id: string;
+  poolId: string;
   userAddress: Address;
-  /** The amount of ETH staked by the user (paired with vToken) */
-  liquidityEth: bigint;
-  /** The amount of vToken staked by the user (paired with ETH) */
-  liquidityTokens: bigint;
-  /** The total liquidity staked by the user in ETH terms */
-  liquidityValue: bigint;
-  /** The user's % share of all staked liquidity */
-  liquidityShare: bigint;
-  /** The % of the user's total position that is in liquidity (vs inventory) */
-  liquiditySplit: number;
-  /** The amount of vToken the user can currently claim */
-  claimableAmount: bigint;
-  /** The amount of vToken the user can currently claim in ETH terms */
-  claimableValue: bigint;
+  vaultId: string;
+  vaultAddress: Address;
+  /** The upper boundary of the position range */
+  tickUpper: bigint;
+  /** The lower boundary of the position range */
+  tickLower: bigint;
+  /** The upper tick in ETH */
+  tickUpperValue: bigint;
+  /** The lower tick in ETH */
+  tickLowerValue: bigint;
+  /** Whether the position is currently in range */
+  inRange: boolean;
+  /** The amount of liquidity in this posistion */
+  liquidity: bigint;
+  /** The amount of vToken in this position */
+  vToken: bigint;
+  /** The ETH value of the vToken */
+  vTokenValue: bigint;
+  /** The amount of ETH in this position */
+  eth: bigint;
+  /** The ETH value of the position (i.e. ETH side + eth-value of vToken) */
+  value: bigint;
+  totalDeposits: number;
+  totalWithdrawals: number;
+  /** The lifetime amount deposited into this position */
+  lifetimeDeposits: bigint;
+  /** The lifetime amount withdrawn from this position */
+  lifetimeWithdrawals: bigint;
+  /** The lifetime amount of rewards earned by this position in ETH */
+  lifetimeRewards: bigint;
+  /** The amount claimable on this position in ETH */
+  claimableRewards: bigint;
+};
 
-  /** The amount of xToken staked by the user (in vToken terms) */
-  inventoryTokens: bigint;
-  /** The total inventory staked by the user in ETH terms */
-  inventoryValue: bigint;
-  /** The user's % share of all staked inventory */
-  inventoryShare: bigint;
-  /** The % of the user's total position that is in inventory (vs liquidity) */
-  inventorySplit: number;
-
-  /** The ETH value of inventory staked + liquidity staked */
-  valueStaked: bigint;
-  /** The ETH value of inventory + liquidity + claimable */
-  totalValue: bigint;
-
-  /** The user's xToken balance */
-  xTokenBalance: bigint;
-  /** The user's xSlp balance */
-  xSlpBalance: bigint;
-  /** The user's slp balance */
-  slpBalance: bigint;
-
-  // yield: Pick<PositionYield, 'amount' | 'timestamp' | 'txnId' | 'type'>[];
-  // lifetimeYield: bigint;
+/** A user's Inventory Position, essentially a single xNFT */
+export type InventoryPosition = {
+  id: Address;
+  userAddress: Address;
+  vaultId: string;
+  vaultAddress: Address;
+  /** The amount of inventory staked (in vToken terms) */
+  vToken: bigint;
+  /** The ETH value of the position */
+  vTokenValue: bigint;
+  /** The lifetime amount of rewards earned by this position in ETH */
+  lifetimeRewards: bigint;
+  /** The amount claimable on this position in ETH */
+  claimableRewards: bigint;
 };
 
 /** A fee generation event */

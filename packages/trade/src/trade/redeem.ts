@@ -18,7 +18,7 @@ const redeem = async (args: {
    */
   targetIds: Array<TokenId> | Array<[TokenId, number]>;
 }) => {
-  const { provider, signer, targetIds, vaultAddress } = args;
+  const { provider, signer, targetIds, vaultAddress, userAddress } = args;
 
   const contract = getContract({
     provider,
@@ -33,8 +33,9 @@ const redeem = async (args: {
   // it will fill out the rest with randoms
   const amount = specificIds.length;
 
+  // TODO: the last param, forceFees, what does it need to be?
   return contract.write.redeem({
-    args: [BigInt(amount), specificIds.map(BigInt)],
+    args: [specificIds.map(BigInt), userAddress, BigInt(amount), false],
   });
 };
 

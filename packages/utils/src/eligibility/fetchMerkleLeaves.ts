@@ -1,11 +1,11 @@
 import { NFTXENSMerkleEligibility } from '@nftx/abi';
 import type { Provider, Vault } from '@nftx/types';
-import type { getContract } from '../web3';
+import { getContract } from '../web3';
 
 type GetContract = typeof getContract;
 type Fetch = typeof fetch;
 
-export default ({
+export const makeFetchMerkleLeaves = ({
   getContract,
   fetch,
 }: {
@@ -51,3 +51,8 @@ export default ({
 
     return leaves;
   };
+
+export default makeFetchMerkleLeaves({
+  getContract,
+  fetch: typeof fetch === 'undefined' ? (undefined as any) : fetch,
+});

@@ -60,7 +60,7 @@ const resetRequiredBlock = () => {
   config.internal.source = 'api';
 };
 
-export const checkApiBlock = (): void => {
+const checkApiBlock = (): void => {
   const { requiredBlockNumber } = config.internal;
 
   // We don't need to worry about syncing if there's no required block number
@@ -72,8 +72,20 @@ export const checkApiBlock = (): void => {
 
   // The API is behind the required block
   if (isApiBehind()) {
+    // Switch to live mode and start polling the api to see what the last-indexed block is
     updateApiBlock({ source });
   } else if (source === 'live') {
+    // Api has caught up so we no longer need to be in live mode
     resetRequiredBlock();
   }
 };
+
+/** Wrap another function so that when it gets called, we first check the last-indexed block from the api */
+const nsync = <F extends (...args: any[]) => any>(f: F): F => {
+  return ((...args: any[]) => {
+    checkApiBlock();
+    return f(...args);
+  }) as F;
+};
+
+export default nsync;

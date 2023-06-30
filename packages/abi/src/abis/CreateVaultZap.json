@@ -1,0 +1,18 @@
+[
+  "constructor(address nftxRouter_, address ammFactory_, address inventoryStaking_)",
+  "error InsufficientETHSent()",
+  "error InsufficientVTokensMinted()",
+  "error NotNFTOwner()",
+  "error R()",
+  "error T()",
+  "error UnableToSendETH()",
+  "function WETH() view returns (address)",
+  "function ammFactory() view returns (address)",
+  "function createVault(tuple(tuple(address assetAddress, bool is1155, bool allowAllItems, string name, string symbol) vaultInfo, tuple(uint256 moduleIndex, bytes initData) eligibilityStorage, uint256[] nftIds, uint256[] nftAmounts, uint256 vaultFeaturesFlag, tuple(uint256 mintFee, uint256 redeemFee, uint256 swapFee) vaultFees, tuple(uint256 lowerNFTPriceInETH, uint256 upperNFTPriceInETH, uint24 fee, uint256 currentNFTPriceInETH, uint256 vTokenMin, uint256 wethMin, uint256 deadline) liquidityParams) params) payable returns (uint256 vaultId)",
+  "function inventoryStaking() view returns (address)",
+  "function nftxRouter() view returns (address)",
+  "function onERC1155BatchReceived(address, address, uint256[], uint256[], bytes) returns (bytes4)",
+  "function onERC1155Received(address, address, uint256, uint256, bytes) returns (bytes4)",
+  "function supportsInterface(bytes4 interfaceId) view returns (bool)",
+  "function vaultFactory() view returns (address)"
+]

@@ -17,6 +17,34 @@ import {
 } from '../trade';
 import { WeiPerEther, Zero } from '@nftx/constants';
 
+const getVaultDetails = ({
+  assetAddress,
+  name,
+  standard,
+  symbol,
+  allowAllItems,
+}: {
+  assetAddress: Address;
+  standard: 'ERC721' | 'ERC1155';
+  name: string;
+  symbol: string;
+  allowAllItems: boolean;
+}): {
+  assetAddress: Address;
+  is1155: boolean;
+  allowAllItems: boolean;
+  name: string;
+  symbol: string;
+} => {
+  return {
+    assetAddress,
+    is1155: standard === 'ERC1155',
+    allowAllItems,
+    name,
+    symbol,
+  };
+};
+
 const getEligibilityArgs = ({
   eligibilityList,
   eligibilityModule,
@@ -25,30 +53,36 @@ const getEligibilityArgs = ({
   eligibilityModule: 'list' | 'range' | false;
   eligibilityRange: [bigint, bigint];
   eligibilityList: bigint[];
-}): { allowAllItems: boolean; moduleIndex: bigint; initData: Address } => {
+}): {
+  allowAllItems: boolean;
+  args: { moduleIndex: bigint; initData: Address };
+} => {
   switch (eligibilityModule) {
     case 'list':
       return {
         allowAllItems: false,
-        moduleIndex: 0n,
-        initData: encodeAbiParameters(parseAbiParameters('uint256[]'), [
-          eligibilityList,
-        ]),
+        args: {
+          moduleIndex: 0n,
+          initData: encodeAbiParameters(parseAbiParameters('uint256[]'), [
+            eligibilityList,
+          ]),
+        },
       };
     case 'range':
       return {
         allowAllItems: false,
-        moduleIndex: 1n,
-        initData: encodeAbiParameters(parseAbiParameters('uint256, uint256'), [
-          eligibilityRange[0],
-          eligibilityRange[1],
-        ]),
+        args: {
+          moduleIndex: 1n,
+          initData: encodeAbiParameters(
+            parseAbiParameters('uint256, uint256'),
+            [eligibilityRange[0], eligibilityRange[1]]
+          ),
+        },
       };
     default:
       return {
         allowAllItems: true,
-        moduleIndex: -1n,
-        initData: 0 as unknown as Address,
+        args: { moduleIndex: -1n, initData: 0 as unknown as Address },
       };
   }
 };
@@ -64,68 +98,53 @@ const getVaultFeatures = (features: CreatePoolFeatures) => {
 };
 
 const getVaultFees = (fees: CreatePoolFees) => {
-  type Key =
-    | 'mintFee'
-    | 'randomRedeemFee'
-    | 'targetRedeemFee'
-    | 'randomSwapFee'
-    | 'targetSwapFee';
+  type Key = 'mintFee' | 'redeemFee' | 'swapFee';
 
-  const feeKeys: Key[] = [
-    'mintFee',
-    'randomRedeemFee',
-    'targetRedeemFee',
-    'randomSwapFee',
-    'targetSwapFee',
-  ];
+  const feeKeys: Key[] = ['mintFee', 'redeemFee', 'swapFee'];
 
   const vaultFees = feeKeys.reduce((acc, key, i) => {
     const value = parseUnits(`${fees[i]}`, 8);
 
     return { ...acc, [key]: value };
-  }, {} as Record<Key, number>);
+  }, {} as Record<Key, bigint>);
 
   return vaultFees;
 };
 
-const getMintAndStake = (
-  liquiditySplit: number,
-  tokenIds: Array<[TokenId, number]>,
-  spotPrice: bigint
-): {
-  assetTokenIds: bigint[];
-  assetTokenAmounts: bigint[];
-  minTokenIn: bigint;
-  minWethIn: bigint;
-  wethIn: bigint;
+const getLiquidityParams = ({
+  currentNftPriceInEth,
+  deadline,
+  fee,
+  lowerNftPriceInEth,
+  upperNftPriceInEth,
+  vTokenMin,
+  wethMin,
+}: {
+  lowerNftPriceInEth: bigint;
+  upperNftPriceInEth: bigint;
+  fee: number;
+  currentNftPriceInEth: bigint;
+  vTokenMin: bigint;
+  wethMin: bigint;
+  deadline: bigint;
+}): {
+  lowerNFTPriceInETH: bigint;
+  upperNFTPriceInETH: bigint;
+  fee: number;
+  currentNFTPriceInETH: bigint;
+  vTokenMin: bigint;
+  wethMin: bigint;
+  deadline: bigint;
 } => {
-  if (!tokenIds.length || !spotPrice) {
-    return {
-      assetTokenIds: [],
-      assetTokenAmounts: [],
-      minTokenIn: Zero,
-      minWethIn: Zero,
-      wethIn: Zero,
-    };
-  }
-  // The amount of token we're going to be adding as liquidity
-  // (so remove the inventory % of the selected assets)
-  const split = parseEther(`${liquiditySplit / 100}`);
-  const minTokenIn = split * BigInt(getTotalTokenIds(tokenIds));
-  // The amount of weth we're going to be pairing with the liquidity
-  // So spot price * # of tokens
-  const minWethIn = (spotPrice * minTokenIn) / WeiPerEther;
-  const wethIn = minWethIn;
-
-  const mintAndStake = {
-    assetTokenIds: getUniqueTokenIds(tokenIds).map(BigInt),
-    assetTokenAmounts: getTokenIdAmounts(tokenIds).map(BigInt),
-    minTokenIn,
-    minWethIn,
-    wethIn,
+  return {
+    lowerNFTPriceInETH: lowerNftPriceInEth,
+    upperNFTPriceInETH: upperNftPriceInEth,
+    fee,
+    currentNFTPriceInETH: currentNftPriceInEth,
+    vTokenMin,
+    wethMin,
+    deadline,
   };
-
-  return mintAndStake;
 };
 
 export default function getCreatePoolArgs({
@@ -135,12 +154,17 @@ export default function getCreatePoolArgs({
   eligibilityRange,
   features,
   fees,
-  liquiditySplit,
   name,
-  spotPrice,
   standard,
   symbol,
   tokenIds,
+  currentNftPriceInEth,
+  deadline,
+  fee,
+  lowerNftPriceInEth,
+  upperNftPriceInEth,
+  vTokenMin,
+  wethMin,
 }: {
   name: string;
   symbol: string;
@@ -152,39 +176,56 @@ export default function getCreatePoolArgs({
   eligibilityRange: [bigint, bigint];
   eligibilityList: bigint[];
   tokenIds: Array<[TokenId, number]>;
-  spotPrice: bigint;
-  liquiditySplit: number;
+  currentNftPriceInEth: bigint;
+  deadline: bigint;
+  fee: number;
+  lowerNftPriceInEth: bigint;
+  upperNftPriceInEth: bigint;
+  vTokenMin: bigint;
+  wethMin: bigint;
 }) {
-  const { allowAllItems, initData, moduleIndex } = getEligibilityArgs({
+  const { allowAllItems, args: eligibilityStorage } = getEligibilityArgs({
     eligibilityList,
     eligibilityModule,
     eligibilityRange,
   });
 
-  const vaultDetails = {
-    name,
-    symbol,
-    assetAddress,
-    is1155: standard === 'ERC1155',
+  const vaultInfo = getVaultDetails({
     allowAllItems,
-  };
+    assetAddress,
+    name,
+    standard,
+    symbol,
+  });
 
-  const vaultFeatures = getVaultFeatures(features);
+  const vaultFeaturesFlag = getVaultFeatures(features);
 
   const vaultFees = getVaultFees(fees);
 
-  const eligibility = {
-    moduleIndex,
-    initData,
-  };
+  const liquidityParams = getLiquidityParams({
+    currentNftPriceInEth,
+    deadline,
+    fee,
+    lowerNftPriceInEth,
+    upperNftPriceInEth,
+    vTokenMin,
+    wethMin,
+  });
 
-  const mintAndStake = getMintAndStake(liquiditySplit, tokenIds, spotPrice);
+  const nftIds = getUniqueTokenIds(tokenIds).map((tokenId) => BigInt(tokenId));
+  const nftAmounts = getTokenIdAmounts(tokenIds).map((amount) =>
+    BigInt(amount)
+  );
 
-  return {
-    vaultDetails,
-    vaultFeatures,
+  const args = {
+    vaultInfo,
+    eligibilityStorage,
+    nftIds,
+    nftAmounts,
+    vaultFeaturesFlag,
     vaultFees,
-    eligibility,
-    mintAndStake,
+    liquidityParams,
   };
+
+  return args;
 }

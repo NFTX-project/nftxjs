@@ -1,8 +1,9 @@
-import { VAULT_CREATION_ZAP } from '@nftx/constants';
-import { VaultCreationZap } from '@nftx/abi';
+import { CreateVaultZap } from '@nftx/abi';
 import { getChainConstant, getContract } from '@nftx/utils';
 import type createPool from './createPool';
 import getCreatePoolArgs from './getCreatePoolArgs';
+import { CREATE_VAULT_ZAP } from '@nftx/constants';
+import { parseEther } from 'viem';
 
 type GetContract = typeof getContract;
 type Args = Parameters<ReturnType<typeof createPool>>[0];
@@ -15,51 +16,54 @@ export default ({ getContract }: { getContract: GetContract }) =>
     eligibilityRange,
     features,
     fees,
-    liquiditySplit,
     name,
     network,
     signer,
     provider,
-    spotPrice,
     standard,
     symbol,
     tokenIds,
+    currentNftPriceInEth,
+    deadline,
+    fee,
+    lowerNftPriceInEth,
+    upperNftPriceInEth,
+    vTokenMin,
+    wethMin,
   }: Args) {
-    const {
-      eligibility,
-      mintAndStake,
-      vaultDetails,
-      vaultFeatures,
-      vaultFees,
-    } = getCreatePoolArgs({
+    const args = getCreatePoolArgs({
       assetAddress,
       eligibilityList,
       eligibilityModule,
       eligibilityRange,
       features,
       fees,
-      liquiditySplit,
       name,
-      spotPrice,
       standard,
       symbol,
       tokenIds,
+      currentNftPriceInEth,
+      deadline,
+      fee,
+      lowerNftPriceInEth,
+      upperNftPriceInEth,
+      vTokenMin,
+      wethMin,
     });
 
-    const value = mintAndStake.wethIn;
-
-    if (!value) {
-      return null;
-    }
+    // TODO: this needs to be uniswap magic fn
+    // https://github.com/NFTX-project/uni-v3-helpers
+    const value = parseEther('0.1');
 
     const contract = getContract({
-      abi: VaultCreationZap,
-      address: getChainConstant(VAULT_CREATION_ZAP, network),
+      abi: CreateVaultZap,
+      address: getChainConstant(CREATE_VAULT_ZAP, network),
       provider,
       signer,
     });
 
     return contract.estimate.createVault({
-      args: [vaultDetails, vaultFeatures, vaultFees, eligibility, mintAndStake],
+      args: [args],
+      value,
     });
   };

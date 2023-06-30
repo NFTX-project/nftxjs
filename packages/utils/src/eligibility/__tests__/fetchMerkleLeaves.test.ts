@@ -1,4 +1,4 @@
-import makeFetchMerkleLeaves from '../fetchMerkleLeaves';
+import { makeFetchMerkleLeaves } from '../fetchMerkleLeaves';
 
 let fetchMerkleLeaves: ReturnType<typeof makeFetchMerkleLeaves>;
 let run: () => ReturnType<typeof fetchMerkleLeaves>;

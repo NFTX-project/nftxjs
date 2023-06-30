@@ -7,10 +7,8 @@ export type Response = {
   globals: Array<{
     fees: {
       mintFee: string;
-      randomRedeemFee: string;
-      targetRedeemFee: string;
-      randomSwapFee: string;
-      targetSwapFee: string;
+      redeemFee: string;
+      swapFee: string;
     };
   }>;
   vaults: Array<{
@@ -36,10 +34,8 @@ export type Response = {
     };
     fees: {
       mintFee: string;
-      randomRedeemFee: string;
-      targetRedeemFee: string;
-      randomSwapFee: string;
-      targetSwapFee: string;
+      redeemFee: string;
+      swapFee: string;
     };
     usesFactoryFees: boolean;
     asset: {
@@ -61,10 +57,8 @@ export type Response = {
     };
     features: {
       enableMint: boolean;
-      enableRandomRedeem: boolean;
-      enableTargetRedeem: boolean;
-      enableRandomSwap: boolean;
-      enableTargetSwap: boolean;
+      enableRedeem: boolean;
+      enableSwap: boolean;
     };
     inventoryStakingPool: {
       id: Address;

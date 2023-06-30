@@ -1,21 +1,16 @@
-import { OPENSEA_COLLECTION } from '@nftx/constants';
+import { OPENSEA_COLLECTION, Zero } from '@nftx/constants';
 import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
 import fetchVaultHoldings from '../fetchVaultHoldings';
 import config from '@nftx/config';
-import {
-  addressEqual,
-  fetchMerkleReference,
-  fetchReservesForTokens,
-  isMerkleVault,
-} from '@nftx/utils';
+import { addressEqual, fetchMerkleReference, isMerkleVault } from '@nftx/utils';
 import type { Address, Provider, Vault } from '@nftx/types';
 import {
   fetchVaultBuyPrice,
   fetchVaultSellPrice,
-  fetchVaultSpotPrice,
   fetchVaultSwapPrice,
 } from '@nftx/trade';
+import fetchVTokenToEth from './fetchVTokenToEth';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
@@ -23,10 +18,7 @@ const isVaultEnabled = (vault: Response['vaults'][0]) => {
     return false;
   }
   // otherwise has to have following features enabled
-  if (
-    !vault.features.enableMint ||
-    (!vault.features.enableRandomRedeem && !vault.features.enableTargetRedeem)
-  ) {
+  if (!vault.features.enableMint || !vault.features.enableRedeem) {
     return false;
   }
   // if we have a finalised vault, make sure that if it's using OpenSea Collection it has some form of eligibilities set
@@ -103,11 +95,6 @@ const fetchVaults = async ({
     vaultData = vaultData.filter(isVaultEnabled);
   }
 
-  const reserves = await fetchReservesForTokens({
-    network,
-    tokenAddresses: vaultData.map(({ id }) => id),
-  });
-
   const vaultPromises =
     vaultData.map(async (x) => {
       const moreHoldings = await fetchMoreHoldings({ network, vault: x });
@@ -116,33 +103,72 @@ const fetchVaults = async ({
           ? await fetchMerkleReference({ provider, vault: x })
           : null) ?? undefined;
 
+      const vTokenToEth = await fetchVTokenToEth({
+        provider,
+        vaultAddress: x.id,
+      });
+
       const vault = transformVault({
         globalFees,
-        reserves,
         vault: x,
         moreHoldings,
         merkleReference,
+        vTokenToEth,
       });
 
-      const prices = await (async () => {
-        try {
-          const buyPrice = await fetchVaultBuyPrice({ network, vault });
-          const sellPrice = await fetchVaultSellPrice({ network, vault });
-          const spotPrice = await fetchVaultSpotPrice({ network, vault });
-          const swapPrice = await fetchVaultSwapPrice({ network, vault });
+      const pricePromises = new Array(5)
+        .fill(null)
+        .map(async (_, i): Promise<Vault['prices'][0]> => {
+          let buyPrice = Zero,
+            sellPrice = Zero,
+            swapPrice = Zero;
+
+          try {
+            buyPrice = (
+              await fetchVaultBuyPrice({
+                network,
+                vault,
+                targetBuys: i + 1,
+              })
+            ).price;
+          } catch {
+            console.warn(`Couldn't get buy price for vault ${vault.vaultId}`);
+          }
+
+          try {
+            sellPrice = (
+              await fetchVaultSellPrice({
+                network,
+                vault,
+                amount: i + 1,
+              })
+            ).price;
+          } catch {
+            console.warn(`Couldn't get sell price for vault ${vault.vaultId}`);
+          }
+
+          try {
+            swapPrice = (
+              await fetchVaultSwapPrice({
+                network,
+                vault,
+                targetSwaps: i + 1,
+              })
+            ).price;
+          } catch {
+            console.warn(`Couldn't get swap price for vault ${vault.vaultId}`);
+          }
 
           const prices = {
-            redeem: buyPrice.price,
-            mint: sellPrice.price,
-            spot: spotPrice.price,
-            swap: swapPrice.price,
+            redeem: buyPrice,
+            mint: sellPrice,
+            swap: swapPrice,
           };
 
           return prices;
-        } catch {
-          return {} as Vault['prices'];
-        }
-      })();
+        });
+
+      const prices = (await Promise.all(pricePromises)) as Vault['prices'];
 
       return { ...vault, prices };
     }) ?? [];
@@ -154,12 +180,6 @@ const fetchVaults = async ({
   if (lastId > 0) {
     return vaults;
   }
-
-  vaults.sort((a, b) => {
-    const tvlB = Number(b.derivedETH) * b.totalHoldings;
-    const tvlA = Number(a.derivedETH) * a.totalHoldings;
-    return tvlB - tvlA;
-  });
 
   return vaults;
 };

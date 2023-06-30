@@ -30,15 +30,11 @@
     "@nftx/subgraph": "^0.9.5",
     "@nftx/trade": "^0.9.0",
     "@nftx/types": "^0.9.0",
-    "@nftx/utils": "^0.9.0"
-  },
-  "devDependencies": {
-    "@ethersproject/abi": "^5.6.0",
-    "@ethersproject/bignumber": "^5.6.0",
-    "@ethersproject/constants": "^5.6.0",
-    "@ethersproject/providers": "^5.6.2",
-    "@ethersproject/units": "^5.6.0",
-    "ethers": "^5.6.2"
+    "@nftx/utils": "^0.9.0",
+    "@uniswap/v3-sdk": "^3.10.0",
+    "decimal.js": "^10.4.3",
+    "jsbi": "^3.1.4",
+    "viem": "0.1.19"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"

@@ -6,13 +6,13 @@ const calculateBuyFee = ({
   targetBuys,
 }: {
   vault: {
-    fees: Pick<Vault['fees'], 'targetRedeemFee'>;
-    features: Pick<Vault['features'], 'enableTargetRedeem'>;
+    fees: Pick<Vault['fees'], 'redeemFee'>;
+    features: Pick<Vault['features'], 'enableRedeem'>;
   };
   /** The number of target buys we are doing */
   targetBuys?: number;
 }) => {
-  const targetPrice = vault.fees.targetRedeemFee;
+  const targetPrice = vault.fees.redeemFee;
 
   let amount = Zero;
   /** Vault buys come with a per-vault fee
