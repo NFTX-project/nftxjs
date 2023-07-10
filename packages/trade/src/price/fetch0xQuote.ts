@@ -1,7 +1,14 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import config from '@nftx/config';
+import { Network } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
+
+const API_KEYS = {
+  [Network.Mainnet]: 'ee990c3a-309a-4859-b5eb-60e0d5ef43b8',
+  [Network.Goerli]: 'a173ffcb-65cd-407b-bc0c-43d87d36b16e',
+  [Network.Arbitrum]: '2b40a84f-af0d-4f00-af35-5aa7a1a39d49',
+};
 
 export type ZeroXQuote = {
   price: string;
@@ -88,8 +95,10 @@ const fetch0xQuote = async (args: {
       throw new Error(`${network} is not a supported network for the 0x API`);
     }
     const url = `${zeroUrl}/swap/v1/${type}?${query}&affiliateAddress=0xaA29881aAc939A025A3ab58024D7dd46200fB93D`;
-    const zeroApiKey = 'ee990c3a-309a-4859-b5eb-60e0d5ef43b8';
-    const response = await fetch(url, { headers: { "0x-api-key": zeroApiKey } });
+    const zeroApiKey = getChainConstant(API_KEYS, network);
+    const response = await fetch(url, {
+      headers: { '0x-api-key': zeroApiKey },
+    });
     if (!response.ok) {
       const json = await response.json();
       throw { ...json, status: response.status };
