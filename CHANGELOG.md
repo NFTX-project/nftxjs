@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.1](https://github.com/NFTX-project/nftxjs/compare/v0.9.0...v0.9.1) (2023-07-10)
+
+
+### Bug Fixes
+
+* different 0x api key per chain ([cb242ef](https://github.com/NFTX-project/nftxjs/commit/cb242ef5c9e06fa4d7c2f9ffe9697a3c8424d221))
+
+
+
+
+
 # [0.9.0](https://github.com/NFTX-project/nftxjs/compare/v0.8.1...v0.9.0) (2023-05-26)
 
 
