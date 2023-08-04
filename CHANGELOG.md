@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.4](https://github.com/NFTX-project/nftxjs/compare/v0.9.3...v0.9.4) (2023-08-04)
+
+
+### Bug Fixes
+
+* remove zero api key for goerli ([c20d758](https://github.com/NFTX-project/nftxjs/commit/c20d7582296c0e368dbe9a90bce85b03b70f2c33))
+
+
+
+
+
 ## [0.9.3](https://github.com/NFTX-project/nftxjs/compare/v0.9.2...v0.9.3) (2023-08-04)
 
 
