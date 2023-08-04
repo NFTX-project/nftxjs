@@ -95,10 +95,12 @@ const fetch0xQuote = async (args: {
       throw new Error(`${network} is not a supported network for the 0x API`);
     }
     const url = `${zeroUrl}/swap/v1/${type}?${query}&affiliateAddress=0xaA29881aAc939A025A3ab58024D7dd46200fB93D`;
+    const headers: Record<string, string> = {};
     const zeroApiKey = getChainConstant(API_KEYS, network);
-    const response = await fetch(url, {
-      headers: { '0x-api-key': zeroApiKey },
-    });
+    if (zeroApiKey) {
+      headers['0x-api-key'] = zeroApiKey;
+    }
+    const response = await fetch(url, { headers });
     if (!response.ok) {
       const json = await response.json();
       throw { ...json, status: response.status };
