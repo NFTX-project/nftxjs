@@ -20,8 +20,9 @@
   "scripts": {
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
     "test": "jest --config ../../jest.config.js",
-    "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
-    "prepublishOnly": "yarn build"
+    "build": "rm -rf dist && yarn codegen && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
+    "prepublishOnly": "yarn build",
+    "codegen": "graphql-codegen"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
@@ -30,5 +31,10 @@
   "dependencies": {
     "@nftx/config": "^0.9.0",
     "@nftx/constants": "^0.9.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "graphql": "^16.7.1"
   }
 }

@@ -45,21 +45,43 @@ const buildArray = (key: string, arr: any[]): [string, string] => {
   // return [key, JSON.stringify(arr.map((el) => buildPrimative(el)))];
   return [key, `[${arr.map((el) => buildPrimative(el))}]`];
 };
+const isOperatorObject = (obj: any) => {
+  const operators = ['is', 'isNot', 'gt', 'gte', 'lt', 'lte', 'in'];
+
+  return Object.keys(obj).every((key) => operators.includes(key));
+};
+const buildOperatorObject = (key: string, obj: any): [string, string][] => {
+  return Object.entries(obj).map(([operator, value]): [string, string] => {
+    switch (operator) {
+      case 'is':
+        return [key, buildPrimative(value)];
+      case 'isNot':
+        return [`${key}_ne`, buildPrimative(value)];
+      default:
+        return [`${key}_${operator}`, buildPrimative(value)];
+    }
+  });
+};
 const buildKeyValuePair = (
   key: string,
   value: any
-): [string, string] | null => {
+): [string, string][] | null => {
   // Strip out null
   if (value == null) {
     return null;
   }
   if (Array.isArray(value)) {
-    return buildArray(key, value);
+    return [buildArray(key, value)];
   }
   if (typeof value === 'object') {
-    return buildNestedFilter(key, value);
+    if (isOperatorObject(value)) {
+      return buildOperatorObject(key, value);
+    } else {
+      const pair = buildNestedFilter(key, value);
+      return pair && [pair];
+    }
   }
-  return [key, buildPrimative(value)];
+  return [[key, buildPrimative(value)]];
 };
 const buildObject = (obj: any) => {
   const keyValues = Object.entries(obj).reduce((acc, [key, value]) => {
@@ -67,7 +89,7 @@ const buildObject = (obj: any) => {
     if (!pair) {
       return acc;
     }
-    return [...acc, pair];
+    return [...acc, ...pair];
   }, [] as [string, string][]);
 
   return ['{', keyValues.map((pair) => pair.join(': ')).join(', '), '}'].join(
