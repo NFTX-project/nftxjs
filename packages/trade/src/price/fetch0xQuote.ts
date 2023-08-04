@@ -96,7 +96,7 @@ const fetch0xQuote = async (args: {
     }
     const url = `${zeroUrl}/swap/v1/${type}?${query}&affiliateAddress=0xaA29881aAc939A025A3ab58024D7dd46200fB93D`;
     const headers: Record<string, string> = {};
-    const zeroApiKey = getChainConstant(API_KEYS, network);
+    const zeroApiKey = getChainConstant(API_KEYS, network, null);
     if (zeroApiKey) {
       headers['0x-api-key'] = zeroApiKey;
     }
