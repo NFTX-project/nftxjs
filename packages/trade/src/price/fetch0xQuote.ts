@@ -6,7 +6,7 @@ import { getChainConstant } from '@nftx/utils';
 
 const API_KEYS = {
   [Network.Mainnet]: 'ee990c3a-309a-4859-b5eb-60e0d5ef43b8',
-  [Network.Goerli]: 'a173ffcb-65cd-407b-bc0c-43d87d36b16e',
+  // [Network.Goerli]: 'a173ffcb-65cd-407b-bc0c-43d87d36b16e',
   [Network.Arbitrum]: '2b40a84f-af0d-4f00-af35-5aa7a1a39d49',
 };
 
