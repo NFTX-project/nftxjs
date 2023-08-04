@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import { PUBLIC_GRAPH_API_KEY } from '@nftx/constants';
 import { type GraphQueryString, interpolateQuery } from './utils';
 import sendQuery from './query';
+import type { QueriesBase, Query } from './createQuery/types';
 
 type Fetch = typeof fetch;
 const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
@@ -22,6 +23,29 @@ async function querySubgraph<Q extends GraphQueryString<any, any>>(args: {
   /** The fetch api to use, if you are using a ponyfill, you can manually pass it in here */
   fetch?: Fetch;
 }): Promise<Q['__r']>;
+async function querySubgraph<Q extends Query<any, any>>(args: {
+  /** The subgraph url */
+  url: string | string[];
+  /** A createQuery object */
+  query: Q;
+  /** The fetch api to use, if you are using a ponyfill, you can manually pass it in here */
+  fetch?: Fetch;
+}): Promise<Q['__r']>;
+async function querySubgraph<Q extends QueriesBase>(args: {
+  /** The subgraph url */
+  url: string | string[];
+  /** A createQuery object */
+  query: Q;
+  /** The fetch api to use, if you are using a ponyfill, you can manually pass it in here */
+  fetch?: Fetch;
+}): Promise<Q['__r']>;
+async function querySubgraph(args: {
+  /** The subgraph url */
+  url: string | string[];
+  query: string;
+  variables?: Record<string, any>;
+  fetch?: Fetch;
+}): Promise<any>;
 async function querySubgraph({
   url: baseUrl,
   query,
@@ -33,6 +57,9 @@ async function querySubgraph({
   variables?: Record<string, any>;
   fetch?: Fetch;
 }) {
+  if (typeof query !== 'string') {
+    query = `${query}`;
+  }
   if (variables) {
     query = interpolateQuery(query, variables);
   }
