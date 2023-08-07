@@ -44,7 +44,7 @@ const fetchPositionsSet = async ({
   let nextId: Address | undefined;
 
   if (data.inventoryPositions.length === 1000) {
-    nextId = data.inventoryPositions.pop()?.id;
+    nextId = data.inventoryPositions.pop()?.id as Address;
   }
 
   return [positions, nextId] as const;

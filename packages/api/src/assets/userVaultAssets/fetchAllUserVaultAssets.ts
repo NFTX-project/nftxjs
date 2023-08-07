@@ -12,14 +12,21 @@ const fetchAllUserVaultAssets = ({
   network = config.network,
   userAddress,
   vaultId,
+  mintable,
 }: {
   network?: number;
   userAddress: Address;
   vaultId?: string;
+  mintable?: boolean;
 }) => {
   return new Promise<Asset[]>((res, rej) => {
     const allAssets: Asset[] = [];
-    const stream = streamUserVaultAssets({ userAddress, network, vaultId });
+    const stream = streamUserVaultAssets({
+      userAddress,
+      network,
+      vaultId,
+      mintable,
+    });
 
     stream.on('data', (data) => {
       allAssets.push(...data);

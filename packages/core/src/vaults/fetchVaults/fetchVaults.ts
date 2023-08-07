@@ -4,13 +4,9 @@ import transformVault from './transformVault';
 import fetchVaultHoldings from '../fetchVaultHoldings';
 import config from '@nftx/config';
 import { addressEqual, fetchMerkleReference, isMerkleVault } from '@nftx/utils';
-import type { Address, Provider, Vault } from '@nftx/types';
-import {
-  fetchVaultBuyPrice,
-  fetchVaultSellPrice,
-  fetchVaultSwapPrice,
-} from '@nftx/trade';
+import type { Address, MarketplacePrice, Provider, Vault } from '@nftx/types';
 import fetchVTokenToEth from './fetchVTokenToEth';
+import { priceVaultBuy, priceVaultSell, priceVaultSwap } from '../../prices';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
@@ -31,58 +27,24 @@ const isVaultEnabled = (vault: Response['vaults'][0]) => {
   return true;
 };
 
-const fetchMoreHoldings = async ({
-  vault,
-  network,
-}: {
-  network: number;
-  vault: {
-    id: Address;
-    holdings: Array<{ tokenId: string }>;
-  };
-}) => {
-  if (vault.holdings.length === 1000) {
-    const lastId = vault.holdings[vault.holdings.length - 1].tokenId;
-    return fetchVaultHoldings({
-      network,
-      vaultAddress: vault.id,
-      lastId,
-    });
-  }
-
-  return [];
-};
-
 const fetchVaults = async ({
   network = config.network,
   provider,
   vaultAddresses,
   vaultIds,
   manager,
-  finalisedOnly = true,
   enabledOnly = true,
-  includeEmptyVaults = false,
-  lastId = 0,
-  retryCount = 0,
 }: {
   network?: number;
   provider: Provider;
   vaultAddresses?: Address[];
   vaultIds?: string[];
-  includeEmptyVaults?: boolean;
-  finalisedOnly?: boolean;
   enabledOnly?: boolean;
   manager?: Address;
-  lastId?: number;
-  retryCount?: number;
 }): Promise<Vault[]> => {
   const data = await fetchSubgraphVaults({
     network,
-    finalisedOnly,
-    lastId,
     manager,
-    includeEmptyVaults,
-    retryCount,
     vaultAddresses,
     vaultIds,
   });
@@ -95,68 +57,113 @@ const fetchVaults = async ({
     vaultData = vaultData.filter(isVaultEnabled);
   }
 
+  const allHoldings = await fetchVaultHoldings({
+    network,
+    vaultIds: vaultData.map((v) => v.vaultId),
+  });
+
   const vaultPromises =
     vaultData.map(async (x) => {
-      const moreHoldings = await fetchMoreHoldings({ network, vault: x });
+      const y = {
+        id: x.id as Address,
+        holdings: x.holdings.map((h) => ({ ...h, tokenId: `${h.tokenId}` })),
+        eligibilityModule: x.eligibilityModule
+          ? { ...x.eligibilityModule, id: x.eligibilityModule.id as Address }
+          : undefined,
+      };
+
       const merkleReference =
-        (isMerkleVault(x)
-          ? await fetchMerkleReference({ provider, vault: x })
+        (isMerkleVault(y)
+          ? await fetchMerkleReference({ provider, vault: y })
           : null) ?? undefined;
 
       const vTokenToEth = await fetchVTokenToEth({
         provider,
-        vaultAddress: x.id,
+        vaultAddress: y.id,
       });
 
       const vault = transformVault({
         globalFees,
         vault: x,
-        moreHoldings,
         merkleReference,
         vTokenToEth,
       });
 
+      const holdings = allHoldings.filter((h) => h.vaultId === x.vaultId);
+
       const pricePromises = new Array(5)
         .fill(null)
         .map(async (_, i): Promise<Vault['prices'][0]> => {
-          let buyPrice = Zero,
-            sellPrice = Zero,
-            swapPrice = Zero;
+          let buyPrice: MarketplacePrice = {
+              feePrice: Zero,
+              premiumPrice: Zero,
+              price: Zero,
+              type: 'buy',
+              vTokenPrice: Zero,
+            },
+            sellPrice: MarketplacePrice = {
+              feePrice: Zero,
+              premiumPrice: Zero,
+              price: Zero,
+              type: 'sell',
+              vTokenPrice: Zero,
+            },
+            swapPrice: MarketplacePrice = {
+              feePrice: Zero,
+              premiumPrice: Zero,
+              price: Zero,
+              type: 'swap',
+              vTokenPrice: Zero,
+            };
+          const tokenIds = new Array(i + 1)
+            .fill(null)
+            .map((_, i) => `${i}` as `${number}`);
 
           try {
-            buyPrice = (
-              await fetchVaultBuyPrice({
-                network,
-                vault,
-                targetBuys: i + 1,
-              })
-            ).price;
-          } catch {
-            console.warn(`Couldn't get buy price for vault ${vault.vaultId}`);
+            buyPrice = await priceVaultBuy({
+              network,
+              vault,
+              holdings,
+              bypassIndexedPrice: true,
+              tokenIds,
+              provider,
+            });
+          } catch (e) {
+            console.warn(
+              `Couldn't get buy price [${i}] for vault ${vault.vaultId}`
+            );
+            console.warn(e);
           }
 
           try {
-            sellPrice = (
-              await fetchVaultSellPrice({
-                network,
-                vault,
-                amount: i + 1,
-              })
-            ).price;
-          } catch {
-            console.warn(`Couldn't get sell price for vault ${vault.vaultId}`);
+            sellPrice = await priceVaultSell({
+              network,
+              vault,
+              tokenIds,
+              bypassIndexedPrice: true,
+            });
+          } catch (e) {
+            console.warn(
+              `Couldn't get sell price [${i}] for vault ${vault.vaultId}`
+            );
+            console.warn(e);
           }
 
           try {
-            swapPrice = (
-              await fetchVaultSwapPrice({
-                network,
-                vault,
-                targetSwaps: i + 1,
-              })
-            ).price;
-          } catch {
-            console.warn(`Couldn't get swap price for vault ${vault.vaultId}`);
+            swapPrice = await priceVaultSwap({
+              vault,
+              buyTokenIds: tokenIds,
+              holdings,
+              sellTokenIds: tokenIds,
+              bypassIndexedPrice: true,
+              provider,
+              network,
+            });
+          } catch (e) {
+            console.warn(
+              `Couldn't get swap price [${i}] for vault ${vault.vaultId}`
+            );
+            console.warn(e);
           }
 
           const prices = {
@@ -174,12 +181,6 @@ const fetchVaults = async ({
     }) ?? [];
 
   const vaults = await Promise.all(vaultPromises);
-
-  // We only want to filter/sort once we've got all the vaults fetched
-  // if lastId > 0 that means we're recursively fetching _more_ vaults
-  if (lastId > 0) {
-    return vaults;
-  }
 
   return vaults;
 };

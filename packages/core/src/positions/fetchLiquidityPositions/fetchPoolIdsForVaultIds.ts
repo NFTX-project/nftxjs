@@ -1,6 +1,5 @@
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import type { Address, Vault } from '@nftx/types';
-import type { PoolIdsResponse } from './types';
+import { createQuery, querySubgraph } from '@nftx/subgraph';
+import type { NftxV3Uniswap, Address, Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { NFTX_UNISWAP_SUBGRAPH } from '@nftx/constants';
 
@@ -13,33 +12,24 @@ const fetchPoolIdsNextSet = async ({
   addresses: Address[];
   network: number;
 }) => {
-  const where = buildWhere({
-    inputTokens: {
-      id_in: addresses,
-      id_gt: lastId,
-    },
-  });
-
-  const query = gql<PoolIdsResponse>`{
-    liquidityPools(
-      first: 1000
-      orderBy: id
-      where: ${where}
-    ) {
-      id
-    }
-  }`;
+  const query = createQuery<NftxV3Uniswap.Query>()
+    .liquidityPools.first(1000)
+    .orderBy('id')
+    .where((w) => [
+      w.inputTokens((token) => [token.id.in(addresses), token.id.gt(lastId)]),
+    ])
+    .select((s) => [s.id]);
 
   const data = await querySubgraph({
     url: getChainConstant(NFTX_UNISWAP_SUBGRAPH, network),
     query,
   });
 
-  const poolIds = data.liquidityPools.map((pool) => pool.id);
+  const poolIds = data.liquidityPools.map((pool) => pool.id as Address);
   let nextId: Address | undefined;
 
   if (data.liquidityPools.length === 1000) {
-    nextId = data.liquidityPools.pop()?.id;
+    nextId = data.liquidityPools.pop()?.id as Address;
   }
 
   return [poolIds, nextId] as const;

@@ -17,7 +17,10 @@ const useMint = (opts?: UseTransactionOptions) => {
     description: 'Mint',
     ...opts,
     async onSuccess(data, args) {
-      await invalidateVault({ vaultId: args.vaultId, network });
+      await invalidateVault({
+        vaultId: args.quote.methodParameters.vaultId,
+        network,
+      });
       return opts?.onSuccess?.(data, args);
     },
   });
