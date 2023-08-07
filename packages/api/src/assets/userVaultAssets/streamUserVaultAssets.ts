@@ -31,10 +31,12 @@ const streamUserVaultAssets = ({
   network = config.network,
   userAddress,
   vaultId,
+  mintable = true,
 }: {
   network?: number;
   userAddress: Address;
   vaultId?: string;
+  mintable?: boolean;
 }): IStream<Asset[]> => {
   let cursor: string;
 
@@ -46,7 +48,7 @@ const streamUserVaultAssets = ({
 
       const result = await queryApi<Response>({
         url,
-        query: { cursor, userAddress, vaultId },
+        query: { cursor, userAddress, vaultId, mintable },
       });
       cursor = result.cursor;
       if (cursor) {

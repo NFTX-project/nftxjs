@@ -1,7 +1,12 @@
 import config from '@nftx/config';
 import { Zero } from '@nftx/constants';
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import type { Address, VaultActivity, VaultActivityType } from '@nftx/types';
+import { querySubgraph, createQuery } from '@nftx/subgraph';
+import type {
+  NftxV3,
+  Address,
+  VaultActivity,
+  VaultActivityType,
+} from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
 type Type =
@@ -16,32 +21,15 @@ type Type =
   | 'VAULT_SHUTDOWN'
   | 'VAULT_FEE_UPDATE';
 
-type Response = {
-  activityEvents: {
-    id: `${Type}-${Address}`;
-    source: Address;
-    type: VaultActivity['eventType'];
-    date: string;
-    vault: {
-      id: Address;
-      vaultId: string;
-    };
-    mintIds: `${number}`[];
-    mintAmounts: `${number}`[];
-    swapMintIds: `${number}`[];
-    swapMintAmounts: `${number}`[];
-    swapRedeemIds: `${number}`[];
-    targetCount: string;
-    randomCount: string;
-    redeemIds: `${number}`[];
-    deposit: `${number}`;
-    withdrawal: `${number}`;
-    feeReceipt: {
-      transfers: {
-        amount: `${number}`;
-      }[];
-    };
-  }[];
+type Response = NftxV3.Query & {
+  activityEvents: NftxV3.ActivityEvent &
+    {
+      mintIds: `${number}`[];
+      redeemIds: `${number}`[];
+      swapMintIds: `${number}`[];
+      swapRedeemIds: `${number}`[];
+      feeReceipt: NftxV3.FeeReceipt;
+    }[];
 };
 
 const calculateFee = (
@@ -153,8 +141,6 @@ const activityEventToActivity = (
     redeemIds,
     swapMintIds,
     swapRedeemIds,
-    deposit,
-    withdrawal,
   }: Response['activityEvents'][0],
   includeAllActivity: boolean
 ): VaultActivity | undefined => {
@@ -162,10 +148,10 @@ const activityEventToActivity = (
   const activityType = getActivityType(type, eventType, includeAllActivity);
   const common = {
     vaultId,
-    vaultAddress,
+    vaultAddress: vaultAddress as Address,
     date: Number(date),
     txId,
-    source,
+    source: source as string,
     eventType,
   };
 
@@ -210,14 +196,16 @@ const activityEventToActivity = (
       return {
         ...common,
         type: 'stake',
-        amount: BigInt(deposit),
+        amount: 0n,
+        // amount: BigInt(deposit),
         stakeType: getStakeType(eventType),
       };
     case 'unstake':
       return {
         ...common,
         type: 'unstake',
-        amount: BigInt(withdrawal),
+        amount: 0n,
+        // amount: BigInt(withdrawal),
         stakeType: getStakeType(eventType),
       };
     case 'create':
@@ -251,65 +239,37 @@ const fetchVaultActivity = async ({
   includeAllActivity?: boolean;
   lastId?: string;
 }): Promise<VaultActivity[]> => {
-  const where = buildWhere({
-    id_gt: lastId,
-    date_gt: fromTimestamp,
-    date_lte: toTimestamp,
-    vault_in: vaultAddresses,
-    vault_: vaultIds ? { vaultId_in: vaultIds } : undefined,
-  });
-  const query = gql<Response>`{
-    activityEvents(
-      where: ${where}
-      first: 1000
-      orderBy: id
-      orderDirection: asc
-    ) {
-      id
-      source
-      type
-      date
-      vault {
-        id
-        vaultId
-      }
-      ... on Mint {
-        mintIds: nftIds
-        mintAmounts: amounts
-        feeReceipt {
-          transfers {
-            amount
-          }
-        }
-      }
-      ... on Redeem {
-        targetCount
-        randomCount
-        redeemIds: nftIds
-        feeReceipt {
-          transfers {
-            amount
-          }
-        }
-      }
-      ... on Swap {
-        swapMintIds: mintedIds
-        swapMintAmounts: mintedAmounts
-        swapRedeemIds: redeemedIds
-        feeReceipt {
-          transfers {
-            amount
-          }
-        }
-      }
-      ... on Deposit {
-      deposit
-    }
-    ... on Withdrawal {
-      withdrawal
-    }
-    }
-  }`;
+  const query = createQuery<Response>()
+    .activityEvents.first(1000)
+    .orderBy('id')
+    .where((w) => [
+      w.id.gt(lastId),
+      w.date.gt(fromTimestamp == null ? null : `${fromTimestamp}`),
+      w.date.lte(toTimestamp == null ? null : `${toTimestamp}`),
+      w.vault.in(vaultAddresses),
+      w.vault((v) => [v.vaultId.in(vaultIds)]),
+    ])
+    .select((s) => [
+      s.id,
+      s.source,
+      s.type,
+      s.date,
+      s.vault((v) => [v.id, v.vaultId]),
+      s.on<NftxV3.Mint>('Mint', (s) => [
+        s.nftIds.as('mintIds'),
+        s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+      ]),
+      s.on<NftxV3.Redeem>('Redeem', (s) => [
+        s.targetCount,
+        s.nftIds.as('redeemIds'),
+        s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+      ]),
+      s.on<NftxV3.Swap>('Swap', (s) => [
+        s.mintedIds.as('swapMintIds'),
+        s.specificIds.as('swapRedeemIds'),
+        s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+      ]),
+    ]);
 
   const response = await querySubgraph({
     url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
@@ -317,7 +277,7 @@ const fetchVaultActivity = async ({
   });
 
   const allActivity = response.activityEvents.map((e) =>
-    activityEventToActivity(e, includeAllActivity)
+    activityEventToActivity(e as any, includeAllActivity)
   );
 
   let activity = allActivity.filter(isDefined);

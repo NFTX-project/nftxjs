@@ -1,14 +1,14 @@
 import config from '@nftx/config';
 import { WeiPerEther } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
-import fetchNftxQuote from './fetchNftxQuote';
+import fetchQuote from './fetchQuote';
 
 const fetchEthPriceFromNftxRouter = async ({
   network,
 }: {
   network: number;
 }) => {
-  const { quote } = await fetchNftxQuote({
+  const { quote } = await fetchQuote({
     network,
     buyToken: 'ETH',
     sellToken: 'USDC',

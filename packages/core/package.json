@@ -20,6 +20,7 @@
   "scripts": {
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
     "test": "jest --config ../../jest.config.js",
+    "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand --config ../../jest.config.js",
     "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
     "prepublishOnly": "yarn build"
   },

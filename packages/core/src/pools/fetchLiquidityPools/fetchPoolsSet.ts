@@ -9,8 +9,8 @@ const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   vaults,
 }: {
   vaults: V[];
-  inputTokens: { id: Address }[];
-  pool: { id: Address };
+  inputTokens: { id: string }[];
+  pool: { id: string };
 }) => {
   const vault = vaults.find((vault) => {
     return inputTokens.some((inputToken) => {
@@ -55,7 +55,7 @@ const fetchPoolsSet = async ({
 
   let nextId: Address | undefined;
   if (data.liquidityPools.length === 1000) {
-    nextId = data.liquidityPools.pop()?.id;
+    nextId = data.liquidityPools.pop()?.id as Address;
   }
 
   return [pools, nextId] as const;

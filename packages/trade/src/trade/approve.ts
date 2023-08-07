@@ -1,6 +1,5 @@
 import { ERC20, ERC721, CryptoPunks } from '@nftx/abi';
-import { getUniqueTokenIds } from './utils';
-import { getContract, isCryptoPunk } from '@nftx/utils';
+import { getContract, getUniqueTokenIds, isCryptoPunk } from '@nftx/utils';
 import type { Address, Provider, Signer, TokenId } from '@nftx/types';
 import { MaxUint256, Zero } from '@nftx/constants';
 

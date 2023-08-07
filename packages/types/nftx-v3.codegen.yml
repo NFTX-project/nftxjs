@@ -1,0 +1,19 @@
+schema: https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-v3-vaults
+generates:
+  ./src/subgraph/nftx-v3.ts:
+    config:
+      useTypeImports: true
+      strictScalars: true
+      scalars:
+        Bytes:
+          input: string
+          output: string
+        BigInt:
+          input: string
+          output: string
+        BigDecimal:
+          input: string
+          output: string
+        Int8: string|number
+    plugins:
+      - typescript

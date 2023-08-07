@@ -1,7 +1,6 @@
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import type { Address } from '@nftx/types';
+import { createQuery, querySubgraph } from '@nftx/subgraph';
+import type { NftxV3Uniswap, Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
-import type { PositionsResponse } from './types';
 import config from '@nftx/config';
 
 const queryPositionData = ({
@@ -17,37 +16,29 @@ const queryPositionData = ({
   lastId?: Address;
   network: number;
 }) => {
-  const where = buildWhere({
-    account_in: userAddresses,
-    pool_in: poolIds,
-    id_in: positionIds,
-    id_gt: lastId,
-  });
-
-  const query = gql<PositionsResponse>`{
-  positions(
-    first: 1000
-    orderBy: id
-    where: ${where}
-  ) {
-    id
-    liquidity
-    pool {
-      id
-      tick
-      inputTokens {
-        id
-      }
-    }
-    tickUpper
-    tickLower
-    account {
-      id
-    }
-    cumulativeDepositTokenAmounts
-    cumulativeWithdrawTokenAmounts
-  }
-}`;
+  const query = createQuery<NftxV3Uniswap.Query>()
+    .positions.first(1000)
+    .orderBy('id')
+    .where((w) => [
+      w.account.in(userAddresses),
+      w.pool.in(poolIds),
+      w.id.in(positionIds),
+      w.id.gt(lastId),
+    ])
+    .select((s) => [
+      s.id,
+      s.liquidity,
+      s.tickUpper((tick) => [tick.index]),
+      s.tickLower((tick) => [tick.index]),
+      s.cumulativeDepositTokenAmounts,
+      s.cumulativeWithdrawTokenAmounts,
+      s.pool((pool) => [
+        pool.id,
+        pool.tick,
+        pool.inputTokens((token) => [token.id]),
+      ]),
+      s.account((account) => [account.id]),
+    ]);
 
   return querySubgraph({
     url: getChainConstant(config.subgraph.NFTX_UNISWAP_SUBGRAPH, network),

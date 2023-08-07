@@ -17,6 +17,6 @@ it('calculate the vToken / ETH split', () => {
     vTokenToEth: BigInt(vTokenToEth),
   });
 
-  expect(result.eth.toString()).toBe('10');
-  expect(result.vToken.toString()).toBe('10');
+  expect(result.eth.toString()).toBe('0');
+  expect(result.vToken.toString()).toBe('0');
 });

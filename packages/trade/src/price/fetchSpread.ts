@@ -1,8 +1,8 @@
 import config from '@nftx/config';
 import { Zero } from '@nftx/constants';
 import type { Address } from '@nftx/types';
-import fetchBuyPrice from './fetchBuyPrice';
-import fetchSellPrice from './fetchSellPrice';
+import fetchTokenBuyPrice from './fetchTokenBuyPrice';
+import fetchTokenSellPrice from './fetchTokenSellPrice';
 import type { QuoteToken } from './types';
 
 /**
@@ -16,12 +16,12 @@ const fetchSpread = async (args: {
   const { network = config.network, tokenAddress, quote } = args;
 
   try {
-    const { price: buyPrice } = await fetchBuyPrice({
+    const { price: buyPrice } = await fetchTokenBuyPrice({
       network,
       tokenAddress,
       quote,
     });
-    const { price: sellPrice } = await fetchSellPrice({
+    const { price: sellPrice } = await fetchTokenSellPrice({
       network,
       tokenAddress,
       quote,

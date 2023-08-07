@@ -1,4 +1,4 @@
-import fetchNftxQuote from '../../price/fetchNftxQuote';
+import fetchQuote from '../../price/fetchQuote';
 import type { BigIntish, Provider, Signer } from '@nftx/types';
 import type { QuoteToken } from '../../price';
 import { getAccount } from 'viem';
@@ -26,7 +26,7 @@ const tradeNftx = async ({
 
   const {
     methodParameters: { calldata, to, value },
-  } = await fetchNftxQuote({
+  } = await fetchQuote({
     network,
     userAddress: address,
     buyToken,

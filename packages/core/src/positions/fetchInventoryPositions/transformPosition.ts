@@ -1,10 +1,9 @@
-import type { InventoryPosition, Vault } from '@nftx/types';
-import type { InventoryPositionsResponse } from './types';
+import type { InventoryPosition, Vault, NftxV3, Address } from '@nftx/types';
 import { WeiPerEther, Zero } from '@nftx/constants';
 import { parseEther } from 'viem';
 
 const transformPosition = (
-  position: InventoryPositionsResponse['inventoryPositions'][0],
+  position: NftxV3.InventoryPosition,
   vault: Pick<Vault, 'vTokenToEth'>
 ): InventoryPosition => {
   const vToken = parseEther(`${position.nftIds.length}`);
@@ -15,9 +14,9 @@ const transformPosition = (
   const lifetimeRewards = Zero;
 
   return {
-    id: position.id,
-    userAddress: position.user.id,
-    vaultAddress: position.vault.id,
+    id: position.id as Address,
+    userAddress: position.user.id as Address,
+    vaultAddress: position.vault.id as Address,
     vaultId: position.vault.vaultId,
     claimableRewards,
     lifetimeRewards,

@@ -1,6 +1,6 @@
 import type { Address, Provider, Vault } from '@nftx/types';
 import { addressEqual } from '@nftx/utils';
-import isAssetEligibleForVault from './isAssetEligibleForVault';
+import isAssetEligibleForVault from '../isAssetEligibleForVault';
 
 type IsAssetEligibleForVault = typeof isAssetEligibleForVault;
 

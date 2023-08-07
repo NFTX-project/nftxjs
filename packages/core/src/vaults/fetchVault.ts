@@ -19,8 +19,6 @@ async function fetchVault({
     vaultIds: vaultId == null ? undefined : [vaultId],
     vaultAddresses: vaultAddress == null ? undefined : [vaultAddress],
     enabledOnly: false,
-    finalisedOnly: false,
-    includeEmptyVaults: true,
   });
 
   return vaults?.[0];

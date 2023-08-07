@@ -1,8 +1,7 @@
 import { WeiPerEther } from '@nftx/constants';
 import type { Address, Provider } from '@nftx/types';
 import { getContract } from '@nftx/utils';
-
-const abi: any = {};
+import { NFTXVaultUpgradeable } from '@nftx/abi';
 
 const fetchVTokenToEth = async ({
   provider,
@@ -12,7 +11,7 @@ const fetchVTokenToEth = async ({
   vaultAddress: Address;
 }) => {
   const contract = getContract({
-    abi,
+    abi: NFTXVaultUpgradeable,
     address: vaultAddress,
     provider,
   });

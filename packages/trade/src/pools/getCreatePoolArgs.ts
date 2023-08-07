@@ -1,21 +1,11 @@
-import {
-  encodeAbiParameters,
-  parseAbiParameters,
-  parseEther,
-  parseUnits,
-} from 'viem';
+import { encodeAbiParameters, parseAbiParameters, parseUnits } from 'viem';
 import type {
   Address,
   CreatePoolFeatures,
   CreatePoolFees,
   TokenId,
 } from '@nftx/types';
-import {
-  getTokenIdAmounts,
-  getTotalTokenIds,
-  getUniqueTokenIds,
-} from '../trade';
-import { WeiPerEther, Zero } from '@nftx/constants';
+import { getTokenIdAmounts, getUniqueTokenIds } from '@nftx/utils';
 
 const getVaultDetails = ({
   assetAddress,

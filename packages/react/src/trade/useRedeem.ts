@@ -17,7 +17,10 @@ const useRedeem = (opts: UseTransactionOptions) => {
     description: 'Redeem',
     ...opts,
     async onSuccess(data, args) {
-      await invalidateVault({ vaultId: args.vaultId, network });
+      await invalidateVault({
+        vaultId: args.quote.methodParameters.vaultId,
+        network,
+      });
       return opts?.onSuccess?.(data, args);
     },
   });
