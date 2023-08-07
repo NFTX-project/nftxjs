@@ -18,7 +18,10 @@ const useBuy = (opts?: UseTransactionOptions) => {
       description: 'Buy',
       ...opts,
       async onSuccess(data, args) {
-        await invalidateVault({ network, vaultId: args.vault.vaultId });
+        await invalidateVault({
+          network,
+          vaultId: args.quote.methodParameters.vaultId,
+        });
         return opts?.onSuccess?.(data, args);
       },
     }

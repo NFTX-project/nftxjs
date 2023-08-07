@@ -1,5 +1,5 @@
 import type { Price } from '@nftx/types';
-import type { NftxQuote } from './fetchNftxQuote';
+import type { NftxQuote } from './fetchQuote';
 import { WeiPerEther, Zero } from '@nftx/constants';
 import { formatEther } from 'viem';
 
@@ -45,6 +45,7 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     price: BigInt(quote.quote),
     estimatedGas: BigInt(quote.gasUseEstimate),
     gasPrice: BigInt(quote.gasPriceWei),
+    methodParameters: quote.methodParameters,
     route,
   };
 

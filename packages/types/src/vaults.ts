@@ -1,3 +1,4 @@
+import type { MarketplacePrice } from './price';
 import type { Token } from './tokens';
 import type { Address, TokenId } from './web3';
 
@@ -7,7 +8,11 @@ export type VaultFeatures = {
   enableSwap: boolean;
 };
 
-type VaultPrice = { mint: bigint; redeem: bigint; swap: bigint };
+type VaultPrice = {
+  mint: MarketplacePrice;
+  redeem: MarketplacePrice;
+  swap: MarketplacePrice;
+};
 
 export type VaultHolding = {
   id: string;
@@ -28,7 +33,9 @@ export type Vault = {
   asset: Token;
   createdBy: { id: Address };
   createdAt: number;
-  /** An array of prices for buying n items from the vault. The [0] indexed price is for buying 1 item. The [4] indexed price is for buying 5 items. */
+  /** An array of prices for buying n items from the vault.
+   * The [0] indexed price is for buying 1 item.
+   * The [4] indexed price is for buying 5 items. */
   prices: [VaultPrice, VaultPrice, VaultPrice, VaultPrice, VaultPrice];
   features: VaultFeatures;
   totalHoldings: number;

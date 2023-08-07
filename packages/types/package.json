@@ -19,7 +19,7 @@
   "scripts": {
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
     "test": "echo \"no tests\"",
-    "build": "rm -rf dist && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
+    "build": "rm -rf dist && graphql-codegen && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
     "prepublishOnly": "yarn build"
   },
   "bugs": {
@@ -28,5 +28,10 @@
   "dependencies": {
     "abitype": "^0.7.1",
     "viem": "0.1.19"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "graphql": "^16.7.1"
   }
 }

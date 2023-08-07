@@ -60,7 +60,7 @@ export type NftxQuote = {
   quoteId: string;
 };
 
-const fetchNftxQuote = async (args: {
+const fetchQuote = async (args: {
   network?: number;
   buyToken: QuoteToken;
   buyAmount?: BigIntish;
@@ -122,4 +122,4 @@ const fetchNftxQuote = async (args: {
   return data;
 };
 
-export default fetchNftxQuote;
+export default fetchQuote;

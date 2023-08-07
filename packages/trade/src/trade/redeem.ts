@@ -2,6 +2,7 @@ import { NFTXVaultUpgradeable } from '@nftx/abi';
 import { getContract } from '@nftx/utils';
 import { getExactTokenIds } from './utils';
 import type { Address, Provider, Signer, TokenId } from '@nftx/types';
+import { Zero } from '@nftx/constants';
 
 /** Redeems an item from the vault
  * Exchanges, for example, 1.05 PUNK for a punk nft (accounting for vault fees)
@@ -29,13 +30,11 @@ const redeem = async (args: {
 
   const specificIds: string[] = getExactTokenIds(targetIds);
 
-  // the total amount to redeem, if you try to redeem more than the total specific ids
-  // it will fill out the rest with randoms
-  const amount = specificIds.length;
-
-  // TODO: the last param, forceFees, what does it need to be?
+  // TODO: what should the 3rd argument be (wethAmount)
   return contract.write.redeem({
-    args: [specificIds.map(BigInt), userAddress, BigInt(amount), false],
+    args: [specificIds.map(BigInt), userAddress, Zero, false],
+    // TODO: should be (count * fee amount * vTokenToEth) + royalty amount + (premiums)
+    value: Zero,
   });
 };
 

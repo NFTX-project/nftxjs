@@ -1,7 +1,9 @@
 import 'isomorphic-fetch';
-import type { Query } from '../../types/nftx-v3-uniswap';
-import createQuery from '..';
-import querySubgraph from '../../querySubgraph';
+import type { NftxV3Uniswap } from '@nftx/types';
+import createQuery from '../createQuery';
+import querySubgraph from '../querySubgraph';
+
+type Query = NftxV3Uniswap.Query;
 
 const ignoreWs = (str: string) => str.replace(/ /g, '').replace(/\n/g, '');
 

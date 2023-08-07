@@ -2,6 +2,7 @@ import { NFTXVaultUpgradeable } from '@nftx/abi';
 import type { Address, Provider, Signer, TokenId } from '@nftx/types';
 import { getContract } from '@nftx/utils';
 import { getTokenIdAmounts, getUniqueTokenIds } from './utils';
+import { Zero } from '@nftx/constants';
 
 /** Mints an NFT into the NFTX vault in exchange for a vToken.
  * For example, minting a punk NFT would return 0.95 PUNK (accounting for vault fees)
@@ -33,6 +34,8 @@ const mint = async (args: {
   // Not sure if vaultAddress is correct
   return contract.write.mint({
     args: [ids.map(BigInt), amounts.map(BigInt), userAddress, vaultAddress],
+    // TODO: value should be amount of (nfts being sold * mint fee * vTokenToEth)
+    value: Zero,
   });
 };
 
