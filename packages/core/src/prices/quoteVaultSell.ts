@@ -10,13 +10,19 @@ import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
 import { getChainConstant } from '@nftx/utils';
 import { calculateFeePricePerItem, calculateTotalFeePrice } from './utils';
 
-const quoteVaultSell = async (
-  vault: Pick<Vault, 'id' | 'fees' | 'asset' | 'vaultId'>,
-  network: number,
-  tokenIds: `${number}`[],
-  userAddress: Address,
-  provider: Provider
-) => {
+const quoteVaultSell = async ({
+  network,
+  provider,
+  tokenIds,
+  userAddress,
+  vault,
+}: {
+  vault: Pick<Vault, 'id' | 'fees' | 'asset' | 'vaultId'>;
+  network: number;
+  tokenIds: `${number}`[];
+  userAddress: Address;
+  provider: Provider;
+}) => {
   const totalTokenIds = getTotalTokenIds(tokenIds);
   const sellAmount = parseEther(`${totalTokenIds}`);
   const tokenIdsIn = getUniqueTokenIds(tokenIds);
