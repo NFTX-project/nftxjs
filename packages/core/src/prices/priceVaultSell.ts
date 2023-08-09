@@ -1,8 +1,10 @@
 import { fetchTokenSellPrice, getTotalTokenIds } from '@nftx/trade';
 import type { MarketplacePrice, Vault } from '@nftx/types';
 import { parseEther } from 'viem';
-import { calculateTotalFeePrice } from './utils';
+import { calculateTotalFeePrice } from './common';
 import { Zero } from '@nftx/constants';
+
+type FetchTokenSellPrice = typeof fetchTokenSellPrice;
 
 const getIndexedPrice = ({
   tokenIds,
@@ -16,14 +18,17 @@ const getIndexedPrice = ({
   // We don't need to worry about premium pricing on sells
   return price;
 };
+
 const getRoughPrice = async ({
   network,
   tokenIds,
   vault,
+  fetchTokenSellPrice,
 }: {
   network: number;
   tokenIds: `${number}`[];
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'fees'>;
+  fetchTokenSellPrice: FetchTokenSellPrice;
 }) => {
   const totalTokenIds = getTotalTokenIds(tokenIds);
   const { vTokenToEth } = vault;
@@ -52,27 +57,29 @@ const getRoughPrice = async ({
   return result;
 };
 
-const priceVaultSell = ({
-  bypassIndexedPrice,
-  network,
-  tokenIds,
-  vault,
-}: {
-  network: number;
-  tokenIds: `${number}`[];
-  vault: Pick<Vault, 'id' | 'prices' | 'vTokenToEth' | 'fees'>;
-  bypassIndexedPrice?: boolean;
-}) => {
-  const totalTokenIds = getTotalTokenIds(tokenIds);
+export const makePriceVaultSell =
+  ({ fetchTokenSellPrice }: { fetchTokenSellPrice: FetchTokenSellPrice }) =>
+  ({
+    bypassIndexedPrice,
+    network,
+    tokenIds,
+    vault,
+  }: {
+    network: number;
+    tokenIds: `${number}`[];
+    vault: Pick<Vault, 'id' | 'prices' | 'vTokenToEth' | 'fees'>;
+    bypassIndexedPrice?: boolean;
+  }) => {
+    const totalTokenIds = getTotalTokenIds(tokenIds);
 
-  if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
-    const result = getIndexedPrice({ tokenIds, vault });
-    if (result) {
-      return result;
+    if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
+      const result = getIndexedPrice({ tokenIds, vault });
+      if (result) {
+        return result;
+      }
     }
-  }
 
-  return getRoughPrice({ network, tokenIds, vault });
-};
+    return getRoughPrice({ network, tokenIds, vault, fetchTokenSellPrice });
+  };
 
-export default priceVaultSell;
+export default makePriceVaultSell({ fetchTokenSellPrice });

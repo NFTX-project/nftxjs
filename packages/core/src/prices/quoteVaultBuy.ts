@@ -1,4 +1,4 @@
-import { MARKETPLACE_ZAP, WeiPerEther, Zero } from '@nftx/constants';
+import { MARKETPLACE_ZAP, WeiPerEther } from '@nftx/constants';
 import {
   fetchTokenBuyPrice,
   getTotalTokenIds,
@@ -14,14 +14,18 @@ import type {
 import { getChainConstant } from '@nftx/utils';
 import { parseEther } from 'viem';
 import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
-import { fetchVaultHoldings } from '../vaults';
 import config from '@nftx/config';
 import {
   calculateFeePricePerItem,
   calculateTotalFeePrice,
   getHoldingByTokenId,
-  getPremiumPrice,
-} from './utils';
+  fetchPremiumPrice,
+  calculateTotalPremiumPrice,
+} from './common';
+
+type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
+type FetchVTokenToEth = typeof fetchVTokenToEth;
+type FetchPremiumPrice = typeof fetchPremiumPrice;
 
 const transformItem = async ({
   buyAmount,
@@ -31,6 +35,7 @@ const transformItem = async ({
   vTokenPrice,
   vTokenToEth,
   vault,
+  fetchPremiumPrice,
 }: {
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   tokenId: `${number}`;
@@ -39,6 +44,7 @@ const transformItem = async ({
   vTokenToEth: bigint;
   vTokenPrice: bigint;
   buyAmount: bigint;
+  fetchPremiumPrice: FetchPremiumPrice;
 }): Promise<MarketplaceQuote['items'][0]> => {
   const vTokenPricePerItem = (vTokenPrice * WeiPerEther) / buyAmount;
   const feePricePerItem = calculateFeePricePerItem(
@@ -47,7 +53,7 @@ const transformItem = async ({
   );
 
   const holding = getHoldingByTokenId(holdings, tokenId);
-  const premiumPrice = await getPremiumPrice({
+  const premiumPrice = await fetchPremiumPrice({
     holding,
     provider,
     tokenId,
@@ -63,87 +69,99 @@ const transformItem = async ({
   };
 };
 
-const quoteVaultBuy = async ({
-  network = config.network,
-  provider,
-  tokenIds,
-  userAddress,
-  vault,
-  holdings: allHoldings,
-}: {
-  vault: Pick<Vault, 'fees' | 'id' | 'vaultId'>;
-  tokenIds: `${number}`[];
-  network?: number;
-  userAddress: Address;
-  provider: Provider;
-  holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
-}) => {
-  const totalTokenIds = getTotalTokenIds(tokenIds);
-  const buyAmount = parseEther(`${totalTokenIds}`);
-  const tokenIdsOut = getUniqueTokenIds(tokenIds);
-
-  const holdings = allHoldings.filter((x) => tokenIdsOut.includes(x.tokenId));
-
-  const vTokenToEth = await fetchVTokenToEth({
+export const makeQuoteVaultBuy =
+  ({
+    fetchPremiumPrice,
+    fetchTokenBuyPrice,
+    fetchVTokenToEth,
+  }: {
+    fetchVTokenToEth: FetchVTokenToEth;
+    fetchTokenBuyPrice: FetchTokenBuyPrice;
+    fetchPremiumPrice: FetchPremiumPrice;
+  }) =>
+  async ({
+    network = config.network,
     provider,
-    vaultAddress: vault.id,
-  });
+    tokenIds,
+    userAddress,
+    vault,
+    holdings: allHoldings,
+  }: {
+    vault: Pick<Vault, 'fees' | 'id' | 'vaultId'>;
+    tokenIds: `${number}`[];
+    network?: number;
+    userAddress: Address;
+    provider: Provider;
+    holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
+  }) => {
+    const totalTokenIds = getTotalTokenIds(tokenIds);
+    const buyAmount = parseEther(`${totalTokenIds}`);
+    const tokenIdsOut = getUniqueTokenIds(tokenIds);
 
-  const {
-    price: vTokenPrice,
-    methodParameters: { calldata: executeCalldata },
-  } = await fetchTokenBuyPrice({
-    network,
-    tokenAddress: vault.id,
-    amount: buyAmount,
-    userAddress: getChainConstant(MARKETPLACE_ZAP, network),
-  });
+    const holdings = allHoldings.filter((x) => tokenIdsOut.includes(x.tokenId));
 
-  const items = await Promise.all(
-    tokenIdsOut.map(async (tokenId) => {
-      return transformItem({
-        buyAmount,
-        holdings,
-        provider,
-        tokenId,
-        vault,
-        vTokenPrice,
-        vTokenToEth,
-      });
-    })
-  );
-
-  const premiumPrice = items.reduce(
-    (total, item) => total + item.premiumPrice,
-    Zero
-  );
-  const feePrice = calculateTotalFeePrice(
-    vault.fees.redeemFee,
-    vTokenToEth,
-    buyAmount
-  );
-  const price = vTokenPrice + premiumPrice + feePrice;
-
-  const result: MarketplaceQuote = {
-    type: 'buy',
-    price,
-    vTokenPrice,
-    feePrice,
-    premiumPrice,
-    approveContracts: [],
-    items,
-    methodParameters: {
-      value: price.toString(),
-      executeCalldata,
-      to: userAddress,
-      tokenIdsIn: [],
-      tokenIdsOut,
+    const vTokenToEth = await fetchVTokenToEth({
+      provider,
       vaultAddress: vault.id,
-      vaultId: vault.vaultId,
-    },
+    });
+
+    const {
+      price: vTokenPrice,
+      methodParameters: { calldata: executeCalldata },
+    } = await fetchTokenBuyPrice({
+      network,
+      tokenAddress: vault.id,
+      amount: buyAmount,
+      userAddress: getChainConstant(MARKETPLACE_ZAP, network),
+    });
+
+    const items = await Promise.all(
+      tokenIdsOut.map(async (tokenId) => {
+        return transformItem({
+          buyAmount,
+          holdings,
+          provider,
+          tokenId,
+          vault,
+          vTokenPrice,
+          vTokenToEth,
+          fetchPremiumPrice,
+        });
+      })
+    );
+
+    const premiumPrice = calculateTotalPremiumPrice(items);
+    const feePrice = calculateTotalFeePrice(
+      vault.fees.redeemFee,
+      vTokenToEth,
+      buyAmount
+    );
+    const price = vTokenPrice + premiumPrice + feePrice;
+
+    const result: MarketplaceQuote = {
+      type: 'buy',
+      price,
+      vTokenPrice,
+      feePrice,
+      premiumPrice,
+      approveContracts: [],
+      items,
+      methodParameters: {
+        value: price.toString(),
+        executeCalldata,
+        to: userAddress,
+        tokenIdsIn: [],
+        tokenIdsOut,
+        vaultAddress: vault.id,
+        vaultId: vault.vaultId,
+      },
+    };
+
+    return result;
   };
 
-  return result;
-};
-
-export default quoteVaultBuy;
+export default makeQuoteVaultBuy({
+  fetchPremiumPrice,
+  fetchTokenBuyPrice,
+  fetchVTokenToEth,
+});

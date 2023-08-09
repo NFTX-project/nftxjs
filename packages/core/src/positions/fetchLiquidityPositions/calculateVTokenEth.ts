@@ -45,8 +45,6 @@ const calculateVTokenEth = ({
     .mul(sqrtPrice.sub(sqrtPriceTickLower))
     .div(sqrtPriceX96);
 
-  console.log(`amount0: ${amount0}, amount1: ${amount1}`);
-
   const wethToken = getChainConstant(WETH_TOKEN, network);
   const is0Weth = addressEqual(inputTokens[0], wethToken);
 

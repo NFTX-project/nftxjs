@@ -1,16 +1,20 @@
 import { fetchTokenBuyPrice, getTotalTokenIds } from '@nftx/trade';
 import type { MarketplacePrice, Vault, VaultHolding } from '@nftx/types';
 import { parseEther } from 'viem';
-import { calculateTotalFeePrice, estimateTotalPremiumPrice } from './utils';
+import { calculateTotalFeePrice, estimateTotalPremiumPrice } from './common';
+
+type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
 
 const getIndexedPrice = ({
   holdings,
   tokenIds,
   vault,
+  now,
 }: {
   vault: Pick<Vault, 'vTokenToEth' | 'prices'>;
   tokenIds: `${number}`[];
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
+  now: number;
 }) => {
   // We store the prices for buying up to 5 NFTs
   // so we can save ourselves from having to make additional calls/calculations
@@ -25,6 +29,7 @@ const getIndexedPrice = ({
     holdings,
     tokenIds,
     vTokenToEth,
+    now,
   });
 
   return {
@@ -39,11 +44,15 @@ const getRoughPrice = async ({
   network,
   tokenIds,
   vault,
+  fetchTokenBuyPrice,
+  now,
 }: {
   tokenIds: `${number}`[];
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   vault: Pick<Vault, 'vTokenToEth' | 'fees' | 'id'>;
   network: number;
+  fetchTokenBuyPrice: FetchTokenBuyPrice;
+  now: number;
 }) => {
   // Calculate the price manually
   // This doesn't need to be as accurate and up-to-the-block accurate as a quote
@@ -66,6 +75,7 @@ const getRoughPrice = async ({
     holdings,
     tokenIds,
     vTokenToEth,
+    now,
   });
 
   const price = vTokenPrice + feePrice + premiumPrice;
@@ -81,30 +91,40 @@ const getRoughPrice = async ({
   return result;
 };
 
-const priceVaultBuy = async ({
-  network,
-  tokenIds,
-  vault,
-  bypassIndexedPrice,
-  holdings: allHoldings,
-}: {
-  network: number;
-  tokenIds: `${number}`[];
-  vault: Vault;
-  bypassIndexedPrice?: boolean;
-  holdings: VaultHolding[];
-}): Promise<MarketplacePrice> => {
-  const totalTokenIds = getTotalTokenIds(tokenIds);
-  const holdings = allHoldings.filter((x) => tokenIds.includes(x.tokenId));
+export const makePriceVaultBuy =
+  ({ fetchTokenBuyPrice }: { fetchTokenBuyPrice: FetchTokenBuyPrice }) =>
+  async ({
+    network,
+    tokenIds,
+    vault,
+    bypassIndexedPrice,
+    holdings: allHoldings,
+  }: {
+    network: number;
+    tokenIds: `${number}`[];
+    vault: Pick<Vault, 'prices' | 'vTokenToEth' | 'fees' | 'id'>;
+    bypassIndexedPrice?: boolean;
+    holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
+  }): Promise<MarketplacePrice> => {
+    const now = Math.floor(Date.now() / 1000);
+    const totalTokenIds = getTotalTokenIds(tokenIds);
+    const holdings = allHoldings.filter((x) => tokenIds.includes(x.tokenId));
 
-  if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
-    const result = getIndexedPrice({ holdings, tokenIds, vault });
-    if (result) {
-      return result;
+    if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
+      const result = getIndexedPrice({ holdings, tokenIds, vault, now });
+      if (result) {
+        return result;
+      }
     }
-  }
 
-  return getRoughPrice({ holdings, network, tokenIds, vault });
-};
+    return getRoughPrice({
+      holdings,
+      network,
+      tokenIds,
+      vault,
+      fetchTokenBuyPrice,
+      now,
+    });
+  };
 
-export default priceVaultBuy;
+export default makePriceVaultBuy({ fetchTokenBuyPrice });
