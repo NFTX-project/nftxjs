@@ -19,7 +19,8 @@
   "scripts": {
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
     "test": "echo \"no tests\"",
-    "build": "rm -rf dist && graphql-codegen && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
+    "codegen": "graphql-codegen -c nftx-v3.codegen.yml && graphql-codegen -c nftx-v3-uniswap.codegen.yml",
+    "build": "rm -rf dist && yarn codegen && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
     "prepublishOnly": "yarn build"
   },
   "bugs": {

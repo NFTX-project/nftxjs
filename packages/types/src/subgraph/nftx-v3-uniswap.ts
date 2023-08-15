@@ -13,7 +13,7 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   BigDecimal: { input: string; output: string; }
-  BigInt: { input: string|bigint; output: string|bigint; }
+  BigInt: { input: string; output: string; }
   Bytes: { input: string; output: string; }
   Int8: { input: string|number; output: string|number; }
 };

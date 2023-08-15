@@ -1,266 +1,101 @@
 import config from '@nftx/config';
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
-import type { Address } from '@nftx/types';
+import { createQuery, querySubgraph } from '@nftx/subgraph';
+import type { Address, NftxV3 } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
-export type Response = {
-  globals: Array<{
-    fees: {
-      mintFee: string;
-      redeemFee: string;
-      swapFee: string;
-    };
-  }>;
-  vaults: Array<{
-    vaultId: string;
-    id: Address;
-    is1155: boolean;
-    isFinalized: boolean;
-    totalHoldings: string;
-    totalMints: string;
-    totalRedeems: string;
-    totalFees: string;
-    createdAt: string;
-    holdings: Array<{
-      id: string;
-      tokenId: `${number}`;
-      amount: `${number}`;
-      dateAdded: string;
-    }>;
-    token: {
-      id: Address;
-      name: string;
-      symbol: string;
-    };
-    fees: {
-      mintFee: string;
-      redeemFee: string;
-      swapFee: string;
-    };
-    usesFactoryFees: boolean;
-    asset: {
-      id: Address;
-      name: string;
-      symbol: string;
-    };
-    manager: {
-      id: Address;
-    };
-    createdBy: {
-      id: Address;
-    };
-    eligibilityModule: {
-      id: Address;
-      name: string;
-      eligibleIds: string[];
-      eligibleRange: [string, string];
-    };
-    features: {
-      enableMint: boolean;
-      enableRedeem: boolean;
-      enableSwap: boolean;
-    };
-    inventoryStakingPool: {
-      id: Address;
-      dividendToken: {
-        id: Address;
-        name: string;
-        symbol: string;
-      };
-    };
-    lpStakingPool: {
-      id: Address;
-      stakingToken: {
-        id: Address;
-        name: string;
-        symbol: string;
-      };
-      dividendToken: {
-        id: Address;
-        name: string;
-        symbol: string;
-      };
-    };
-    shutdownDate: string;
-  }>;
-};
+export type Response = { globals: NftxV3.Global[]; vaults: NftxV3.Vault[] };
 
 const fetchSubgraphVaults = async ({
+  manager,
   network = config.network,
   vaultAddresses,
   vaultIds,
-  manager,
-  finalisedOnly = true,
-  includeEmptyVaults = false,
-  lastId = 0,
-  retryCount = 0,
 }: {
   network?: number;
   vaultAddresses?: Address[];
   vaultIds?: string[];
-  includeEmptyVaults?: boolean;
-  finalisedOnly?: boolean;
   manager?: Address;
-  lastId?: number;
-  retryCount?: number;
 }): Promise<Response> => {
-  const where = buildWhere({
-    isFinalized: finalisedOnly || null,
-    totalHoldings_gte: includeEmptyVaults ? null : 1,
-    vaultId: vaultIds != null && vaultIds.length === 1 ? vaultIds[0] : null,
-    vaultId_in: vaultIds != null && vaultIds.length > 1 ? vaultIds : null,
-    id:
-      vaultAddresses != null && vaultAddresses.length === 1
-        ? vaultAddresses[0]
-        : null,
-    id_in:
-      vaultAddresses != null && vaultAddresses.length > 1
-        ? vaultAddresses.map((x) => x.toLowerCase())
-        : null,
-    manager: manager?.toLowerCase(),
-    vaultId_gte: lastId,
-  });
+  const g = createQuery<NftxV3.Query>();
+  const globalsQuery = g.globals.select((s) => [
+    s.fees((s) => [s.mintFee, s.redeemFee, s.swapFee]),
+  ]);
 
-  const query = gql<Response>`{
-    globals {
-      fees {
-        mintFee
-        randomRedeemFee
-        targetRedeemFee
-        randomSwapFee
-        targetSwapFee
-      }
-    }
-    vaults(
-      first: 1000,
-      where: ${where}
-    ) {
-      vaultId
-      id
-      is1155
-      isFinalized
-      totalHoldings
-      totalMints
-      totalRedeems
-      totalFees
-      createdAt
-      shutdownDate
-      holdings(
-        first: 1000,
-        orderBy: tokenId,
-        orderDirection: asc
-      ) {
-        id
-        tokenId
-        amount
-        dateAdded
-      }
-      token {
-        id
-        name
-        symbol
-      }
-      fees {
-        mintFee
-        randomRedeemFee
-        targetRedeemFee
-        randomSwapFee
-        targetSwapFee
-      }
-      usesFactoryFees
-      asset {
-        id
-        name
-        symbol
-      }
-      manager {
-        id
-      }
-      createdBy {
-        id
-      }
-      eligibilityModule {
-        id
-        name
-        eligibleIds
-        eligibleRange
-      }
-      features {
-        enableMint
-        enableRandomRedeem
-        enableTargetRedeem
-        enableRandomSwap
-        enableTargetSwap
-      }
-      inventoryStakingPool {
-        id
-        dividendToken {
-          id
-          name
-          symbol
-        }
-      }
-      lpStakingPool {
-        id
-        stakingToken {
-          id
-          name
-          symbol
-        }
-        dividendToken {
-          id
-          name
-          symbol
-        }
-      }
-    }
-  }`;
+  const vaults: NftxV3.Vault[] = [];
+  const globals: NftxV3.Global[] = [];
+  let lastId: string | undefined;
 
-  let data: Response;
+  do {
+    const vaultsQuery = g.vaults
+      .first(1000)
+      .where((w) => [
+        w.vaultId.in(vaultIds && vaultIds.length > 1 ? vaultIds : undefined),
+        w.vaultId.is(
+          vaultIds && vaultIds.length === 1 ? vaultIds[0] : undefined
+        ),
+        w.vaultId.gt(lastId),
+        w.id.in(
+          vaultAddresses && vaultAddresses.length > 1
+            ? vaultAddresses
+            : undefined
+        ),
+        w.id.is(
+          vaultAddresses && vaultAddresses.length === 1
+            ? vaultAddresses[0]
+            : undefined
+        ),
+        w.manager.is(manager),
+      ])
+      .select((v) => [
+        v.vaultId,
+        v.id,
+        v.is1155,
+        v.isFinalized,
+        v.totalHoldings,
+        v.totalMints,
+        v.totalRedeems,
+        v.totalFees,
+        v.createdAt,
+        v.shutdownDate,
+        v.usesFactoryFees,
+        v.token((s) => [s.id, s.name, s.symbol]),
+        v.fees((s) => [s.mintFee, s.redeemFee, s.swapFee]),
+        v.asset((s) => [s.id, s.name, s.symbol]),
+        v.manager((s) => [s.id]),
+        v.createdBy((s) => [s.id]),
+        v.eligibilityModule((e) => [
+          e.id,
+          e.name,
+          e.eligibleIds,
+          e.eligibleRange,
+        ]),
+        v.features((f) => [f.enableMint, f.enableRedeem, f.enableSwap]),
+        g.holdings
+          .first(1000)
+          .orderBy('tokenId')
+          .select((h) => [h.id, h.tokenId, h.amount, h.dateAdded]),
+      ]);
 
-  try {
-    data = await querySubgraph({
+    // const query = g.combine(globalsQuery, vaultsQuery);
+    const query = globalsQuery.combine(vaultsQuery);
+
+    const data = await querySubgraph({
       url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
       query,
     });
 
-    if (data?.vaults?.length === 1000) {
+    vaults.push(...data.vaults);
+    globals.push(...data.globals);
+
+    if (data.vaults.length === 1000) {
       const lastVault = data.vaults[data.vaults.length - 1];
-      const lastId = Number(lastVault.vaultId) + 1;
-      const moreVaults = await fetchSubgraphVaults({
-        finalisedOnly,
-        includeEmptyVaults,
-        manager,
-        network,
-        vaultAddresses,
-        vaultIds,
-        retryCount: 0,
-        lastId,
-      });
-
-      data = {
-        ...data,
-        vaults: [...data.vaults, ...(moreVaults?.vaults ?? [])],
-      };
+      lastId = `${lastVault.vaultId}`;
+    } else {
+      lastId = undefined;
     }
-  } catch (e) {
-    console.error(e);
-    if (retryCount < 3) {
-      return fetchSubgraphVaults({
-        network,
-        finalisedOnly,
-        includeEmptyVaults,
-        lastId,
-        manager,
-        vaultAddresses,
-        vaultIds,
-        retryCount: retryCount + 1,
-      });
-    }
-    throw e;
-  }
+  } while (lastId);
 
-  return data;
+  return { globals, vaults };
 };
 
 export default fetchSubgraphVaults;

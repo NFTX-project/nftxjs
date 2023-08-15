@@ -1,5 +1,5 @@
 import 'isomorphic-fetch';
-import type { NftxV3Uniswap } from '@nftx/types';
+import type { NftxV3, NftxV3Uniswap } from '@nftx/types';
 import createQuery from '../createQuery';
 import querySubgraph from '../querySubgraph';
 
@@ -11,7 +11,7 @@ it('handles a single entity', () => {
   const g = createQuery<Query>();
   const query = g.liquidityPool
     .id('0x1768ccc3fc3a40522fcd3296633ae8c00434b3b6')
-    .select(['id']);
+    .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
@@ -25,7 +25,7 @@ it('handles a single entity', () => {
 
 it('handles a list entity', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select(['id']);
+  const query = g.liquidityPools.select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
@@ -43,7 +43,7 @@ it('adds filters', () => {
     .first(10)
     .orderBy('activeLiquidity')
     .orderDirection('desc')
-    .select(['id']);
+    .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
@@ -61,9 +61,10 @@ it('adds filters', () => {
 
 it('searches by primitive values', () => {
   const g = createQuery<Query>();
+
   const query = g.liquidityPools
-    .where({ createdTimestamp: '0' })
-    .select(['id']);
+    .where((w) => [w.createdTimestamp('0')])
+    .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
@@ -79,37 +80,59 @@ it('searches by primitive values', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
-it('handles a bigint value', () => {
+it('strips out nullish values', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.where({ activeLiquidity: 0n }).select(['id']);
+
+  const query = g.liquidityPools
+    .where((w) => [
+      w.createdTimestamp(undefined),
+      w.totalLiquidity(null),
+      w.activeLiquidity.in(undefined),
+    ])
+    .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools(
-      where: {
-        activeLiquidity: 0
+      liquidityPools {
+        id
       }
-    ) {
-      id
-    }
-  }`;
+    }`;
 
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
+// For now we're just saying bigint fields should be stringified
+// it('handles a bigint value', () => {
+//   const g = createQuery<Query>();
+//   const query = g.liquidityPools
+//     .where((w) => w.activeLiquidity.is(0n))
+//     .select((s) => [s.id]);
+
+//   const actual = query.toString();
+//   const expected = `{
+//     liquidityPools(
+//       where: {
+//         activeLiquidity: 0
+//       }
+//     ) {
+//       id
+//     }
+//   }`;
+
+//   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+// });
+
 it('searches by lt/lte/gt/gte/ne', () => {
   const g = createQuery<Query>();
   const query = g.liquidityPools
-    .where({
-      activeLiquidity: {
-        gt: '0',
-        gte: '1',
-        isNot: '2',
-        lt: '100000000000',
-        lte: '9999999999',
-      },
-    })
-    .select(['id']);
+    .where((w) => [
+      w.activeLiquidity.gt('0'),
+      w.activeLiquidity.gte('1'),
+      w.activeLiquidity.isNot('2'),
+      w.activeLiquidity.lt('100000000000'),
+      w.activeLiquidity.lte('9999999999'),
+    ])
+    .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
@@ -131,10 +154,10 @@ it('searches by lt/lte/gt/gte/ne', () => {
 
 it('searches on nested fields', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools
-    .where({ inputTokens: { id: '0x00000' } })
-    .select(['id']);
 
+  const query = g.liquidityPools
+    .where((w) => [w.inputTokens((w) => [w.id('0x00000')])])
+    .select((s) => [s.id]);
   const actual = query.toString();
   const expected = `{
     liquidityPools(
@@ -153,7 +176,10 @@ it('searches on nested fields', () => {
 
 it("searches by a child entity's ID", () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.where({ protocol: '0x000' }).select(['id']);
+
+  const query = g.liquidityPools
+    .where((w) => w.protocol.is('0x000'))
+    .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
@@ -171,10 +197,10 @@ it("searches by a child entity's ID", () => {
 
 it('selects primitive fields', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select([
-    'id',
-    'activeLiquidity',
-    'createdTimestamp',
+  const query = g.liquidityPools.select((s) => [
+    s.id,
+    s.activeLiquidity,
+    s.createdTimestamp,
   ]);
 
   const actual = query.toString();
@@ -191,7 +217,7 @@ it('selects primitive fields', () => {
 
 it('selects nested primitive fields', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select({ positions: ['id'] });
+  const query = g.liquidityPools.select((s) => [s.positions((s) => [s.id])]);
 
   const actual = query.toString();
   const expected = `{
@@ -207,7 +233,9 @@ it('selects nested primitive fields', () => {
 
 it('selects deeply-nested primitive fields', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select({ positions: { pool: ['id'] } });
+  const query = g.liquidityPools.select((s) => [
+    s.positions((s) => [s.pool((s) => [s.id])]),
+  ]);
 
   const actual = query.toString();
   const expected = `{
@@ -225,7 +253,7 @@ it('selects deeply-nested primitive fields', () => {
 
 it('selects primitives with object-syntax', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select({ id: true });
+  const query = g.liquidityPools.select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
@@ -239,9 +267,11 @@ it('selects primitives with object-syntax', () => {
 
 it('selects and filters child entities with a nested query', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select({
-    positions: g.positions.where({ account: '0x0' }).select(['depositCount']),
-  });
+  const query = g.liquidityPools.select(() => [
+    g.positions
+      .where((w) => w.account.is('0x0'))
+      .select((s) => [s.depositCount]),
+  ]);
 
   const actual = query.toString();
   const expected = `{
@@ -252,6 +282,131 @@ it('selects and filters child entities with a nested query', () => {
         }
       ) {
         depositCount
+      }
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('works with optional fields', () => {
+  const g = createQuery<NftxV3.Query>();
+  const query = g.vaults
+    .where((w) => [w.manager.is('0x0')])
+    .select((s) => [s.is1155]);
+
+  const actual = query.toString();
+  const expected = `{
+    vaults(where: { manager: "0x0" }) {
+      is1155
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('works with implicit stringify', () => {
+  const g = createQuery<Query>();
+  const query = g.liquidityPools
+    .where((w) => [
+      w.activeLiquidity.gt('0'),
+      w.inputTokens((w) => [w.id('0xAB')]),
+    ])
+    .select((s) => [
+      s.activeLiquidity,
+      s.fees((s) => [s.id, s.feeType, s.feePercentage]),
+      g.positions
+        .where((w) => [w.account.is('0x0')])
+        .select((s) => [s.id, s.account((s) => [s.id])]),
+    ]);
+
+  const actual = `${query}`;
+  const expected = `{
+    liquidityPools(
+      where: {
+        activeLiquidity_gt: "0",
+        inputTokens_: {
+          id: "0xab"
+        }
+      }
+    ) {
+      activeLiquidity
+      fees {
+        id
+        feeType
+        feePercentage
+      }
+      positions(
+        where: {
+          account: "0x0"
+        }
+      ) {
+        id
+        account {
+          id
+        }
+      }
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('aliases fields', () => {
+  const query = createQuery<Query>().liquidityPools.select((s) => [
+    s.activeLiquidity.as('liquidityActive'),
+    s.deposits((s) => [s.blockNumber]).as('x'),
+    s.positions((s) => [s.withdrawCount.as('totalWithdrawals')]).as('y'),
+  ]);
+
+  const actual = query.toString();
+  const expected = `{
+    liquidityPools {
+      liquidityActive: activeLiquidity
+      x: deposits {
+        blockNumber
+      }
+      y: positions {
+        totalWithdrawals: withdrawCount
+      }
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('creates "... on" selectors', () => {
+  const g = createQuery<NftxV3.Query>();
+
+  const query = g.activityEvents.select((s) => [
+    s.on<NftxV3.Mint>('Mint', (s) => [
+      s.nftIds,
+      s.feeReceipt((s) => [s.transfers((s) => [s.amount])]),
+    ]),
+    s.on<NftxV3.Redeem>('Redeem', (s) => [
+      s.nftIds.as('redeemIds'),
+      s.feeReceipt((s) => [s.transfers((s) => [s.amount])]),
+    ]),
+  ]);
+
+  const actual = query.toString();
+  const expected = `{
+    activityEvents {
+      ... on Mint {
+        nftIds
+        feeReceipt {
+          transfers {
+            amount
+          }
+        }
+      }
+      ... on Redeem {
+        redeemIds: nftIds
+        feeReceipt {
+          transfers {
+            amount
+          }
+        }
       }
     }
   }`;
@@ -277,7 +432,7 @@ it('sends a query to the subgraph', async () => {
     text: async () => JSON.stringify(response),
   });
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select(['id']).first(1);
+  const query = g.liquidityPools.select((s) => [s.id]).first(1);
 
   const result = await querySubgraph({
     url: 'https://example.com',
@@ -301,9 +456,10 @@ it('combines multiple queries into a single query request', async () => {
     text: async () => JSON.stringify(response),
   });
   const g = createQuery<Query>();
-  const q1 = g.liquidityPools.select(['id']);
-  const q2 = g.positions.select(['id']);
-  const query = g.combine(q1, q2);
+  const q1 = g.liquidityPools.select((s) => [s.id]);
+  const q2 = g.positions.select((s) => [s.id]);
+  const q3 = g.accounts.select((s) => [s.id]);
+  const query = q1.combine(q2).combine(q3);
 
   const actual = query.toString();
   const expected = `{
@@ -311,6 +467,9 @@ it('combines multiple queries into a single query request', async () => {
       id
     }
     positions {
+      id
+    }
+    accounts {
       id
     }
   }`;

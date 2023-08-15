@@ -1,6 +1,6 @@
 import { mapObj } from '../../utils';
 import type { Response } from '../fetchSubgraphVaults';
-import type { Vault, VaultHolding } from '@nftx/types';
+import type { Address, Vault, VaultHolding } from '@nftx/types';
 
 const transformVault = ({
   vault: x,
@@ -17,11 +17,27 @@ const transformVault = ({
 }) => {
   const rawFees = (x.usesFactoryFees && globalFees ? globalFees : x.fees) ?? {};
   const fees: Vault['fees'] = mapObj(rawFees, (key, value) => {
-    return [key, BigInt(value)];
+    return [key, BigInt(value as string)];
   });
 
   const vault: Vault = {
     ...x,
+    id: x.id as Address,
+    vaultId: `${x.vaultId}`,
+    asset: {
+      ...x.asset,
+      id: x.asset.id as Address,
+    },
+    token: {
+      ...x.token,
+      id: x.token.id as Address,
+    },
+    createdBy: {
+      id: x.createdBy?.id as Address,
+    },
+    is1155: !!x.is1155,
+    isFinalized: !!x.isFinalized,
+    manager: { id: x.manager?.id as Address },
     createdAt: Number(x.createdAt),
     totalHoldings: Number(x.totalHoldings),
     totalMints: Number(x.totalMints),

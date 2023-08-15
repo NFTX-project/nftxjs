@@ -82,7 +82,9 @@ export const NFTX_SUBGRAPH = {
     NFTX_SUBGRAPH_MAINNET_URLS.SHARED,
   ],
   [Network.Arbitrum]: `${SHARED_ROOT}/nftx-project/nftx-v2-arbitrum`,
-  [Network.Goerli]: `${SHARED_ROOT}/nftx-project/nftx-v2-1-goerli`,
+  // [Network.Goerli]: `${SHARED_ROOT}/nftx-project/nftx-v2-1-goerli`,
+  [Network.Goerli]:
+    'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-v3-vaults',
 };
 
 // TODO: will this still be a separate graph for v3 or part of the NFT graph?

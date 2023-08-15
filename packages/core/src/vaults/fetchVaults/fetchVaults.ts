@@ -56,30 +56,18 @@ const fetchVaults = async ({
   vaultAddresses,
   vaultIds,
   manager,
-  finalisedOnly = true,
   enabledOnly = true,
-  includeEmptyVaults = false,
-  lastId = 0,
-  retryCount = 0,
 }: {
   network?: number;
   provider: Provider;
   vaultAddresses?: Address[];
   vaultIds?: string[];
-  includeEmptyVaults?: boolean;
-  finalisedOnly?: boolean;
   enabledOnly?: boolean;
   manager?: Address;
-  lastId?: number;
-  retryCount?: number;
 }): Promise<Vault[]> => {
   const data = await fetchSubgraphVaults({
     network,
-    finalisedOnly,
-    lastId,
     manager,
-    includeEmptyVaults,
-    retryCount,
     vaultAddresses,
     vaultIds,
   });
@@ -94,19 +82,30 @@ const fetchVaults = async ({
 
   const vaultPromises =
     vaultData.map(async (x) => {
-      const moreHoldings = await fetchMoreHoldings({ network, vault: x });
+      const y = {
+        id: x.id as Address,
+        holdings: x.holdings.map((h) => ({ ...h, tokenId: `${h.tokenId}` })),
+        eligibilityModule: x.eligibilityModule
+          ? { ...x.eligibilityModule, id: x.eligibilityModule.id as Address }
+          : undefined,
+      };
+
+      const moreHoldings = await fetchMoreHoldings({
+        network,
+        vault: y,
+      });
       const holdings = x.holdings
         .map((holding) => transformVaultHolding(holding))
         .concat(moreHoldings);
 
       const merkleReference =
-        (isMerkleVault(x)
-          ? await fetchMerkleReference({ provider, vault: x })
+        (isMerkleVault(y)
+          ? await fetchMerkleReference({ provider, vault: y })
           : null) ?? undefined;
 
       const vTokenToEth = await fetchVTokenToEth({
         provider,
-        vaultAddress: x.id,
+        vaultAddress: y.id,
       });
 
       const vault = transformVault({
@@ -195,12 +194,6 @@ const fetchVaults = async ({
     }) ?? [];
 
   const vaults = await Promise.all(vaultPromises);
-
-  // We only want to filter/sort once we've got all the vaults fetched
-  // if lastId > 0 that means we're recursively fetching _more_ vaults
-  if (lastId > 0) {
-    return vaults;
-  }
 
   return vaults;
 };

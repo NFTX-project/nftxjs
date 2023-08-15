@@ -16,6 +16,17 @@ it('removes null and undefined values', () => {
     date_gt: 0,
     alive: null,
     dead: undefined,
+    operators: {
+      in: null,
+      is: null,
+      gt: null,
+    },
+    deep: {
+      child: null,
+      childOperator: {
+        in: undefined,
+      },
+    },
   });
 
   const expected = `{ date_gt: 0 }`;

@@ -9,8 +9,8 @@ generates:
           input: string
           output: string
         BigInt:
-          input: string|bigint
-          output: string|bigint
+          input: string
+          output: string
         BigDecimal:
           input: string
           output: string
