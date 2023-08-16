@@ -16,9 +16,11 @@ type VaultPrice = {
 
 export type VaultHolding = {
   id: string;
+  assetAddress: Address;
   tokenId: TokenId;
   amount: bigint;
   dateAdded: number;
+  vaultId: string;
 };
 
 export type VaultFees = {
@@ -42,7 +44,6 @@ export type Vault = {
   totalMints: number;
   totalRedeems: number;
   totalFees: bigint;
-  tokenIds: string[];
   is1155: boolean;
   isFinalized: boolean;
   usesFactoryFees: boolean;

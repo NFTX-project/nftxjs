@@ -22,6 +22,6 @@ export const NFTX_API_URL = 'https://api-v3.nftx.xyz';
 
 export const RESERVOIR_URL = {
   [Network.Mainnet]: 'https://api.reservoir.tools',
-  [Network.Goerli]: 'https://api-goerli.reservoir.tools/',
-  [Network.Arbitrum]: 'https://api-arbitrum.reservoir.tools/',
+  [Network.Goerli]: 'https://api-goerli.reservoir.tools',
+  [Network.Arbitrum]: 'https://api-arbitrum.reservoir.tools',
 };

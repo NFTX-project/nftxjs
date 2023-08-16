@@ -4,45 +4,54 @@ import type { NftxV3, Address, VaultHolding } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import transformVaultHolding from './transformVaultHolding';
 
-const LIMIT = 1000;
-
 /** Returns all holdings for a given vault */
 const fetchVaultHoldings = async ({
   network = config.network,
-  vaultAddress,
-  lastId = '0',
+  vaultAddresses,
+  vaultIds,
 }: {
   network?: number;
-  vaultAddress: Address;
-  lastId?: string;
+  vaultAddresses?: Address[];
+  vaultIds?: string[];
 }): Promise<VaultHolding[]> => {
   const g = createQuery<NftxV3.Query>();
-  const query = g.vault.id(vaultAddress).select(() => [
-    g.holdings
-      .first(LIMIT)
-      .orderBy('tokenId')
-      .where((w) => [w.tokenId.gt(lastId)])
-      .select((h) => [h.id, h.tokenId, h.amount, h.dateAdded]),
-  ]);
 
-  const url = getChainConstant(config.subgraph.NFTX_SUBGRAPH, network);
+  const rawHoldings: NftxV3.Holding[] = [];
+  let lastId: string | undefined;
 
-  const data = await querySubgraph({
-    url,
-    query,
-  });
+  do {
+    const query = g.holdings
+      .first(1000)
+      .orderBy('id')
+      .where((w) => [
+        w.vault.in(vaultAddresses),
+        w.id.gt(lastId),
+        w.vault((w) => [w.vaultId.in(vaultIds)]),
+      ])
+      .select((s) => [
+        s.amount,
+        s.dateAdded,
+        s.id,
+        s.tokenId,
+        s.vault((v) => [v.id, v.vaultId, v.asset((a) => [a.id])]),
+      ]);
 
-  let holdings = (data?.vault?.holdings ?? []).map(transformVaultHolding);
+    const url = getChainConstant(config.subgraph.NFTX_SUBGRAPH, network);
 
-  if (holdings.length === LIMIT) {
-    const lastId = holdings[holdings.length - 1].tokenId;
-    const moreHoldings = await fetchVaultHoldings({
-      network,
-      vaultAddress,
-      lastId,
+    const data = await querySubgraph({
+      url,
+      query,
     });
-    holdings = [...holdings, ...moreHoldings];
-  }
+
+    rawHoldings.push(...data.holdings);
+    if (data.holdings.length === 1000) {
+      lastId = data.holdings[data.holdings.length - 1].id;
+    } else {
+      lastId = undefined;
+    }
+  } while (lastId);
+
+  const holdings = rawHoldings.map(transformVaultHolding);
 
   return holdings;
 };

@@ -1,18 +1,16 @@
 import { mapObj } from '../../utils';
 import type { Response } from '../fetchSubgraphVaults';
-import type { Address, Vault, VaultHolding } from '@nftx/types';
+import type { Address, Vault } from '@nftx/types';
 
 const transformVault = ({
   vault: x,
   globalFees,
   merkleReference,
-  holdings,
   vTokenToEth,
 }: {
   vault: Response['vaults'][0];
   globalFees: Response['globals'][0]['fees'];
   merkleReference?: string;
-  holdings: VaultHolding[];
   vTokenToEth: bigint;
 }) => {
   const rawFees = (x.usesFactoryFees && globalFees ? globalFees : x.fees) ?? {};
@@ -44,7 +42,6 @@ const transformVault = ({
     totalRedeems: Number(x.totalRedeems),
     totalFees: BigInt(x.totalFees),
     shutdownDate: Number(x.shutdownDate || '0'),
-    tokenIds: holdings.map((x) => x.tokenId),
     fees,
     // We'll be calculating the price further down the line
     prices: [] as unknown as Vault['prices'],

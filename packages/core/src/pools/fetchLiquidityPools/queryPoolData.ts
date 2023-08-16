@@ -1,8 +1,7 @@
 import config from '@nftx/config';
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
+import { createQuery, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '@nftx/utils';
-import type { LiquidityPoolsResponse } from './types';
-import type { Address, Vault } from '@nftx/types';
+import type { NftxV3Uniswap, Address, Vault } from '@nftx/types';
 
 const getAddressesForVaultIds = (
   vaultIds: string[],
@@ -33,37 +32,22 @@ const queryPoolData = ({
     vaultAddresses = getAddressesForVaultIds(vaultIds, vaults);
   }
 
-  const where = buildWhere({
-    id_in: poolIds,
-    inputTokens: {
-      id_in: vaultAddresses,
-    },
-  });
-
-  const query = gql<LiquidityPoolsResponse>`{
-    liquidityPools(
-      first: 1000
-      orderBy: id
-      orderDirection: asc
-      where: ${where}
-    ) {
-      id
-      name
-      fees {
-        id
-        feeType
-        percentage
-      }
-      tick
-      totalLiquidity
-      activeLiquidity
-      inputTokens {
-        id
-        symbol
-        name
-      }
-    }
-  }`;
+  const query = createQuery<NftxV3Uniswap.Query>()
+    .liquidityPools.first(1000)
+    .orderBy('id')
+    .where((w) => [
+      w.id.in(poolIds),
+      w.inputTokens((w) => [w.id.in(vaultAddresses)]),
+    ])
+    .select((s) => [
+      s.id,
+      s.name,
+      s.tick,
+      s.totalLiquidity,
+      s.activeLiquidity,
+      s.fees((fee) => [fee.id, fee.feePercentage, fee.feeType]),
+      s.inputTokens((token) => [token.id, token.symbol, token.name]),
+    ]);
 
   return querySubgraph({
     url: getChainConstant(config.subgraph.NFTX_UNISWAP_SUBGRAPH, network),

@@ -1,4 +1,4 @@
-import type { LiquidityPosition, Vault } from '@nftx/types';
+import type { Address, LiquidityPosition, Vault } from '@nftx/types';
 import type { PositionsResponse } from './types';
 import { WeiPerEther, Zero } from '@nftx/constants';
 import calculateVTokenEth from './calculateVTokenEth';
@@ -26,9 +26,9 @@ const transformPosition = ({
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'vaultId'>;
   network: number;
 }): LiquidityPosition => {
-  const tick = BigInt(position.pool.tick);
-  const tickLower = BigInt(position.tickLower.index);
-  const tickUpper = BigInt(position.tickUpper.index);
+  const tick = BigInt(position.pool.tick ?? '0');
+  const tickLower = BigInt(position.tickLower?.index ?? '0');
+  const tickUpper = BigInt(position.tickUpper?.index ?? '0');
   const inRange = tick >= tickLower && tick <= tickUpper;
   const liquidity = BigInt(position.liquidity);
 
@@ -43,7 +43,7 @@ const transformPosition = ({
   const totalWithdrawals = position.cumulativeWithdrawTokenAmounts.length;
 
   const { eth, vToken, tickLowerPrice, tickUpperPrice } = calculateVTokenEth({
-    inputTokens: position.pool.inputTokens.map((t) => t.id),
+    inputTokens: position.pool.inputTokens.map((t) => t.id as Address),
     liquidity,
     network,
     tickLower,
@@ -73,7 +73,7 @@ const transformPosition = ({
     liquidity,
     tickLower,
     tickUpper,
-    userAddress: position.account.id,
+    userAddress: position.account.id as Address,
     inRange,
     eth,
     lifetimeDeposits,

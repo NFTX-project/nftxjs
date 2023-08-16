@@ -1,4 +1,4 @@
-import type { VaultHolding } from '@nftx/types';
+import type { Address, VaultHolding } from '@nftx/types';
 import type { Response } from '../fetchSubgraphVaults';
 
 const transformVaultHolding = (
@@ -9,6 +9,8 @@ const transformVaultHolding = (
     tokenId: holding.tokenId as `${number}`,
     amount: BigInt(holding.amount),
     dateAdded: Number(holding.dateAdded),
+    vaultId: holding.vault.vaultId,
+    assetAddress: holding.vault.asset.id as Address,
   };
 };
 

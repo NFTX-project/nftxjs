@@ -28,28 +28,6 @@ const isVaultEnabled = (vault: Response['vaults'][0]) => {
   return true;
 };
 
-const fetchMoreHoldings = async ({
-  vault,
-  network,
-}: {
-  network: number;
-  vault: {
-    id: Address;
-    holdings: Array<{ tokenId: string }>;
-  };
-}) => {
-  if (vault.holdings.length === 1000) {
-    const lastId = vault.holdings[vault.holdings.length - 1].tokenId;
-    return fetchVaultHoldings({
-      network,
-      vaultAddress: vault.id,
-      lastId,
-    });
-  }
-
-  return [];
-};
-
 const fetchVaults = async ({
   network = config.network,
   provider,
@@ -80,6 +58,11 @@ const fetchVaults = async ({
     vaultData = vaultData.filter(isVaultEnabled);
   }
 
+  const allHoldings = await fetchVaultHoldings({
+    network,
+    vaultIds: vaultData.map((v) => v.vaultId),
+  });
+
   const vaultPromises =
     vaultData.map(async (x) => {
       const y = {
@@ -89,14 +72,6 @@ const fetchVaults = async ({
           ? { ...x.eligibilityModule, id: x.eligibilityModule.id as Address }
           : undefined,
       };
-
-      const moreHoldings = await fetchMoreHoldings({
-        network,
-        vault: y,
-      });
-      const holdings = x.holdings
-        .map((holding) => transformVaultHolding(holding))
-        .concat(moreHoldings);
 
       const merkleReference =
         (isMerkleVault(y)
@@ -111,10 +86,11 @@ const fetchVaults = async ({
       const vault = transformVault({
         globalFees,
         vault: x,
-        holdings,
         merkleReference,
         vTokenToEth,
       });
+
+      const holdings = allHoldings.filter((h) => h.vaultId === x.vaultId);
 
       const pricePromises = new Array(5)
         .fill(null)
@@ -152,8 +128,11 @@ const fetchVaults = async ({
               bypassIndexedPrice: true,
               tokenIds,
             });
-          } catch {
-            console.warn(`Couldn't get buy price for vault ${vault.vaultId}`);
+          } catch (e) {
+            console.warn(
+              `Couldn't get buy price [${i}] for vault ${vault.vaultId}`
+            );
+            console.warn(e);
           }
 
           try {
@@ -163,8 +142,11 @@ const fetchVaults = async ({
               tokenIds,
               bypassIndexedPrice: true,
             });
-          } catch {
-            console.warn(`Couldn't get sell price for vault ${vault.vaultId}`);
+          } catch (e) {
+            console.warn(
+              `Couldn't get sell price [${i}] for vault ${vault.vaultId}`
+            );
+            console.warn(e);
           }
 
           try {
@@ -175,8 +157,11 @@ const fetchVaults = async ({
               sellTokenIds: tokenIds,
               bypassIndexedPrice: true,
             });
-          } catch {
-            console.warn(`Couldn't get swap price for vault ${vault.vaultId}`);
+          } catch (e) {
+            console.warn(
+              `Couldn't get swap price [${i}] for vault ${vault.vaultId}`
+            );
+            console.warn(e);
           }
 
           const prices = {

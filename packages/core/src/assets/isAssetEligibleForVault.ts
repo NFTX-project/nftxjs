@@ -1,5 +1,10 @@
-import type { Provider, Vault } from '@nftx/types';
-import { checkEligible, fetchMerkleLeaves, isMerkleVault } from '@nftx/utils';
+import type { Address, Provider, Vault } from '@nftx/types';
+import {
+  addressEqual,
+  checkEligible,
+  fetchMerkleLeaves,
+  isMerkleVault,
+} from '@nftx/utils';
 
 type IsMerkleVault = typeof isMerkleVault;
 type FetchMerkleLeaves = typeof fetchMerkleLeaves;
@@ -20,11 +25,14 @@ const makeIsAssetEligibleForVault =
     provider,
     vault,
   }: {
-    vault: Pick<Vault, 'features' | 'eligibilityModule'>;
-    asset: { tokenId: `${number}` };
+    vault: Pick<Vault, 'features' | 'eligibilityModule' | 'asset'>;
+    asset: { tokenId: `${number}`; assetAddress: Address };
     provider: Provider;
   }) => {
-    if (vault.features.enableMint) {
+    if (!vault.features.enableMint) {
+      return false;
+    }
+    if (!addressEqual(vault.asset.id, asset.assetAddress)) {
       return false;
     }
     if (isMerkleVault(vault) && provider != null) {
