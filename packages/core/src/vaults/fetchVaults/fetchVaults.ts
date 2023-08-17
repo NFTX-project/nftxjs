@@ -7,7 +7,6 @@ import { addressEqual, fetchMerkleReference, isMerkleVault } from '@nftx/utils';
 import type { Address, MarketplacePrice, Provider, Vault } from '@nftx/types';
 import fetchVTokenToEth from './fetchVTokenToEth';
 import { priceVaultBuy, priceVaultSell, priceVaultSwap } from '../../prices';
-import transformVaultHolding from '../fetchVaultHoldings/transformVaultHolding';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only

@@ -46,7 +46,7 @@ const streamUserVaultAssets = ({
 
       const result = await queryApi<Response>({
         url,
-        query: { cursor, userAddress, vaultId },
+        query: { cursor, userAddress, vaultId, mintable: true },
       });
       cursor = result.cursor;
       if (cursor) {

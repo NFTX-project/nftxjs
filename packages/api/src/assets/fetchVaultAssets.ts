@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { VaultHolding } from '@nftx/types';
+import type { Asset } from '@nftx/types';
 import { queryApi } from '../utils';
 
 /** Get all tokens held by a vault */
@@ -10,7 +10,7 @@ const fetchVaultAssets = ({
   network?: number;
   vaultId: string;
 }) => {
-  return queryApi<VaultHolding[]>({
+  return queryApi<Asset[]>({
     url: `/${network}/assets`,
     query: {
       vaultId,

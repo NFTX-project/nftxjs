@@ -71,8 +71,9 @@ const fetchSubgraphVaults = async ({
         ]),
         v.features((f) => [f.enableMint, f.enableRedeem, f.enableSwap]),
         g.holdings
-          .first(1000)
-          .orderBy('tokenId')
+          .first(1)
+          .orderBy('dateAdded')
+          .orderDirection('desc')
           .select((h) => [h.id, h.tokenId, h.amount, h.dateAdded]),
       ]);
 

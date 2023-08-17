@@ -50,6 +50,8 @@ export type Vault = {
   fees: VaultFees;
   manager: { id: Address };
   token: Token;
+  /** A sample token id from the vault */
+  tokenId: `${number}`;
   eligibilityModule: {
     id: Address;
     name: string;

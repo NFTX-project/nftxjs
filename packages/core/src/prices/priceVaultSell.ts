@@ -48,9 +48,13 @@ const getRoughPrice = async ({
 
   const result: MarketplacePrice = {
     type: 'sell',
+    // The total amount of ETH you'll receive (vToken sale, less fees)
     price,
+    // The amount of ETH you'll get for selling the vToken
     vTokenPrice,
+    // The amount of ETH you'll pay in fees
     feePrice,
+    // There is never any premium price for selling
     premiumPrice: Zero,
   };
 

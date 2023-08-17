@@ -82,9 +82,13 @@ const getRoughPrice = async ({
 
   const result: MarketplacePrice = {
     type: 'buy',
+    // The total amount of ETH you'll pay
     price,
+    // The amount of ETH you'll pay to buy vToken
     vTokenPrice,
+    // The amount of ETH you'll pay in fees
     feePrice,
+    // The amount of ETH you'll pay in premiums
     premiumPrice,
   };
 

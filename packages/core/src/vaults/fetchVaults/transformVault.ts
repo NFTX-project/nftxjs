@@ -38,6 +38,7 @@ const transformVault = ({
     manager: { id: x.manager?.id as Address },
     createdAt: Number(x.createdAt),
     totalHoldings: Number(x.totalHoldings),
+    tokenId: x.holdings?.[0]?.tokenId as `${number}`,
     totalMints: Number(x.totalMints),
     totalRedeems: Number(x.totalRedeems),
     totalFees: BigInt(x.totalFees),
