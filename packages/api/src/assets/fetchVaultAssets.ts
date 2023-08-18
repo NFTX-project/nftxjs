@@ -3,19 +3,20 @@ import type { Asset } from '@nftx/types';
 import { queryApi } from '../utils';
 
 /** Get all tokens held by a vault */
-const fetchVaultAssets = ({
+const fetchVaultAssets = async ({
   vaultId,
   network = config.network,
 }: {
   network?: number;
   vaultId: string;
 }) => {
-  return queryApi<Asset[]>({
+  const { assets } = await queryApi<{ assets: Asset[] }>({
     url: `/${network}/assets`,
     query: {
       vaultId,
     },
   });
+  return assets;
 };
 
 export default fetchVaultAssets;
