@@ -289,6 +289,36 @@ it('selects and filters child entities with a nested query', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
+it('selects and filters child entities with a nested query assigned to another field', () => {
+  const q = createQuery<Query>();
+
+  const query = q.liquidityPools.select((s) => [
+    s.hourlySnapshots(
+      q.liquidityPoolHourlySnapshots
+        .first(24)
+        .orderBy('hour')
+        .orderDirection('desc')
+        .select((s) => [s.hourlyVolumeUSD, s.id])
+    ),
+  ]);
+
+  const actual = query.toString();
+  const expected = `{
+      liquidityPools {
+        hourlySnapshots(
+          first: 24
+          orderBy: hour
+          orderDirection: desc
+        ) {
+          hourlyVolumeUSD
+          id
+        }
+      }
+    }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
 it('works with optional fields', () => {
   const g = createQuery<NftxV3.Query>();
   const query = g.vaults

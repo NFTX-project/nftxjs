@@ -23,6 +23,7 @@ export type LiquidityPool = {
   tick: bigint;
   totalLiquidity: bigint;
   activeLiquidity: bigint;
+  inRangeLiquidity: bigint;
   /** The token pair that makes up the pool */
   tokens: Token[];
   /** Whether or not the pool actually exists or if it needs creating */
@@ -41,6 +42,11 @@ export type LiquidityPool = {
     '1m': bigint;
     all: bigint;
   };
+  totalValueLocked: bigint;
+  dailyVolume: bigint;
+  weeklyVolume: bigint;
+  dailyRevenue: bigint;
+  weeklyRevenue: bigint;
 };
 
 export type InventoryPool = {

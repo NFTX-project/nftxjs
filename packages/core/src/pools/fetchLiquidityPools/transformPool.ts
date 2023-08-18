@@ -3,6 +3,7 @@ import type { LiquidityPoolsResponse } from './types';
 import calculatePeriodFees from './calculatePeriodFees';
 import calcualateAprs from './calculateAprs';
 import { getTickSpacing } from '../../univ3-helpers';
+import { WeiPerEther, Zero } from '@nftx/constants';
 
 type Pool = LiquidityPoolsResponse['liquidityPools'][0];
 
@@ -26,8 +27,8 @@ const transformPool = (
     symbol,
     name,
   }));
-  const activeLiquidity = BigInt(pool.activeLiquidity);
-  const totalLiquidity = BigInt(pool.totalLiquidity);
+  const activeLiquidity = BigInt(pool.activeLiquidity ?? '0');
+  const totalLiquidity = BigInt(pool.totalLiquidity ?? '0');
   const price = vault.vTokenToEth;
   const tick = BigInt(pool.tick ?? '0');
   const feeTier = Number(
@@ -35,11 +36,29 @@ const transformPool = (
       ?.feePercentage ?? 0
   ) as 1;
   const tickSpacing = getTickSpacing(feeTier);
+  const totalValueLocked = BigInt(pool.totalValueLockedUSD ?? '0');
+  const inRangeLiquidity =
+    totalLiquidity > Zero
+      ? (activeLiquidity * WeiPerEther) / totalLiquidity
+      : Zero;
   // If a pool is in the subgraph then it exists
   // We build a list of "missing" pools later on
   const exists = true;
 
   const periodFees = calculatePeriodFees();
+
+  const dailyVolume = pool.hourlySnapshots.reduce((total, snapshot) => {
+    return total + BigInt(snapshot.hourlyVolumeUSD ?? '0');
+  }, Zero);
+  const dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
+    return total + BigInt(snapshot.hourlyTotalRevenueUSD ?? '0');
+  }, Zero);
+  const weeklyVolume = pool.dailySnapshots.reduce((total, snapshot) => {
+    return total + BigInt(snapshot.dailyVolumeUSD ?? '0');
+  }, Zero);
+  const weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
+    return total + BigInt(snapshot.dailyTotalRevenueUSD ?? '0');
+  }, Zero);
 
   const apr = calcualateAprs({
     activeLiquidity,
@@ -64,6 +83,12 @@ const transformPool = (
     totalLiquidity,
     vaultAddress: vault.id,
     vaultId: vault.vaultId,
+    dailyRevenue,
+    dailyVolume,
+    inRangeLiquidity,
+    totalValueLocked,
+    weeklyRevenue,
+    weeklyVolume,
   };
 };
 

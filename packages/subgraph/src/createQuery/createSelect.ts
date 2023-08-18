@@ -18,7 +18,7 @@ export type SelectFieldPrimitives = Array<
 >;
 
 type SelectFieldObjectFn<Def> = (
-  select: (s: Select<Def>) => SelectFieldPrimitives
+  select: ((s: Select<Def>) => SelectFieldPrimitives) | QueryBase<any, any>
 ) => SelectFieldPrimitive;
 
 type SelectFieldObject<Field> = Field extends Array<string | number | bigint>
@@ -59,14 +59,32 @@ const stringify = (element: SelectFieldPrimitive): string => {
   return output.join('');
 };
 
-const createSelect = <Def>(
-  name?: string,
-  fields?: any[],
-  alias?: string,
-  on?: string
-): Select<Def> => {
-  const fn = (cb: (s: any) => SelectFieldPrimitives) => {
-    return createSelect(name, cb(proxy));
+const createSelect = <Def>({
+  alias,
+  fields,
+  name,
+  on,
+}: {
+  name?: string;
+  fields?: any[];
+  alias?: string;
+  on?: string;
+} = {}): Select<Def> => {
+  const fn = (
+    cb: ((s: any) => SelectFieldPrimitives) | QueryBase<any, any>
+  ) => {
+    if (typeof cb === 'function') {
+      const fields = cb(proxy);
+      return createSelect({ name, fields });
+    }
+    if (
+      cb &&
+      typeof cb === 'object' &&
+      typeof (cb as any).rename === 'function'
+    ) {
+      return (cb as any).rename(name);
+    }
+    throw new Error(`Invalid field callback provided: [${typeof cb}]`);
   };
 
   const proxy: any = new Proxy(fn, {
@@ -76,11 +94,12 @@ const createSelect = <Def>(
           return () => stringify(proxy);
         case 'as':
           return (v: string) => {
-            return createSelect(name, fields, v);
+            return createSelect({ name, fields, alias: v });
           };
         case 'on':
           return (v: string, cb: (s: any) => SelectFieldPrimitives) => {
-            return createSelect(name, cb(proxy), alias, v);
+            const fields = cb(proxy);
+            return createSelect({ name, fields, alias, on: v });
           };
         case '$on':
           return on;
@@ -91,7 +110,7 @@ const createSelect = <Def>(
         case '$fields':
           return fields;
         default:
-          return createSelect(fieldName as string);
+          return createSelect({ name: fieldName as string });
       }
     },
   });

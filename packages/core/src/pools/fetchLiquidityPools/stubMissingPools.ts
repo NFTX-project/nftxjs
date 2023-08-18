@@ -74,6 +74,12 @@ const createStub = ({
     totalLiquidity: Zero,
     vaultAddress: vault.id,
     vaultId: vault.vaultId,
+    dailyRevenue: Zero,
+    dailyVolume: Zero,
+    inRangeLiquidity: Zero,
+    totalValueLocked: Zero,
+    weeklyRevenue: Zero,
+    weeklyVolume: Zero,
   };
 };
 

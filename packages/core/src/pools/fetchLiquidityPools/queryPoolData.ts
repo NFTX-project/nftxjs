@@ -32,8 +32,9 @@ const queryPoolData = ({
     vaultAddresses = getAddressesForVaultIds(vaultIds, vaults);
   }
 
-  const query = createQuery<NftxV3Uniswap.Query>()
-    .liquidityPools.first(1000)
+  const q = createQuery<NftxV3Uniswap.Query>();
+  const query = q.liquidityPools
+    .first(1000)
     .orderBy('id')
     .where((w) => [
       w.id.in(poolIds),
@@ -47,6 +48,21 @@ const queryPoolData = ({
       s.activeLiquidity,
       s.fees((fee) => [fee.id, fee.feePercentage, fee.feeType]),
       s.inputTokens((token) => [token.id, token.symbol, token.name]),
+      s.totalValueLockedUSD,
+      s.hourlySnapshots(
+        q.liquidityPoolHourlySnapshots
+          .first(24)
+          .orderBy('hour')
+          .orderDirection('desc')
+          .select((s) => [s.hourlyVolumeUSD, s.id])
+      ),
+      s.dailySnapshots(
+        q.liquidityPoolDailySnapshots
+          .first(7)
+          .orderBy('day')
+          .orderDirection('desc')
+          .select((s) => [s.id, s.day, s.dailyVolumeUSD])
+      ),
     ]);
 
   return querySubgraph({

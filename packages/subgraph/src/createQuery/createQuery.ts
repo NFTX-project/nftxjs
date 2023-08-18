@@ -173,9 +173,17 @@ const createQueryObj = (args: {
       return createQueryObj({ ...args, where });
     },
     select: (cb: (s: Select<any>) => SelectFieldPrimitives) => {
+      const proxy = createSelect<any>();
+      const select = cb(proxy);
       return createQueryObj({
         ...args,
-        select: cb(createSelect()),
+        select,
+      });
+    },
+    rename: (newName: string) => {
+      return createQueryObj({
+        ...args,
+        name: newName,
       });
     },
     toStringInner: () => {
