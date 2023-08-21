@@ -4,6 +4,8 @@ import { getExactTokenIds } from './utils';
 import type { Address, Provider, Signer, TokenId } from '@nftx/types';
 import { Zero } from '@nftx/constants';
 
+// TODO: I think this should be handled similar to buy/sell/swap where you fetch a quote from the api
+
 /** Redeems an item from the vault
  * Exchanges, for example, 1.05 PUNK for a punk nft (accounting for vault fees)
  */
@@ -30,7 +32,6 @@ const redeem = async (args: {
 
   const specificIds: string[] = getExactTokenIds(targetIds);
 
-  // TODO: what should the 3rd argument be (wethAmount)
   return contract.write.redeem({
     args: [specificIds.map(BigInt), userAddress, Zero, false],
     // TODO: should be (count * fee amount * vTokenToEth) + royalty amount + (premiums)

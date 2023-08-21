@@ -18,12 +18,13 @@ type WherePrimitive<Field> = {
   lt: WhereOperator<Field>;
   lte: WhereOperator<Field>;
   in: WhereOperator<Field[]>;
+  contains: WhereOperator<Field[]>;
 } & WhereOperator<Field>;
 
 type WhereFieldFn<Field> = ((
   cb: (w: Where<Field>) => WhereStatements
 ) => WhereStatements) &
-  WherePrimitive<string>;
+  WherePrimitive<Field extends Array<any> ? string | Field : string>;
 
 type WhereField<Field> = Field extends object
   ? WhereFieldFn<Field>
@@ -49,6 +50,7 @@ const createWhereField = (fieldName: string) => {
   whereField.lt = createOperator('lt');
   whereField.lte = createOperator('lte');
   whereField.in = createOperator('in');
+  whereField.contains = createOperator('contains');
 
   return whereField;
 };
@@ -89,6 +91,9 @@ export const stringifyWhere = (statements: WhereStatements): string => {
           }
           return `${field}: ${stringifyPrimative(value)}`;
         case 'isNot':
+          if (Array.isArray(value)) {
+            return `${field}_not: ${stringifyPrimative(value)}`;
+          }
           return `${field}_ne: ${stringifyPrimative(value)}`;
         case 'in':
           return `${field}_in: [${value.map(stringifyPrimative)}]`;

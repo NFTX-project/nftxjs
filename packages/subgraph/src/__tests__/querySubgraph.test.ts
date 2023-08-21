@@ -1,4 +1,4 @@
-import { buildWhere, gql, querySubgraph } from '..';
+import { gql, querySubgraph } from '..';
 
 // We're absolutely not bothered about a fully-working api
 // We just want to make sure that our method is sending the right payload

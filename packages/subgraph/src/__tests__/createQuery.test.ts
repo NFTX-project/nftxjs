@@ -37,6 +37,20 @@ it('handles a list entity', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
+it('aliases the collection name', () => {
+  const g = createQuery<Query>();
+  const query = g.liquidityPools.as('foo').select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    foo: liquidityPools {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
 it('adds filters', () => {
   const g = createQuery<Query>();
   const query = g.liquidityPools
@@ -97,6 +111,46 @@ it('strips out nullish values', () => {
         id
       }
     }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('filters with a contains query', () => {
+  const q = createQuery<Query>();
+  const query = q.withdraws
+    .where((w) => [w.inputTokens.contains(['0x1234'])])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    withdraws(
+      where: {
+        inputTokens_contains: ["0x1234"]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('filters by an exact array match', () => {
+  const q = createQuery<Query>();
+  const query = q.withdraws
+    .where((w) => [w.inputTokenAmounts.isNot(['0', '0'])])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    withdraws(
+      where: {
+        inputTokenAmounts_not: ["0", "0"]
+      }
+    ) {
+      id
+    }
+  }`;
 
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });

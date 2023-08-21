@@ -4,6 +4,8 @@ import { getContract } from '@nftx/utils';
 import { getTokenIdAmounts, getUniqueTokenIds } from './utils';
 import { Zero } from '@nftx/constants';
 
+// TODO: I think this should be handled similar to buy/sell/swap where you fetch a quote from the api
+
 /** Mints an NFT into the NFTX vault in exchange for a vToken.
  * For example, minting a punk NFT would return 0.95 PUNK (accounting for vault fees)
  */

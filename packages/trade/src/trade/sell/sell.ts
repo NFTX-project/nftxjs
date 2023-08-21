@@ -28,7 +28,7 @@ const sell = ({
       quote.methodParameters.tokenIdsIn.map((x) => BigInt(x)),
       quote.methodParameters.executeCalldata,
       quote.methodParameters.to,
-      // TODO: how do we know whether to deduct royalties?
+      // TODO: handle royalties?
       false,
     ],
   });
