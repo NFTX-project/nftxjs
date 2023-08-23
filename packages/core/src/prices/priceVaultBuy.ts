@@ -1,9 +1,18 @@
-import { fetchTokenBuyPrice, getTotalTokenIds } from '@nftx/trade';
-import type { MarketplacePrice, Vault, VaultHolding } from '@nftx/types';
+import { fetchTokenBuyPrice } from '@nftx/trade';
+import type {
+  MarketplacePrice,
+  Provider,
+  TokenId,
+  Vault,
+  VaultHolding,
+} from '@nftx/types';
 import { parseEther } from 'viem';
 import { calculateTotalFeePrice, estimateTotalPremiumPrice } from './common';
+import quoteVaultBuy from './quoteVaultBuy';
+import { getTotalTokenIds, getUniqueTokenIds } from '@nftx/utils';
 
 type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
+type QuoteVaultBuy = typeof quoteVaultBuy;
 
 const getIndexedPrice = ({
   holdings,
@@ -12,7 +21,7 @@ const getIndexedPrice = ({
   now,
 }: {
   vault: Pick<Vault, 'vTokenToEth' | 'prices'>;
-  tokenIds: `${number}`[];
+  tokenIds: TokenId[] | [TokenId, number][];
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
   now: number;
 }) => {
@@ -47,7 +56,7 @@ const getRoughPrice = async ({
   fetchTokenBuyPrice,
   now,
 }: {
-  tokenIds: `${number}`[];
+  tokenIds: TokenId[] | [TokenId, number][];
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   vault: Pick<Vault, 'vTokenToEth' | 'fees' | 'id'>;
   network: number;
@@ -96,23 +105,58 @@ const getRoughPrice = async ({
 };
 
 export const makePriceVaultBuy =
-  ({ fetchTokenBuyPrice }: { fetchTokenBuyPrice: FetchTokenBuyPrice }) =>
+  ({
+    fetchTokenBuyPrice,
+    quoteVaultBuy,
+  }: {
+    fetchTokenBuyPrice: FetchTokenBuyPrice;
+    quoteVaultBuy: QuoteVaultBuy;
+  }) =>
   async ({
     network,
     tokenIds,
     vault,
     bypassIndexedPrice,
     holdings: allHoldings,
+    provider,
   }: {
     network: number;
-    tokenIds: `${number}`[];
-    vault: Pick<Vault, 'prices' | 'vTokenToEth' | 'fees' | 'id'>;
+    tokenIds: TokenId[] | [TokenId, number][];
+    vault: Pick<
+      Vault,
+      'prices' | 'vTokenToEth' | 'fees' | 'id' | 'is1155' | 'vaultId'
+    >;
     bypassIndexedPrice?: boolean;
-    holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
+    holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded' | 'amount'>[];
+    provider: Provider;
   }): Promise<MarketplacePrice> => {
     const now = Math.floor(Date.now() / 1000);
     const totalTokenIds = getTotalTokenIds(tokenIds);
-    const holdings = allHoldings.filter((x) => tokenIds.includes(x.tokenId));
+    const uniqueTokenIds = getUniqueTokenIds(tokenIds);
+    const holdings = allHoldings.filter((x) =>
+      uniqueTokenIds.includes(x.tokenId)
+    );
+
+    if (vault.is1155) {
+      // If we've been given dummy token ids that don't match actual vault holdings
+      // We a) can't get a quote, and b) don't care about premiums
+      if (holdings.length) {
+        // If there aren't any holdings with more than 1 item then actually it doesn't matter
+        if (holdings.some((x) => x.amount > 1n)) {
+          // For ERC1155s we don't have any way to determine the premium of an asset when
+          // there are multiple items per token id.
+          // The simplest solution is to instead fire off an on-chain quote.
+          return quoteVaultBuy({
+            holdings: allHoldings,
+            provider,
+            tokenIds,
+            userAddress: '0x',
+            vault,
+            network,
+          });
+        }
+      }
+    }
 
     if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
       const result = getIndexedPrice({ holdings, tokenIds, vault, now });
@@ -131,4 +175,4 @@ export const makePriceVaultBuy =
     });
   };
 
-export default makePriceVaultBuy({ fetchTokenBuyPrice });
+export default makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });

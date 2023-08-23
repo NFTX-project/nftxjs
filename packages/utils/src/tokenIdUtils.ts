@@ -62,3 +62,16 @@ export const getTotalTokenIds = (
 ): number => {
   return getExactTokenIds(tokenIds).length;
 };
+
+/** Takes a list of token ids and amounts and returns them in tuple format.
+ * @example (['1', '2', '3'], [1, 2, 1]) -> [['1', 1], ['2', 2], ['3', 1]]
+ * @example (['1', '2', '3']) -> [['1', 1], ['2', 1], ['3', 1]]
+ */
+export const zipTokenIds = (
+  tokenIds: TokenId[],
+  amounts?: number[]
+): [TokenId, number][] => {
+  return tokenIds.map((tokenId, i) => {
+    return [tokenId, amounts?.[i] ?? 1];
+  });
+};

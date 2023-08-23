@@ -1,33 +1,43 @@
 import { MarketplaceZap } from '@nftx/abi';
 import type { MarketplaceQuote, Provider, Signer } from '@nftx/types';
-import { getContract } from '@nftx/utils';
+import { getContract, getExactTokenIds, zipTokenIds } from '@nftx/utils';
 
 const swap = ({
   provider,
-  quote,
+  quote: { methodParameters: params },
   signer,
 }: {
   network?: number;
   provider: Provider;
   signer: Signer;
-  quote: MarketplaceQuote;
+  quote: Pick<MarketplaceQuote, 'methodParameters'>;
 }) => {
   const contract = getContract({
-    address: quote.methodParameters.vaultAddress,
+    address: params.vaultAddress,
     abi: MarketplaceZap,
     provider,
     signer,
   });
 
-  // TODO: handle 1155s
+  const vaultId = BigInt(params.vaultId);
+  const idsIn = params.tokenIdsIn.map(BigInt);
+  const amounts = params.amountsIn.map(BigInt);
+  const idsOut = getExactTokenIds(
+    zipTokenIds(params.tokenIdsOut, params.amountsOut)
+  ).map(BigInt);
+  const to = params.to;
+  const value = BigInt(params.value);
+
+  if (params.standard === 'ERC721') {
+    return contract.write.swap1155({
+      args: [vaultId, idsIn, amounts, idsOut, to],
+      value,
+    });
+  }
+
   return contract.write.swap721({
-    args: [
-      BigInt(quote.methodParameters.vaultId),
-      quote.methodParameters.tokenIdsIn.map((x) => BigInt(x)),
-      quote.methodParameters.tokenIdsOut.map((x) => BigInt(x)),
-      quote.methodParameters.to,
-    ],
-    value: BigInt(quote.methodParameters.value),
+    args: [vaultId, idsIn, idsOut, to],
+    value,
   });
 };
 

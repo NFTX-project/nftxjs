@@ -95,13 +95,11 @@ const fetchQuote = async (args: {
     searchParams.append('buyAmount', WeiPerEther.toString());
     searchParams.append('type', 'exactOut');
   }
-  if (slippagePercentage != null) {
-    searchParams.append('slippageTolerance', `${slippagePercentage}`);
-  }
   if (userAddress) {
     searchParams.append('recipient', userAddress);
     searchParams.append('deadline', '300');
     searchParams.append('enableUniversalRouter', 'true');
+    searchParams.append('slippageTolerance', `${slippagePercentage ?? 0}`);
   }
   searchParams.append('protocols', 'v2,v3');
 

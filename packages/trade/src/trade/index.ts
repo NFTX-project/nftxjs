@@ -7,9 +7,3 @@ export { default as redeem } from './redeem';
 export * from './sell';
 export * from './swap';
 export * from './tradeErc20';
-export {
-  getExactTokenIds,
-  getTokenIdAmounts,
-  getTotalTokenIds,
-  getUniqueTokenIds,
-} from './utils';

@@ -25,7 +25,7 @@ export type LiquidityPool = {
   activeLiquidity: bigint;
   inRangeLiquidity: bigint;
   /** The token pair that makes up the pool */
-  tokens: Token[];
+  tokens: Array<Token & { balance: bigint }>;
   /** Whether or not the pool actually exists or if it needs creating */
   exists: boolean;
   name: string;

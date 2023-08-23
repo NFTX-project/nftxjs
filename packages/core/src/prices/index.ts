@@ -4,3 +4,7 @@ export { default as priceVaultSwap } from './priceVaultSwap';
 export { default as quoteVaultBuy } from './quoteVaultBuy';
 export { default as quoteVaultSell } from './quoteVaultSell';
 export { default as quoteVaultSwap } from './quoteVaultSwap';
+export { default as quoteVaultMint } from './quoteVaultMint';
+export { default as quoteVaultRedeem } from './quoteVaultRedeem';
+export { default as priceVaultMint } from './priceVaultMint';
+export { default as priceVaultRedeem } from './priceVaultRedeem';

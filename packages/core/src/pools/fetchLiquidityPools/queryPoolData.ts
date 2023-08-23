@@ -48,6 +48,7 @@ const queryPoolData = ({
       s.activeLiquidity,
       s.fees((fee) => [fee.id, fee.feePercentage, fee.feeType]),
       s.inputTokens((token) => [token.id, token.symbol, token.name]),
+      s.inputTokenBalances,
       s.totalValueLockedUSD,
       s.hourlySnapshots(
         q.liquidityPoolHourlySnapshots

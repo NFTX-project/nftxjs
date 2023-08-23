@@ -7,6 +7,7 @@ let priceVaultBuy: PriceVaultBuy;
 let run: () => ReturnType<PriceVaultBuy>;
 
 let fetchTokenBuyPrice: jest.Mock;
+let quoteVaultBuy: jest.Mock;
 let tokenIds: `${number}`[];
 let vault: Parameters<PriceVaultBuy>[0]['vault'];
 let holdings: Parameters<PriceVaultBuy>[0]['holdings'];
@@ -15,6 +16,7 @@ beforeEach(() => {
   fetchTokenBuyPrice = jest.fn(({ amount }: { amount: bigint }) => ({
     price: amount,
   }));
+  quoteVaultBuy = jest.fn().mockResolvedValue({});
   tokenIds = ['0', '1'];
   vault = {
     fees: {
@@ -23,6 +25,8 @@ beforeEach(() => {
       redeemFee: parseEther('0.05'), // 5%
     },
     id: '0x01',
+    is1155: false,
+    vaultId: '0',
     vTokenToEth: parseEther('0.5'),
     prices: [
       {
@@ -53,15 +57,24 @@ beforeEach(() => {
     {
       tokenId: '0',
       dateAdded: Date.now() / 1000 - 4000,
+      amount: 1n,
     },
     {
       tokenId: '1',
       dateAdded: Date.now() / 1000 - 4000,
+      amount: 1n,
     },
   ];
 
-  priceVaultBuy = makePriceVaultBuy({ fetchTokenBuyPrice });
-  run = () => priceVaultBuy({ holdings, network: 1, tokenIds, vault });
+  priceVaultBuy = makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });
+  run = () =>
+    priceVaultBuy({
+      holdings,
+      network: 1,
+      tokenIds,
+      vault,
+      provider: null as any,
+    });
 });
 
 describe('when there are more than 5 token ids', () => {
@@ -154,5 +167,24 @@ describe('when there are 5 or less token ids', () => {
       expect(Number(formatEther(result.price))).toBeGreaterThan(2.1);
       expect(Number(formatEther(result.price))).toBeLessThan(7);
     });
+  });
+});
+
+describe('when vault is an 1155', () => {
+  beforeEach(() => {
+    vault.is1155 = true;
+    holdings[0].amount = 2n;
+  });
+
+  it('gets an on-chain quote', async () => {
+    const result = await run();
+
+    expect(quoteVaultBuy).toBeCalled();
+    expect(result).toEqual({});
+  });
+  it('does not fetch any prices', async () => {
+    await run();
+
+    expect(fetchTokenBuyPrice).not.toBeCalled();
   });
 });

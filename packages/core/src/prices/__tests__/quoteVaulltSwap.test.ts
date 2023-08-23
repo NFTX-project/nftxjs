@@ -23,6 +23,7 @@ beforeEach(() => {
   buyTokenIds = ['0', '1'];
   userAddress = '0x0';
   vault = {
+    is1155: false,
     vaultId: '0',
     id: '0x1',
     asset: { id: '0x2', name: '', symbol: '' },

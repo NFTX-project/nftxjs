@@ -1,7 +1,7 @@
 import type { TokenId } from '@nftx/types';
 import fetchQuote from './fetchQuote';
 
-const fetchVaultSellPrice = ({
+const fetchVaultMintPrice = ({
   tokenIds,
   vaultId,
   network,
@@ -12,10 +12,10 @@ const fetchVaultSellPrice = ({
 }) =>
   fetchQuote({
     quoteType: 'price',
-    type: 'sell',
+    type: 'mint',
     vaultId,
     sellTokenIds: tokenIds,
     network,
   });
 
-export default fetchVaultSellPrice;
+export default fetchVaultMintPrice;

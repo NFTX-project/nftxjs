@@ -7,7 +7,7 @@ import config from '@nftx/config';
 const sell = ({
   network = config.network,
   provider,
-  quote,
+  quote: { methodParameters: params },
   signer,
 }: {
   network?: number;
@@ -22,15 +22,22 @@ const sell = ({
     signer,
   });
 
+  const vaultId = BigInt(params.vaultId);
+  const idsIn = params.tokenIdsIn.map(BigInt);
+  const amounts = params.amountsIn.map(BigInt);
+  const calldata = params.executeCalldata;
+  const to = params.to;
+  // TODO: handle royalties?
+  const deductRoyalty = false;
+
+  if (params.standard === 'ERC1155') {
+    return contract.write.sell1155({
+      args: [vaultId, idsIn, amounts, calldata, to, deductRoyalty],
+    });
+  }
+
   return contract.write.sell721({
-    args: [
-      BigInt(quote.methodParameters.vaultId),
-      quote.methodParameters.tokenIdsIn.map((x) => BigInt(x)),
-      quote.methodParameters.executeCalldata,
-      quote.methodParameters.to,
-      // TODO: handle royalties?
-      false,
-    ],
+    args: [vaultId, idsIn, calldata, to, deductRoyalty],
   });
 };
 

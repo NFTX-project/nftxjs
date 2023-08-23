@@ -25,12 +25,19 @@ const fetchUserVaultAssets = async ({
   network = config.network,
   userAddress,
   vaultId,
+  mintable,
 }: {
   network?: number;
   userAddress: Address;
   vaultId?: string;
+  mintable?: boolean;
 }) => {
-  const stream = streamUserVaultAssets({ userAddress, network, vaultId });
+  const stream = streamUserVaultAssets({
+    userAddress,
+    network,
+    vaultId,
+    mintable,
+  });
 
   const run = async (): Promise<Result> => {
     const assets = await stream.read();

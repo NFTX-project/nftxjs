@@ -68,8 +68,8 @@ const createStub = ({
     periodFees: { '1m': Zero, '24h': Zero, '7d': Zero, all: Zero },
     tick: Zero,
     tokens: [
-      vault.token,
-      { id: wethAddress, name: 'Wrapped Ether', symbol: 'WETH' },
+      { ...vault.token, balance: Zero },
+      { id: wethAddress, name: 'Wrapped Ether', symbol: 'WETH', balance: Zero },
     ],
     totalLiquidity: Zero,
     vaultAddress: vault.id,

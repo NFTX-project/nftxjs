@@ -1,7 +1,7 @@
 import type { Address, TokenId } from '@nftx/types';
 import fetchQuote from './fetchQuote';
 
-const fetchVaultBuyQuote = ({
+const fetchVaultRedeemQuote = ({
   tokenIds,
   vaultId,
   network,
@@ -14,11 +14,11 @@ const fetchVaultBuyQuote = ({
 }) =>
   fetchQuote({
     quoteType: 'quote',
-    type: 'buy',
+    type: 'redeem',
     vaultId,
     buyTokenIds: tokenIds,
     network,
     userAddress,
   });
 
-export default fetchVaultBuyQuote;
+export default fetchVaultRedeemQuote;

@@ -22,10 +22,11 @@ const transformPool = (
   vault: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>
 ): LiquidityPool => {
   const fees = transformFees(pool.fees);
-  const tokens = pool.inputTokens.map(({ id, symbol, name }) => ({
+  const tokens = pool.inputTokens.map(({ id, symbol, name }, i) => ({
     id: id as Address,
     symbol,
     name,
+    balance: BigInt(pool.inputTokenBalances[i] ?? '0'),
   }));
   const activeLiquidity = BigInt(pool.activeLiquidity ?? '0');
   const totalLiquidity = BigInt(pool.totalLiquidity ?? '0');

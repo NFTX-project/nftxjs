@@ -45,7 +45,9 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     price: BigInt(quote.quote),
     estimatedGas: BigInt(quote.gasUseEstimate),
     gasPrice: BigInt(quote.gasPriceWei),
-    methodParameters: quote.methodParameters,
+    methodParameters: {
+      ...quote.methodParameters,
+    },
     route,
   };
 

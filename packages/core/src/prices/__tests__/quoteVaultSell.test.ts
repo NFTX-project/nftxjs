@@ -27,6 +27,7 @@ beforeEach(() => {
     id: '0x1',
     asset: { id: '0x02', name: '', symbol: '' },
     fees: { redeemFee: Zero, swapFee: Zero, mintFee: parseEther('0.05') },
+    is1155: false,
   };
 
   quoteVaultSell = makeQuoteVaultSell({

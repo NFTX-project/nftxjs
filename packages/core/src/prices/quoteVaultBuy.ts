@@ -1,17 +1,19 @@
 import { MARKETPLACE_ZAP, WeiPerEther } from '@nftx/constants';
-import {
-  fetchTokenBuyPrice,
-  getTotalTokenIds,
-  getUniqueTokenIds,
-} from '@nftx/trade';
+import { fetchTokenBuyPrice } from '@nftx/trade';
 import type {
   Address,
   MarketplaceQuote,
   Provider,
+  TokenId,
   Vault,
   VaultHolding,
 } from '@nftx/types';
-import { getChainConstant } from '@nftx/utils';
+import {
+  getChainConstant,
+  getTokenIdAmounts,
+  getTotalTokenIds,
+  getUniqueTokenIds,
+} from '@nftx/utils';
 import { parseEther } from 'viem';
 import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
 import config from '@nftx/config';
@@ -32,13 +34,15 @@ const transformItem = async ({
   holdings,
   provider,
   tokenId,
+  amount,
   vTokenPrice,
   vTokenToEth,
   vault,
   fetchPremiumPrice,
 }: {
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
-  tokenId: `${number}`;
+  tokenId: TokenId;
+  amount: number;
   provider: Provider;
   vault: Pick<Vault, 'id' | 'fees'>;
   vTokenToEth: bigint;
@@ -63,9 +67,10 @@ const transformItem = async ({
 
   return {
     tokenId,
+    amount,
     premiumPrice,
-    feePrice: feePricePerItem,
-    vTokenPrice: vTokenPricePerItem,
+    feePrice: feePricePerItem * BigInt(amount),
+    vTokenPrice: vTokenPricePerItem * BigInt(amount),
   };
 };
 
@@ -87,8 +92,8 @@ export const makeQuoteVaultBuy =
     vault,
     holdings: allHoldings,
   }: {
-    vault: Pick<Vault, 'fees' | 'id' | 'vaultId'>;
-    tokenIds: `${number}`[];
+    vault: Pick<Vault, 'fees' | 'id' | 'vaultId' | 'is1155'>;
+    tokenIds: TokenId[] | [TokenId, number][];
     network?: number;
     userAddress: Address;
     provider: Provider;
@@ -97,6 +102,7 @@ export const makeQuoteVaultBuy =
     const totalTokenIds = getTotalTokenIds(tokenIds);
     const buyAmount = parseEther(`${totalTokenIds}`);
     const tokenIdsOut = getUniqueTokenIds(tokenIds);
+    const amountsOut = getTokenIdAmounts(tokenIds);
 
     const holdings = allHoldings.filter((x) => tokenIdsOut.includes(x.tokenId));
 
@@ -116,7 +122,7 @@ export const makeQuoteVaultBuy =
     });
 
     const items = await Promise.all(
-      tokenIdsOut.map(async (tokenId) => {
+      tokenIdsOut.map(async (tokenId, i) => {
         return transformItem({
           buyAmount,
           holdings,
@@ -125,6 +131,7 @@ export const makeQuoteVaultBuy =
           vault,
           vTokenPrice,
           vTokenToEth,
+          amount: amountsOut[i],
           fetchPremiumPrice,
         });
       })
@@ -151,9 +158,12 @@ export const makeQuoteVaultBuy =
         executeCalldata,
         to: userAddress,
         tokenIdsIn: [],
+        amountsIn: [],
         tokenIdsOut,
+        amountsOut,
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
+        standard: vault.is1155 ? 'ERC1155' : 'ERC721',
       },
     };
 

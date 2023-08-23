@@ -6,12 +6,14 @@ type PriceVaultSwap = ReturnType<typeof makePriceVaultSwap>;
 let priceVaultSwap: PriceVaultSwap;
 let run: () => ReturnType<PriceVaultSwap>;
 
+let quoteVaultSwap: jest.Mock;
 let buyTokenIds: `${number}`[];
 let sellTokenIds: `${number}`[];
 let vault: Parameters<PriceVaultSwap>[0]['vault'];
 let holdings: Parameters<PriceVaultSwap>[0]['holdings'];
 
 beforeEach(() => {
+  quoteVaultSwap = jest.fn().mockResolvedValue({});
   buyTokenIds = ['0', '1'];
   sellTokenIds = ['100', '101'];
   vault = {
@@ -21,6 +23,10 @@ beforeEach(() => {
       swapFee: parseEther('0.05'), // 5%
     },
     vTokenToEth: parseEther('0.5'),
+    asset: { id: '0x', name: '', symbol: '' },
+    id: '0x01',
+    vaultId: '0',
+    is1155: false,
     prices: [
       {
         mint: null as any,
@@ -50,15 +56,25 @@ beforeEach(() => {
     {
       tokenId: '0',
       dateAdded: Date.now() / 1000 - 4000,
+      amount: 1n,
     },
     {
       tokenId: '1',
       dateAdded: Date.now() / 1000 - 4000,
+      amount: 1n,
     },
   ];
 
-  priceVaultSwap = makePriceVaultSwap();
-  run = () => priceVaultSwap({ holdings, buyTokenIds, sellTokenIds, vault });
+  priceVaultSwap = makePriceVaultSwap({ quoteVaultSwap });
+  run = () =>
+    priceVaultSwap({
+      holdings,
+      buyTokenIds,
+      sellTokenIds,
+      vault,
+      network: 1,
+      provider: null as any,
+    });
 });
 
 describe('when there are more than 5 token ids', () => {
@@ -144,5 +160,19 @@ describe('when there are 5 or less token ids', () => {
       expect(Number(formatEther(result.price))).toBeGreaterThan(0.1);
       expect(Number(formatEther(result.price))).toBeLessThan(5);
     });
+  });
+});
+
+describe('when vault is an 1155', () => {
+  beforeEach(() => {
+    vault.is1155 = true;
+    holdings[1].amount = 2n;
+  });
+
+  it('gets an on-chain quote', async () => {
+    const result = await run();
+
+    expect(quoteVaultSwap).toBeCalled();
+    expect(result).toEqual({});
   });
 });

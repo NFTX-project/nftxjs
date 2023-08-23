@@ -1,4 +1,4 @@
-import type { Address } from '@nftx/types';
+import type { Address, TokenId } from '@nftx/types';
 import fetchQuote from './fetchQuote';
 
 const fetchVaultSellQuote = ({
@@ -8,7 +8,7 @@ const fetchVaultSellQuote = ({
   userAddress,
 }: {
   vaultId: string;
-  tokenIds: `${number}`[];
+  tokenIds: TokenId[] | [TokenId, number][];
   userAddress: Address;
   network?: number;
 }) =>

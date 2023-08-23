@@ -29,6 +29,7 @@ beforeEach(() => {
     vaultId: '0',
     id: '0x1',
     fees: { mintFee: Zero, swapFee: Zero, redeemFee: parseEther('0.05') },
+    is1155: false,
   };
   holdings = [
     {

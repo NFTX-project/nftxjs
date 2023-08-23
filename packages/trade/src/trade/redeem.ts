@@ -1,41 +1,37 @@
 import { NFTXVaultUpgradeable } from '@nftx/abi';
-import { getContract } from '@nftx/utils';
-import { getExactTokenIds } from './utils';
-import type { Address, Provider, Signer, TokenId } from '@nftx/types';
+import { getContract, getExactTokenIds, zipTokenIds } from '@nftx/utils';
+import type { MarketplaceQuote, Provider, Signer } from '@nftx/types';
 import { Zero } from '@nftx/constants';
 
-// TODO: I think this should be handled similar to buy/sell/swap where you fetch a quote from the api
+// TODO: should we instead be using marketplacezap.buyNFTsWithERC20 ?
 
-/** Redeems an item from the vault
- * Exchanges, for example, 1.05 PUNK for a punk nft (accounting for vault fees)
- */
-const redeem = async (args: {
+const redeem = async ({
+  provider,
+  signer,
+  quote: { methodParameters: params },
+}: {
   provider: Provider;
   signer: Signer;
-  userAddress: Address;
-  vaultId: string;
-  vaultAddress: Address;
-  /** Ids of the individual NFTs you want to redeem
-   * For 721s you just pass a flat array of ids ['1','2','3']
-   * For 1155s if you're dealing with multiples, you pass a tuple of [tokenId, quantity] [['1', 2], ['2', 1], ['3', 2]]
-   */
-  targetIds: Array<TokenId> | Array<[TokenId, number]>;
+  quote: Pick<MarketplaceQuote, 'methodParameters'>;
 }) => {
-  const { provider, signer, targetIds, vaultAddress, userAddress } = args;
-
   const contract = getContract({
     provider,
     signer,
     abi: NFTXVaultUpgradeable,
-    address: vaultAddress,
+    address: params.vaultAddress,
   });
 
-  const specificIds: string[] = getExactTokenIds(targetIds);
+  const tokenIds = getExactTokenIds(
+    zipTokenIds(params.tokenIdsOut, params.amountsOut)
+  ).map(BigInt);
+  const to = params.to;
+  const wethAmount = Zero;
+  const forceFees = true;
+  const value = BigInt(params.value);
 
   return contract.write.redeem({
-    args: [specificIds.map(BigInt), userAddress, Zero, false],
-    // TODO: should be (count * fee amount * vTokenToEth) + royalty amount + (premiums)
-    value: Zero,
+    args: [tokenIds, to, wethAmount, forceFees],
+    value,
   });
 };
 

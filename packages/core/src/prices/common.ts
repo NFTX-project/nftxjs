@@ -1,6 +1,7 @@
 import { NFTXVaultUpgradeable } from '@nftx/abi';
 import { WeiPerEther, Zero } from '@nftx/constants';
-import type { Address, Provider, VaultHolding } from '@nftx/types';
+import { getExactTokenIds } from '@nftx/utils';
+import type { Address, Provider, TokenId, VaultHolding } from '@nftx/types';
 import { getContract } from '@nftx/utils';
 
 type GetContract = typeof getContract;
@@ -53,7 +54,6 @@ const fetchVTokenPremium = async ({
     abi: NFTXVaultUpgradeable,
   });
 
-  // TODO: handle 1155s
   const [premiumVTokenAmount] = await vaultContract.read.getVTokenPremium721({
     args: [BigInt(tokenId)],
   });
@@ -124,12 +124,12 @@ export const estimateTotalPremiumPrice = ({
   vTokenToEth,
   now,
 }: {
-  tokenIds: `${number}`[];
+  tokenIds: TokenId[] | [TokenId, number][];
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   vTokenToEth: bigint;
   now: number;
 }) => {
-  return tokenIds.reduce((total, tokenId) => {
+  return getExactTokenIds(tokenIds).reduce((total, tokenId) => {
     const holding = maybeGetHoldingByTokenId(holdings, tokenId);
     const premium = estimatePremiumPrice({
       holding,

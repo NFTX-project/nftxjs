@@ -29,7 +29,7 @@ export type Price = {
 
 /** A price object for buying/selling/swapping an NFT through the marketplace zap */
 export type MarketplacePrice = {
-  type: 'buy' | 'sell' | 'swap';
+  type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem';
   /** The total price in ETH */
   price: bigint;
   /** The ETH price of the vToken being bought/sold */
@@ -45,15 +45,20 @@ type MarketplaceParameters = {
   vaultAddress: Address;
   to: Address;
   tokenIdsIn: `${number}`[];
+  amountsIn: number[];
   tokenIdsOut: `${number}`[];
+  amountsOut: number[];
   executeCalldata: Address;
   value: string;
+  standard: 'ERC721' | 'ERC1155' | 'ERC20';
 };
 
 export type MarketplaceQuote = MarketplacePrice & {
   /** A breakdown of the price */
   items: Array<{
     tokenId: `${number}`;
+    /** The number of this tokenId in the quote (for ERC1155s) */
+    amount: number;
     vTokenPrice: bigint;
     feePrice: bigint;
     premiumPrice: bigint;

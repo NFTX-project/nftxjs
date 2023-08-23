@@ -1,13 +1,20 @@
 import { MARKETPLACE_ZAP, PERMIT2, WeiPerEther, Zero } from '@nftx/constants';
-import {
-  fetchTokenSellPrice,
-  getTotalTokenIds,
-  getUniqueTokenIds,
-} from '@nftx/trade';
-import type { Address, MarketplaceQuote, Provider, Vault } from '@nftx/types';
+import { fetchTokenSellPrice } from '@nftx/trade';
+import type {
+  Address,
+  MarketplaceQuote,
+  Provider,
+  TokenId,
+  Vault,
+} from '@nftx/types';
 import { parseEther } from 'viem';
 import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
-import { getChainConstant } from '@nftx/utils';
+import {
+  getChainConstant,
+  getTokenIdAmounts,
+  getTotalTokenIds,
+  getUniqueTokenIds,
+} from '@nftx/utils';
 import { calculateFeePricePerItem, calculateTotalFeePrice } from './common';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
@@ -28,15 +35,16 @@ export const makeQuoteVaultSell =
     userAddress,
     vault,
   }: {
-    vault: Pick<Vault, 'id' | 'fees' | 'asset' | 'vaultId'>;
+    vault: Pick<Vault, 'id' | 'fees' | 'asset' | 'vaultId' | 'is1155'>;
     network: number;
-    tokenIds: `${number}`[];
+    tokenIds: TokenId[] | [TokenId, number][];
     userAddress: Address;
     provider: Provider;
   }) => {
     const totalTokenIds = getTotalTokenIds(tokenIds);
     const sellAmount = parseEther(`${totalTokenIds}`);
     const tokenIdsIn = getUniqueTokenIds(tokenIds);
+    const amountsIn = getTokenIdAmounts(tokenIds);
 
     const vTokenToEth = await fetchVTokenToEth({
       provider,
@@ -66,23 +74,26 @@ export const makeQuoteVaultSell =
 
     const price = vTokenPrice - feePrice;
 
-    const items = tokenIdsIn.map((tokenId) => {
+    const items = tokenIdsIn.map((tokenId, i) => {
+      const amount = amountsIn[i];
       const item: MarketplaceQuote['items'][0] = {
         tokenId,
-        vTokenPrice: vTokenPricePerItem,
-        feePrice: feePricePerItem,
+        amount,
+        vTokenPrice: vTokenPricePerItem * BigInt(amount),
+        feePrice: feePricePerItem * BigInt(amount),
         premiumPrice: Zero,
       };
 
       return item;
     });
 
+    const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
+
     const approveContracts: MarketplaceQuote['approveContracts'] = [
       {
         tokenAddress: vault.asset.id,
         spenderAddress: getChainConstant(MARKETPLACE_ZAP, network),
-        // TODO: 1155?
-        standard: 'ERC721',
+        standard,
       },
       {
         tokenAddress: vault.id,
@@ -106,10 +117,13 @@ export const makeQuoteVaultSell =
         executeCalldata,
         to: userAddress,
         tokenIdsIn,
+        amountsIn,
         tokenIdsOut: [],
+        amountsOut: [],
         value: feePrice.toString(),
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
+        standard,
       },
     };
 

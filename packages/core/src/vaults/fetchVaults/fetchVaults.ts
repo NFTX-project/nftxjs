@@ -126,6 +126,7 @@ const fetchVaults = async ({
               holdings,
               bypassIndexedPrice: true,
               tokenIds,
+              provider,
             });
           } catch (e) {
             console.warn(
@@ -155,6 +156,8 @@ const fetchVaults = async ({
               holdings,
               sellTokenIds: tokenIds,
               bypassIndexedPrice: true,
+              provider,
+              network,
             });
           } catch (e) {
             console.warn(

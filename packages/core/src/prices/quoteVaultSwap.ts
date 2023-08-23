@@ -3,11 +3,16 @@ import type {
   Address,
   MarketplaceQuote,
   Provider,
+  TokenId,
   Vault,
   VaultHolding,
 } from '@nftx/types';
 import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
-import { getTotalTokenIds, getUniqueTokenIds } from '@nftx/trade';
+import {
+  getTokenIdAmounts,
+  getTotalTokenIds,
+  getUniqueTokenIds,
+} from '@nftx/utils';
 import { parseEther } from 'viem';
 import { getHoldingByTokenId, fetchPremiumPrice } from './common';
 import { getChainConstant } from '@nftx/utils';
@@ -33,20 +38,27 @@ export const makeQuoteVaultSwap =
     vault,
   }: {
     network: number;
-    vault: Pick<Vault, 'id' | 'vaultId' | 'fees' | 'asset'>;
+    vault: Pick<Vault, 'id' | 'vaultId' | 'fees' | 'asset' | 'is1155'>;
     userAddress: Address;
     provider: Provider;
-    sellTokenIds: `${number}`[];
-    buyTokenIds: `${number}`[];
+    sellTokenIds: TokenId[] | [TokenId, number][];
+    buyTokenIds: TokenId[] | [TokenId, number][];
     holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
   }) => {
     const tokenIdsIn = getUniqueTokenIds(sellTokenIds);
+    const amountsIn = getTokenIdAmounts(sellTokenIds);
     const tokenIdsOut = getUniqueTokenIds(buyTokenIds);
-    const count = getTotalTokenIds(sellTokenIds);
-    if (count !== getTotalTokenIds(buyTokenIds)) {
+    const amountsOut = getTokenIdAmounts(buyTokenIds);
+    const totalIn = getTotalTokenIds(sellTokenIds);
+    const totalOut = getTotalTokenIds(buyTokenIds);
+
+    if (totalIn !== totalOut) {
       throw new Error('You must mint/redeem the same amount of items');
     }
-    const swapAmount = parseEther(`${count}`);
+
+    const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
+
+    const swapAmount = parseEther(`${totalIn}`);
     const vTokenToEth = await fetchVTokenToEth({
       provider,
       vaultAddress: vault.id,
@@ -56,7 +68,8 @@ export const makeQuoteVaultSwap =
     const feePrice = (feePricePerItem * swapAmount) / WeiPerEther;
 
     const items = await Promise.all(
-      tokenIdsOut.map(async (tokenId) => {
+      tokenIdsOut.map(async (tokenId, i) => {
+        const amount = amountsOut[i];
         const holding = getHoldingByTokenId(holdings, tokenId);
         const premiumPrice = await fetchPremiumPrice({
           holding,
@@ -68,6 +81,7 @@ export const makeQuoteVaultSwap =
 
         const item: MarketplaceQuote['items'][0] = {
           tokenId,
+          amount,
           vTokenPrice: Zero,
           feePrice: feePricePerItem,
           premiumPrice,
@@ -88,8 +102,7 @@ export const makeQuoteVaultSwap =
       {
         tokenAddress: vault.asset.id,
         spenderAddress: getChainConstant(MARKETPLACE_ZAP, network),
-        // TODO: 1155s?
-        standard: 'ERC721',
+        standard,
       },
       {
         tokenAddress: vault.id,
@@ -113,10 +126,13 @@ export const makeQuoteVaultSwap =
         executeCalldata: null as any,
         to: userAddress,
         tokenIdsIn,
+        amountsIn,
         tokenIdsOut,
+        amountsOut,
         value: price.toString(),
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
+        standard,
       },
     };
 

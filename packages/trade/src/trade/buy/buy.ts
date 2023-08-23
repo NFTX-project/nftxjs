@@ -1,13 +1,18 @@
 import { MARKETPLACE_ZAP } from '@nftx/constants';
 import type { MarketplaceQuote, Provider, Signer } from '@nftx/types';
-import { getChainConstant, getContract } from '@nftx/utils';
+import {
+  getChainConstant,
+  getContract,
+  getExactTokenIds,
+  zipTokenIds,
+} from '@nftx/utils';
 import { MarketplaceZap } from '@nftx/abi';
 import config from '@nftx/config';
 
 const buy = ({
   network = config.network,
   provider,
-  quote,
+  quote: { methodParameters: params },
   signer,
 }: {
   quote: Pick<MarketplaceQuote, 'methodParameters'>;
@@ -22,16 +27,17 @@ const buy = ({
     signer,
   });
 
-  // TODO: how to handle 1155s?
+  const vaultId = BigInt(params.vaultId);
+  const idsOut = getExactTokenIds(
+    zipTokenIds(params.tokenIdsOut, params.amountsOut)
+  ).map(BigInt);
+  const calldata = params.executeCalldata;
+  const to = params.to;
+  const deductRoyalty = false;
+
   return contract.write.buyNFTsWithETH({
-    args: [
-      BigInt(quote.methodParameters.vaultId),
-      quote.methodParameters.tokenIdsOut.map((x) => BigInt(x)),
-      quote.methodParameters.executeCalldata,
-      quote.methodParameters.to,
-      false,
-    ],
-    value: BigInt(quote.methodParameters.value),
+    args: [vaultId, idsOut, calldata, to, deductRoyalty],
+    value: BigInt(params.value),
   });
 };
 
