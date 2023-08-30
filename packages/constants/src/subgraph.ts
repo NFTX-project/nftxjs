@@ -49,13 +49,15 @@ export const ERC721_SUBGRAPH = {
     `${SHARED_ROOT}/amxx/eip721-subgraph`,
   ],
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip721-subgraph-arbitrum`,
-  [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/eip721-goerli`,
+  [Network.Goerli]:
+    'https://api.thegraph.com/subgraphs/name/nftx-project/eip721-looksrare-goerli',
 };
 
 export const ERC1155_SUBGRAPH = {
   [Network.Mainnet]: `${GATEWAY_PROXY_ROOT}/GCQVLurkeZrdMf4t5v5NyeWJY8pHhfE9sinjFMjLYd9C`,
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip1155-subgraph-arbitrum`,
-  [Network.Goerli]: `${SHARED_PROXY_ROOT}/odyssy-automaton/erc1155-goerli-subgraph`,
+  [Network.Goerli]:
+    'https://api.thegraph.com/subgraphs/name/nftx-project/eip1155-looksrare-goerli',
 };
 
 // TODO: update to the v3 subgraph urls

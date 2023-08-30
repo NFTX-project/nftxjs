@@ -53,10 +53,10 @@ const calculateVTokenEth = ({
     const vToken = is0Weth ? amount1 : amount0;
 
     return {
-      eth: parseEther(eth.toString() as `${number}`),
-      vToken: parseEther(vToken.toString() as `${number}`),
-      tickUpperPrice: parseEther(tickUpperPrice.toString() as `${number}`),
-      tickLowerPrice: parseEther(tickLowerPrice.toString() as `${number}`),
+      eth: parseEther(eth.toFixed(18) as `${number}`),
+      vToken: parseEther(vToken.toFixed(18) as `${number}`),
+      tickUpperPrice: parseEther(tickUpperPrice.toFixed(18) as `${number}`),
+      tickLowerPrice: parseEther(tickLowerPrice.toFixed(18) as `${number}`),
     };
   } catch (e) {
     console.warn('Failed to calculate position value');

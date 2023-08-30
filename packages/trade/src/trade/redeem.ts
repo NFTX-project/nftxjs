@@ -3,8 +3,6 @@ import { getContract, getExactTokenIds, zipTokenIds } from '@nftx/utils';
 import type { MarketplaceQuote, Provider, Signer } from '@nftx/types';
 import { Zero } from '@nftx/constants';
 
-// TODO: should we instead be using marketplacezap.buyNFTsWithERC20 ?
-
 const redeem = async ({
   provider,
   signer,

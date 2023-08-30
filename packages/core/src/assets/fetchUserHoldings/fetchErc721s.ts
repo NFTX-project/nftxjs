@@ -83,7 +83,73 @@ const makeFetchErc721sMainnet =
     return [holdings, nextId] as const;
   };
 
-const makeFetchErc721sGoerli = makeFetchErc721sMainnet;
+const makeFetchErc721sGoerli =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  async ({
+    lastId,
+    network,
+    userAddress,
+  }: {
+    network: number;
+    lastId: string;
+    userAddress: Address;
+  }) => {
+    let holdings: Array<Holding> = [];
+    let nextId: string | undefined;
+    type Response = {
+      owners: {
+        id: Address;
+        totalTokens: string;
+        tokens: {
+          tokenID: `${number}`;
+          collection: { id: Address };
+        }[];
+      }[];
+    };
+
+    const query = gql<Response>`{
+    owners(
+      where: {
+        id: "${userAddress}"
+      }
+    ) {
+      id
+      totalTokens
+      tokens(
+        first: 1000
+        orderBy: tokenID
+        where: {
+          tokenID_gt: "${lastId}"
+        }
+      ) {
+        tokenID
+        collection {
+          id
+        }
+      }
+    }
+  }`;
+
+    const data = await querySubgraph({
+      url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
+      query,
+    });
+
+    if (data?.owners?.[0]?.tokens?.length) {
+      holdings = data.owners[0].tokens.map((x) => {
+        return {
+          assetAddress: x.collection.id,
+          tokenId: x.tokenID,
+        };
+      });
+    }
+    if (data?.owners?.[0]?.tokens?.length === 1000) {
+      nextId =
+        data.owners?.[0].tokens[data.owners?.[0].tokens.length - 1].tokenID;
+    }
+
+    return [holdings, nextId] as const;
+  };
 
 const makeFetchErc721sArbitrum =
   ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
