@@ -216,7 +216,7 @@ const makeFetchErc1155s =
 
     return {
       holdings,
-      cursor: createCursor('721', nextId),
+      cursor: createCursor('1155', nextId),
     };
   };
 
