@@ -8,23 +8,33 @@ import { queryApi } from '../utils';
 import config from '@nftx/config';
 import { getTokenIdAmounts, getUniqueTokenIds } from '@nftx/utils';
 
-const fetchQuote = ({
-  quoteType,
-  type,
-  vaultId,
-  buyTokenIds: buyTokensAndAmounts,
-  network = config.network,
-  sellTokenIds: sellTokensAndAmounts,
-  userAddress,
-}: {
-  quoteType: 'quote' | 'price';
+type CommonArgs = {
   type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem';
   vaultId: string;
   buyTokenIds?: TokenId[] | [TokenId, number][];
   sellTokenIds?: TokenId[] | [TokenId, number][];
-  userAddress?: Address;
   network?: number;
-}) => {
+};
+type PriceArgs = CommonArgs & {
+  quoteType: 'price';
+};
+type QuoteArgs = CommonArgs & {
+  quoteType: 'quote';
+  userAddress: Address;
+};
+
+function fetchQuote(args: PriceArgs): Promise<MarketplacePrice>;
+function fetchQuote(args: QuoteArgs): Promise<MarketplaceQuote>;
+function fetchQuote(args: PriceArgs | QuoteArgs) {
+  const {
+    quoteType,
+    type,
+    vaultId,
+    buyTokenIds: buyTokensAndAmounts,
+    network = config.network,
+    sellTokenIds: sellTokensAndAmounts,
+  } = args;
+
   const buyTokenIds = buyTokensAndAmounts
     ? getUniqueTokenIds(buyTokensAndAmounts)
     : undefined;
@@ -35,7 +45,7 @@ const fetchQuote = ({
     ? getUniqueTokenIds(sellTokensAndAmounts)
     : undefined;
   const sellAmounts = sellTokensAndAmounts
-    ? getUniqueTokenIds(sellTokensAndAmounts)
+    ? getTokenIdAmounts(sellTokensAndAmounts)
     : undefined;
 
   if (quoteType === 'price') {
@@ -52,6 +62,8 @@ const fetchQuote = ({
     });
   }
 
+  const { userAddress } = args;
+
   return queryApi<MarketplaceQuote>({
     url: `/${network}/quote`,
     query: {
@@ -64,6 +76,6 @@ const fetchQuote = ({
       userAddress,
     },
   });
-};
+}
 
 export default fetchQuote;

@@ -1,12 +1,10 @@
-import { RESERVOIR_URL } from '@nftx/constants';
-import { query } from '@nftx/subgraph';
 import type { Address, Asset, Provider, Vault } from '@nftx/types';
-import { getChainConstant } from '@nftx/utils';
+import { queryReservoir } from '@nftx/utils';
 import reservoirTokenToAsset from './reservoirTokenToAsset';
 import getEligibleAssetVaultIds from './getEligibleAssetVaultIds';
 import { createCursor, parseCursor } from './cursor';
 
-type Query = typeof query;
+type QueryReservoir = typeof queryReservoir;
 type GetEligibleAssetVaultIds = typeof getEligibleAssetVaultIds;
 
 type ReservoirResponse = {
@@ -73,9 +71,9 @@ type ReservoirResponse = {
 const makeFetchUserAssetsFromReservoir =
   ({
     getEligibleAssetVaultIds,
-    query,
+    queryReservoir,
   }: {
-    query: Query;
+    queryReservoir: QueryReservoir;
     getEligibleAssetVaultIds: GetEligibleAssetVaultIds;
   }) =>
   async ({
@@ -96,17 +94,13 @@ const makeFetchUserAssetsFromReservoir =
     >[];
     provider: Provider;
   }) => {
-    const uri = new URL(
-      `/users/${userAddress}/tokens/v7`,
-      getChainConstant(RESERVOIR_URL, network)
-    );
-
     const assets: Asset[] = [];
 
     const continuation = parseCursor(cursor);
 
-    const data = await query<ReservoirResponse>({
-      url: uri.toString(),
+    const data = await queryReservoir<ReservoirResponse>({
+      network,
+      path: `/users/${userAddress}/tokens/v7`,
       query: {
         limit: 200,
         includeAttributes: true,
@@ -144,5 +138,5 @@ const makeFetchUserAssetsFromReservoir =
 
 export default makeFetchUserAssetsFromReservoir({
   getEligibleAssetVaultIds,
-  query,
+  queryReservoir,
 });

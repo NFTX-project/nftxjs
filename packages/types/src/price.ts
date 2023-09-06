@@ -23,8 +23,25 @@ export type Price = {
       amount: bigint;
     }>;
   }>;
+  routeString?: string;
   priceImpact?: number;
   methodParameters: { calldata: Address; value: Address; to: Address };
+  approveContracts: ApproveContract[];
+};
+
+type ApproveContract = {
+  /** The approval type */
+  type: 'on-chain' | 'permit2';
+  /** The token we want to spend */
+  tokenAddress: Address;
+  /** The smart contract address that will be spending the token */
+  spenderAddress: Address;
+  /** For ERC721/ERC1155, provide the token id or tokenIds */
+  tokenIds?: TokenId[] | [TokenId, number][];
+  /** For ERC20, provide the amount the spender can spend - if omitted it defaults to the max amount */
+  amount?: bigint;
+  /** If the standard is omitted, we will infer either ERC721 or ERC20 based on amount/tokenId/tokenIds parameters */
+  standard?: 'ERC721' | 'ERC1155' | 'ERC20';
 };
 
 /** A price object for buying/selling/swapping an NFT through the marketplace zap */
@@ -64,16 +81,5 @@ export type MarketplaceQuote = MarketplacePrice & {
     premiumPrice: bigint;
   }>;
   methodParameters: MarketplaceParameters;
-  approveContracts: Array<{
-    /** The token we want to spend */
-    tokenAddress: Address;
-    /** The smart contract address that will be spending the token */
-    spenderAddress: Address;
-    /** For ERC721/ERC1155, provide the token id or tokenIds */
-    tokenIds?: TokenId[] | [TokenId, number][];
-    /** For ERC20, provide the amount the spender can spend - if omitted it defaults to the max amount */
-    amount?: bigint;
-    /** If the standard is omitted, we will infer either ERC721 or ERC20 based on amount/tokenId/tokenIds parameters */
-    standard?: 'ERC721' | 'ERC1155' | 'ERC20';
-  }>;
+  approveContracts: ApproveContract[];
 };

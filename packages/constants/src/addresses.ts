@@ -34,26 +34,31 @@ export const OPENSEA_COLLECTION = a(
 
 /** Zap specifically for creating new vaults */
 export const CREATE_VAULT_ZAP = {
-  [Network.Goerli]: a('0x3045AeD8a3206a98e7f54a9B6b88F078b2ddfa71'),
+  [Network.Goerli]: a('0x040fE06ABc3c099772DEe413dE138937bf053543'),
 };
 
 /** Perform buy/sell/swaps */
 export const MARKETPLACE_ZAP = {
-  [Network.Goerli]: a('0x11F9ce2C92ed333115D1cB1078a1F7bbfa7De0D5'),
+  [Network.Goerli]: a('0x5A40C0288d23E83a23bb16C29B790F7e49e49ee6'),
 };
 
 /** Stake NFTs or vTokens for xNFTs */
 export const INVENTORY_STAKING = {
-  [Network.Goerli]: a('0x2d5c9C71B3D97A030d8E84a5cd1d1b778e1b26c5'),
+  [Network.Goerli]: a('0xEf771a17e6970d8B4b208a76e94F175277554230'),
 };
 
-/** Add/remove liquidity */
+/** AMM Router (Universal Router / nftxUniversalRouter) */
 export const NFTX_ROUTER = {
-  [Network.Goerli]: a('0x423c4EF234c4321F44613f0D33E45727A95286aF'),
+  [Network.Goerli]: a('0xF7c4FC5C2e30258e1E4d1197fc63aeDE371508f3'),
+};
+
+/** Staking  / Liquidity / Pools (NftxRouter) */
+export const POOL_ROUTER = {
+  [Network.Goerli]: a('0x3b79692Eb189a68E513ad5628A419950E5773e35'),
 };
 
 export const NONFUNGIBLE_POSITION_MANAGER = {
-  [Network.Goerli]: a('0xdC69Df04C9D9026bAF9205460995F517e3b13F88'),
+  [Network.Goerli]: a('0xaEC6537206e8e590603399c714c39947680f1181'),
 };
 
 /** The permit2 contract, needs an approval signature because the UniversalRouter only transfers tokens from user via Permit2 */
@@ -61,14 +66,13 @@ export const PERMIT2 = {
   [Network.Goerli]: a('0x000000000022d473030f116ddee9f6b43ac78ba3'),
 };
 
-/** Swap tokens using the NFT AMM router */
-export const UNIVERSAL_ROUTER = {
-  [Network.Goerli]: a('0x9a9ac6e79E7750d6cFb847971370574Ca3CcB8e9'),
-};
-
 /** ENS Address */
 export const ENS_REGISTRAR = {
   [Network.Mainnet]: a('0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'),
   [Network.Arbitrum]: a('0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'),
   [Network.Goerli]: a('0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'),
+};
+
+export const VAULT_FACTORY = {
+  [Network.Goerli]: a('0xf25081B098c5929A26F562aa2502795fE89BC73f'),
 };

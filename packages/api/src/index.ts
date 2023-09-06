@@ -5,3 +5,4 @@ export * from './prices';
 export * from './balances';
 export * from './vaults';
 export * from './users';
+export * from './utils';

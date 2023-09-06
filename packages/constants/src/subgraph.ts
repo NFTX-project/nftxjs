@@ -90,26 +90,6 @@ export const NFTX_SUBGRAPH = {
     'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-v3-vaults',
 };
 
-// TODO: will this still be a separate graph for v3 or part of the NFT graph?
-export const NFTX_TOKEN_BALANCE_SUBGRAPH = {
-  [Network.Mainnet]: [
-    // Gateway + Proxy + Cache
-    `${GATEWAY_PROXY_ROOT}/FiFs5im99VCUNevp1XaF642uCcsYkbN6eoN3GMErE7wL?nocache`,
-    // Indexer + Proxy
-    `${INDEXER_PROXY_ROOT}/QmTExpkmZq5ebuSUyKKHwraEaGhDdi3p7vG98aoKjJE6tY`,
-    // Gateway
-    `${GATEWAY_ROOT}/FiFs5im99VCUNevp1XaF642uCcsYkbN6eoN3GMErE7wL`,
-    // Indexer
-    `${INDEXER_ROOT}/QmTExpkmZq5ebuSUyKKHwraEaGhDdi3p7vG98aoKjJE6tY`,
-    // Shared + Proxy
-    `${SHARED_PROXY_ROOT}/nftx-project/nftx-vault-tokens-holdings`,
-    // Shared
-    `${SHARED_ROOT}/nftx-project/nftx-vault-tokens-holdings`,
-  ],
-  [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-vault-token-holdings-arbitrum?nocache`,
-  [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/nftx-v2-1-token-holdings-goerl?nocache`,
-};
-
 export const NFTX_UNISWAP_SUBGRAPH = {
   [Network.Goerli]: `${SHARED_ROOT}/nftx-project/nftx-v3-uniswap-goerli`,
 };

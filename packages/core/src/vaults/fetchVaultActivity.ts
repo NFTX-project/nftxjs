@@ -49,7 +49,7 @@ const parseId = (id: Response['activityEvents'][0]['id']) => {
 
 const getActivityType = (
   type: Type,
-  eventType: VaultActivity['eventType'],
+  eventType: NftxV3.ActivityEventType,
   includeAllActivity: boolean
 ): VaultActivityType | undefined => {
   switch (type) {
@@ -58,6 +58,7 @@ const getActivityType = (
         case 'Mint':
           return 'mint';
         case 'ZapSell':
+        case 'SellNFTS':
           return 'sell';
         default:
           return;
@@ -65,9 +66,9 @@ const getActivityType = (
     case 'REDEEM':
       switch (eventType) {
         case 'Redeem':
-        case 'UnstakeInventory':
           return 'redeem';
         case 'ZapBuy':
+        case 'BuyNFTS':
           return 'buy';
         default:
           return;
@@ -76,18 +77,19 @@ const getActivityType = (
       return 'swap';
     case 'DEPOSIT':
       switch (eventType) {
-        case 'Deposit':
-        case 'LPDeposit':
+        case 'IncreaseLiquidity':
+        case 'AddLiquidity':
+        case 'InventoryDeposit':
+        case 'InventoryDepositWithNFT':
+        case 'InventoryIncreasePosition':
           return 'stake';
         default:
           return;
       }
     case 'WITHDRAWAL':
       switch (eventType) {
-        case 'UnstakeInventory':
-          return 'unstake';
-        case 'LPWithdrawal':
-        case 'Withdrawal':
+        case 'RemoveLiquidity':
+        case 'InventoryWithdraw':
           return 'unstake';
         default:
           return;
@@ -115,15 +117,17 @@ const getActivityType = (
 };
 
 const getStakeType = (
-  eventType: VaultActivity['eventType']
+  eventType: NftxV3.ActivityEventType
 ): 'inventory' | 'liquidity' => {
   switch (eventType) {
-    case 'UnstakeInventory':
+    case 'InventoryDeposit':
+    case 'InventoryDepositWithNFT':
+    case 'InventoryIncreasePosition':
+    case 'InventoryWithdraw':
       return 'inventory';
-    case 'Deposit':
-    case 'LPDeposit':
-    case 'LPWithdrawal':
-    case 'Withdrawal':
+    case 'AddLiquidity':
+    case 'IncreaseLiquidity':
+    case 'RemoveLiquidity':
     default:
       return 'liquidity';
   }

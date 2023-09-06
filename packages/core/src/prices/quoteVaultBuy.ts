@@ -30,6 +30,7 @@ type FetchVTokenToEth = typeof fetchVTokenToEth;
 type FetchPremiumPrice = typeof fetchPremiumPrice;
 
 const transformItem = async ({
+  network,
   buyAmount,
   holdings,
   provider,
@@ -40,11 +41,12 @@ const transformItem = async ({
   vault,
   fetchPremiumPrice,
 }: {
+  network: number;
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   tokenId: TokenId;
   amount: number;
   provider: Provider;
-  vault: Pick<Vault, 'id' | 'fees'>;
+  vault: Pick<Vault, 'vaultId' | 'fees' | 'is1155'>;
   vTokenToEth: bigint;
   vTokenPrice: bigint;
   buyAmount: bigint;
@@ -61,8 +63,11 @@ const transformItem = async ({
     holding,
     provider,
     tokenId,
-    vaultAddress: vault.id,
+    amount,
     vTokenToEth,
+    network,
+    standard: vault.is1155 ? 'ERC1155' : 'ERC721',
+    vaultId: vault.vaultId,
   });
 
   return {
@@ -119,6 +124,7 @@ export const makeQuoteVaultBuy =
       tokenAddress: vault.id,
       amount: buyAmount,
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
+      quote: 'WETH',
     });
 
     const items = await Promise.all(
@@ -132,6 +138,7 @@ export const makeQuoteVaultBuy =
           vTokenPrice,
           vTokenToEth,
           amount: amountsOut[i],
+          network,
           fetchPremiumPrice,
         });
       })

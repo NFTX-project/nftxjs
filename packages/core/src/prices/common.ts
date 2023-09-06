@@ -1,7 +1,19 @@
-import { NFTXVaultUpgradeable } from '@nftx/abi';
-import { WeiPerEther, Zero } from '@nftx/constants';
-import { getExactTokenIds } from '@nftx/utils';
-import type { Address, Provider, TokenId, VaultHolding } from '@nftx/types';
+import { VaultFactory } from '@nftx/abi';
+import {
+  MARKETPLACE_ZAP,
+  VAULT_FACTORY,
+  WeiPerEther,
+  Zero,
+} from '@nftx/constants';
+import { getChainConstant, getExactTokenIds, isCryptoPunk } from '@nftx/utils';
+import type {
+  Address,
+  MarketplaceQuote,
+  Provider,
+  TokenId,
+  Vault,
+  VaultHolding,
+} from '@nftx/types';
 import { getContract } from '@nftx/utils';
 
 type GetContract = typeof getContract;
@@ -14,7 +26,8 @@ export const calculateTotalFeePrice = (
   vTokenToEth: bigint,
   buyAmount: bigint
 ) => {
-  return (calculateFeePricePerItem(fee, vTokenToEth) * buyAmount) / WeiPerEther;
+  return (fee * vTokenToEth * buyAmount) / (WeiPerEther * WeiPerEther);
+  // return (calculateFeePricePerItem(fee, vTokenToEth) * buyAmount) / WeiPerEther;
 };
 
 export const maybeGetHoldingByTokenId = <
@@ -38,24 +51,38 @@ export const getHoldingByTokenId = <H extends Pick<VaultHolding, 'tokenId'>>(
 };
 
 const fetchVTokenPremium = async ({
+  network,
   provider,
   tokenId,
-  vaultAddress,
+  vaultId,
+  amount,
   getContract,
+  standard,
 }: {
-  vaultAddress: Address;
+  network: number;
+  vaultId: string;
   provider: Provider;
   tokenId: `${number}`;
+  amount: number;
   getContract: GetContract;
+  standard: 'ERC721' | 'ERC1155';
 }) => {
-  const vaultContract = getContract({
-    address: vaultAddress,
+  const contract = getContract({
+    address: getChainConstant(VAULT_FACTORY, network),
     provider,
-    abi: NFTXVaultUpgradeable,
+    abi: VaultFactory,
   });
 
-  const [premiumVTokenAmount] = await vaultContract.read.getVTokenPremium721({
-    args: [BigInt(tokenId)],
+  if (standard === 'ERC1155') {
+    const [premiumVTokenAmount] = await contract.read.getVTokenPremium1155({
+      args: [BigInt(vaultId), BigInt(tokenId), BigInt(amount)],
+    });
+
+    return premiumVTokenAmount;
+  }
+
+  const [premiumVTokenAmount] = await contract.read.getVTokenPremium721({
+    args: [BigInt(vaultId), BigInt(tokenId)],
   });
 
   return premiumVTokenAmount;
@@ -68,13 +95,19 @@ const makeFetchPremiumPrice =
     provider,
     tokenId,
     vTokenToEth,
-    vaultAddress,
+    amount,
+    network,
+    standard,
+    vaultId,
   }: {
     holding: Pick<VaultHolding, 'dateAdded'>;
     provider: Provider;
     tokenId: `${number}`;
-    vaultAddress: Address;
+    amount: number;
     vTokenToEth: bigint;
+    network: number;
+    standard: 'ERC721' | 'ERC1155';
+    vaultId: string;
   }) => {
     const premiumThreshold = Date.now() / 1000 - 3601;
 
@@ -84,7 +117,10 @@ const makeFetchPremiumPrice =
     const premiumVTokenAmount = await fetchVTokenPremium({
       provider,
       tokenId,
-      vaultAddress: vaultAddress,
+      amount,
+      network,
+      standard,
+      vaultId,
       getContract,
     });
     return (premiumVTokenAmount * vTokenToEth) / WeiPerEther;
@@ -144,4 +180,38 @@ export const calculateTotalPremiumPrice = (
   items: { premiumPrice: bigint }[]
 ) => {
   return items.reduce((total, item) => total + item.premiumPrice, Zero);
+};
+
+export const getApproveContracts = ({
+  tokenIds,
+  vault,
+  spender,
+}: {
+  vault: Pick<Vault, 'is1155' | 'asset'>;
+  tokenIds: TokenId[];
+  spender: Address;
+}): MarketplaceQuote['approveContracts'] => {
+  const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
+
+  if (isCryptoPunk(vault.asset.id)) {
+    return tokenIds.map((tokenId) => {
+      return {
+        type: 'on-chain',
+        tokenAddress: vault.asset.id,
+        spenderAddress: spender,
+        standard,
+        tokenIds: [tokenId],
+      };
+    });
+  } else {
+    return [
+      {
+        type: 'on-chain',
+        tokenAddress: vault.asset.id,
+        spenderAddress: spender,
+        standard,
+        tokenIds: tokenIds,
+      },
+    ];
+  }
 };

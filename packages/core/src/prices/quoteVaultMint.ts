@@ -7,6 +7,7 @@ import type {
   Vault,
 } from '@nftx/types';
 import quoteVaultSell from './quoteVaultSell';
+import { getApproveContracts } from './common';
 
 const quoteVaultMint = async ({
   network,
@@ -31,13 +32,11 @@ const quoteVaultMint = async ({
 
   const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
 
-  const approveContracts: MarketplaceQuote['approveContracts'] = [
-    {
-      tokenAddress: vault.asset.id,
-      spenderAddress: vault.id,
-      standard,
-    },
-  ];
+  const approveContracts = getApproveContracts({
+    tokenIds: tokenIdsIn,
+    vault,
+    spender: vault.id,
+  });
 
   const result: MarketplaceQuote = {
     type: 'mint',
