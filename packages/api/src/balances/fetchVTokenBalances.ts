@@ -15,7 +15,7 @@ const fetchVTokenBalances = ({
 }) => {
   return queryApi<VTokenBalance[]>({
     url: `/${network}/balances`,
-    query: { userAddress, vaultAddress, vaultId },
+    query: { userAddress, vaultAddresses: vaultAddress, vaultIds: vaultId },
   });
 };
 
