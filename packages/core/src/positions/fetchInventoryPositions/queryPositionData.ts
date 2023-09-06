@@ -29,7 +29,7 @@ const queryPositionData = ({
       p.id,
       p.positionId,
       p.vault((v) => [v.id, v.vaultId]),
-      p.nftIds,
+      p.amount,
       p.amount,
       p.user((u) => [u.id]),
       p.merged,

@@ -1,9 +1,19 @@
 import type { Price } from '@nftx/types';
 import type { NftxQuote } from './fetchQuote';
-import { WeiPerEther, Zero } from '@nftx/constants';
+import {
+  MaxUint256,
+  NFTX_ROUTER,
+  PERMIT2,
+  WeiPerEther,
+  Zero,
+} from '@nftx/constants';
 import { formatEther } from 'viem';
+import { getChainConstant } from '@nftx/utils';
 
 const nftxQuoteToPrice = (quote: NftxQuote) => {
+  const { network, sellToken } = quote;
+  const isEth = `${sellToken}` === 'ETH';
+
   const totalAmountIn = quote.route.reduce((total, r) => {
     return total + BigInt(r[0].amountIn);
   }, Zero);
@@ -41,6 +51,25 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     };
   });
 
+  const approveContracts: Price['approveContracts'] = [];
+
+  if (!isEth) {
+    approveContracts.push({
+      type: 'on-chain',
+      spenderAddress: getChainConstant(PERMIT2, network),
+      tokenAddress: sellToken,
+      standard: 'ERC20',
+      amount: MaxUint256,
+    });
+
+    approveContracts.push({
+      type: 'permit2',
+      tokenAddress: sellToken,
+      spenderAddress: getChainConstant(NFTX_ROUTER, network),
+      amount: BigInt(quote.amount),
+    });
+  }
+
   const price: Price = {
     price: BigInt(quote.quote),
     estimatedGas: BigInt(quote.gasUseEstimate),
@@ -48,7 +77,9 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     methodParameters: {
       ...quote.methodParameters,
     },
+    approveContracts,
     route,
+    routeString: quote.routeString,
   };
 
   return price;

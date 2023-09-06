@@ -21,38 +21,28 @@
         "name": "inventoryStaking_",
         "type": "address"
       },
-      {
-        "internalType": "contract IWETH9",
-        "name": "WETH_",
-        "type": "address"
-      }
+      { "internalType": "contract IWETH9", "name": "WETH_", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
-  {
-    "inputs": [],
-    "name": "NotNFTOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "SwapFailed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "UnableToSendETH",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ZapPaused",
-    "type": "error"
-  },
+  { "inputs": [], "name": "InsufficientWethForVaultFees", "type": "error" },
+  { "inputs": [], "name": "NotEnoughFundsForRedeem", "type": "error" },
+  { "inputs": [], "name": "NotNFTOwner", "type": "error" },
+  { "inputs": [], "name": "SwapFailed", "type": "error" },
+  { "inputs": [], "name": "UnableToSendETH", "type": "error" },
+  { "inputs": [], "name": "WrongVaultType", "type": "error" },
+  { "inputs": [], "name": "ZapPaused", "type": "error" },
+  { "inputs": [], "name": "ZeroAddress", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "vaultId",
+        "type": "uint256"
+      },
       {
         "indexed": false,
         "internalType": "uint256[]",
@@ -70,6 +60,12 @@
         "internalType": "address",
         "name": "to",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "netRoyaltyAmount",
+        "type": "uint256"
       }
     ],
     "name": "Buy",
@@ -104,6 +100,32 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dustThreshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "NewDustThreshold",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "universalRouter",
+        "type": "address"
+      }
+    ],
+    "name": "NewUniversalRouter",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -124,6 +146,25 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "status",
+        "type": "bool"
+      }
+    ],
+    "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "vaultId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "count",
         "type": "uint256"
@@ -139,6 +180,18 @@
         "internalType": "address",
         "name": "to",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "netRoyaltyAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "wethFees",
+        "type": "uint256"
       }
     ],
     "name": "Sell",
@@ -147,6 +200,12 @@
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "vaultId",
+        "type": "uint256"
+      },
       {
         "indexed": false,
         "internalType": "uint256[]",
@@ -178,6 +237,12 @@
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "vaultId",
+        "type": "uint256"
+      },
       {
         "indexed": false,
         "internalType": "uint256[]",
@@ -229,11 +294,7 @@
     "inputs": [],
     "name": "WETH",
     "outputs": [
-      {
-        "internalType": "contract IWETH9",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IWETH9", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -247,20 +308,17 @@
             "name": "tokenIn",
             "type": "address"
           },
-          {
-            "internalType": "uint256",
-            "name": "amountIn",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "vaultId",
-            "type": "uint256"
-          },
+          { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
+          { "internalType": "uint256", "name": "vaultId", "type": "uint256" },
           {
             "internalType": "uint256[]",
             "name": "idsOut",
             "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vTokenPremiumLimit",
+            "type": "uint256"
           },
           {
             "internalType": "bytes",
@@ -277,11 +335,7 @@
             "name": "to",
             "type": "address"
           },
-          {
-            "internalType": "bool",
-            "name": "deductRoyalty",
-            "type": "bool"
-          }
+          { "internalType": "bool", "name": "deductRoyalty", "type": "bool" }
         ],
         "internalType": "struct MarketplaceUniversalRouterZap.BuyNFTsWithERC20Params",
         "name": "params",
@@ -302,20 +356,17 @@
             "name": "tokenIn",
             "type": "address"
           },
-          {
-            "internalType": "uint256",
-            "name": "amountIn",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "vaultId",
-            "type": "uint256"
-          },
+          { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
+          { "internalType": "uint256", "name": "vaultId", "type": "uint256" },
           {
             "internalType": "uint256[]",
             "name": "idsOut",
             "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vTokenPremiumLimit",
+            "type": "uint256"
           },
           {
             "internalType": "bytes",
@@ -332,21 +383,13 @@
             "name": "to",
             "type": "address"
           },
-          {
-            "internalType": "bool",
-            "name": "deductRoyalty",
-            "type": "bool"
-          }
+          { "internalType": "bool", "name": "deductRoyalty", "type": "bool" }
         ],
         "internalType": "struct MarketplaceUniversalRouterZap.BuyNFTsWithERC20Params",
         "name": "params",
         "type": "tuple"
       },
-      {
-        "internalType": "bytes",
-        "name": "encodedPermit2",
-        "type": "bytes"
-      }
+      { "internalType": "bytes", "name": "encodedPermit2", "type": "bytes" }
     ],
     "name": "buyNFTsWithERC20WithPermit2",
     "outputs": [],
@@ -355,31 +398,16 @@
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "vaultId", "type": "uint256" },
+      { "internalType": "uint256[]", "name": "idsOut", "type": "uint256[]" },
+      { "internalType": "bytes", "name": "executeCallData", "type": "bytes" },
+      { "internalType": "address payable", "name": "to", "type": "address" },
       {
         "internalType": "uint256",
-        "name": "vaultId",
+        "name": "vTokenPremiumLimit",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256[]",
-        "name": "idsOut",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "executeCallData",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address payable",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "deductRoyalty",
-        "type": "bool"
-      }
+      { "internalType": "bool", "name": "deductRoyalty", "type": "bool" }
     ],
     "name": "buyNFTsWithETH",
     "outputs": [],
@@ -389,26 +417,14 @@
   {
     "inputs": [],
     "name": "dustThreshold",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "inventoryStaking",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -427,137 +443,51 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+      { "internalType": "bytes", "name": "", "type": "bytes" }
     ],
     "name": "onERC1155BatchReceived",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes4", "name": "", "type": "bytes4" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "bytes", "name": "", "type": "bytes" }
     ],
     "name": "onERC1155Received",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes4", "name": "", "type": "bytes4" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "bytes", "name": "", "type": "bytes" }
     ],
     "name": "onERC721Received",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes4", "name": "", "type": "bytes4" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "paused_",
-        "type": "bool"
-      }
-    ],
+    "inputs": [{ "internalType": "bool", "name": "paused_", "type": "bool" }],
     "name": "pause",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -566,13 +496,7 @@
   {
     "inputs": [],
     "name": "paused",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -585,36 +509,12 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "vaultId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "idsIn",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "amounts",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "executeCallData",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address payable",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "deductRoyalty",
-        "type": "bool"
-      }
+      { "internalType": "uint256", "name": "vaultId", "type": "uint256" },
+      { "internalType": "uint256[]", "name": "idsIn", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" },
+      { "internalType": "bytes", "name": "executeCallData", "type": "bytes" },
+      { "internalType": "address payable", "name": "to", "type": "address" },
+      { "internalType": "bool", "name": "deductRoyalty", "type": "bool" }
     ],
     "name": "sell1155",
     "outputs": [],
@@ -623,31 +523,11 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "vaultId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "idsIn",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "executeCallData",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address payable",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "deductRoyalty",
-        "type": "bool"
-      }
+      { "internalType": "uint256", "name": "vaultId", "type": "uint256" },
+      { "internalType": "uint256[]", "name": "idsIn", "type": "uint256[]" },
+      { "internalType": "bytes", "name": "executeCallData", "type": "bytes" },
+      { "internalType": "address payable", "name": "to", "type": "address" },
+      { "internalType": "bool", "name": "deductRoyalty", "type": "bool" }
     ],
     "name": "sell721",
     "outputs": [],
@@ -656,11 +536,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "dustThreshold_",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "dustThreshold_", "type": "uint256" }
     ],
     "name": "setDustThreshold",
     "outputs": [],
@@ -682,50 +558,25 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
+      { "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }
     ],
     "name": "supportsInterface",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "vaultId", "type": "uint256" },
+      { "internalType": "uint256[]", "name": "idsIn", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "idsOut", "type": "uint256[]" },
       {
         "internalType": "uint256",
-        "name": "vaultId",
+        "name": "vTokenPremiumLimit",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256[]",
-        "name": "idsIn",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "amounts",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "idsOut",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "address payable",
-        "name": "to",
-        "type": "address"
-      }
+      { "internalType": "address payable", "name": "to", "type": "address" }
     ],
     "name": "swap1155",
     "outputs": [],
@@ -734,26 +585,15 @@
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "vaultId", "type": "uint256" },
+      { "internalType": "uint256[]", "name": "idsIn", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "idsOut", "type": "uint256[]" },
       {
         "internalType": "uint256",
-        "name": "vaultId",
+        "name": "vTokenPremiumLimit",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256[]",
-        "name": "idsIn",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "idsOut",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "address payable",
-        "name": "to",
-        "type": "address"
-      }
+      { "internalType": "address payable", "name": "to", "type": "address" }
     ],
     "name": "swap721",
     "outputs": [],
@@ -762,11 +602,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -776,18 +612,9 @@
   {
     "inputs": [],
     "name": "universalRouter",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
-  }
+  { "stateMutability": "payable", "type": "receive" }
 ]

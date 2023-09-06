@@ -42,8 +42,8 @@ function getContract<T extends Abi>({
         if (!signer) {
           throw new Error('Cannot perform a write operation without a signer');
         }
-        const [address] = await signer.getAddresses();
-        const account = getAccount(address);
+        const [userAddress] = await signer.getAddresses();
+        const account = getAccount(userAddress);
 
         const { request } = await provider.simulateContract({
           address,
@@ -69,8 +69,8 @@ function getContract<T extends Abi>({
           throw new Error('Cannot estimate gas without a signer');
         }
         try {
-          const [address] = await signer.getAddresses();
-          const account = getAccount(address);
+          const [userAddress] = await signer.getAddresses();
+          const account = getAccount(userAddress);
 
           const gasEstimate = await provider.estimateContractGas({
             address,

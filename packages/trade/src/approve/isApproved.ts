@@ -119,6 +119,7 @@ const isErc20Approved = async ({
 
 /** Returns whether a spender is approved to spend a given token */
 const isApproved = async (args: {
+  type?: 'on-chain' | 'permit2';
   network?: number;
   provider: Provider;
   /** The token you want to spend */
@@ -137,6 +138,7 @@ const isApproved = async (args: {
   standard?: 'ERC721' | 'ERC1155' | 'ERC20';
 }): Promise<boolean> => {
   const {
+    type,
     provider,
     spenderAddress,
     tokenAddress,
@@ -146,6 +148,10 @@ const isApproved = async (args: {
   } = args;
   let { tokenIds } = args;
   const { standard = tokenId || tokenIds ? 'ERC721' : 'ERC20' } = args;
+
+  if (type === 'permit2') {
+    return false;
+  }
 
   if (standard === 'ERC721') {
     if (isCryptoPunk(tokenAddress)) {

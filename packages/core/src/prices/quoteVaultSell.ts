@@ -1,4 +1,9 @@
-import { MARKETPLACE_ZAP, PERMIT2, WeiPerEther, Zero } from '@nftx/constants';
+import {
+  MARKETPLACE_ZAP,
+  WETH_TOKEN,
+  WeiPerEther,
+  Zero,
+} from '@nftx/constants';
 import { fetchTokenSellPrice } from '@nftx/trade';
 import type {
   Address,
@@ -15,7 +20,11 @@ import {
   getTotalTokenIds,
   getUniqueTokenIds,
 } from '@nftx/utils';
-import { calculateFeePricePerItem, calculateTotalFeePrice } from './common';
+import {
+  calculateFeePricePerItem,
+  calculateTotalFeePrice,
+  getApproveContracts,
+} from './common';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
 type FetchVTokenToEth = typeof fetchVTokenToEth;
@@ -58,7 +67,8 @@ export const makeQuoteVaultSell =
       tokenAddress: vault.id,
       amount: sellAmount,
       network,
-      userAddress,
+      userAddress: getChainConstant(MARKETPLACE_ZAP, network),
+      quote: 'WETH',
     });
     const vTokenPricePerItem = (vTokenPrice * WeiPerEther) / sellAmount;
 
@@ -89,21 +99,11 @@ export const makeQuoteVaultSell =
 
     const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
 
-    const approveContracts: MarketplaceQuote['approveContracts'] = [
-      {
-        tokenAddress: vault.asset.id,
-        spenderAddress: getChainConstant(MARKETPLACE_ZAP, network),
-        standard,
-      },
-      {
-        tokenAddress: vault.id,
-        spenderAddress: getChainConstant(PERMIT2, network),
-        standard: 'ERC20',
-      },
-      // TODO: we also need to do a permit2 call that isn't a regular approval
-      //     Then before each swap, user signs a permit2 signature off-chain, allowing UniversalRouter to pull the required tokens.
-      // *2a. For testing, we are instead doing it on-chain by executing: Permit2.approve(token, universalRouterAddress, amount, expiration)
-    ];
+    const approveContracts = getApproveContracts({
+      vault,
+      tokenIds: tokenIdsIn,
+      spender: getChainConstant(MARKETPLACE_ZAP, network),
+    });
 
     const result: MarketplaceQuote = {
       type: 'sell',

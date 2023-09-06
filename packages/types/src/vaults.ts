@@ -1,4 +1,5 @@
 import type { MarketplacePrice } from './price';
+import type { ActivityEventType } from './subgraph/nftx-v3';
 import type { Token } from './tokens';
 import type { Address, TokenId } from './web3';
 
@@ -77,23 +78,7 @@ export type VaultActivityType =
   | 'create'
   | 'update'
   | 'shutdown';
-type VaultActivityEventType =
-  | 'Swap'
-  | 'Redeem'
-  | 'Mint'
-  | 'Deposit'
-  | 'Withdrawal'
-  | 'LPDeposit'
-  | 'LPWithdrawal'
-  | 'ZapSell'
-  | 'ZapSwap'
-  | 'ZapBuy'
-  | 'UnstakeInventory'
-  | 'VaultCreated'
-  | 'VaultPublished'
-  | 'VaultNameChange'
-  | 'VaultShutdown'
-  | 'VaultFeeUpdate';
+type VaultActivityEventType = ActivityEventType;
 
 type CommonVaultActivity<T extends VaultActivityType> = {
   vaultId: string;

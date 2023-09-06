@@ -21,8 +21,10 @@ const mint = async ({
   const tokenIds = params.tokenIdsIn.map(BigInt);
   const amounts = params.amountsIn.map(BigInt);
   const depositor = params.to;
-  const to = params.vaultAddress;
+  const to = params.to;
   const value = BigInt(params.value);
+
+  console.debug({ method: 'mint', tokenIds, amounts, depositor, to, value });
 
   // Not sure if vaultAddress is correct
   return contract.write.mint({

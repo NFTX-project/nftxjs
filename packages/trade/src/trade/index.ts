@@ -1,9 +1,7 @@
-export { default as approve } from './approve';
-export * from './buy';
+export { default as buy } from './buy';
 export { default as increaseGasLimit } from './increaseGasLimit';
-export { default as isApproved } from './isApproved';
 export { default as mint } from './mint';
 export { default as redeem } from './redeem';
-export * from './sell';
-export * from './swap';
-export * from './tradeErc20';
+export { default as sell } from './sell';
+export { default as swap } from './swap';
+export { default as tradeErc20 } from './tradeErc20';

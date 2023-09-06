@@ -12,10 +12,10 @@ import config from '@nftx/config';
 const buy = ({
   network = config.network,
   provider,
-  quote: { methodParameters: params },
+  quote: { premiumPrice, methodParameters: params },
   signer,
 }: {
-  quote: Pick<MarketplaceQuote, 'methodParameters'>;
+  quote: Pick<MarketplaceQuote, 'methodParameters' | 'premiumPrice'>;
   network?: number;
   provider: Provider;
   signer: Signer;
@@ -33,10 +33,22 @@ const buy = ({
   ).map(BigInt);
   const calldata = params.executeCalldata;
   const to = params.to;
+  const vTokenPremiumLimit = premiumPrice;
   const deductRoyalty = false;
 
+  console.debug({
+    method: 'buyNFTsWithETH',
+    vaultId,
+    idsOut,
+    calldata,
+    to,
+    vTokenPremiumLimit,
+    deductRoyalty,
+    value: BigInt(params.value),
+  });
+
   return contract.write.buyNFTsWithETH({
-    args: [vaultId, idsOut, calldata, to, deductRoyalty],
+    args: [vaultId, idsOut, calldata, to, vTokenPremiumLimit, deductRoyalty],
     value: BigInt(params.value),
   });
 };
