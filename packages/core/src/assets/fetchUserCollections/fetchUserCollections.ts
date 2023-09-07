@@ -21,7 +21,7 @@ export const makeFetchUserCollections =
   }) => {
     if (
       getChainConstant(RESERVOIR_URL, network, null) &&
-      getChainConstant(config.keys.ALCHEMY, network, null)
+      getChainConstant(config.keys.RESERVOIR, network, null)
     ) {
       console.debug('fetching collections from reservoir');
       return fetchUserCollectionsReservoir({ network, offset: 0, userAddress });

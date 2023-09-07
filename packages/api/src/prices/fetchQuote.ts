@@ -35,7 +35,7 @@ const fetchQuote = ({
     ? getUniqueTokenIds(sellTokensAndAmounts)
     : undefined;
   const sellAmounts = sellTokensAndAmounts
-    ? getUniqueTokenIds(sellTokensAndAmounts)
+    ? getTokenIdAmounts(sellTokensAndAmounts)
     : undefined;
 
   if (quoteType === 'price') {

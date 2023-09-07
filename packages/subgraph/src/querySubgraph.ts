@@ -1,7 +1,7 @@
 import config from '@nftx/config';
 import { PUBLIC_GRAPH_API_KEY } from '@nftx/constants';
 import { type GraphQueryString, interpolateQuery } from './utils';
-import sendQuery from './query';
+import { query as sendQuery } from '@nftx/utils';
 import type { QueryBase } from './createQuery/createQuery';
 
 type Fetch = typeof fetch;

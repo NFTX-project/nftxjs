@@ -32,7 +32,6 @@
     "@nftx/abi": "^0.9.0",
     "@nftx/config": "^0.9.0",
     "@nftx/constants": "^0.9.0",
-    "@nftx/subgraph": "^0.9.0",
     "@nftx/types": "^0.9.0",
     "abitype": "^0.7.1",
     "keccak256": "^1.0.6",

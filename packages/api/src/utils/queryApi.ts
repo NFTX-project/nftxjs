@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import { query as sendQuery } from '@nftx/subgraph';
+import { query as sendQuery } from '@nftx/utils';
 
 const queryApi = async <T>({
   url,

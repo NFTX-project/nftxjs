@@ -1,10 +1,7 @@
-import { RESERVOIR_URL } from '@nftx/constants';
 import type { Address, Collection } from '@nftx/types';
-import { getChainConstant } from '@nftx/utils';
-import { query } from '@nftx/subgraph';
-import config from '@nftx/config';
+import { queryReservoir } from '@nftx/utils';
 
-type Query = typeof query;
+type QueryReservoir = typeof queryReservoir;
 
 type Response = {
   collections: {
@@ -28,9 +25,9 @@ type Response = {
 };
 
 export const makeFetchUserCollectionsReservoir = ({
-  query: sendQuery,
+  queryReservoir: sendQuery,
 }: {
-  query: Query;
+  queryReservoir: QueryReservoir;
 }) =>
   async function fetchUserCollectionsReservoir({
     network,
@@ -41,21 +38,12 @@ export const makeFetchUserCollectionsReservoir = ({
     network: number;
     offset: number;
   }): Promise<Collection[]> {
-    const baseUrl = getChainConstant(RESERVOIR_URL, network);
     const path = `/users/${userAddress}/collections/v3`;
     const query = {
       limit: 100,
       offset,
     };
-    const headers = {
-      'x-api-key': getChainConstant(config.keys.RESERVOIR, network),
-    };
-    const uri = new URL(path, baseUrl);
-    const data = await sendQuery<Response>({
-      url: uri.toString(),
-      query,
-      headers,
-    });
+    const data = await sendQuery<Response>({ network, path, query });
     const collections: Collection[] = data.collections.map((x) => {
       return {
         address: x.collection.id,
@@ -78,4 +66,4 @@ export const makeFetchUserCollectionsReservoir = ({
     return collections;
   };
 
-export default makeFetchUserCollectionsReservoir({ query });
+export default makeFetchUserCollectionsReservoir({ queryReservoir });

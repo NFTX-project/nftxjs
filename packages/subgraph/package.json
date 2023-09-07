@@ -30,7 +30,8 @@
   "sideEffects": false,
   "dependencies": {
     "@nftx/config": "^0.9.0",
-    "@nftx/constants": "^0.9.0"
+    "@nftx/constants": "^0.9.0",
+    "@nftx/utils": "^0.9.0"
   },
   "devDependencies": {
     "@nftx/types": "^0.9.0"
