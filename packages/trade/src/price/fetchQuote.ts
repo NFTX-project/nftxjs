@@ -38,6 +38,9 @@ type RouteElV2 = {
 type RouteEl = RouteElV3 | RouteElV2;
 
 export type NftxQuote = {
+  network: number;
+  sellToken: Address;
+  buyToken: Address;
   methodParameters: {
     calldata: Address;
     value: Address;
@@ -99,9 +102,10 @@ const fetchQuote = async (args: {
     searchParams.append('recipient', userAddress);
     searchParams.append('deadline', '300');
     searchParams.append('enableUniversalRouter', 'true');
-    searchParams.append('slippageTolerance', `${slippagePercentage ?? 0}`);
+    searchParams.append('slippageTolerance', `${slippagePercentage ?? 1}`);
+    // TODO: if we provide all this but the response has no methodParameters, slippage is probably too low and we need to throw an error
   }
-  searchParams.append('protocols', 'v2,v3');
+  searchParams.append('protocols', 'v3');
 
   const query = searchParams.toString();
   const baseUrl = getChainConstant(config.urls.NFTX_ROUTER_URL, network, null);
@@ -117,7 +121,12 @@ const fetchQuote = async (args: {
 
   const data: NftxQuote = await response.json();
 
-  return data;
+  return {
+    ...data,
+    network,
+    sellToken,
+    buyToken,
+  };
 };
 
 export default fetchQuote;

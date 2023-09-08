@@ -103,6 +103,10 @@ export default function useWrapTransaction<F extends Fn>(
           );
         }
 
+        if (receipt.status === 'reverted') {
+          throw new TransactionFailedError(receipt, network, tx, receipt);
+        }
+
         addEvent({
           type: 'Success',
           createdAt: Date.now(),

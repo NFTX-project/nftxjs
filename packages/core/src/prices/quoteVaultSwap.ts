@@ -12,6 +12,7 @@ import {
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
+  isCryptoPunk,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
 import { getHoldingByTokenId, fetchPremiumPrice } from './common';
@@ -75,8 +76,11 @@ export const makeQuoteVaultSwap =
           holding,
           provider,
           tokenId,
-          vaultAddress: vault.id,
+          amount,
           vTokenToEth,
+          network,
+          standard,
+          vaultId: vault.vaultId,
         });
 
         const item: MarketplaceQuote['items'][0] = {
@@ -98,21 +102,35 @@ export const makeQuoteVaultSwap =
 
     const price = premiumPrice + feePrice;
 
-    const approveContracts: MarketplaceQuote['approveContracts'] = [
-      {
+    const approveContracts: MarketplaceQuote['approveContracts'] = [];
+
+    if (isCryptoPunk(vault.asset.id)) {
+      tokenIdsIn.forEach((tokenId) => {
+        approveContracts.push({
+          tokenAddress: vault.asset.id,
+          spenderAddress: getChainConstant(MARKETPLACE_ZAP, network),
+          standard,
+          tokenIds: [tokenId],
+        });
+      });
+    } else {
+      approveContracts.push({
         tokenAddress: vault.asset.id,
         spenderAddress: getChainConstant(MARKETPLACE_ZAP, network),
         standard,
-      },
-      {
-        tokenAddress: vault.id,
-        spenderAddress: getChainConstant(PERMIT2, network),
-        standard: 'ERC20',
-      },
-      // TODO: we also need to do a permit2 call that isn't a regular approval
-      //     Then before each swap, user signs a permit2 signature off-chain, allowing UniversalRouter to pull the required tokens.
-      // *2a. For testing, we are instead doing it on-chain by executing: Permit2.approve(token, universalRouterAddress, amount, expiration)
-    ];
+        tokenIds: tokenIdsIn,
+      });
+    }
+
+    approveContracts.push({
+      tokenAddress: vault.id,
+      spenderAddress: getChainConstant(PERMIT2, network),
+      standard: 'ERC20',
+    });
+
+    // TODO: we also need to do a permit2 call that isn't a regular approval
+    //     Then before each swap, user signs a permit2 signature off-chain, allowing UniversalRouter to pull the required tokens.
+    // *2a. For testing, we are instead doing it on-chain by executing: Permit2.approve(token, universalRouterAddress, amount, expiration)
 
     const result: MarketplaceQuote = {
       type: 'swap',
