@@ -9,7 +9,7 @@ import nftxQuoteToPrice from './quoteToPrice';
  */
 const fetchTokenSellPrice = async (args: {
   network?: number;
-  tokenAddress: Address;
+  tokenAddress: QuoteToken;
   amount?: BigIntish;
   quote?: QuoteToken;
   userAddress?: Address;

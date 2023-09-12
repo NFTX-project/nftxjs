@@ -1,6 +1,5 @@
 import config from '@nftx/config';
 import { WeiPerEther } from '@nftx/constants';
-import type { Address } from '@nftx/types';
 import type { QuoteToken } from './types';
 import fetchTokenBuyPrice from './fetchTokenBuyPrice';
 
@@ -8,7 +7,7 @@ import fetchTokenBuyPrice from './fetchTokenBuyPrice';
  */
 const fetchTokenSpotPrice = async (args: {
   network?: number;
-  tokenAddress: Address;
+  tokenAddress: QuoteToken;
   quote?: QuoteToken;
   amount?: bigint;
 }) => {

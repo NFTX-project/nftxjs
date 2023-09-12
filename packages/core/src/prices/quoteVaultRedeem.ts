@@ -40,6 +40,8 @@ const quoteVaultRedeem = async ({
 
   const value = (feePrice + premiumPrice).toString();
 
+  const approveContracts: MarketplaceQuote['approveContracts'] = [];
+
   const result: MarketplaceQuote = {
     type: 'redeem',
     vTokenPrice,
@@ -47,7 +49,7 @@ const quoteVaultRedeem = async ({
     premiumPrice,
     price,
     items,
-    approveContracts: [],
+    approveContracts,
     methodParameters: {
       executeCalldata: '0x',
       to: userAddress,

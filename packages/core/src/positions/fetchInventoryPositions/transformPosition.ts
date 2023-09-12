@@ -1,12 +1,11 @@
 import type { InventoryPosition, Vault, NftxV3, Address } from '@nftx/types';
 import { WeiPerEther, Zero } from '@nftx/constants';
-import { parseEther } from 'viem';
 
 const transformPosition = (
   position: NftxV3.InventoryPosition,
   vault: Pick<Vault, 'vTokenToEth'>
 ): InventoryPosition => {
-  const vToken = parseEther(`${position.nftIds.length}`);
+  const vToken = BigInt(`${position.amount}`);
   const vTokenValue = (vToken * vault.vTokenToEth) / WeiPerEther;
 
   // TODO: where do we get reward data from?

@@ -115,7 +115,7 @@ const defaultConfig: Config = {
   },
   contracts: {
     ethPrice: {
-      [Network.Rinkeby]: '2500000000', // $2.5k
+      [Network.Goerli]: '2500000000', // $2.5k
     },
   },
 
@@ -137,12 +137,6 @@ export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
 };
 
-const initialConfig: Config = merge(
-  defaultConfig,
-  {},
-  { arrayMerge: (_, arr) => arr }
-);
-
 /**
  * Configuration settings for nftx.js
  */
@@ -153,13 +147,14 @@ const config: Config & {
    */
   configure(opts: DeepPartial<Config>): void;
 } = {
-  ...initialConfig,
+  ...defaultConfig,
   /**
    * Set a series of options
    * You can pass in a combination of partial options and they will be merged into the previous configuration
    */
   configure(opts: DeepPartial<Config>) {
     const merged = merge(config, opts, { arrayMerge: (_, arr) => arr });
+    storeSettings(merged.internal);
     Object.entries(merged).forEach(([key, value]) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -168,6 +163,6 @@ const config: Config & {
   },
 };
 
-storeSettings(config.internal);
+config.configure(defaultConfig);
 
 export default config;

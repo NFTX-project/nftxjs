@@ -124,6 +124,7 @@ export const makeQuoteVaultBuy =
       tokenAddress: vault.id,
       amount: buyAmount,
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
+      quote: 'WETH',
     });
 
     const items = await Promise.all(

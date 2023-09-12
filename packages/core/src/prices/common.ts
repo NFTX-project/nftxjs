@@ -1,7 +1,19 @@
 import { VaultFactory } from '@nftx/abi';
-import { VAULT_FACTORY, WeiPerEther, Zero } from '@nftx/constants';
-import { getChainConstant, getExactTokenIds } from '@nftx/utils';
-import type { Provider, TokenId, VaultHolding } from '@nftx/types';
+import {
+  MARKETPLACE_ZAP,
+  VAULT_FACTORY,
+  WeiPerEther,
+  Zero,
+} from '@nftx/constants';
+import { getChainConstant, getExactTokenIds, isCryptoPunk } from '@nftx/utils';
+import type {
+  Address,
+  MarketplaceQuote,
+  Provider,
+  TokenId,
+  Vault,
+  VaultHolding,
+} from '@nftx/types';
 import { getContract } from '@nftx/utils';
 
 type GetContract = typeof getContract;
@@ -14,7 +26,8 @@ export const calculateTotalFeePrice = (
   vTokenToEth: bigint,
   buyAmount: bigint
 ) => {
-  return (calculateFeePricePerItem(fee, vTokenToEth) * buyAmount) / WeiPerEther;
+  return (fee * vTokenToEth * buyAmount) / (WeiPerEther * WeiPerEther);
+  // return (calculateFeePricePerItem(fee, vTokenToEth) * buyAmount) / WeiPerEther;
 };
 
 export const maybeGetHoldingByTokenId = <
@@ -167,4 +180,38 @@ export const calculateTotalPremiumPrice = (
   items: { premiumPrice: bigint }[]
 ) => {
   return items.reduce((total, item) => total + item.premiumPrice, Zero);
+};
+
+export const getApproveContracts = ({
+  tokenIds,
+  vault,
+  spender,
+}: {
+  vault: Pick<Vault, 'is1155' | 'asset'>;
+  tokenIds: TokenId[];
+  spender: Address;
+}): MarketplaceQuote['approveContracts'] => {
+  const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
+
+  if (isCryptoPunk(vault.asset.id)) {
+    return tokenIds.map((tokenId) => {
+      return {
+        type: 'on-chain',
+        tokenAddress: vault.asset.id,
+        spenderAddress: spender,
+        standard,
+        tokenIds: [tokenId],
+      };
+    });
+  } else {
+    return [
+      {
+        type: 'on-chain',
+        tokenAddress: vault.asset.id,
+        spenderAddress: spender,
+        standard,
+        tokenIds: tokenIds,
+      },
+    ];
+  }
 };

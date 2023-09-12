@@ -1,7 +1,13 @@
-import { ERC20, ERC721, CryptoPunks } from '@nftx/abi';
-import { getContract, getUniqueTokenIds, isCryptoPunk } from '@nftx/utils';
+import { ERC20, ERC721, CryptoPunks, Permit2 } from '@nftx/abi';
+import {
+  getChainConstant,
+  getContract,
+  getUniqueTokenIds,
+  isCryptoPunk,
+} from '@nftx/utils';
 import type { Address, Provider, Signer, TokenId } from '@nftx/types';
-import { MaxUint256, Zero } from '@nftx/constants';
+import { MaxUint256, PERMIT2, Zero } from '@nftx/constants';
+import config from '@nftx/config';
 
 function approvePunk({
   tokenId,
@@ -81,11 +87,42 @@ function approveErc20({
   });
 }
 
+function approvePermit2({
+  amount,
+  network,
+  provider,
+  signer,
+  spenderAddress,
+  tokenAddress,
+}: {
+  network: number;
+  provider: Provider;
+  signer: Signer;
+  tokenAddress: Address;
+  spenderAddress: Address;
+  amount: bigint;
+}) {
+  const expiration = Math.floor(Date.now() / 1000) + 60 * 30;
+
+  const contract = getContract({
+    abi: Permit2,
+    address: getChainConstant(PERMIT2, network),
+    provider,
+    signer,
+  });
+
+  return contract.write.approve({
+    args: [tokenAddress, spenderAddress, amount, expiration],
+  });
+}
+
 /**
  * Approves a spender to spend a specific token address.
  * If you want to approve a standard sell or swap, use the relevant methods instead (approveSell/approveSwap)
  */
 async function approve(args: {
+  type?: 'on-chain' | 'permit2';
+  network?: number;
   /** The token we want to spend */
   tokenAddress: Address;
   /** The smart contract address that will be spending the token */
@@ -101,6 +138,8 @@ async function approve(args: {
   standard?: 'ERC721' | 'ERC1155' | 'ERC20';
 }) {
   const {
+    type = 'on-chain',
+    network = config.network,
     tokenAddress,
     spenderAddress,
     tokenId,
@@ -110,6 +149,17 @@ async function approve(args: {
     amount,
     standard = tokenId || tokenIds ? 'ERC721' : amount ? 'ERC20' : null,
   } = args;
+
+  if (type === 'permit2') {
+    return approvePermit2({
+      amount: amount ?? Zero,
+      network,
+      provider,
+      signer,
+      spenderAddress,
+      tokenAddress,
+    });
+  }
 
   if (standard === 'ERC721') {
     if (isCryptoPunk(tokenAddress)) {

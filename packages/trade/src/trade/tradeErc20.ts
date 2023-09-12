@@ -18,6 +18,14 @@ const tradeErc20 = async ({
     methodParameters: { calldata, to, value },
   } = quote;
 
+  console.debug({
+    method: 'tradeErc20',
+    to,
+    data: calldata,
+    value: BigInt(value),
+    account,
+  });
+
   const hash = await signer.sendTransaction({
     to,
     data: calldata,

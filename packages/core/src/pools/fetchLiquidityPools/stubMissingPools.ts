@@ -1,7 +1,7 @@
 import type { Address, LiquidityPool, Provider, Vault } from '@nftx/types';
 import { addressEqual, getChainConstant, getContract } from '@nftx/utils';
-import { NFTX_ROUTER, WETH_TOKEN, Zero } from '@nftx/constants';
-import { NftxRouter } from '@nftx/abi';
+import { POOL_ROUTER, WETH_TOKEN, Zero } from '@nftx/constants';
+import { PoolRouter } from '@nftx/abi';
 
 type FeeTier = LiquidityPool['feeTier'];
 const FEE_TIERS: FeeTier[] = [0.3, 0.5, 1];
@@ -20,9 +20,9 @@ const fetchPoolAddress = async ({
   const fee = feeTier * 10000;
 
   const contract = getContract({
-    address: getChainConstant(NFTX_ROUTER, network),
+    address: getChainConstant(POOL_ROUTER, network),
     provider,
-    abi: NftxRouter,
+    abi: PoolRouter,
   });
 
   const poolAddress = await contract.read.computePool({

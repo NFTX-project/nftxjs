@@ -1,8 +1,4 @@
-import {
-  getTokenIdAmounts,
-  getUniqueTokenIds,
-  isCryptoPunk,
-} from '@nftx/utils';
+import { getTokenIdAmounts, getUniqueTokenIds } from '@nftx/utils';
 import type {
   Address,
   MarketplaceQuote,
@@ -11,6 +7,7 @@ import type {
   Vault,
 } from '@nftx/types';
 import quoteVaultSell from './quoteVaultSell';
+import { getApproveContracts } from './common';
 
 const quoteVaultMint = async ({
   network,
@@ -35,24 +32,11 @@ const quoteVaultMint = async ({
 
   const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
 
-  const approveContracts: MarketplaceQuote['approveContracts'] = [];
-  if (isCryptoPunk(vault.asset.id)) {
-    tokenIdsIn.forEach((tokenId) => {
-      approveContracts.push({
-        tokenAddress: vault.asset.id,
-        spenderAddress: vault.id,
-        standard,
-        tokenIds: [tokenId],
-      });
-    });
-  } else {
-    approveContracts.push({
-      tokenAddress: vault.asset.id,
-      spenderAddress: vault.id,
-      standard,
-      tokenIds: tokenIdsIn,
-    });
-  }
+  const approveContracts = getApproveContracts({
+    tokenIds: tokenIdsIn,
+    vault,
+    spender: vault.id,
+  });
 
   const result: MarketplaceQuote = {
     type: 'mint',

@@ -29,6 +29,16 @@ const redeem = async ({
   // TODO: what's this?
   const vTokenPremiumLimit = premiumPrice;
 
+  console.debug({
+    method: 'redeem',
+    tokenIds,
+    to,
+    wethAmount,
+    vTokenPremiumLimit,
+    forceFees,
+    value,
+  });
+
   return contract.write.redeem({
     args: [tokenIds, to, wethAmount, vTokenPremiumLimit, forceFees],
     value,

@@ -1,7 +1,7 @@
 import type { Address, BigIntish } from '@nftx/types';
 import type { QuoteToken } from './types';
 import config from '@nftx/config';
-import { WeiPerEther } from '@nftx/constants';
+import { NFTX_ROUTER, WeiPerEther } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
 import parseQuoteToken from './parseQuoteToken';
 
@@ -120,6 +120,11 @@ const fetchQuote = async (args: {
   }
 
   const data: NftxQuote = await response.json();
+
+  if (data?.methodParameters?.to) {
+    // We need to override the to property as it's pointing to the Uniswap router instead of our own
+    data.methodParameters.to = getChainConstant(NFTX_ROUTER, network);
+  }
 
   return {
     ...data,

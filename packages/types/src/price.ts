@@ -29,6 +29,8 @@ export type Price = {
 };
 
 type ApproveContract = {
+  /** The approval type */
+  type: 'on-chain' | 'permit2';
   /** The token we want to spend */
   tokenAddress: Address;
   /** The smart contract address that will be spending the token */
