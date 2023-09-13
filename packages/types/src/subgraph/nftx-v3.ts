@@ -491,7 +491,7 @@ export type Block_Height = {
   number_gte?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type BuyNfts = {
+export type BuyNfts = ActivityEvent & {
   __typename?: 'BuyNFTS';
   date: Scalars['BigInt']['output'];
   ethSpent: Scalars['BigInt']['output'];
@@ -499,6 +499,7 @@ export type BuyNfts = {
   nftCount: Scalars['BigInt']['output'];
   source?: Maybe<Scalars['Bytes']['output']>;
   type: ActivityEventType;
+  vault: Vault;
 };
 
 export type BuyNfts_Filter = {
@@ -552,6 +553,27 @@ export type BuyNfts_Filter = {
   type_in?: InputMaybe<Array<ActivityEventType>>;
   type_not?: InputMaybe<ActivityEventType>;
   type_not_in?: InputMaybe<Array<ActivityEventType>>;
+  vault?: InputMaybe<Scalars['String']['input']>;
+  vault_?: InputMaybe<Vault_Filter>;
+  vault_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_gt?: InputMaybe<Scalars['String']['input']>;
+  vault_gte?: InputMaybe<Scalars['String']['input']>;
+  vault_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_lt?: InputMaybe<Scalars['String']['input']>;
+  vault_lte?: InputMaybe<Scalars['String']['input']>;
+  vault_not?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum BuyNfts_OrderBy {
@@ -560,7 +582,24 @@ export enum BuyNfts_OrderBy {
   Id = 'id',
   NftCount = 'nftCount',
   Source = 'source',
-  Type = 'type'
+  Type = 'type',
+  Vault = 'vault',
+  VaultAllocTotal = 'vault__allocTotal',
+  VaultAllowAllItems = 'vault__allowAllItems',
+  VaultCreatedAt = 'vault__createdAt',
+  VaultId = 'vault__id',
+  VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
+  VaultIs1155 = 'vault__is1155',
+  VaultIsFinalized = 'vault__isFinalized',
+  VaultShutdownDate = 'vault__shutdownDate',
+  VaultTotalFees = 'vault__totalFees',
+  VaultTotalHoldings = 'vault__totalHoldings',
+  VaultTotalMints = 'vault__totalMints',
+  VaultTotalRedeems = 'vault__totalRedeems',
+  VaultTotalSwaps = 'vault__totalSwaps',
+  VaultTreasuryAlloc = 'vault__treasuryAlloc',
+  VaultUsesFactoryFees = 'vault__usesFactoryFees',
+  VaultVaultId = 'vault__vaultId'
 }
 
 export type DustReturned = {
@@ -5551,7 +5590,7 @@ export enum RemoveLiquidity_OrderBy {
   WethAmount = 'wethAmount'
 }
 
-export type SellNfts = {
+export type SellNfts = ActivityEvent & {
   __typename?: 'SellNFTS';
   date: Scalars['BigInt']['output'];
   ethReceived: Scalars['BigInt']['output'];
@@ -5559,6 +5598,7 @@ export type SellNfts = {
   nftCount: Scalars['BigInt']['output'];
   source?: Maybe<Scalars['Bytes']['output']>;
   type: ActivityEventType;
+  vault: Vault;
 };
 
 export type SellNfts_Filter = {
@@ -5612,6 +5652,27 @@ export type SellNfts_Filter = {
   type_in?: InputMaybe<Array<ActivityEventType>>;
   type_not?: InputMaybe<ActivityEventType>;
   type_not_in?: InputMaybe<Array<ActivityEventType>>;
+  vault?: InputMaybe<Scalars['String']['input']>;
+  vault_?: InputMaybe<Vault_Filter>;
+  vault_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_gt?: InputMaybe<Scalars['String']['input']>;
+  vault_gte?: InputMaybe<Scalars['String']['input']>;
+  vault_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_lt?: InputMaybe<Scalars['String']['input']>;
+  vault_lte?: InputMaybe<Scalars['String']['input']>;
+  vault_not?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SellNfts_OrderBy {
@@ -5620,7 +5681,24 @@ export enum SellNfts_OrderBy {
   Id = 'id',
   NftCount = 'nftCount',
   Source = 'source',
-  Type = 'type'
+  Type = 'type',
+  Vault = 'vault',
+  VaultAllocTotal = 'vault__allocTotal',
+  VaultAllowAllItems = 'vault__allowAllItems',
+  VaultCreatedAt = 'vault__createdAt',
+  VaultId = 'vault__id',
+  VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
+  VaultIs1155 = 'vault__is1155',
+  VaultIsFinalized = 'vault__isFinalized',
+  VaultShutdownDate = 'vault__shutdownDate',
+  VaultTotalFees = 'vault__totalFees',
+  VaultTotalHoldings = 'vault__totalHoldings',
+  VaultTotalMints = 'vault__totalMints',
+  VaultTotalRedeems = 'vault__totalRedeems',
+  VaultTotalSwaps = 'vault__totalSwaps',
+  VaultTreasuryAlloc = 'vault__treasuryAlloc',
+  VaultUsesFactoryFees = 'vault__usesFactoryFees',
+  VaultVaultId = 'vault__vaultId'
 }
 
 export type SimpleFeeReceiver = {
@@ -7039,18 +7117,8 @@ export enum Token_OrderBy {
 export type Transaction = {
   __typename?: 'Transaction';
   blockNumber: Scalars['BigInt']['output'];
-  events: Array<Event>;
   id: Scalars['ID']['output'];
   timestamp: Scalars['BigInt']['output'];
-};
-
-
-export type TransactionEventsArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Event_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  where?: InputMaybe<Event_Filter>;
 };
 
 export type Transaction_Filter = {
@@ -7065,7 +7133,6 @@ export type Transaction_Filter = {
   blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
   blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
   blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  events_?: InputMaybe<Event_Filter>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -7087,7 +7154,6 @@ export type Transaction_Filter = {
 
 export enum Transaction_OrderBy {
   BlockNumber = 'blockNumber',
-  Events = 'events',
   Id = 'id',
   Timestamp = 'timestamp'
 }

@@ -23,6 +23,7 @@ export type Price = {
       amount: bigint;
     }>;
   }>;
+  routeString?: string;
   priceImpact?: number;
   methodParameters: { calldata: Address; value: Address; to: Address };
   approveContracts: ApproveContract[];

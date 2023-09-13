@@ -79,6 +79,7 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     },
     approveContracts,
     route,
+    routeString: quote.routeString,
   };
 
   return price;
