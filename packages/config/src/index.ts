@@ -3,7 +3,6 @@ import {
   ERC721_SUBGRAPH,
   NFTX_SUBGRAPH,
   NON_STANDARD_SUBGRAPH,
-  NFTX_TOKEN_BALANCE_SUBGRAPH,
   PUBLIC_GRAPH_API_KEY,
   NFTX_APR_URL,
   Network,
@@ -35,7 +34,6 @@ export interface Config {
     ERC721_SUBGRAPH: Record<string, string | string[]>;
     NFTX_SUBGRAPH: Record<string, string | string[]>;
     NON_STANDARD_SUBGRAPH: Record<string, string | string[]>;
-    NFTX_TOKEN_BALANCE_SUBGRAPH: Record<string, string | string[]>;
     NFTX_UNISWAP_SUBGRAPH: Record<string, string | string[]>;
   };
   /** External & 3rd party URLs used by nftx.js
@@ -103,7 +101,6 @@ const defaultConfig: Config = {
     ERC1155_SUBGRAPH,
     ERC721_SUBGRAPH,
     NFTX_SUBGRAPH,
-    NFTX_TOKEN_BALANCE_SUBGRAPH,
     NON_STANDARD_SUBGRAPH,
     NFTX_UNISWAP_SUBGRAPH,
   },

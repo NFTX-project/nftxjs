@@ -26,7 +26,6 @@ const redeem = async ({
   const wethAmount = Zero;
   const forceFees = true;
   const value = BigInt(params.value);
-  // TODO: what's this?
   const vTokenPremiumLimit = premiumPrice;
 
   console.debug({

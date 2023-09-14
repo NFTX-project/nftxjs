@@ -79,6 +79,9 @@ const getActivityType = (
       switch (eventType) {
         case 'IncreaseLiquidity':
         case 'AddLiquidity':
+        case 'InventoryDeposit':
+        case 'InventoryDepositWithNFT':
+        case 'InventoryIncreasePosition':
           return 'stake';
         default:
           return;
@@ -86,6 +89,7 @@ const getActivityType = (
     case 'WITHDRAWAL':
       switch (eventType) {
         case 'RemoveLiquidity':
+        case 'InventoryWithdraw':
           return 'unstake';
         default:
           return;
@@ -116,9 +120,11 @@ const getStakeType = (
   eventType: NftxV3.ActivityEventType
 ): 'inventory' | 'liquidity' => {
   switch (eventType) {
-    // TODO: we don't currently have any inventory event types
-    // case 'UnstakeInventory':
-    //   return 'inventory';
+    case 'InventoryDeposit':
+    case 'InventoryDepositWithNFT':
+    case 'InventoryIncreasePosition':
+    case 'InventoryWithdraw':
+      return 'inventory';
     case 'AddLiquidity':
     case 'IncreaseLiquidity':
     case 'RemoveLiquidity':
