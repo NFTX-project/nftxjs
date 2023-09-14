@@ -41,11 +41,12 @@ export default function useWrapTransaction<F extends Fn>(
     // call the original fn and intercept the result
     const [txErr, tx] = await t(fn(args));
     if (txErr) {
-      if (txErr.code === 4001 || txErr.code === 'ACTION_REJECTED') {
-        throw new TransactionCancelledError(txErr, network);
+      const e = txErr.cause ?? txErr;
+      if (e.code === 4001 || e.code === 'ACTION_REJECTED') {
+        throw new TransactionCancelledError(e, network);
       }
       // Exception - we couldn't even trigger the transaction
-      throw new TransactionExceptionError(txErr, network);
+      throw new TransactionExceptionError(e, network);
     }
 
     addEvent({
