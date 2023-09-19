@@ -1,5 +1,6 @@
 import type { Token } from './tokens';
 import type { Address } from './web3';
+import type { FeePercentage, FeeTier } from '@nftx/constants';
 
 /**
  * A Liquidity pool allows you to stake liquidity for a vault.
@@ -11,13 +12,13 @@ export type LiquidityPool = {
   vaultId: string;
   vaultAddress: Address;
   /** The fee tier for this pool, 0.3, 0.5, 1 */
-  feeTier: 0.3 | 0.5 | 1;
+  feeTier: FeeTier;
   /** A list of all of the applicable fees for this pool */
   fees: {
     id: Address;
     feeType: 'FIXED_PROTOCOL_FEE' | 'FIXED_LP_FEE' | 'FIXED_TRADING_FEE';
     /** A percentage in decimal format */
-    feePercentage: number;
+    feePercentage: FeePercentage;
   }[];
   /** The current tick that the pool is operating at */
   tick: bigint;
@@ -73,18 +74,10 @@ export type InventoryPool = {
   };
 };
 
-export type CreatePoolFees = [
-  mint: number,
-  randomRedeem: number,
-  targetRedeem: number,
-  randomSwap: number,
-  targetSwap: number
-];
+export type CreatePoolFees = [mint: number, redeem: number, swap: number];
 
 export type CreatePoolFeatures = [
   mint: boolean,
-  randomRedeem: boolean,
-  targetRedeem: boolean,
-  randomSwap: boolean,
-  targetSwap: boolean
+  redeem: boolean,
+  swap: boolean
 ];

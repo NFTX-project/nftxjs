@@ -27,6 +27,7 @@
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
   "dependencies": {
+    "@nftx/constants": "^0.9.0",
     "abitype": "^0.7.1",
     "viem": "0.1.19"
   },

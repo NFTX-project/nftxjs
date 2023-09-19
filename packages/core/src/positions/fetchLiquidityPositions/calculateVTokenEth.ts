@@ -1,5 +1,5 @@
 import type { Address } from '@nftx/types';
-import { sqrtX96 } from '../../univ3-helpers';
+import { ethersToDecimal, sqrtX96 } from '../../univ3-helpers';
 import { formatEther, parseEther } from 'viem';
 import { addressEqual, getChainConstant } from '@nftx/utils';
 import { WETH_TOKEN, Zero } from '@nftx/constants';
@@ -29,7 +29,7 @@ const calculateVTokenEth = ({
     // https://www.notion.so/nftx/Remove-partial-liquidity-from-pool-5bf28f4ed98d48079b0b78fb91bdd1aa
     const price = new Decimal(formatEther(args.vTokenToEth));
     const sqrtPrice = price.sqrt();
-    const sqrtPriceX96 = sqrtX96(price);
+    const sqrtPriceX96 = sqrtX96(args.vTokenToEth);
     const tick = new Decimal('1.0001');
     const tickUpperPrice = tick.pow(tickUpper);
     const tickLowerPrice = tick.pow(tickLower);
@@ -39,12 +39,12 @@ const calculateVTokenEth = ({
     const amount0 = liquidity
       .mul(sqrtPriceTickUpper.sub(sqrtPrice))
       .div(sqrtPrice)
-      .div(sqrtPriceX96);
+      .div(ethersToDecimal(sqrtPriceX96));
 
     // amount1 = liquidity * (sqrtPrice - sqrtPrice_tickLower) / sqrtPriceX96
     const amount1 = liquidity
       .mul(sqrtPrice.sub(sqrtPriceTickLower))
-      .div(sqrtPriceX96);
+      .div(ethersToDecimal(sqrtPriceX96));
 
     const wethToken = getChainConstant(WETH_TOKEN, network);
     const is0Weth = addressEqual(inputTokens[0], wethToken);

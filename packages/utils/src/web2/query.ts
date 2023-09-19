@@ -1,12 +1,4 @@
-const parseResponse = (str: string) => {
-  return JSON.parse(str, (key, value) => {
-    if (typeof value === 'string' && value.startsWith('BigNumber(')) {
-      const [, v] = value.match(/BigNumber\((.+)?\)/) ?? [];
-      return BigInt(v);
-    }
-    return value;
-  });
-};
+import { parseJson, stringifyJson } from './json';
 
 type Fetch = typeof fetch;
 const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
@@ -57,7 +49,7 @@ const query = async <T>(args: Args): Promise<T> => {
       }
     });
   }
-  const body = method === 'GET' ? undefined : JSON.stringify(queryData);
+  const body = method === 'GET' ? undefined : stringifyJson(queryData, true);
 
   const response = await fetch(uri.toString(), {
     method,
@@ -84,7 +76,7 @@ const query = async <T>(args: Args): Promise<T> => {
       `Incorrect response type. Expected application/json but received ${contentType}`
     );
   }
-  const data = parseResponse(text);
+  const data = parseJson(text);
 
   return data as T;
 };

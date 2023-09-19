@@ -1,14 +1,11 @@
-import { Zero } from '@nftx/constants';
+import { FeeTickSpacing, Zero } from '@nftx/constants';
 import type calculatePeriodFees from './calculatePeriodFees';
-import { formatEther, parseEther } from 'viem';
 import { Decimal } from 'decimal.js';
-
-const bigintToDecimal = (v: bigint) => {
-  return new Decimal(v.toString());
-};
-const ethersToDecimal = (v: bigint) => {
-  return new Decimal(formatEther(v));
-};
+import {
+  bigintToDecimal,
+  decimalToEthers,
+  ethersToDecimal,
+} from '../../univ3-helpers';
 
 // https://medium.com/@alexeuler/navigating-uniswap-v3-a-comprehensive-guide-to-apr-estimation-and-pool-risk-analysis-22cdab21e2db
 export const calculateApr = ({
@@ -23,7 +20,7 @@ export const calculateApr = ({
   totalLiquidity: bigint;
   price: bigint;
   currentTick: bigint;
-  tickSpacing: number;
+  tickSpacing: FeeTickSpacing;
   periodFees: bigint;
 }) => {
   try {
@@ -60,7 +57,7 @@ export const calculateApr = ({
     const APR = ethersToDecimal(periodFees).sub(IL).div(TVL.mul(LCF));
 
     // Convert back into bigint
-    return parseEther(APR.toString() as `${number}`);
+    return decimalToEthers(APR);
   } catch (e) {
     console.warn('Failed to calculate liquidity APR');
     console.warn(e);
@@ -80,7 +77,7 @@ const calculateAprs = ({
   totalLiquidity: bigint;
   price: bigint;
   currentTick: bigint;
-  tickSpacing: number;
+  tickSpacing: FeeTickSpacing;
   periodFees: ReturnType<typeof calculatePeriodFees>;
 }) => {
   return {

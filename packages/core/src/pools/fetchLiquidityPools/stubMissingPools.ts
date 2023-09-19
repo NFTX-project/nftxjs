@@ -1,10 +1,15 @@
 import type { Address, LiquidityPool, Provider, Vault } from '@nftx/types';
 import { addressEqual, getChainConstant, getContract } from '@nftx/utils';
-import { POOL_ROUTER, WETH_TOKEN, Zero } from '@nftx/constants';
+import {
+  FeeTier,
+  POOL_ROUTER,
+  WETH_TOKEN,
+  Zero,
+  feeTierToPercentage,
+} from '@nftx/constants';
 import { PoolRouter } from '@nftx/abi';
 
-type FeeTier = LiquidityPool['feeTier'];
-const FEE_TIERS: FeeTier[] = [0.3, 0.5, 1];
+const FEE_TIERS: FeeTier[] = [3_000, 10_000, 30_000];
 
 const fetchPoolAddress = async ({
   feeTier,
@@ -13,12 +18,10 @@ const fetchPoolAddress = async ({
   vaultAddress,
 }: {
   vaultAddress: Address;
-  feeTier: 0.3 | 0.5 | 1;
+  feeTier: FeeTier;
   network: number;
   provider: Provider;
 }) => {
-  const fee = feeTier * 10000;
-
   const contract = getContract({
     address: getChainConstant(POOL_ROUTER, network),
     provider,
@@ -26,7 +29,7 @@ const fetchPoolAddress = async ({
   });
 
   const poolAddress = await contract.read.computePool({
-    args: [vaultAddress, fee],
+    args: [vaultAddress, feeTier],
   });
 
   return poolAddress;
@@ -39,11 +42,12 @@ const createStub = ({
   vault,
 }: {
   vault: Pick<Vault, 'id' | 'vaultId' | 'token'>;
-  feeTier: 0.3 | 0.5 | 1;
+  feeTier: FeeTier;
   poolAddress: Address;
   network: number;
 }): LiquidityPool => {
   const wethAddress = getChainConstant(WETH_TOKEN, network);
+  const feePercentage = feeTierToPercentage(feeTier);
 
   return {
     activeLiquidity: Zero,
@@ -53,18 +57,18 @@ const createStub = ({
       {
         id: '0x',
         feeType: 'FIXED_LP_FEE',
-        feePercentage: feeTier,
+        feePercentage,
       },
       { id: '0x', feeType: 'FIXED_PROTOCOL_FEE', feePercentage: 0 },
       {
         id: '0x',
         feeType: 'FIXED_TRADING_FEE',
-        feePercentage: feeTier,
+        feePercentage,
       },
     ],
     feeTier,
     id: poolAddress,
-    name: `${vault.token.symbol} ${feeTier}% Pool`,
+    name: `${vault.token.symbol} ${feePercentage * 100}% Pool`,
     periodFees: { '1m': Zero, '24h': Zero, '7d': Zero, all: Zero },
     tick: Zero,
     tokens: [
@@ -112,7 +116,6 @@ const getPoolsByVaultId = <T extends Pick<LiquidityPool, 'vaultId'>>(
 
 const getMissingTiers = (pools: Pick<LiquidityPool, 'feeTier'>[]) => {
   // There should be 3 liquidity pools for each vault
-  // 0.3% 0.5% and 1%
   // If any of them are missing, they haven't been created yet and we'll need to create stub for them
   const tiers = [...FEE_TIERS];
 

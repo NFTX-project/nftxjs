@@ -2,17 +2,26 @@ import type { Address, LiquidityPool, Vault } from '@nftx/types';
 import type { LiquidityPoolsResponse } from './types';
 import calculatePeriodFees from './calculatePeriodFees';
 import calcualateAprs from './calculateAprs';
-import { getTickSpacing } from '../../univ3-helpers';
-import { WeiPerEther, Zero } from '@nftx/constants';
+import {
+  FeePercentage,
+  WeiPerEther,
+  Zero,
+  feeTierToTickSpacing,
+  percentageToFeeTier,
+} from '@nftx/constants';
 
 type Pool = LiquidityPoolsResponse['liquidityPools'][0];
 
 const transformFees = (fees: Pool['fees']): LiquidityPool['fees'] => {
-  return fees.map(({ feeType, id, feePercentage }) => {
+  return fees.map((fee): LiquidityPool['fees'][0] => {
+    const id = fee.id as Address;
+    const feeType = fee.feeType as LiquidityPool['fees'][0]['feeType'];
+    const feePercentage = Number(fee.feePercentage) as FeePercentage;
+
     return {
-      id: id as Address,
-      feeType: feeType as LiquidityPool['fees'][0]['feeType'],
-      feePercentage: Number(feePercentage),
+      id,
+      feeType,
+      feePercentage,
     };
   });
 };
@@ -32,11 +41,12 @@ const transformPool = (
   const totalLiquidity = BigInt(pool.totalLiquidity ?? '0');
   const price = vault.vTokenToEth;
   const tick = BigInt(pool.tick ?? '0');
-  const feeTier = Number(
+  const feePercentage = Number(
     pool.fees.find((fee) => fee.feeType === 'FIXED_TRADING_FEE')
       ?.feePercentage ?? 0
-  ) as 1;
-  const tickSpacing = getTickSpacing(feeTier);
+  );
+  const feeTier = percentageToFeeTier(feePercentage);
+  const tickSpacing = feeTierToTickSpacing(feeTier);
   const totalValueLocked = BigInt(pool.totalValueLockedUSD ?? '0');
   const inRangeLiquidity =
     totalLiquidity > Zero
