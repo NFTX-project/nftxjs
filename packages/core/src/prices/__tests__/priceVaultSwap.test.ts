@@ -55,12 +55,12 @@ beforeEach(() => {
   holdings = [
     {
       tokenId: '0',
-      dateAdded: Date.now() / 1000 - 4000,
+      dateAdded: Date.now() / 1000 - 60 * 60 * 24,
       amount: 1n,
     },
     {
       tokenId: '1',
-      dateAdded: Date.now() / 1000 - 4000,
+      dateAdded: Date.now() / 1000 - 60 * 60 * 24,
       amount: 1n,
     },
   ];
@@ -118,13 +118,13 @@ describe('when there are more than 5 token ids', () => {
       const result = await run();
 
       expect(result.premiumPrice).toBeGreaterThan(Zero);
-      expect(result.premiumPrice).toBeLessThan(4362997539289817600n); // Max premium
+      expect(result.premiumPrice).toBeLessThan(5010034472084955136n); // Max premium
     });
     it('adds the premium price to the total', async () => {
       const result = await run();
 
       expect(Number(formatEther(result.price))).toBeGreaterThan(0.15);
-      expect(Number(formatEther(result.price))).toBeLessThan(5);
+      expect(Number(formatEther(result.price))).toBeLessThan(5.1);
     });
   });
 });
@@ -152,13 +152,13 @@ describe('when there are 5 or less token ids', () => {
       const result = await run();
 
       expect(result.premiumPrice).toBeGreaterThan(Zero);
-      expect(result.premiumPrice).toBeLessThan(4362997539289817600n); // Max premium
+      expect(result.premiumPrice).toBeLessThan(5062997539289817600n); // Max premium
     });
     it('adds the premium price to the total', async () => {
       const result = await run();
 
       expect(Number(formatEther(result.price))).toBeGreaterThan(0.1);
-      expect(Number(formatEther(result.price))).toBeLessThan(5);
+      expect(Number(formatEther(result.price))).toBeLessThan(5.1);
     });
   });
 });

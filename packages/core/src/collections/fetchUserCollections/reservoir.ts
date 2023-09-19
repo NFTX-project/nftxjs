@@ -3,7 +3,7 @@ import { queryReservoir } from '@nftx/utils';
 
 type QueryReservoir = typeof queryReservoir;
 
-type Response = {
+export type Response = {
   collections: {
     collection: {
       id: Address;
@@ -15,6 +15,22 @@ type Response = {
       description: string;
       primaryContract: Address;
       sampleImages: string[];
+      discordUrl: string;
+      externalUrl: string;
+      twitterUsername: string;
+      openseaVerificationStatus: string;
+      onSaleCount: string;
+      creator: string;
+      royalties: unknown;
+      topBid: unknown;
+      rank: unknown;
+      volume: unknown;
+      volumeChange: unknown;
+      floorSale: unknown;
+      floorSaleChange: unknown;
+      ownerCount: string;
+      floorAsk: { price: { amount: { raw: string } } };
+      contractKind: string;
     };
     ownership: {
       tokenCount: string;
@@ -47,10 +63,16 @@ export const makeFetchUserCollectionsReservoir = ({
     const collections: Collection[] = data.collections.map((x) => {
       return {
         address: x.collection.id,
-        image: x.collection.image,
         name: x.collection.name,
+        slug: x.collection.slug,
+        image: x.collection.image,
+        banner: x.collection.banner,
         symbol: x.collection.slug,
-        numDistinctTokensOwned: Number(x.ownership.tokenCount),
+        discordUrl: x.collection.discordUrl,
+        externalUrl: x.collection.externalUrl,
+        twitterUsername: x.collection.twitterUsername,
+        standard: x.collection.contractKind.toUpperCase() as 'ERC721',
+        floorPrice: BigInt(x.collection.floorAsk?.price?.amount?.raw ?? '0'),
       };
     });
 

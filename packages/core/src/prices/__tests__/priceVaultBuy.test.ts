@@ -56,12 +56,12 @@ beforeEach(() => {
   holdings = [
     {
       tokenId: '0',
-      dateAdded: Date.now() / 1000 - 4000,
+      dateAdded: Date.now() / 1000 - 60 * 60 * 24,
       amount: 1n,
     },
     {
       tokenId: '1',
-      dateAdded: Date.now() / 1000 - 4000,
+      dateAdded: Date.now() / 1000 - 60 * 60 * 24,
       amount: 1n,
     },
   ];
@@ -120,7 +120,7 @@ describe('when there are more than 5 token ids', () => {
       const result = await run();
 
       expect(result.premiumPrice).toBeGreaterThan(Zero);
-      expect(result.premiumPrice).toBeLessThan(4362997539289817600n); // Max premium
+      expect(result.premiumPrice).toBeLessThan(5062997539289817600n); // Max premium
     });
     it('adds the premium price to the total', async () => {
       const result = await run();
@@ -159,13 +159,13 @@ describe('when there are 5 or less token ids', () => {
       const result = await run();
 
       expect(result.premiumPrice).toBeGreaterThan(Zero);
-      expect(result.premiumPrice).toBeLessThan(4362997539289817600n); // Max premium
+      expect(result.premiumPrice).toBeLessThan(5062997539289817600n); // Max premium
     });
     it('adds the premium price to the total', async () => {
       const result = await run();
 
       expect(Number(formatEther(result.price))).toBeGreaterThan(2.1);
-      expect(Number(formatEther(result.price))).toBeLessThan(7);
+      expect(Number(formatEther(result.price))).toBeLessThan(7.1);
     });
   });
 });

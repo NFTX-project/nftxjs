@@ -5,7 +5,7 @@ import fetchVaultHoldings from '../fetchVaultHoldings';
 import config from '@nftx/config';
 import { addressEqual, fetchMerkleReference, isMerkleVault } from '@nftx/utils';
 import type { Address, MarketplacePrice, Provider, Vault } from '@nftx/types';
-import fetchVTokenToEth from './fetchVTokenToEth';
+import fetchVTokenToEth from '../fetchVTokenToEth';
 import { priceVaultBuy, priceVaultSell, priceVaultSwap } from '../../prices';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
@@ -117,7 +117,7 @@ const fetchVaults = async ({
             };
           const tokenIds = new Array(i + 1)
             .fill(null)
-            .map((_, i) => `${i}` as `${number}`);
+            .map((_, i) => `999${i}` as `${number}`);
 
           try {
             buyPrice = await priceVaultBuy({

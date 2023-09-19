@@ -50,7 +50,7 @@ const fetchPoolsSet = async ({
       pool,
       vaults,
     });
-    return transformPool(pool, vault);
+    return transformPool(pool, vault, pool.openPositionCount);
   });
 
   let nextId: Address | undefined;

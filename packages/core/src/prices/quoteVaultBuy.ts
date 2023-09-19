@@ -15,7 +15,7 @@ import {
   getUniqueTokenIds,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
-import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
+import fetchVTokenToEth from '../vaults/fetchVTokenToEth';
 import config from '@nftx/config';
 import {
   calculateFeePricePerItem,
@@ -59,7 +59,7 @@ const transformItem = async ({
   );
 
   const holding = getHoldingByTokenId(holdings, tokenId);
-  const premiumPrice = await fetchPremiumPrice({
+  const [premiumLimit, premiumPrice] = await fetchPremiumPrice({
     holding,
     provider,
     tokenId,
@@ -74,6 +74,7 @@ const transformItem = async ({
     tokenId,
     amount,
     premiumPrice,
+    premiumLimit,
     feePrice: feePricePerItem * BigInt(amount),
     vTokenPrice: vTokenPricePerItem * BigInt(amount),
   };
@@ -144,7 +145,7 @@ export const makeQuoteVaultBuy =
       })
     );
 
-    const premiumPrice = calculateTotalPremiumPrice(items);
+    const [premiumLimit, premiumPrice] = calculateTotalPremiumPrice(items);
     const feePrice = calculateTotalFeePrice(
       vault.fees.redeemFee,
       vTokenToEth,
@@ -168,6 +169,7 @@ export const makeQuoteVaultBuy =
         amountsIn: [],
         tokenIdsOut,
         amountsOut,
+        premiumLimit: premiumLimit.toString(),
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
         standard: vault.is1155 ? 'ERC1155' : 'ERC721',

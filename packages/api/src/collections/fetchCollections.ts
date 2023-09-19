@@ -2,19 +2,22 @@ import config from '@nftx/config';
 import type { Address, Collection } from '@nftx/types';
 import { queryApi } from '../utils';
 
-/** Returns a list of all collections held by a user */
-const fetchUserCollections = ({
-  network = config.network,
+const fetchCollections = ({
   userAddress,
+  mintable,
+  network = config.network,
 }: {
   network?: number;
   userAddress: Address;
+  mintable?: boolean;
 }) => {
-  const url = `/${network}/collections`;
   return queryApi<Collection[]>({
-    url,
-    query: { userAddress },
+    url: `/${network}/collections`,
+    query: {
+      userAddress,
+      mintable,
+    },
   });
 };
 
-export default fetchUserCollections;
+export default fetchCollections;

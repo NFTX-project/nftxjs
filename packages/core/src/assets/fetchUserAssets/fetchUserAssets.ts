@@ -40,7 +40,6 @@ const makeFetchUserAssets = ({
     cursor?: string;
   }> {
     const vaults = givenVaults ?? (await fetchVaults({ provider, network }));
-    const allAssetAddresses = [...new Set(vaults.map((v) => v.asset.id))];
 
     if (vaultIds) {
       assetAddresses = vaultIds
@@ -56,7 +55,7 @@ const makeFetchUserAssets = ({
       return { assets: [] };
     }
 
-    const { assets: allAssets, cursor: newCursor } =
+    const { assets: assets, cursor: newCursor } =
       await fetchAssetsFromReservoir({
         assetAddresses,
         cursor,
@@ -65,11 +64,6 @@ const makeFetchUserAssets = ({
         provider,
         vaults,
       });
-    const assets = allAssets.filter((asset) => {
-      return allAssetAddresses.includes(
-        asset.assetAddress.toLowerCase() as Address
-      );
-    });
 
     return { assets, cursor: newCursor };
   }

@@ -5,11 +5,16 @@ import type {
   InventoryPosition,
   Provider,
   Vault,
+  VaultFeeReceipt,
 } from '@nftx/types';
 import { fetchVaults } from '../../vaults';
 import { fetchInventoryPositions } from '../../positions';
 import filterVaults from './filterVaults';
 import transformPool from './transformPool';
+import fetchFeeReceipts from '../../vaults/fetchFeeReceipts';
+import { getChainConstant, getContract } from '@nftx/utils';
+import { INVENTORY_STAKING } from '@nftx/constants';
+import { InventoryStaking } from '@nftx/abi';
 
 const fetchInventoryPools = async ({
   network = config.network,
@@ -17,6 +22,7 @@ const fetchInventoryPools = async ({
   vaultIds,
   provider,
   vaults: givenVaults,
+  feeReceipts: givenFeeReceipts,
   positions: givenPositions,
 }: {
   network?: number;
@@ -24,6 +30,7 @@ const fetchInventoryPools = async ({
   vaultIds?: string[];
   provider: Provider;
   vaults?: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
+  feeReceipts?: VaultFeeReceipt[];
   positions?: InventoryPosition[];
 }): Promise<InventoryPool[]> => {
   const allVaults = givenVaults ?? (await fetchVaults({ network, provider }));
@@ -34,6 +41,13 @@ const fetchInventoryPools = async ({
     vaultIds,
   });
 
+  const feeReceipts =
+    givenFeeReceipts ??
+    (await fetchFeeReceipts({
+      network,
+      vaultAddresses: vaults.map((v) => v.id),
+    }));
+
   const positions =
     givenPositions ??
     (await fetchInventoryPositions({
@@ -43,8 +57,20 @@ const fetchInventoryPools = async ({
       vaults: allVaults,
     }));
 
+  const inventoryContract = getContract({
+    provider,
+    address: getChainConstant(INVENTORY_STAKING, network),
+    abi: InventoryStaking,
+  });
+
+  const timelock = Number(await inventoryContract.read.timelock({}));
+
   return vaults.map((vault) => {
-    return transformPool({ positions, vault });
+    const receipts = feeReceipts.filter(
+      (receipt) => receipt.vaultId === vault.vaultId
+    );
+
+    return transformPool({ positions, vault, receipts, timelock });
   });
 };
 

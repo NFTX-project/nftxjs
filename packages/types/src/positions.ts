@@ -27,12 +27,10 @@ export type LiquidityPosition = {
   eth: bigint;
   /** The ETH value of the position (i.e. ETH side + eth-value of vToken) */
   value: bigint;
-  totalDeposits: number;
-  totalWithdrawals: number;
-  /** The lifetime amount deposited into this position */
-  lifetimeDeposits: bigint;
-  /** The lifetime amount withdrawn from this position */
-  lifetimeWithdrawals: bigint;
+  /** The ETH value of the position when created */
+  initialValue: bigint;
+  /** The % of the pool provided by this position */
+  poolShare: bigint;
   /** The lifetime amount of rewards earned by this position in ETH */
   lifetimeRewards: bigint;
   /** The amount claimable on this position in ETH */
@@ -53,6 +51,10 @@ export type InventoryPosition = {
   lifetimeRewards: bigint;
   /** The amount claimable on this position in ETH */
   claimableRewards: bigint;
+  /** The % of the pool provided by this position */
+  poolShare: bigint;
+  /** The timestamp at which the position is no longer timelocked */
+  timelockedUntil: number;
 };
 
 /** A fee generation event */

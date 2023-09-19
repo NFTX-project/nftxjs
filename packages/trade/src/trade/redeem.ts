@@ -6,11 +6,11 @@ import { Zero } from '@nftx/constants';
 const redeem = async ({
   provider,
   signer,
-  quote: { premiumPrice, methodParameters: params },
+  quote: { methodParameters: params },
 }: {
   provider: Provider;
   signer: Signer;
-  quote: Pick<MarketplaceQuote, 'methodParameters' | 'premiumPrice'>;
+  quote: Pick<MarketplaceQuote, 'methodParameters'>;
 }) => {
   const contract = getContract({
     provider,
@@ -26,7 +26,7 @@ const redeem = async ({
   const wethAmount = Zero;
   const forceFees = true;
   const value = BigInt(params.value);
-  const vTokenPremiumLimit = premiumPrice;
+  const vTokenPremiumLimit = BigInt(params.premiumLimit);
 
   console.debug({
     method: 'redeem',

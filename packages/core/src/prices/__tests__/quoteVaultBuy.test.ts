@@ -21,7 +21,7 @@ beforeEach(() => {
     methodParameters: { calldata: '0x9' },
   }));
   fetchVTokenToEth = jest.fn().mockResolvedValue(WeiPerEther / 2n);
-  fetchPremiumPrice = jest.fn().mockResolvedValue(Zero);
+  fetchPremiumPrice = jest.fn().mockResolvedValue([Zero, Zero]);
 
   tokenIds = ['0', '1'];
   userAddress = '0x0';
@@ -97,7 +97,7 @@ it('returns a list of individual item costs', async () => {
 
 describe('when items are in the premium window', () => {
   beforeEach(() => {
-    fetchPremiumPrice.mockResolvedValueOnce(WeiPerEther);
+    fetchPremiumPrice.mockResolvedValueOnce([WeiPerEther, WeiPerEther]);
   });
 
   it('returns a premium amount', async () => {

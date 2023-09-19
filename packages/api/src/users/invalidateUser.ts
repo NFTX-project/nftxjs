@@ -1,6 +1,6 @@
 import config from '@nftx/config';
 import type { Address } from '@nftx/types';
-import { bustCache, queryApi } from '../utils';
+import { queryApi } from '../utils';
 
 /**
  * Flags a user as stale and waits for the NFTX api to refetch the user's positions and balances
@@ -16,7 +16,6 @@ const invalidateUser = async ({
     url: `/${network}/users/${userAddress}`,
     method: 'POST',
   });
-  bustCache();
 };
 
 export default invalidateUser;

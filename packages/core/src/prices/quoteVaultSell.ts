@@ -1,9 +1,4 @@
-import {
-  MARKETPLACE_ZAP,
-  WETH_TOKEN,
-  WeiPerEther,
-  Zero,
-} from '@nftx/constants';
+import { MARKETPLACE_ZAP, WeiPerEther, Zero } from '@nftx/constants';
 import { fetchTokenSellPrice } from '@nftx/trade';
 import type {
   Address,
@@ -13,7 +8,7 @@ import type {
   Vault,
 } from '@nftx/types';
 import { parseEther } from 'viem';
-import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
+import fetchVTokenToEth from '../vaults/fetchVTokenToEth';
 import {
   getChainConstant,
   getTokenIdAmounts,
@@ -92,6 +87,7 @@ export const makeQuoteVaultSell =
         vTokenPrice: vTokenPricePerItem * BigInt(amount),
         feePrice: feePricePerItem * BigInt(amount),
         premiumPrice: Zero,
+        premiumLimit: Zero,
       };
 
       return item;
@@ -124,6 +120,7 @@ export const makeQuoteVaultSell =
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
         standard,
+        premiumLimit: '',
       },
     };
 

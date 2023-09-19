@@ -28,15 +28,21 @@ const quoteVaultRedeem = async ({
   const tokenIdsOut = getUniqueTokenIds(tokenIds);
   const amountsOut = getTokenIdAmounts(tokenIds);
 
-  const { feePrice, items, premiumPrice, price, vTokenPrice } =
-    await quoteVaultBuy({
-      holdings,
-      provider,
-      tokenIds,
-      userAddress,
-      vault,
-      network,
-    });
+  const {
+    feePrice,
+    items,
+    premiumPrice,
+    methodParameters: { premiumLimit },
+    price,
+    vTokenPrice,
+  } = await quoteVaultBuy({
+    holdings,
+    provider,
+    tokenIds,
+    userAddress,
+    vault,
+    network,
+  });
 
   const value = (feePrice + premiumPrice).toString();
 
@@ -61,6 +67,7 @@ const quoteVaultRedeem = async ({
       tokenIdsOut,
       amountsOut,
       value,
+      premiumLimit,
     },
   };
 

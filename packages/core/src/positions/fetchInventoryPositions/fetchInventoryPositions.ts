@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { Address, InventoryPosition, Provider, Vault } from '@nftx/types';
 import { fetchVaults } from '../../vaults';
 import fetchPositionsSet from './fetchPositionsSet';
+import { WeiPerEther, Zero } from '@nftx/constants';
 
 const getVaultAddressesForVaultIds = (
   vaults: Pick<Vault, 'vaultId' | 'id'>[],
@@ -13,6 +14,30 @@ const getVaultAddressesForVaultIds = (
       .map((vault) => vault.id);
   }
 };
+
+function updatePoolShares(positions: InventoryPosition[]) {
+  // First we need to get the total vToken for each pool
+  const poolVTokens: Record<string, bigint> = {};
+  positions.forEach((position) => {
+    const { vaultId: id, vToken } = position;
+    const current = poolVTokens[id] ?? Zero;
+    const updated = current + vToken;
+
+    poolVTokens[position.vaultId] = updated;
+  });
+  // Then we need to work out the share of each position
+  positions.forEach((position) => {
+    const { vToken, vaultId: id } = position;
+    const total = poolVTokens[id];
+
+    if (!total) {
+      return;
+    }
+    const share = (vToken * WeiPerEther) / total;
+
+    position.poolShare = share;
+  });
+}
 
 const fetchInventoryPositions = async ({
   network = config.network,
@@ -49,6 +74,9 @@ const fetchInventoryPositions = async ({
 
     positions.push(...morePositions);
   } while (lastId);
+
+  // We can't calculate pool share until we've got all data
+  updatePoolShares(positions);
 
   return positions;
 };

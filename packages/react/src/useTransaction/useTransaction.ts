@@ -127,11 +127,11 @@ const useTransaction = <F extends Fn>(
 
       const receipt = await transaction.wait();
 
-      dispatch({ status: 'Success', receipt });
       const maybePromise = opts?.onSuccess?.({ transaction, receipt }, args);
       if (maybePromise && typeof maybePromise.then === 'function') {
         await maybePromise;
       }
+      dispatch({ status: 'Success', receipt });
       return receipt;
     } catch (e) {
       let error = e;

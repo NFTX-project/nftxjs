@@ -14,11 +14,12 @@ const queryApi = async <T>({
   const query: Record<string, any> = {
     ...givenQuery,
     ebn: 'true',
-    _c: config.internal.cacheKey || undefined,
     source: config.internal.source,
   };
   // Add the api key header
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
   if (config.keys.NFTX_API) {
     headers['Authorization'] = config.keys.NFTX_API;
   } else {

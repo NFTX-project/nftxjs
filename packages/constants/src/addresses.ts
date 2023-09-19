@@ -73,6 +73,10 @@ export const ENS_REGISTRAR = {
   [Network.Goerli]: a('0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'),
 };
 
-export const VAULT_FACTORY = {
+export const AMM_FACTORY = {
   [Network.Goerli]: a('0xf25081B098c5929A26F562aa2502795fE89BC73f'),
+};
+
+export const VAULT_FACTORY = {
+  [Network.Goerli]: a('0x1d552A0e6c2f680872C4a88b1e7def05F1858dF0'),
 };
