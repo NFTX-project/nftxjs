@@ -21,6 +21,8 @@ const transformPosition = (
     lifetimeRewards,
     vToken,
     vTokenValue,
+    poolShare: Zero,
+    timelockedUntil: Number(position.timeLockUntil),
   };
 };
 

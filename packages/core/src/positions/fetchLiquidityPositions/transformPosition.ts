@@ -5,10 +5,6 @@ import calculateVTokenEth from './calculateVTokenEth';
 
 type Position = PositionsResponse['positions'][0];
 
-const accumulateAmounts = (amounts: string[]): bigint => {
-  return amounts.reduce((total, amount) => total + BigInt(amount), Zero);
-};
-
 // If a tick is less than 0 that means it's a fractional amount
 const normalizeTickPrice = (tickPrice: bigint) => {
   if (tickPrice >= Zero) {
@@ -31,16 +27,6 @@ const transformPosition = ({
   const tickUpper = BigInt(position.tickUpper?.index ?? '0');
   const inRange = tick >= tickLower && tick <= tickUpper;
   const liquidity = BigInt(position.liquidity);
-
-  const lifetimeDeposits = accumulateAmounts(
-    position.cumulativeDepositTokenAmounts
-  );
-  const lifetimeWithdrawals = accumulateAmounts(
-    position.cumulativeWithdrawTokenAmounts
-  );
-
-  const totalDeposits = position.cumulativeDepositTokenAmounts.length;
-  const totalWithdrawals = position.cumulativeWithdrawTokenAmounts.length;
 
   const { eth, vToken, tickLowerPrice, tickUpperPrice } = calculateVTokenEth({
     inputTokens: position.pool.inputTokens.map((t) => t.id as Address),
@@ -76,12 +62,8 @@ const transformPosition = ({
     userAddress: position.account.id as Address,
     inRange,
     eth,
-    lifetimeDeposits,
-    lifetimeWithdrawals,
     tickLowerValue,
     tickUpperValue,
-    totalDeposits,
-    totalWithdrawals,
     value,
     vToken,
     vTokenValue,
@@ -89,6 +71,8 @@ const transformPosition = ({
     vaultId: vault.vaultId,
     claimableRewards,
     lifetimeRewards,
+    poolShare: Zero,
+    initialValue: value,
   };
 };
 

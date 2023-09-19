@@ -12,10 +12,10 @@ import config from '@nftx/config';
 const buy = ({
   network = config.network,
   provider,
-  quote: { premiumPrice, methodParameters: params },
+  quote: { methodParameters: params },
   signer,
 }: {
-  quote: Pick<MarketplaceQuote, 'methodParameters' | 'premiumPrice'>;
+  quote: Pick<MarketplaceQuote, 'methodParameters'>;
   network?: number;
   provider: Provider;
   signer: Signer;
@@ -33,7 +33,7 @@ const buy = ({
   ).map(BigInt);
   const calldata = params.executeCalldata;
   const to = params.to;
-  const vTokenPremiumLimit = premiumPrice;
+  const vTokenPremiumLimit = BigInt(params.premiumLimit);
   const deductRoyalty = false;
 
   console.debug({

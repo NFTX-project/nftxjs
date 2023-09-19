@@ -20,12 +20,3 @@ export type Asset = {
   animationUrl?: string;
   backgroundColor?: string;
 };
-
-/** Metadata bouat an ERC collection */
-export type Collection = {
-  address: Address;
-  image: string;
-  name: string;
-  numDistinctTokensOwned: number;
-  symbol: string;
-};

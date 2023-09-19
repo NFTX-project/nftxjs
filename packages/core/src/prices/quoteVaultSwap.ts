@@ -7,7 +7,7 @@ import type {
   Vault,
   VaultHolding,
 } from '@nftx/types';
-import fetchVTokenToEth from '../vaults/fetchVaults/fetchVTokenToEth';
+import fetchVTokenToEth from '../vaults/fetchVTokenToEth';
 import {
   getChainConstant,
   getTokenIdAmounts,
@@ -75,7 +75,7 @@ export const makeQuoteVaultSwap =
       tokenIdsOut.map(async (tokenId, i) => {
         const amount = amountsOut[i];
         const holding = getHoldingByTokenId(holdings, tokenId);
-        const premiumPrice = await fetchPremiumPrice({
+        const [premiumLimit, premiumPrice] = await fetchPremiumPrice({
           holding,
           provider,
           tokenId,
@@ -92,6 +92,7 @@ export const makeQuoteVaultSwap =
           vTokenPrice: Zero,
           feePrice: feePricePerItem,
           premiumPrice,
+          premiumLimit,
         };
 
         return item;
@@ -100,6 +101,10 @@ export const makeQuoteVaultSwap =
 
     const premiumPrice = items.reduce(
       (total, item) => total + item.premiumPrice,
+      Zero
+    );
+    const premiumLimit = items.reduce(
+      (total, item) => total + item.premiumLimit,
       Zero
     );
 
@@ -130,6 +135,7 @@ export const makeQuoteVaultSwap =
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
         standard,
+        premiumLimit: premiumLimit.toString(),
       },
     };
 

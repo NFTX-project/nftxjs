@@ -12,13 +12,13 @@ import {
 const swap = ({
   network = config.network,
   provider,
-  quote: { methodParameters: params, premiumPrice },
+  quote: { methodParameters: params },
   signer,
 }: {
   network?: number;
   provider: Provider;
   signer: Signer;
-  quote: Pick<MarketplaceQuote, 'methodParameters' | 'premiumPrice'>;
+  quote: Pick<MarketplaceQuote, 'methodParameters'>;
 }) => {
   const contract = getContract({
     address: getChainConstant(MARKETPLACE_ZAP, network),
@@ -33,7 +33,7 @@ const swap = ({
   const idsOut = getExactTokenIds(
     zipTokenIds(params.tokenIdsOut, params.amountsOut)
   ).map(BigInt);
-  const vTokenPremiumLimit = premiumPrice;
+  const vTokenPremiumLimit = BigInt(params.premiumLimit);
   const to = params.to;
   const value = BigInt(params.value);
 

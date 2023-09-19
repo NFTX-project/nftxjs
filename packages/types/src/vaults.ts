@@ -1,3 +1,4 @@
+import type { CreatePoolFeatures, CreatePoolFees } from './pools';
 import type { MarketplacePrice } from './price';
 import type { ActivityEventType } from './subgraph/nftx-v3';
 import type { Token } from './tokens';
@@ -135,4 +136,52 @@ export type VaultFeeReceipt = {
   transfers: VaultFeeTransfer[];
   amount: bigint;
   date: number;
+};
+
+export type CreateVaultArgs = {
+  name: string;
+  symbol: string;
+  assetAddress: Address;
+  standard: 'ERC1155' | 'ERC721';
+  fees: CreatePoolFees;
+  features: CreatePoolFeatures;
+  eligibilityModule: 'list' | 'range' | false;
+  eligibilityRange: [bigint, bigint];
+  eligibilityList: bigint[];
+  tokenIds: Array<[TokenId, number]>;
+  currentNftPriceInEth: bigint;
+  deadline: bigint;
+  fee: number;
+  lowerNftPriceInEth: bigint;
+  upperNftPriceInEth: bigint;
+  vTokenMin: bigint;
+  wethMin: bigint;
+};
+
+export type CreateVaultParams = {
+  vaultInfo: {
+    assetAddress: Address;
+    is1155: boolean;
+    allowAllItems: boolean;
+    name: string;
+    symbol: string;
+  };
+  eligibilityStorage: {
+    moduleIndex: bigint;
+    initData: Address;
+  };
+  nftIds: bigint[];
+  nftAmounts: bigint[];
+  vaultFeaturesFlag: bigint;
+  vaultFees: { mintFee: bigint; redeemFee: bigint; swapFee: bigint };
+  liquidityParams: {
+    lowerNFTPriceInETH: bigint;
+    upperNFTPriceInETH: bigint;
+    fee: number;
+    currentNFTPriceInETH: bigint;
+    vTokenMin: bigint;
+    wethMin: bigint;
+    deadline: bigint;
+  };
+  value: bigint;
 };

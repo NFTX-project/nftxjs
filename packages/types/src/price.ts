@@ -67,6 +67,7 @@ type MarketplaceParameters = {
   amountsOut: number[];
   executeCalldata: Address;
   value: string;
+  premiumLimit: string;
   standard: 'ERC721' | 'ERC1155' | 'ERC20';
 };
 
@@ -79,6 +80,7 @@ export type MarketplaceQuote = MarketplacePrice & {
     vTokenPrice: bigint;
     feePrice: bigint;
     premiumPrice: bigint;
+    premiumLimit: bigint;
   }>;
   methodParameters: MarketplaceParameters;
   approveContracts: ApproveContract[];
