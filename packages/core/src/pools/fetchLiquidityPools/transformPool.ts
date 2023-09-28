@@ -28,7 +28,8 @@ const transformFees = (fees: Pool['fees']): LiquidityPool['fees'] => {
 
 const transformPool = (
   pool: Pool,
-  vault: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>
+  vault: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>,
+  totalPositions: number
 ): LiquidityPool => {
   const fees = transformFees(pool.fees);
   const tokens = pool.inputTokens.map(({ id, symbol, name }, i) => ({
@@ -100,6 +101,7 @@ const transformPool = (
     totalValueLocked,
     weeklyRevenue,
     weeklyVolume,
+    totalPositions,
   };
 };
 

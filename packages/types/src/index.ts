@@ -7,3 +7,4 @@ export * from './balances';
 export * from './vaults';
 export * from './web3';
 export * from './subgraph';
+export * from './collections';

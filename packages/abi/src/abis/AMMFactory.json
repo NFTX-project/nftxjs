@@ -1,4 +1,12 @@
 [
+  "event AdminChanged(address previousAdmin, address newAdmin)",
+  "event BeaconUpgraded(address indexed beacon)",
+  "event Upgraded(address indexed implementation)",
+  "function admin() returns (address admin_)",
+  "function changeAdmin(address newAdmin)",
+  "function implementation() returns (address implementation_)",
+  "function upgradeTo(address newImplementation)",
+  "function upgradeToAndCall(address newImplementation, bytes data) payable",
   "error CallerIsNotVault()",
   "error ChildImplementationIsNotAContract()",
   "error DepositorPremiumShareExceedsLimit()",
@@ -29,11 +37,9 @@
   "event UpdateFactoryFees(uint256 mintFee, uint256 redeemFee, uint256 swapFee)",
   "event UpdateVaultFees(uint256 vaultId, uint256 mintFee, uint256 redeemFee, uint256 swapFee)",
   "event UpdatedZapContract(address zap, bool excluded)",
-  "event Upgraded(address indexed beaconImplementation)",
   "function __NFTXVaultFactory_init(address vaultImpl, uint32 twapInterval_, uint256 premiumDuration_, uint256 premiumMax_, uint256 depositorPremiumShare_)",
   "function __UpgradeableBeacon__init(address beaconImplementation_)",
   "function allVaults() view returns (address[])",
-  "function computeVaultAddress(address assetAddress, string name, string symbol) view returns (address)",
   "function createVault(string name, string symbol, address assetAddress, bool is1155, bool allowAllItems) returns (uint256 vaultId)",
   "function depositorPremiumShare() view returns (uint256)",
   "function disableVaultFees(uint256 vaultId)",
@@ -44,9 +50,8 @@
   "function factorySwapFee() view returns (uint64)",
   "function feeDistributor() view returns (address)",
   "function getTwapX96(address pool) view returns (uint256 priceX96)",
-  "function getVTokenPremium1155(uint256 vaultId, uint256 tokenId, uint256 amount) view returns (uint256 totalPremium, uint256[] premiums, address[] depositors)",
+  "function getVTokenPremium1155(uint256 vaultId, uint256 tokenId, uint256 amount) view returns (uint256 netPremium, uint256[] premiums, address[] depositors)",
   "function getVTokenPremium721(uint256 vaultId, uint256 tokenId) view returns (uint256 premium, address depositor)",
-  "function implementation() view returns (address)",
   "function isGuardian(address) view returns (bool)",
   "function isLocked(uint256 lockId) view returns (bool)",
   "function isPaused(uint256) view returns (bool)",
@@ -73,5 +78,6 @@
   "function upgradeBeaconTo(address newBeaconImplementation)",
   "function vault(uint256 vaultId) view returns (address)",
   "function vaultFees(uint256 vaultId) view returns (uint256 mintFee, uint256 redeemFee, uint256 swapFee)",
-  "function vaultsForAsset(address assetAddress) view returns (address[])"
+  "function vaultsForAsset(address assetAddress) view returns (address[])",
+  "constructor(address _logic, address admin_, bytes _data) payable"
 ]

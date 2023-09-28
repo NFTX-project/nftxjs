@@ -48,6 +48,8 @@ export type LiquidityPool = {
   weeklyVolume: bigint;
   dailyRevenue: bigint;
   weeklyRevenue: bigint;
+  /** The total number of positions */
+  totalPositions: number;
 };
 
 export type InventoryPool = {
@@ -72,6 +74,10 @@ export type InventoryPool = {
     '1m': bigint;
     all: bigint;
   };
+  /** The length of time a position is locked for */
+  timelock: number;
+  /** The total number of positions */
+  totalPositions: number;
 };
 
 export type CreatePoolFees = [mint: number, redeem: number, swap: number];

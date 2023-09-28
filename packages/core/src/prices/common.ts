@@ -1,10 +1,5 @@
-import { VaultFactory } from '@nftx/abi';
-import {
-  MARKETPLACE_ZAP,
-  VAULT_FACTORY,
-  WeiPerEther,
-  Zero,
-} from '@nftx/constants';
+import { AMMFactory } from '@nftx/abi';
+import { AMM_FACTORY, WeiPerEther, Zero } from '@nftx/constants';
 import { getChainConstant, getExactTokenIds, isCryptoPunk } from '@nftx/utils';
 import type {
   Address,
@@ -68,9 +63,9 @@ const fetchVTokenPremium = async ({
   standard: 'ERC721' | 'ERC1155';
 }) => {
   const contract = getContract({
-    address: getChainConstant(VAULT_FACTORY, network),
+    address: getChainConstant(AMM_FACTORY, network),
     provider,
-    abi: VaultFactory,
+    abi: AMMFactory,
   });
 
   if (standard === 'ERC1155') {

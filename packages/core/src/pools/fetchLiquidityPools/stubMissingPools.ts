@@ -84,6 +84,7 @@ const createStub = ({
     totalValueLocked: Zero,
     weeklyRevenue: Zero,
     weeklyVolume: Zero,
+    totalPositions: 0,
   };
 };
 

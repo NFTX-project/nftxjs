@@ -1,4 +1,9 @@
-import type { InventoryPool, InventoryPosition, Vault } from '@nftx/types';
+import type {
+  InventoryPool,
+  InventoryPosition,
+  Vault,
+  VaultFeeReceipt,
+} from '@nftx/types';
 import { Zero } from '@nftx/constants';
 import calculateAprs from './calculateAprs';
 import calculatePeriodFees from './calculatePeriodFees';
@@ -29,9 +34,13 @@ const calculatePoolValue = (
 const transformPool = ({
   vault,
   positions,
+  receipts,
+  timelock,
 }: {
   vault: Pick<Vault, 'id' | 'vaultId'>;
   positions: InventoryPosition[];
+  receipts: VaultFeeReceipt[];
+  timelock: number;
 }): InventoryPool => {
   const [vToken, vTokenValue, xNFTCount] = calculatePoolValue(
     positions,
@@ -40,12 +49,14 @@ const transformPool = ({
 
   return {
     apr: calculateAprs(),
-    periodFees: calculatePeriodFees(),
+    periodFees: calculatePeriodFees(receipts),
     vaultAddress: vault.id,
     vaultId: vault.vaultId,
     vToken,
     vTokenValue,
     xNFTCount,
+    timelock,
+    totalPositions: positions.length,
   };
 };
 

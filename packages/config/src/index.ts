@@ -62,7 +62,6 @@ export interface Config {
     source: 'api' | 'live';
     requiredBlockNumber: number;
     apiBlockNumber: number;
-    cacheKey: string;
   };
 }
 
@@ -126,7 +125,6 @@ const defaultConfig: Config = {
     source: 'api',
     requiredBlockNumber: 0,
     apiBlockNumber: 0,
-    cacheKey: '',
   },
 };
 

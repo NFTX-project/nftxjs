@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import { bustCache, queryApi } from '../utils';
+import { queryApi } from '../utils';
 
 /**
  * Flags a vault as stale and waits for the NFTX api to refetch the vault data
@@ -15,7 +15,6 @@ const invalidateVault = async ({
     url: `/${network}/vaults/${vaultId}`,
     method: 'POST',
   });
-  bustCache();
 };
 
 export default invalidateVault;

@@ -117,7 +117,7 @@ const fetchVaults = async ({
             };
           const tokenIds = new Array(i + 1)
             .fill(null)
-            .map((_, i) => `${i}` as `${number}`);
+            .map((_, i) => `999${i}` as `${number}`);
 
           try {
             buyPrice = await priceVaultBuy({
