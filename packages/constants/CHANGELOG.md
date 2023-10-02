@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.5](https://github.com/NFTX-project/nftxjs/compare/v0.9.4...v0.9.5) (2023-10-02)
+
+
+### Bug Fixes
+
+* update NFTX Subgraph endpoint ([#11](https://github.com/NFTX-project/nftxjs/issues/11)) ([b84029c](https://github.com/NFTX-project/nftxjs/commit/b84029c1039457d2fec986524c6b4ff7c5c03ef1))
+
+
+
+
+
 # [0.9.0](https://github.com/NFTX-project/nftxjs/compare/v0.8.1...v0.9.0) (2023-05-26)
 
 **Note:** Version bump only for package @nftx/constants
