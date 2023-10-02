@@ -11,7 +11,7 @@ export type LiquidityPool = {
   id: string;
   vaultId: string;
   vaultAddress: Address;
-  /** The fee tier for this pool, 0.3, 0.5, 1 */
+  /** The fee tier for this pool */
   feeTier: FeeTier;
   /** A list of all of the applicable fees for this pool */
   fees: {

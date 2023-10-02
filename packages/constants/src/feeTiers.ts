@@ -1,8 +1,7 @@
 /** 0.3% | 1% | 3% */
-
 export type FeeTier = 3_000 | 10_000 | 30_000;
 export type FeePercentage = 0 | 0.003 | 0.01 | 0.03;
-export type FeeTickSpacing = 10 | 60 | 200;
+export type FeeTickSpacing = 60 | 200 | 600;
 
 export const VAULT_FEE_TIER: FeeTier = 3_000;
 
@@ -38,11 +37,11 @@ export const feeTierToPercentage = (feeTier: number): FeePercentage => {
 export const feeTierToTickSpacing = (feeTier: number): FeeTickSpacing => {
   switch (feeTier) {
     case 3000:
-      return 10;
-    case 10000:
       return 60;
-    case 30000:
+    case 10000:
       return 200;
+    case 30000:
+      return 600;
     default:
       throw new Error(`Invalid fee tier: "${feeTier}"`);
   }
