@@ -1348,7 +1348,7 @@ export enum Erc20Transfer_OrderBy {
 export type Earning = {
   __typename?: 'Earning';
   amount?: Maybe<Scalars['BigDecimal']['output']>;
-  feeReceipt: WethFeeReceipt;
+  feeReceipt: VaultInventoryFee;
   id: Scalars['Bytes']['output'];
   positionFee: InventoryPositionFee;
   vault: Vault;
@@ -1367,7 +1367,7 @@ export type Earning_Filter = {
   amount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   and?: InputMaybe<Array<InputMaybe<Earning_Filter>>>;
   feeReceipt?: InputMaybe<Scalars['String']['input']>;
-  feeReceipt_?: InputMaybe<WethFeeReceipt_Filter>;
+  feeReceipt_?: InputMaybe<VaultInventoryFee_Filter>;
   feeReceipt_contains?: InputMaybe<Scalars['String']['input']>;
   feeReceipt_contains_nocase?: InputMaybe<Scalars['String']['input']>;
   feeReceipt_ends_with?: InputMaybe<Scalars['String']['input']>;
@@ -1446,8 +1446,8 @@ export enum Earning_OrderBy {
   Amount = 'amount',
   FeeReceipt = 'feeReceipt',
   FeeReceiptAmount = 'feeReceipt__amount',
-  FeeReceiptDate = 'feeReceipt__date',
   FeeReceiptId = 'feeReceipt__id',
+  FeeReceiptTimestamp = 'feeReceipt__timestamp',
   Id = 'id',
   PositionFee = 'positionFee',
   PositionFeeAmount = 'positionFee__amount',
@@ -4288,6 +4288,10 @@ export type Query = {
   vaultFeeUpdate?: Maybe<VaultFeeUpdate>;
   vaultFeeUpdates: Array<VaultFeeUpdate>;
   vaultFees: Array<VaultFee>;
+  vaultInventoryFee?: Maybe<VaultInventoryFee>;
+  vaultInventoryFees: Array<VaultInventoryFee>;
+  vaultLiquidityFee?: Maybe<VaultLiquidityFee>;
+  vaultLiquidityFees: Array<VaultLiquidityFee>;
   vaultNameChange?: Maybe<VaultNameChange>;
   vaultNameChanges: Array<VaultNameChange>;
   vaultPublished?: Maybe<VaultPublished>;
@@ -4297,8 +4301,6 @@ export type Query = {
   vaultToAddressLookup?: Maybe<VaultToAddressLookup>;
   vaultToAddressLookups: Array<VaultToAddressLookup>;
   vaults: Array<Vault>;
-  wethFeeReceipt?: Maybe<WethFeeReceipt>;
-  wethFeeReceipts: Array<WethFeeReceipt>;
   zapBuy?: Maybe<ZapBuy>;
   zapBuys: Array<ZapBuy>;
   zapSell?: Maybe<ZapSell>;
@@ -5177,6 +5179,42 @@ export type QueryVaultFeesArgs = {
 };
 
 
+export type QueryVaultInventoryFeeArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryVaultInventoryFeesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<VaultInventoryFee_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<VaultInventoryFee_Filter>;
+};
+
+
+export type QueryVaultLiquidityFeeArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryVaultLiquidityFeesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<VaultLiquidityFee_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<VaultLiquidityFee_Filter>;
+};
+
+
 export type QueryVaultNameChangeArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
@@ -5257,24 +5295,6 @@ export type QueryVaultsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Vault_Filter>;
-};
-
-
-export type QueryWethFeeReceiptArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QueryWethFeeReceiptsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<WethFeeReceipt_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<WethFeeReceipt_Filter>;
 };
 
 
@@ -5867,6 +5887,10 @@ export type Subscription = {
   vaultFeeUpdate?: Maybe<VaultFeeUpdate>;
   vaultFeeUpdates: Array<VaultFeeUpdate>;
   vaultFees: Array<VaultFee>;
+  vaultInventoryFee?: Maybe<VaultInventoryFee>;
+  vaultInventoryFees: Array<VaultInventoryFee>;
+  vaultLiquidityFee?: Maybe<VaultLiquidityFee>;
+  vaultLiquidityFees: Array<VaultLiquidityFee>;
   vaultNameChange?: Maybe<VaultNameChange>;
   vaultNameChanges: Array<VaultNameChange>;
   vaultPublished?: Maybe<VaultPublished>;
@@ -5876,8 +5900,6 @@ export type Subscription = {
   vaultToAddressLookup?: Maybe<VaultToAddressLookup>;
   vaultToAddressLookups: Array<VaultToAddressLookup>;
   vaults: Array<Vault>;
-  wethFeeReceipt?: Maybe<WethFeeReceipt>;
-  wethFeeReceipts: Array<WethFeeReceipt>;
   zapBuy?: Maybe<ZapBuy>;
   zapBuys: Array<ZapBuy>;
   zapSell?: Maybe<ZapSell>;
@@ -6756,6 +6778,42 @@ export type SubscriptionVaultFeesArgs = {
 };
 
 
+export type SubscriptionVaultInventoryFeeArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionVaultInventoryFeesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<VaultInventoryFee_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<VaultInventoryFee_Filter>;
+};
+
+
+export type SubscriptionVaultLiquidityFeeArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionVaultLiquidityFeesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<VaultLiquidityFee_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<VaultLiquidityFee_Filter>;
+};
+
+
 export type SubscriptionVaultNameChangeArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
@@ -6836,24 +6894,6 @@ export type SubscriptionVaultsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Vault_Filter>;
-};
-
-
-export type SubscriptionWethFeeReceiptArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionWethFeeReceiptsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<WethFeeReceipt_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<WethFeeReceipt_Filter>;
 };
 
 
@@ -7784,6 +7824,176 @@ export enum VaultFee_OrderBy {
   VaultVaultId = 'vault__vaultId'
 }
 
+export type VaultInventoryFee = {
+  __typename?: 'VaultInventoryFee';
+  amount: Scalars['BigInt']['output'];
+  id: Scalars['Bytes']['output'];
+  timestamp: Scalars['BigInt']['output'];
+  vault: Vault;
+};
+
+export type VaultInventoryFee_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  amount?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<VaultInventoryFee_Filter>>>;
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<VaultInventoryFee_Filter>>>;
+  timestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  timestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vault?: InputMaybe<Scalars['String']['input']>;
+  vault_?: InputMaybe<Vault_Filter>;
+  vault_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_gt?: InputMaybe<Scalars['String']['input']>;
+  vault_gte?: InputMaybe<Scalars['String']['input']>;
+  vault_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_lt?: InputMaybe<Scalars['String']['input']>;
+  vault_lte?: InputMaybe<Scalars['String']['input']>;
+  vault_not?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum VaultInventoryFee_OrderBy {
+  Amount = 'amount',
+  Id = 'id',
+  Timestamp = 'timestamp',
+  Vault = 'vault',
+  VaultAllocTotal = 'vault__allocTotal',
+  VaultAllowAllItems = 'vault__allowAllItems',
+  VaultCreatedAt = 'vault__createdAt',
+  VaultId = 'vault__id',
+  VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
+  VaultIs1155 = 'vault__is1155',
+  VaultIsFinalized = 'vault__isFinalized',
+  VaultShutdownDate = 'vault__shutdownDate',
+  VaultTotalFees = 'vault__totalFees',
+  VaultTotalHoldings = 'vault__totalHoldings',
+  VaultTotalMints = 'vault__totalMints',
+  VaultTotalRedeems = 'vault__totalRedeems',
+  VaultTotalSwaps = 'vault__totalSwaps',
+  VaultTreasuryAlloc = 'vault__treasuryAlloc',
+  VaultUsesFactoryFees = 'vault__usesFactoryFees',
+  VaultVaultId = 'vault__vaultId'
+}
+
+export type VaultLiquidityFee = {
+  __typename?: 'VaultLiquidityFee';
+  amount: Scalars['BigInt']['output'];
+  id: Scalars['Bytes']['output'];
+  timestamp: Scalars['BigInt']['output'];
+  vault: Vault;
+};
+
+export type VaultLiquidityFee_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  amount?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<VaultLiquidityFee_Filter>>>;
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<VaultLiquidityFee_Filter>>>;
+  timestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  timestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vault?: InputMaybe<Scalars['String']['input']>;
+  vault_?: InputMaybe<Vault_Filter>;
+  vault_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_gt?: InputMaybe<Scalars['String']['input']>;
+  vault_gte?: InputMaybe<Scalars['String']['input']>;
+  vault_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_lt?: InputMaybe<Scalars['String']['input']>;
+  vault_lte?: InputMaybe<Scalars['String']['input']>;
+  vault_not?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains?: InputMaybe<Scalars['String']['input']>;
+  vault_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  vault_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with?: InputMaybe<Scalars['String']['input']>;
+  vault_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum VaultLiquidityFee_OrderBy {
+  Amount = 'amount',
+  Id = 'id',
+  Timestamp = 'timestamp',
+  Vault = 'vault',
+  VaultAllocTotal = 'vault__allocTotal',
+  VaultAllowAllItems = 'vault__allowAllItems',
+  VaultCreatedAt = 'vault__createdAt',
+  VaultId = 'vault__id',
+  VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
+  VaultIs1155 = 'vault__is1155',
+  VaultIsFinalized = 'vault__isFinalized',
+  VaultShutdownDate = 'vault__shutdownDate',
+  VaultTotalFees = 'vault__totalFees',
+  VaultTotalHoldings = 'vault__totalHoldings',
+  VaultTotalMints = 'vault__totalMints',
+  VaultTotalRedeems = 'vault__totalRedeems',
+  VaultTotalSwaps = 'vault__totalSwaps',
+  VaultTreasuryAlloc = 'vault__treasuryAlloc',
+  VaultUsesFactoryFees = 'vault__usesFactoryFees',
+  VaultVaultId = 'vault__vaultId'
+}
+
 export type VaultNameChange = ActivityEvent & {
   __typename?: 'VaultNameChange';
   date: Scalars['BigInt']['output'];
@@ -8530,91 +8740,6 @@ export enum Vault_OrderBy {
   TreasuryAlloc = 'treasuryAlloc',
   UsesFactoryFees = 'usesFactoryFees',
   VaultId = 'vaultId'
-}
-
-export type WethFeeReceipt = {
-  __typename?: 'WethFeeReceipt';
-  amount: Scalars['BigInt']['output'];
-  date: Scalars['BigInt']['output'];
-  id: Scalars['Bytes']['output'];
-  vault: Vault;
-};
-
-export type WethFeeReceipt_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>;
-  amount?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  and?: InputMaybe<Array<InputMaybe<WethFeeReceipt_Filter>>>;
-  date?: InputMaybe<Scalars['BigInt']['input']>;
-  date_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  date_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  date_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  date_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  date_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  date_not?: InputMaybe<Scalars['BigInt']['input']>;
-  date_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  or?: InputMaybe<Array<InputMaybe<WethFeeReceipt_Filter>>>;
-  vault?: InputMaybe<Scalars['String']['input']>;
-  vault_?: InputMaybe<Vault_Filter>;
-  vault_contains?: InputMaybe<Scalars['String']['input']>;
-  vault_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  vault_ends_with?: InputMaybe<Scalars['String']['input']>;
-  vault_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  vault_gt?: InputMaybe<Scalars['String']['input']>;
-  vault_gte?: InputMaybe<Scalars['String']['input']>;
-  vault_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  vault_lt?: InputMaybe<Scalars['String']['input']>;
-  vault_lte?: InputMaybe<Scalars['String']['input']>;
-  vault_not?: InputMaybe<Scalars['String']['input']>;
-  vault_not_contains?: InputMaybe<Scalars['String']['input']>;
-  vault_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  vault_not_ends_with?: InputMaybe<Scalars['String']['input']>;
-  vault_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  vault_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  vault_not_starts_with?: InputMaybe<Scalars['String']['input']>;
-  vault_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  vault_starts_with?: InputMaybe<Scalars['String']['input']>;
-  vault_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-};
-
-export enum WethFeeReceipt_OrderBy {
-  Amount = 'amount',
-  Date = 'date',
-  Id = 'id',
-  Vault = 'vault',
-  VaultAllocTotal = 'vault__allocTotal',
-  VaultAllowAllItems = 'vault__allowAllItems',
-  VaultCreatedAt = 'vault__createdAt',
-  VaultId = 'vault__id',
-  VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
-  VaultIs1155 = 'vault__is1155',
-  VaultIsFinalized = 'vault__isFinalized',
-  VaultShutdownDate = 'vault__shutdownDate',
-  VaultTotalFees = 'vault__totalFees',
-  VaultTotalHoldings = 'vault__totalHoldings',
-  VaultTotalMints = 'vault__totalMints',
-  VaultTotalRedeems = 'vault__totalRedeems',
-  VaultTotalSwaps = 'vault__totalSwaps',
-  VaultTreasuryAlloc = 'vault__treasuryAlloc',
-  VaultUsesFactoryFees = 'vault__usesFactoryFees',
-  VaultVaultId = 'vault__vaultId'
 }
 
 export type ZapBuy = {

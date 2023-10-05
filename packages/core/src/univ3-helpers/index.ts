@@ -1,4 +1,4 @@
-import type { FeeTickSpacing } from '@nftx/constants';
+import { Zero, type FeeTickSpacing } from '@nftx/constants';
 import { TickMath } from '@uniswap/v3-sdk';
 import { Decimal } from 'decimal.js';
 import JSBI from 'jsbi';
@@ -18,11 +18,17 @@ export const Q192 = new Decimal(2).pow(192);
 export const Q96 = new Decimal(2).pow(96);
 
 export const sqrtX96 = (value: bigint) => {
+  if (!value) {
+    return Zero;
+  }
   return decimalToEthers(ethersToDecimal(value).sqrt().mul(Q96));
 };
 
 export const getSqrtRatioX96 = (amount1: bigint, amount0: bigint) => {
   // price = amount 1 / amount0
+  if (!amount0) {
+    return Zero;
+  }
   return decimalToEthers(
     ethersToDecimal(amount1).mul(Q192).div(ethersToDecimal(amount0)).sqrt()
   );
@@ -32,6 +38,9 @@ export const getTickAtSqrtRatio = (
   sqrtRatioX96: bigint,
   tickSpacing: FeeTickSpacing
 ) => {
+  if (!sqrtRatioX96) {
+    return 0;
+  }
   const tick = TickMath.getTickAtSqrtRatio(JSBI.BigInt(`${sqrtRatioX96}`));
   const tickWithSpacing = Math.ceil(tick / tickSpacing) * tickSpacing;
   return tickWithSpacing;
