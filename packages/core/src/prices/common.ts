@@ -1,5 +1,5 @@
-import { AMMFactory } from '@nftx/abi';
-import { AMM_FACTORY, WeiPerEther, Zero } from '@nftx/constants';
+import { VaultFactory } from '@nftx/abi';
+import { VAULT_FACTORY, WeiPerEther, Zero } from '@nftx/constants';
 import { getChainConstant, getExactTokenIds, isCryptoPunk } from '@nftx/utils';
 import type {
   Address,
@@ -12,6 +12,8 @@ import type {
 import { getContract } from '@nftx/utils';
 
 type GetContract = typeof getContract;
+
+const PREMIUM_DURATION = 36000;
 
 export const calculateFeePricePerItem = (fee: bigint, vTokenToEth: bigint) => {
   return (fee * vTokenToEth) / WeiPerEther;
@@ -63,9 +65,9 @@ const fetchVTokenPremium = async ({
   standard: 'ERC721' | 'ERC1155';
 }) => {
   const contract = getContract({
-    address: getChainConstant(AMM_FACTORY, network),
+    address: getChainConstant(VAULT_FACTORY, network),
     provider,
-    abi: AMMFactory,
+    abi: VaultFactory,
   });
 
   if (standard === 'ERC1155') {
@@ -103,11 +105,12 @@ const makeFetchPremiumPrice =
     network: number;
     standard: 'ERC721' | 'ERC1155';
     vaultId: string;
-  }) => {
-    const premiumThreshold = Date.now() / 1000 - 3601;
+  }): Promise<[vToken: bigint, price: bigint]> => {
+    const now = Math.floor(Date.now() / 1000);
+    const premiumThreshold = now - PREMIUM_DURATION;
 
     if (holding.dateAdded < premiumThreshold) {
-      return Zero;
+      return [Zero, Zero];
     }
     const premiumVTokenAmount = await fetchVTokenPremium({
       provider,
@@ -118,7 +121,9 @@ const makeFetchPremiumPrice =
       vaultId,
       getContract,
     });
-    return (premiumVTokenAmount * vTokenToEth) / WeiPerEther;
+    const price = (premiumVTokenAmount * vTokenToEth) / WeiPerEther;
+
+    return [premiumVTokenAmount, price];
   };
 export const fetchPremiumPrice = makeFetchPremiumPrice({ getContract });
 
@@ -130,16 +135,14 @@ export const estimatePremiumPrice = ({
   holding: Pick<VaultHolding, 'dateAdded'> | undefined;
   vTokenToEth: bigint;
   now: number;
-}) => {
-  const oneHour = 3600;
-  // const now = Math.floor(Date.now() / 1000); // 1691441674
-  const premiumThreshold = now - oneHour;
+}): [vToken: bigint, price: bigint] => {
+  const premiumThreshold = now - PREMIUM_DURATION;
 
   if (!holding || holding.dateAdded < premiumThreshold) {
-    return Zero;
+    return [Zero, Zero];
   }
 
-  const T = oneHour;
+  const T = PREMIUM_DURATION;
   const a = 5 * 10 ** 18;
   const endValue = 4882812500000000;
   const t = now - holding.dateAdded;
@@ -147,7 +150,9 @@ export const estimatePremiumPrice = ({
   // Bottom out at 0
   const premiumVTokenAmount = BigInt(Math.floor(Math.max(p, 0)));
 
-  return (premiumVTokenAmount * vTokenToEth) / WeiPerEther;
+  const price = (premiumVTokenAmount * vTokenToEth) / WeiPerEther;
+
+  return [premiumVTokenAmount, price];
 };
 export const estimateTotalPremiumPrice = ({
   holdings,
@@ -159,22 +164,28 @@ export const estimateTotalPremiumPrice = ({
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   vTokenToEth: bigint;
   now: number;
-}) => {
-  return getExactTokenIds(tokenIds).reduce((total, tokenId) => {
-    const holding = maybeGetHoldingByTokenId(holdings, tokenId);
-    const premium = estimatePremiumPrice({
-      holding,
-      vTokenToEth,
-      now,
-    });
-    return total + premium;
-  }, Zero);
+}): [vToken: bigint, price: bigint] => {
+  return getExactTokenIds(tokenIds).reduce(
+    (total, tokenId) => {
+      const holding = maybeGetHoldingByTokenId(holdings, tokenId);
+      const premium = estimatePremiumPrice({
+        holding,
+        vTokenToEth,
+        now,
+      });
+      return [total[0] + premium[0], total[1] + premium[1]] as [bigint, bigint];
+    },
+    [Zero, Zero] as [vToken: bigint, price: bigint]
+  );
 };
 
 export const calculateTotalPremiumPrice = (
-  items: { premiumPrice: bigint }[]
-) => {
-  return items.reduce((total, item) => total + item.premiumPrice, Zero);
+  items: { premiumPrice: bigint; premiumLimit: bigint }[]
+): [vToken: bigint, price: bigint] => {
+  const initial: [bigint, bigint] = [Zero, Zero];
+  return items.reduce((total, item) => {
+    return [total[0] + item.premiumLimit, total[1] + item.premiumPrice];
+  }, initial);
 };
 
 export const getApproveContracts = ({

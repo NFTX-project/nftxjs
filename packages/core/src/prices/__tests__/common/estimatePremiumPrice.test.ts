@@ -14,13 +14,13 @@ beforeEach(() => {
   run = () => estimatePremiumPrice({ holding, vTokenToEth, now });
 });
 
-describe('when holding is older than 1 hour', () => {
+describe('when holding is older than 10 hours', () => {
   beforeEach(() => {
-    holding.dateAdded = now - 3601;
+    holding.dateAdded = now - 36001;
   });
 
   it('returns 0', () => {
-    const result = run();
+    const [, result] = run();
 
     expect(result).toBe(Zero);
   });
@@ -32,7 +32,7 @@ describe('when holding does not exist', () => {
   });
 
   it('returns 0', () => {
-    const result = run();
+    const [, result] = run();
 
     expect(result).toBe(Zero);
   });
@@ -44,7 +44,7 @@ describe('when holding is brand new', () => {
   });
 
   it('returns the max estimate', () => {
-    const result = run();
+    const [, result] = run();
 
     expect(formatEther(result)).toBe('4.995117187500000256');
   });
@@ -56,8 +56,8 @@ describe('when holding is 30 minutes old', () => {
   });
 
   it('returns an estimate based on an exponential curve', () => {
-    const result = run();
+    const [, result] = run();
 
-    expect(formatEther(result)).toBe('3.530651093432737792');
+    expect(formatEther(result)).toBe('4.824798832124227584');
   });
 });

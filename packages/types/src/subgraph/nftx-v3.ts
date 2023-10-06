@@ -3855,7 +3855,7 @@ export enum Manager_OrderBy {
 export type Mint = ActivityEvent & {
   __typename?: 'Mint';
   date: Scalars['BigInt']['output'];
-  feeReceipt: FeeReceipt;
+  feeReceipt?: Maybe<FeeReceipt>;
   id: Scalars['ID']['output'];
   nftIds?: Maybe<Array<Scalars['BigInt']['output']>>;
   source?: Maybe<Scalars['Bytes']['output']>;
@@ -5354,7 +5354,7 @@ export type QueryZapSwapsArgs = {
 export type Redeem = ActivityEvent & {
   __typename?: 'Redeem';
   date: Scalars['BigInt']['output'];
-  feeReceipt: FeeReceipt;
+  feeReceipt?: Maybe<FeeReceipt>;
   id: Scalars['ID']['output'];
   nftIds: Array<Scalars['BigInt']['output']>;
   source?: Maybe<Scalars['Bytes']['output']>;
@@ -6953,7 +6953,7 @@ export type SubscriptionZapSwapsArgs = {
 export type Swap = ActivityEvent & {
   __typename?: 'Swap';
   date: Scalars['BigInt']['output'];
-  feeReceipt: FeeReceipt;
+  feeReceipt?: Maybe<FeeReceipt>;
   id: Scalars['ID']['output'];
   mintedIds: Array<Scalars['BigInt']['output']>;
   source?: Maybe<Scalars['Bytes']['output']>;

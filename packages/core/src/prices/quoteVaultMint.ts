@@ -53,6 +53,7 @@ const quoteVaultMint = async ({
       amountsIn,
       tokenIdsOut: [],
       amountsOut: [],
+      premiumLimit: '',
       value,
       vaultAddress: vault.id,
       vaultId: vault.vaultId,

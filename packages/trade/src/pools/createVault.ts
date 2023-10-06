@@ -11,6 +11,8 @@ import config from '@nftx/config';
 
 type GetContract = typeof getContract;
 
+// TODO: need to pass in the infinite range parameter from UI and pass it to the api
+
 export default ({ getContract }: { getContract: GetContract }) =>
   async function createVault({
     network,

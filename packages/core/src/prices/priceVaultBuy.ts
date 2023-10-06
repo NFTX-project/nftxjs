@@ -34,7 +34,7 @@ const getIndexedPrice = ({
   if (!price) {
     return;
   }
-  const premiumPrice = estimateTotalPremiumPrice({
+  const [, premiumPrice] = estimateTotalPremiumPrice({
     holdings,
     tokenIds,
     vTokenToEth,
@@ -80,7 +80,7 @@ const getRoughPrice = async ({
     vTokenToEth,
     buyAmount
   );
-  const premiumPrice = estimateTotalPremiumPrice({
+  const [, premiumPrice] = estimateTotalPremiumPrice({
     holdings,
     tokenIds,
     vTokenToEth,
