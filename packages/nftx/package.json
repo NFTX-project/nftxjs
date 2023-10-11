@@ -27,6 +27,7 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@nftx/errors": "^0.9.4",
     "@nftx/api": "^0.9.5",
     "@nftx/config": "^0.9.5",
     "@nftx/constants": "^0.9.5",

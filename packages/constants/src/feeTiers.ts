@@ -1,3 +1,5 @@
+import { ValidationError } from '@nftx/errors';
+
 /** 0.3% | 1% | 3% */
 export type FeeTier = 3_000 | 10_000 | 30_000;
 export type FeePercentage = 0 | 0.003 | 0.01 | 0.03;
@@ -17,7 +19,9 @@ export const percentageToFeeTier = (feePercentage: number): FeeTier => {
     case 0.03:
       return 30_000;
     default:
-      throw new Error(`Invalid fee percentage: "${feePercentage}"`);
+      throw new ValidationError({
+        feePercentage: `Invalid fee percentage: "${feePercentage}"`,
+      });
   }
 };
 
@@ -30,7 +34,9 @@ export const feeTierToPercentage = (feeTier: number): FeePercentage => {
     case 30000:
       return 0.03;
     default:
-      throw 0;
+      throw new ValidationError({
+        feeTier: `Invalid fee tier: "${feeTier}"`,
+      });
   }
 };
 
@@ -43,6 +49,8 @@ export const feeTierToTickSpacing = (feeTier: number): FeeTickSpacing => {
     case 30000:
       return 600;
     default:
-      throw new Error(`Invalid fee tier: "${feeTier}"`);
+      throw new ValidationError({
+        feeTier: `Invalid fee tier: "${feeTier}"`,
+      });
   }
 };

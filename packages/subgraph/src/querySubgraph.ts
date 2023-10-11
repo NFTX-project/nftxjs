@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import { PUBLIC_GRAPH_API_KEY } from '@nftx/constants';
 import { type GraphQueryString, interpolateQuery } from './utils';
 import { query as sendQuery } from '@nftx/utils';
+import { UnknownError } from '@nftx/errors';
 import type { QueryBase } from './createQuery/createQuery';
 
 type Fetch = typeof fetch;
@@ -89,10 +90,10 @@ async function querySubgraph({
 
       // If there was an error with the query, we'll receive an array of errors
       if (errors?.[0]?.message) {
-        throw new Error(errors[0].message);
+        throw new UnknownError(errors[0].message);
       }
       if (errors?.message) {
-        throw new Error(errors.message);
+        throw new UnknownError(errors.message);
       }
 
       return data;

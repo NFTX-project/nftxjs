@@ -1,6 +1,7 @@
 import { NFTXENSMerkleEligibility } from '@nftx/abi';
 import fetchMerkleLeaves from './fetchMerkleLeaves';
 import type { Address, Provider, Signer, TokenId, Vault } from '@nftx/types';
+import { BadRequestError } from '@nftx/errors';
 import getContract from '../web3/getContract';
 
 type FetchMerkleLeaves = typeof fetchMerkleLeaves;
@@ -31,7 +32,7 @@ export const makeProcessTokens = ({
     const { provider, signer, vault, tokenIds } = args;
     let { leaves } = args;
     if (!vault?.eligibilityModule?.merkleReference) {
-      throw new Error('Not a valid eligibility module');
+      new BadRequestError('Not a valid eligibility module');
     }
 
     if (!leaves) {

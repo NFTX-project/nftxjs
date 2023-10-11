@@ -10,6 +10,7 @@ import { parseEther } from 'viem';
 import { calculateTotalFeePrice, estimateTotalPremiumPrice } from './common';
 import quoteVaultBuy from './quoteVaultBuy';
 import { getTotalTokenIds, getUniqueTokenIds } from '@nftx/utils';
+import { ValidationError } from '@nftx/errors';
 
 type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
 type QuoteVaultBuy = typeof quoteVaultBuy;
@@ -136,6 +137,10 @@ export const makePriceVaultBuy =
     const holdings = allHoldings.filter((x) =>
       uniqueTokenIds.includes(x.tokenId)
     );
+
+    ValidationError.validate({
+      tokenIds: () => !!totalTokenIds || 'Required',
+    });
 
     if (vault.is1155) {
       // If we've been given dummy token ids that don't match actual vault holdings

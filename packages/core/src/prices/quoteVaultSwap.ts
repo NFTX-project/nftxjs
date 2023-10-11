@@ -7,8 +7,8 @@ import type {
   Vault,
   VaultHolding,
 } from '@nftx/types';
-import fetchVTokenToEth from '../vaults/fetchVTokenToEth';
 import {
+  fetchVTokenToEth,
   getChainConstant,
   getTokenIdAmounts,
   getTotalTokenIds,
@@ -20,6 +20,7 @@ import {
   fetchPremiumPrice,
   getApproveContracts,
 } from './common';
+import { ValidationError } from '@nftx/errors';
 
 type FetchVTokenToEth = typeof fetchVTokenToEth;
 type FetchPremiumPrice = typeof fetchPremiumPrice;
@@ -56,9 +57,18 @@ export const makeQuoteVaultSwap =
     const totalIn = getTotalTokenIds(sellTokenIds);
     const totalOut = getTotalTokenIds(buyTokenIds);
 
-    if (totalIn !== totalOut) {
-      throw new Error('You must mint/redeem the same amount of items');
-    }
+    ValidationError.validate({
+      buyTokenIds: () => {
+        if (!totalOut) {
+          return 'Required';
+        }
+        if (sellTokenIds && totalIn !== totalOut) {
+          return 'You must redeem the same amount of items as you are minting';
+        }
+      },
+      sellTokenIds: () => !!totalIn || 'Required',
+      userAddress: () => !!userAddress || 'Required',
+    });
 
     const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
 

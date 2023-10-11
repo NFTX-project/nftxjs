@@ -5,3 +5,4 @@ export * from '@nftx/trade';
 export * from '@nftx/types';
 export * from '@nftx/api';
 export * from '@nftx/utils';
+export * from '@nftx/errors';

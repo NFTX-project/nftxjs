@@ -3,9 +3,13 @@ import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
 import fetchVaultHoldings from '../fetchVaultHoldings';
 import config from '@nftx/config';
-import { addressEqual, fetchMerkleReference, isMerkleVault } from '@nftx/utils';
+import {
+  addressEqual,
+  fetchMerkleReference,
+  isMerkleVault,
+  fetchVTokenToEth,
+} from '@nftx/utils';
 import type { Address, MarketplacePrice, Provider, Vault } from '@nftx/types';
-import fetchVTokenToEth from '../fetchVTokenToEth';
 import { priceVaultBuy, priceVaultSell, priceVaultSwap } from '../../prices';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {

@@ -1,6 +1,5 @@
 import config from '@nftx/config';
-import type { Address, InventoryPosition, Provider, Vault } from '@nftx/types';
-import { fetchVaults } from '../../vaults';
+import type { Address, InventoryPosition, Vault } from '@nftx/types';
 import fetchPositionsSet from './fetchPositionsSet';
 import { WeiPerEther, Zero } from '@nftx/constants';
 
@@ -41,20 +40,17 @@ function updatePoolShares(positions: InventoryPosition[]) {
 
 const fetchInventoryPositions = async ({
   network = config.network,
-  provider,
   positionIds,
   userAddresses,
   vaultIds,
-  vaults: givenVaults,
+  vaults,
 }: {
   userAddresses?: Address[];
   vaultIds?: string[];
   positionIds?: Address[];
   network?: number;
-  provider: Provider;
-  vaults?: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
+  vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
 }): Promise<InventoryPosition[]> => {
-  const vaults = givenVaults ?? (await fetchVaults({ network, provider }));
   const vaultAddresses = getVaultAddressesForVaultIds(vaults, vaultIds);
 
   const positions: InventoryPosition[] = [];

@@ -32,7 +32,7 @@ const fetchPoolAddress = async ({
     args: [vaultAddress, feeTier],
   });
 
-  return poolAddress;
+  return poolAddress.toLowerCase() as Address;
 };
 
 const createStub = ({
