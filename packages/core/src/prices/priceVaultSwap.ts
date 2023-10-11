@@ -10,6 +10,7 @@ import { calculateTotalFeePrice, estimateTotalPremiumPrice } from './common';
 import { parseEther } from 'viem';
 import { Zero } from '@nftx/constants';
 import quoteVaultSwap from './quoteVaultSwap';
+import { ValidationError } from '@nftx/errors';
 
 type QuoteVaultSwap = typeof quoteVaultSwap;
 
@@ -105,11 +106,25 @@ export const makePriceVaultSwap =
     bypassIndexedPrice?: boolean;
   }) => {
     const now = Math.floor(Date.now() / 1000);
-    const totalTokenIds = getTotalTokenIds(buyTokenIds);
+    const totalIn = getTotalTokenIds(sellTokenIds);
+    const totalOut = getTotalTokenIds(buyTokenIds);
+    const totalTokenIds = totalOut;
     const uniqueTokenIds = getUniqueTokenIds(buyTokenIds);
     const holdings = allHoldings.filter((x) =>
       uniqueTokenIds.includes(x.tokenId)
     );
+
+    ValidationError.validate({
+      buyTokenIds: () => {
+        if (!totalOut) {
+          return 'Required';
+        }
+        if (totalIn && totalIn !== totalOut) {
+          return 'You must redeem the same amount of items as you are minting';
+        }
+      },
+      sellTokenIds: () => !!totalIn || 'Required',
+    });
 
     if (vault.is1155) {
       // If we've been given dummy token ids that don't match actual vault holdings

@@ -7,6 +7,7 @@ import {
 } from '@nftx/utils';
 import type { Address, Provider, Signer, TokenId } from '@nftx/types';
 import { MaxUint256, PERMIT2, Zero } from '@nftx/constants';
+import { ValidationError } from '@nftx/errors';
 import config from '@nftx/config';
 
 function approvePunk({
@@ -28,7 +29,9 @@ function approvePunk({
     tokenId = tokenIds?.[0];
   }
   if (!tokenId) {
-    throw new Error('To approve a punk you must provide the tokenID');
+    throw new ValidationError({
+      tokenId: 'To approve a PUNK you must provide the token ID',
+    });
   }
   const contract = getContract({
     address: tokenAddress,
@@ -187,7 +190,9 @@ async function approve(args: {
     });
   }
 
-  throw new Error(`approve not supported for ${standard}`);
+  throw new ValidationError({
+    standard: `Approve is not supported for ${standard}`,
+  });
 }
 
 export default approve;

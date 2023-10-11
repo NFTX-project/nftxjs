@@ -1,12 +1,12 @@
 import { useNftx } from '../contexts/nftx';
+import { t } from '../utils';
+import { useAddEvent } from '../contexts/events';
+import { config, Transaction } from 'nftx.js';
 import {
   TransactionCancelledError,
   TransactionExceptionError,
   TransactionFailedError,
-} from '../errors';
-import { t } from '../utils';
-import { useAddEvent } from '../contexts/events';
-import { config, Transaction } from 'nftx.js';
+} from '@nftx/errors';
 
 type Fn = (...args: any) => Promise<Transaction>;
 
@@ -43,7 +43,7 @@ export default function useWrapTransaction<F extends Fn>(
     if (txErr) {
       const e = txErr.cause ?? txErr;
       if (e.code === 4001 || e.code === 'ACTION_REJECTED') {
-        throw new TransactionCancelledError(e, network);
+        throw new TransactionCancelledError(network);
       }
       // Exception - we couldn't even trigger the transaction
       throw new TransactionExceptionError(e, network);
@@ -105,7 +105,7 @@ export default function useWrapTransaction<F extends Fn>(
         }
 
         if (receipt.status === 'reverted') {
-          throw new TransactionFailedError(receipt, network, tx, receipt);
+          throw new TransactionFailedError(network, {}, tx, receipt);
         }
 
         addEvent({

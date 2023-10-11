@@ -1,10 +1,10 @@
-import { useCallback, useReducer } from 'react';
-import type { TransactionState } from '../types';
 import {
   TransactionCancelledError,
   TransactionExceptionError,
   TransactionFailedError,
-} from '../errors';
+} from '@nftx/errors';
+import { useCallback, useReducer } from 'react';
+import type { TransactionState } from '../types';
 import useWrapTransaction from './useWrapTransaction';
 import type { Transaction } from 'nftx.js';
 import type { TransactionReceipt } from 'viem';

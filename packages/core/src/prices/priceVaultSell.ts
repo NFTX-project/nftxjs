@@ -4,6 +4,7 @@ import { parseEther } from 'viem';
 import { calculateTotalFeePrice } from './common';
 import { Zero } from '@nftx/constants';
 import { getTotalTokenIds } from '@nftx/utils';
+import { ValidationError } from '@nftx/errors';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
 
@@ -76,6 +77,10 @@ export const makePriceVaultSell =
     bypassIndexedPrice?: boolean;
   }) => {
     const totalTokenIds = getTotalTokenIds(tokenIds);
+
+    ValidationError.validate({
+      tokenIds: () => !!totalTokenIds || 'Required',
+    });
 
     if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
       const result = getIndexedPrice({ tokenIds, vault });

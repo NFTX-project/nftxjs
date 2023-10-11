@@ -1,4 +1,8 @@
-import { getTokenIdAmounts, getUniqueTokenIds } from '@nftx/utils';
+import {
+  getTokenIdAmounts,
+  getTotalTokenIds,
+  getUniqueTokenIds,
+} from '@nftx/utils';
 import type {
   Address,
   MarketplaceQuote,
@@ -8,6 +12,7 @@ import type {
   VaultHolding,
 } from '@nftx/types';
 import quoteVaultBuy from './quoteVaultBuy';
+import { ValidationError } from '@nftx/errors';
 
 const quoteVaultRedeem = async ({
   holdings,
@@ -25,8 +30,14 @@ const quoteVaultRedeem = async ({
   holdings: VaultHolding[];
 }) => {
   const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
+  const totalTokenIds = getTotalTokenIds(tokenIds);
   const tokenIdsOut = getUniqueTokenIds(tokenIds);
   const amountsOut = getTokenIdAmounts(tokenIds);
+
+  ValidationError.validate({
+    tokenIds: () => !!totalTokenIds || 'Required',
+    userAddress: () => !!userAddress || 'Required',
+  });
 
   const {
     feePrice,

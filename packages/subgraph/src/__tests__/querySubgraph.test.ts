@@ -1,3 +1,4 @@
+import { UnknownError } from '@nftx/errors';
 import { gql, querySubgraph } from '..';
 
 // We're absolutely not bothered about a fully-working api
@@ -8,6 +9,7 @@ let fetch: jest.Mock;
 let response: {
   ok: boolean;
   text: () => Promise<string>;
+  json: () => Record<string, any>;
   headers: { get: (key: string) => string } & Record<string, any>;
 };
 let data: any;
@@ -17,6 +19,7 @@ beforeEach(() => {
   response = {
     ok: true,
     text: async () => JSON.stringify({ data }),
+    json: async () => ({}),
     headers: {
       'Content-Type': 'application/json',
       get: (key) => response.headers[key],
@@ -105,9 +108,7 @@ describe('error handling', () => {
       `;
       const promise = querySubgraph({ url: 'https://nftx.io', query, fetch });
 
-      await expect(promise).rejects.toThrowError(
-        'Failed to fetch https://nftx.io'
-      );
+      await expect(promise).rejects.toThrowError(UnknownError);
     });
 
     describe('when the response fails with an error message', () => {
@@ -130,7 +131,7 @@ describe('error handling', () => {
           fetch,
         });
 
-        await expect(promise).rejects.toThrowError('Failed');
+        await expect(promise).rejects.toThrowError(UnknownError);
       });
     });
   });
@@ -155,7 +156,7 @@ describe('error handling', () => {
         fetch,
       });
 
-      await expect(promise).rejects.toThrowError('Failed');
+      await expect(promise).rejects.toThrowError(UnknownError);
     });
   });
 

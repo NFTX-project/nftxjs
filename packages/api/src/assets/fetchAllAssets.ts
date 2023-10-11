@@ -1,4 +1,5 @@
 import type { Address, Asset } from '@nftx/types';
+import { BadRequestError } from '@nftx/errors';
 import streamAssets from './streamAssets';
 import type {
   CollectionAssetsArgs,
@@ -45,7 +46,9 @@ function fetchAllAssets({
       if (assetAddress) {
         return streamAssets({ assetAddress, network });
       }
-      throw new Error('Must provide userAddress, vaultId, or assetAddress');
+      throw new BadRequestError(
+        'Must provide userAddress, vaultId, or assetAddress'
+      );
     })();
 
     stream.on('error', rej);

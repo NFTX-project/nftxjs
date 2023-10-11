@@ -2,6 +2,7 @@ import type { Address, LiquidityPosition, Vault } from '@nftx/types';
 import queryPositionData from './queryPositionData';
 import { addressEqual } from '@nftx/utils';
 import transformPosition from './transformPosition';
+import { NotFoundError } from '@nftx/errors';
 
 const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   inputTokens,
@@ -18,7 +19,7 @@ const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
     });
   });
   if (vault == null) {
-    throw new Error(`Could not find vault for position ${position.id}`);
+    throw new NotFoundError('vault for position', position.id);
   }
   return vault;
 };

@@ -2,7 +2,7 @@ import { Network } from './networks';
 
 export const NFTX_ROUTER_URL = {
   [Network.Goerli]:
-    'https://cdtl2od0t3.execute-api.eu-central-1.amazonaws.com/prod/quote',
+    'https://lmw8qdcm7e.execute-api.eu-central-1.amazonaws.com/prod/quote',
 };
 
 export const NFTX_APR_URL = {

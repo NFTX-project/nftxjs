@@ -1,6 +1,5 @@
 import config from '@nftx/config';
 import type { Address, LiquidityPool, Provider, Vault } from '@nftx/types';
-import { fetchVaults } from '../../vaults';
 import fetchPoolsSet from './fetchPoolsSet';
 import stubMissingPools from './stubMissingPools';
 
@@ -9,7 +8,7 @@ const fetchLiquidityPools = async ({
   vaultIds,
   vaultAddresses,
   poolIds,
-  vaults: givenVaults,
+  vaults,
   provider,
 }: {
   network?: number;
@@ -18,11 +17,9 @@ const fetchLiquidityPools = async ({
   /** Only return pools for specific vault ids */
   vaultIds?: string[];
   poolIds?: Address[];
-  vaults?: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'token'>[];
+  vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'token'>[];
   provider: Provider;
 }): Promise<LiquidityPool[]> => {
-  const vaults = givenVaults ?? (await fetchVaults({ network, provider }));
-
   const pools: LiquidityPool[] = [];
   let lastId: Address | undefined;
 
