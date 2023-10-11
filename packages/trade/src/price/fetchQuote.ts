@@ -4,6 +4,11 @@ import config from '@nftx/config';
 import { NFTX_ROUTER, WeiPerEther } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
 import parseQuoteToken from './parseQuoteToken';
+import {
+  QuoteFailedError,
+  QuoteSlippageError,
+  ValidationError,
+} from '@nftx/errors';
 
 type RouteToken = {
   chainId: number;
@@ -82,6 +87,21 @@ const fetchQuote = async (args: {
   const sellToken = parseQuoteToken(args.sellToken, network);
   const buyToken = parseQuoteToken(args.buyToken, network);
 
+  const baseUrl = getChainConstant(config.urls.NFTX_ROUTER_URL, network, null);
+
+  ValidationError.validate({
+    sellToken: () => !!sellToken || 'Required',
+    network: () => {
+      if (!network) {
+        return 'Required';
+      }
+      if (!baseUrl) {
+        return 'Not currently supported for NFTX Router';
+      }
+    },
+    buyToken: () => !!buyToken || 'Required',
+  });
+
   const searchParams = new URLSearchParams();
   searchParams.append('tokenInAddress', sellToken);
   searchParams.append('tokenInChainId', `${network}`);
@@ -103,23 +123,23 @@ const fetchQuote = async (args: {
     searchParams.append('deadline', '300');
     searchParams.append('enableUniversalRouter', 'true');
     searchParams.append('slippageTolerance', `${slippagePercentage ?? 1}`);
-    // TODO: if we provide all this but the response has no methodParameters, slippage is probably too low and we need to throw an error
   }
   searchParams.append('protocols', 'v3');
 
   const query = searchParams.toString();
-  const baseUrl = getChainConstant(config.urls.NFTX_ROUTER_URL, network, null);
-  if (!baseUrl) {
-    throw new Error(`Network ${network} is not supported for the NFTX Router`);
-  }
+
   const url = `${baseUrl}?${query}`;
   const response = await fetch(url);
   if (!response.ok) {
     const json = await response.json();
-    throw { ...json, status: response.status };
+    throw new QuoteFailedError(json);
   }
 
   const data: NftxQuote = await response.json();
+
+  if (userAddress && !data?.methodParameters) {
+    throw new QuoteSlippageError();
+  }
 
   if (data?.methodParameters?.to) {
     // We need to override the to property as it's pointing to the Uniswap router instead of our own

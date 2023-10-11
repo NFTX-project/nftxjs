@@ -1,4 +1,4 @@
-import type { Address, InventoryPosition, Provider } from '@nftx/types';
+import type { Address, InventoryPosition, Provider, Vault } from '@nftx/types';
 import fetchInventoryPositions from './fetchInventoryPositions';
 
 type FetchInventoryPositions = typeof fetchInventoryPositions;
@@ -12,32 +12,34 @@ export const makeFetchInventoryPosition = ({
     network?: number;
     provider: Provider;
     positionId: Address;
+    vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
   }): Promise<InventoryPosition>;
   function fetchPosition(args: {
     network?: number;
     provider: Provider;
     userAddress: Address;
     vaultId: string;
+    vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
   }): Promise<InventoryPosition>;
   async function fetchPosition({
-    provider,
     network,
     positionId,
     userAddress,
     vaultId,
+    vaults,
   }: {
     network?: number;
-    provider: Provider;
     userAddress?: Address;
     vaultId?: string;
     positionId?: Address;
+    vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
   }) {
     const [position] = await fetchInventoryPositions({
       network,
-      provider,
       positionIds: positionId ? [positionId] : undefined,
       userAddresses: userAddress ? [userAddress] : undefined,
       vaultIds: vaultId ? [vaultId] : undefined,
+      vaults,
     });
 
     return position;

@@ -1,4 +1,5 @@
 import type { Address, Vault } from '@nftx/types';
+import { NotFoundError } from '@nftx/errors';
 import queryPositionData from './queryPositionData';
 import transformPosition from './transformPosition';
 
@@ -8,7 +9,7 @@ const getVaultByVaultId = <V extends Pick<Vault, 'vaultId'>>(
 ) => {
   const vault = vaults.find((vault) => vault.vaultId === vaultId);
   if (vault == null) {
-    throw new Error(`Could not find vault ${vaultId}`);
+    throw new NotFoundError('vault', vaultId);
   }
   return vault;
 };

@@ -27,6 +27,7 @@
     "@nftx/abi": "^0.9.0",
     "@nftx/config": "^0.9.0",
     "@nftx/constants": "^0.9.0",
+    "@nftx/errors": "^0.9.4",
     "@nftx/types": "^0.9.0",
     "@nftx/utils": "^0.9.0",
     "viem": "0.1.19"

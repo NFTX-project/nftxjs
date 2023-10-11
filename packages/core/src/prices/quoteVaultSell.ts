@@ -20,6 +20,7 @@ import {
   calculateTotalFeePrice,
   getApproveContracts,
 } from './common';
+import { ValidationError } from '@nftx/errors';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
 type FetchVTokenToEth = typeof fetchVTokenToEth;
@@ -49,6 +50,11 @@ export const makeQuoteVaultSell =
     const sellAmount = parseEther(`${totalTokenIds}`);
     const tokenIdsIn = getUniqueTokenIds(tokenIds);
     const amountsIn = getTokenIdAmounts(tokenIds);
+
+    ValidationError.validate({
+      tokenIds: () => !!totalTokenIds || 'Required',
+      userAddress: () => !!userAddress || 'Required',
+    });
 
     const vTokenToEth = await fetchVTokenToEth({
       provider,

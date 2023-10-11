@@ -24,6 +24,7 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
+    "@nftx/errors": "^0.9.4",
     "@nftx/config": "^0.9.0",
     "@nftx/types": "^0.9.0",
     "@nftx/utils": "^0.9.0",

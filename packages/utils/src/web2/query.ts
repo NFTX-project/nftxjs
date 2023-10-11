@@ -1,3 +1,4 @@
+import { UnknownError, hydrateResponse } from '@nftx/errors';
 import { parseJson, stringifyJson } from './json';
 
 type Fetch = typeof fetch;
@@ -25,7 +26,7 @@ const query = async <T>(args: Args): Promise<T> => {
   } = args;
 
   if (fetch == null) {
-    throw new Error(
+    throw new UnknownError(
       'Could not find fetch api. You may need to import a polyfill'
     );
   }
@@ -62,9 +63,10 @@ const query = async <T>(args: Args): Promise<T> => {
     await new Promise((res) => setTimeout(res, 1000));
     return query({ ...args, retries: retries + 1 });
   }
-  // Any other error we want to immediately throw
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${uri}`);
+    const json = await response.json();
+    const err = hydrateResponse({ status: response.status, body: json });
+    throw err;
   }
 
   // Get the text response as we need to manually parse big numbers
@@ -72,7 +74,7 @@ const query = async <T>(args: Args): Promise<T> => {
   const contentType = response.headers.get('Content-Type');
   // We should always be receiving a json response, if not then something's gone wrong
   if (!contentType?.includes('application/json')) {
-    throw new Error(
+    throw new UnknownError(
       `Incorrect response type. Expected application/json but received ${contentType}`
     );
   }

@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Address, Provider } from '@nftx/types';
+import type { Address, Vault } from '@nftx/types';
 import fetchLiquidityPositions from './fetchLiquidityPositions';
 
 type FetchLiquidityPositions = typeof fetchLiquidityPositions;
@@ -13,15 +13,16 @@ export const makeFetchLiquidityPosition = ({
   async function fetchLiquidityPosition({
     positionId,
     network = config.network,
-    provider,
+    vaults,
   }: {
     positionId: Address;
-    provider: Provider;
     network?: number;
+    vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
   }) {
     const [position] = await fetchLiquidityPositions({
-      provider,
+      network,
       positionIds: [positionId],
+      vaults,
     });
     return position;
   };

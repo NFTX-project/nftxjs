@@ -24,6 +24,7 @@ import {
   fetchPremiumPrice,
   calculateTotalPremiumPrice,
 } from './common';
+import { ValidationError } from '@nftx/errors';
 
 type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
 type FetchVTokenToEth = typeof fetchVTokenToEth;
@@ -109,6 +110,11 @@ export const makeQuoteVaultBuy =
     const buyAmount = parseEther(`${totalTokenIds}`);
     const tokenIdsOut = getUniqueTokenIds(tokenIds);
     const amountsOut = getTokenIdAmounts(tokenIds);
+
+    ValidationError.validate({
+      tokenIds: () => !!totalTokenIds || 'Required',
+      userAddress: () => !!userAddress || 'Required',
+    });
 
     const holdings = allHoldings.filter((x) => tokenIdsOut.includes(x.tokenId));
 

@@ -6,6 +6,7 @@ import fetchAssets, {
   UserAssetsArgs,
   VaultAssetsArgs,
 } from './fetchAssets';
+import { BadRequestError } from '@nftx/errors';
 
 /** Stream assets owned by a user */
 function streamAssets(args: Omit<UserAssetsArgs, 'cursor'>): IStream<Asset[]>;
@@ -51,7 +52,9 @@ function streamAssets({
         if (assetAddress) {
           return fetchAssets({ assetAddress, cursor, network });
         }
-        throw new Error();
+        throw new BadRequestError(
+          'Must be provide either userAddress, vaultId, or assetAddress'
+        );
       })();
 
       cursor = result.cursor;

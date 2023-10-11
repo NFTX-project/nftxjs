@@ -27,6 +27,7 @@
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
   "dependencies": {
+    "@nftx/errors": "^0.9.4",
     "viem": "0.1.19"
   },
   "devDependencies": {
@@ -35,7 +36,7 @@
   },
   "peerDependencies": {
     "nftx.js": "<1.0.0",
-    "react": "^17.0.0 || ^18.0.0"
+    "react": "^18.0.0"
   },
   "sideEffects": false
 }

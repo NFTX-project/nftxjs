@@ -14,7 +14,7 @@ const makeFetchLiquidityPool =
     network?: number;
     poolId: Address;
     provider: Provider;
-    vaults?: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth' | 'token'>[];
+    vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth' | 'token'>[];
   }) => {
     const pools = await fetchLiquidityPools({
       network,

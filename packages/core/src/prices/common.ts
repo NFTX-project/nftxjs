@@ -10,9 +10,11 @@ import type {
   VaultHolding,
 } from '@nftx/types';
 import { getContract } from '@nftx/utils';
+import { NotFoundError } from '@nftx/errors';
 
 type GetContract = typeof getContract;
 
+// TODO: move to @nftx/constants
 const PREMIUM_DURATION = 36000;
 
 export const calculateFeePricePerItem = (fee: bigint, vTokenToEth: bigint) => {
@@ -42,7 +44,7 @@ export const getHoldingByTokenId = <H extends Pick<VaultHolding, 'tokenId'>>(
 ) => {
   const holding = maybeGetHoldingByTokenId(holdings, tokenId);
   if (holding == null) {
-    throw new Error(`Could not locate NFT [${tokenId}] in vault holdings`);
+    throw new NotFoundError('vault NFT', tokenId);
   }
   return holding;
 };

@@ -25,5 +25,8 @@
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
+  },
+  "dependencies": {
+    "@nftx/errors": "^0.9.4"
   }
 }

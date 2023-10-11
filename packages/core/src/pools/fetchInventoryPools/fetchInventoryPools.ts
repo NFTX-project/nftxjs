@@ -7,7 +7,6 @@ import type {
   Vault,
   VaultFeeReceipt,
 } from '@nftx/types';
-import { fetchVaults } from '../../vaults';
 import { fetchInventoryPositions } from '../../positions';
 import filterVaults from './filterVaults';
 import transformPool from './transformPool';
@@ -21,7 +20,7 @@ const fetchInventoryPools = async ({
   vaultAddresses,
   vaultIds,
   provider,
-  vaults: givenVaults,
+  vaults: allVaults,
   feeReceipts: givenFeeReceipts,
   positions: givenPositions,
 }: {
@@ -29,12 +28,10 @@ const fetchInventoryPools = async ({
   vaultAddresses?: Address[];
   vaultIds?: string[];
   provider: Provider;
-  vaults?: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
+  vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
   feeReceipts?: VaultFeeReceipt[];
   positions?: InventoryPosition[];
 }): Promise<InventoryPool[]> => {
-  const allVaults = givenVaults ?? (await fetchVaults({ network, provider }));
-
   const vaults = filterVaults({
     vaults: allVaults,
     vaultAddresses,
@@ -51,7 +48,6 @@ const fetchInventoryPools = async ({
   const positions =
     givenPositions ??
     (await fetchInventoryPositions({
-      provider,
       network,
       vaultIds: vaults.map((v) => v.vaultId),
       vaults: allVaults,

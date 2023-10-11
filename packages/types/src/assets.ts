@@ -19,4 +19,5 @@ export type Asset = {
   mintable: boolean;
   animationUrl?: string;
   backgroundColor?: string;
+  dateAdded?: number;
 };
