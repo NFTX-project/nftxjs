@@ -7,8 +7,8 @@ import type {
   Vault,
   VaultHolding,
 } from '@nftx/types';
-import fetchVTokenToEth from '../vaults/fetchVTokenToEth';
 import {
+  fetchVTokenToEth,
   getChainConstant,
   getTokenIdAmounts,
   getTotalTokenIds,

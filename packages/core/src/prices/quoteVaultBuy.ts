@@ -9,13 +9,13 @@ import type {
   VaultHolding,
 } from '@nftx/types';
 import {
+  fetchVTokenToEth,
   getChainConstant,
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
-import fetchVTokenToEth from '../vaults/fetchVTokenToEth';
 import config from '@nftx/config';
 import {
   calculateFeePricePerItem,

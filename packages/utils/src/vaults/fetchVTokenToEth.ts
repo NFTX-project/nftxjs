@@ -1,7 +1,7 @@
 import { WeiPerEther } from '@nftx/constants';
 import type { Address, Provider } from '@nftx/types';
-import { getContract } from '@nftx/utils';
 import { NFTXVaultUpgradeable } from '@nftx/abi';
+import { getContract } from '../web3';
 
 const fetchVTokenToEth = async ({
   provider,

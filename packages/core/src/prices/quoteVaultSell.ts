@@ -8,8 +8,8 @@ import type {
   Vault,
 } from '@nftx/types';
 import { parseEther } from 'viem';
-import fetchVTokenToEth from '../vaults/fetchVTokenToEth';
 import {
+  fetchVTokenToEth,
   getChainConstant,
   getTokenIdAmounts,
   getTotalTokenIds,

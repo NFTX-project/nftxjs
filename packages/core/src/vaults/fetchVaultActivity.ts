@@ -35,8 +35,8 @@ type Response = NftxV3.Query & {
 const calculateFee = (
   feeReceipt: Response['activityEvents'][0]['feeReceipt']
 ) => {
-  return (feeReceipt ?? Zero).transfers.reduce(
-    (acc, r) => acc + BigInt(r.amount),
+  return (
+    feeReceipt?.transfers?.reduce((acc, r) => acc + BigInt(r.amount), Zero) ??
     Zero
   );
 };

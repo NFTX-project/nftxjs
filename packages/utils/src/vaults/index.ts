@@ -1,2 +1,2 @@
-export { default as fetchXNftShare } from './fetchXNftShare';
+export { default as fetchVTokenToEth } from './fetchVTokenToEth';
 export * from './utils';
