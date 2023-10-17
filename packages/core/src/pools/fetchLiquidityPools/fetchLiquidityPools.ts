@@ -17,7 +17,10 @@ const fetchLiquidityPools = async ({
   /** Only return pools for specific vault ids */
   vaultIds?: string[];
   poolIds?: Address[];
-  vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'token'>[];
+  vaults: Pick<
+    Vault,
+    'vaultId' | 'id' | 'vTokenToEth' | 'token' | 'createdAt'
+  >[];
   provider: Provider;
 }): Promise<LiquidityPool[]> => {
   const pools: LiquidityPool[] = [];

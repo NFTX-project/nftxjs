@@ -1,4 +1,11 @@
-import { Zero, type FeeTickSpacing } from '@nftx/constants';
+import {
+  Zero,
+  type FeeTickSpacing,
+  MaxUint256,
+  MIN_TICK,
+  MAX_TICK,
+  TICK_PRICE_BASE,
+} from '@nftx/constants';
 import { TickMath } from '@uniswap/v3-sdk';
 import { Decimal } from 'decimal.js';
 import JSBI from 'jsbi';
@@ -17,19 +24,27 @@ export const decimalToBigint = (v: Decimal) => {
   return BigInt(v.toFixed(0));
 };
 
+export const bigintToJsbi = (v: bigint): JSBI => {
+  return JSBI.BigInt(v.toString());
+};
+
+export const jsbiToBigint = (v: JSBI) => {
+  return BigInt(v.toString());
+};
+
 // export const Q192 = new Decimal(2).pow(192);
 // export const Q96 = new Decimal(2).pow(96);
 export const Q192 = bigintToDecimal(2n ** 192n);
 export const Q96 = bigintToDecimal(2n ** 96n);
 
-export const sqrtX96 = (value: bigint) => {
+export const sqrtX96 = (value: bigint): bigint => {
   if (!value) {
     return Zero;
   }
   return decimalToEthers(ethersToDecimal(value).sqrt().mul(Q96));
 };
 
-export const getSqrtRatioX96 = (amount1: bigint, amount0: bigint) => {
+export const getSqrtRatioX96 = (amount1: bigint, amount0: bigint): bigint => {
   // price = amount 1 / amount0
   if (!amount0) {
     return Zero;
@@ -44,19 +59,28 @@ export const getSqrtRatioX96 = (amount1: bigint, amount0: bigint) => {
 export const getTickAtSqrtRatio = (
   sqrtRatioX96: bigint,
   tickSpacing: FeeTickSpacing
-) => {
+): number => {
   if (!sqrtRatioX96) {
     return 0;
   }
-  const ratioStr = sqrtRatioX96.toString();
-  const bigRatio = JSBI.BigInt(ratioStr);
-  const tick = TickMath.getTickAtSqrtRatio(bigRatio);
+  const tick = TickMath.getTickAtSqrtRatio(bigintToJsbi(sqrtRatioX96));
   const tickWithSpacing = Math.ceil(tick / tickSpacing) * tickSpacing;
   return tickWithSpacing;
 };
 
-export const getSqrtRatioAtTick = (tick: number) => {
-  const bigRatio = TickMath.getSqrtRatioAtTick(tick);
-  const ratioStr = bigRatio.toString();
-  return BigInt(ratioStr);
+export const getSqrtRatioAtTick = (tick: number): bigint => {
+  const ratio = TickMath.getSqrtRatioAtTick(tick);
+  return jsbiToBigint(ratio);
+};
+
+export const calculatePriceFromTick = (tick: number): bigint => {
+  const tickNum = Number(tick);
+
+  if (tickNum <= MIN_TICK) {
+    return BigInt(0);
+  } else if (tickNum >= MAX_TICK) {
+    return MaxUint256;
+  } else {
+    return BigInt(Math.pow(TICK_PRICE_BASE, tickNum) * 1e18);
+  }
 };

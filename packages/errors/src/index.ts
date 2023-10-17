@@ -318,6 +318,8 @@ export const hydrateResponse = (response: {
         return new NotFoundError();
       case 409:
         return new ConflictError();
+      case 429:
+        return new RateLimitedError();
       default:
         break;
     }

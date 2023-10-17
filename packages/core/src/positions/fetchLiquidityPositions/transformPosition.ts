@@ -35,6 +35,7 @@ const transformPosition = ({
     tickLower,
     tickUpper,
     vTokenToEth: vault.vTokenToEth,
+    currentTick: tick,
   });
 
   // This is ETH price at the upper and lower tick boundaries
@@ -46,7 +47,7 @@ const transformPosition = ({
   const price = vault.vTokenToEth;
 
   // TODO: surely it's not that simple?
-  const vTokenValue = price * vToken;
+  const vTokenValue = (price * vToken) / WeiPerEther;
   const value = vTokenValue + eth;
 
   // TODO: get these from... somwhere?

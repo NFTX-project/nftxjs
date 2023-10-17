@@ -1,14 +1,20 @@
-import type { Address, LiquidityPool, Vault } from '@nftx/types';
+import type {
+  Address,
+  LiquidityPool,
+  Vault,
+  VaultFeeReceipt,
+} from '@nftx/types';
 import type { LiquidityPoolsResponse } from './types';
 import calculatePeriodFees from './calculatePeriodFees';
 import calcualateAprs from './calculateAprs';
 import {
   FeePercentage,
+  WETH_TOKEN,
   WeiPerEther,
   Zero,
-  feeTierToTickSpacing,
   percentageToFeeTier,
 } from '@nftx/constants';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 
 type Pool = LiquidityPoolsResponse['liquidityPools'][0];
 
@@ -27,9 +33,11 @@ const transformFees = (fees: Pool['fees']): LiquidityPool['fees'] => {
 };
 
 const transformPool = (
+  network: number,
   pool: Pool,
-  vault: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>,
-  totalPositions: number
+  vault: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'createdAt'>,
+  totalPositions: number,
+  receipts: VaultFeeReceipt[]
 ): LiquidityPool => {
   const fees = transformFees(pool.fees);
   const tokens = pool.inputTokens.map(({ id, symbol, name }, i) => ({
@@ -40,14 +48,12 @@ const transformPool = (
   }));
   const activeLiquidity = BigInt(pool.activeLiquidity ?? '0');
   const totalLiquidity = BigInt(pool.totalLiquidity ?? '0');
-  const price = vault.vTokenToEth;
   const tick = BigInt(pool.tick ?? '0');
   const feePercentage = Number(
     pool.fees.find((fee) => fee.feeType === 'FIXED_TRADING_FEE')
       ?.feePercentage ?? 0
   );
   const feeTier = percentageToFeeTier(feePercentage);
-  const tickSpacing = feeTierToTickSpacing(feeTier);
   const totalValueLocked = BigInt(pool.totalValueLockedUSD ?? '0');
   const inRangeLiquidity =
     totalLiquidity > Zero
@@ -57,7 +63,7 @@ const transformPool = (
   // We build a list of "missing" pools later on
   const exists = true;
 
-  const periodFees = calculatePeriodFees();
+  const periodFees = calculatePeriodFees(receipts);
 
   const dailyVolume = pool.hourlySnapshots.reduce((total, snapshot) => {
     return total + BigInt(snapshot.hourlyVolumeUSD ?? '0');
@@ -72,13 +78,18 @@ const transformPool = (
     return total + BigInt(snapshot.dailyTotalRevenueUSD ?? '0');
   }, Zero);
 
+  const wethToken = getChainConstant(WETH_TOKEN, network);
+  const eth =
+    tokens.find((token) => addressEqual(token.id, wethToken))?.balance ?? Zero;
+  const vToken =
+    tokens.find((token) => !addressEqual(token.id, wethToken))?.balance ?? Zero;
+  const vTokenValue = (vToken * vault.vTokenToEth) / WeiPerEther;
+  const poolValue = eth + vTokenValue;
+
   const apr = calcualateAprs({
-    activeLiquidity,
-    currentTick: tick,
     periodFees,
-    price,
-    tickSpacing,
-    totalLiquidity,
+    createdAt: vault.createdAt,
+    poolValue,
   });
 
   return {

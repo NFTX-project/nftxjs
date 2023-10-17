@@ -1,3 +1,4 @@
+import { Zero } from '@nftx/constants';
 import { mapObj } from '../../utils';
 import type { Response } from '../fetchSubgraphVaults';
 import type { Address, Vault } from '@nftx/types';
@@ -17,6 +18,26 @@ const transformVault = ({
   const fees: Vault['fees'] = mapObj(rawFees, (key, value) => {
     return [key, BigInt(value as string)];
   });
+  const getDefaultPrice = (): Vault['prices'][0]['mint'] => {
+    return {
+      feePrice: Zero,
+      premiumPrice: Zero,
+      price: Zero,
+      vTokenPrice: Zero,
+      type: 'buy',
+    };
+  };
+  const getDefaultPrices = (): Vault['prices'][0] => {
+    return {
+      mint: getDefaultPrice(),
+      redeem: getDefaultPrice(),
+      swap: getDefaultPrice(),
+    };
+  };
+
+  const prices = new Array(5)
+    .fill(null)
+    .map(() => getDefaultPrices()) as Vault['prices'];
 
   const vault: Vault = {
     ...x,
@@ -45,7 +66,8 @@ const transformVault = ({
     shutdownDate: Number(x.shutdownDate || '0'),
     fees,
     // We'll be calculating the price further down the line
-    prices: [] as unknown as Vault['prices'],
+    // prices: [] as unknown as Vault['prices'],
+    prices,
     eligibilityModule: x.eligibilityModule
       ? {
           ...x.eligibilityModule,

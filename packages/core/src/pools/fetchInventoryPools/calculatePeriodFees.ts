@@ -20,13 +20,13 @@ const calculatePeriodFees = (
   const oneMonthAgo = now - 2592000;
 
   receipts.forEach((receipt) => {
-    if (receipt.date <= oneDayAgo) {
+    if (receipt.date >= oneDayAgo) {
       periodFees['24h'] += receipt.amount;
     }
-    if (receipt.date <= oneWeekAgo) {
+    if (receipt.date >= oneWeekAgo) {
       periodFees['7d'] += receipt.amount;
     }
-    if (receipt.date <= oneMonthAgo) {
+    if (receipt.date >= oneMonthAgo) {
       periodFees['1m'] += receipt.amount;
     }
     periodFees.all += receipt.amount;

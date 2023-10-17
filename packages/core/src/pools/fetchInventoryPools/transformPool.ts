@@ -37,7 +37,7 @@ const transformPool = ({
   receipts,
   timelock,
 }: {
-  vault: Pick<Vault, 'id' | 'vaultId'>;
+  vault: Pick<Vault, 'id' | 'vaultId' | 'createdAt'>;
   positions: InventoryPosition[];
   receipts: VaultFeeReceipt[];
   timelock: number;
@@ -46,10 +46,15 @@ const transformPool = ({
     positions,
     vault.vaultId
   );
+  const periodFees = calculatePeriodFees(receipts);
 
   return {
-    apr: calculateAprs(),
-    periodFees: calculatePeriodFees(receipts),
+    apr: calculateAprs({
+      createdAt: vault.createdAt,
+      periodFees,
+      poolValue: vTokenValue,
+    }),
+    periodFees: periodFees,
     vaultAddress: vault.id,
     vaultId: vault.vaultId,
     vToken,
