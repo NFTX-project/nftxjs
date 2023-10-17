@@ -66,7 +66,7 @@ export class NotFoundError extends NftxError {
   constructor(entity?: string, id?: string) {
     let message;
     if (id && entity) {
-      message = `Could not find requested ${entity} with id ${id}`;
+      message = `Could not find ${entity} "${id}"`;
     } else if (entity) {
       message = `Could not find ${entity}`;
     } else {
@@ -318,6 +318,8 @@ export const hydrateResponse = (response: {
         return new NotFoundError();
       case 409:
         return new ConflictError();
+      case 429:
+        return new RateLimitedError();
       default:
         break;
     }

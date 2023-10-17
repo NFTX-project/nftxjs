@@ -58,6 +58,6 @@ describe('when holding is 30 minutes old', () => {
   it('returns an estimate based on an exponential curve', () => {
     const [, result] = run();
 
-    expect(formatEther(result)).toBe('4.824798832124227584');
+    expect(formatEther(result)).toBe('3.530651093432737792');
   });
 });

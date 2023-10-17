@@ -22,6 +22,7 @@ const transformPosition = (
     vToken,
     vTokenValue,
     poolShare: Zero,
+    timeLocked: position.timeLock,
     timelockedUntil: Number(position.timeLockUntil),
   };
 };

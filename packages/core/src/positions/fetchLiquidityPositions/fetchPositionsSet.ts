@@ -1,8 +1,15 @@
-import type { Address, LiquidityPosition, Vault } from '@nftx/types';
+import type {
+  Address,
+  LiquidityPosition,
+  Provider,
+  TokenId,
+  Vault,
+} from '@nftx/types';
 import queryPositionData from './queryPositionData';
 import { addressEqual } from '@nftx/utils';
 import transformPosition from './transformPosition';
 import { NotFoundError } from '@nftx/errors';
+import fetchClaimableAmount from '../fetchClaimableAmount';
 
 const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   inputTokens,
@@ -31,9 +38,11 @@ const fetchPositionsSet = async ({
   poolIds,
   positionIds,
   userAddresses,
+  provider,
 }: {
   network: number;
   vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
+  provider: Provider;
   lastId?: Address;
   poolIds?: Address[];
   positionIds?: Address[];
@@ -47,14 +56,27 @@ const fetchPositionsSet = async ({
     userAddresses,
   });
 
-  const positions = data.positions.map((position): LiquidityPosition => {
-    const vault = getVaultByTokens({
-      inputTokens: position.pool.inputTokens,
-      position,
-      vaults,
-    });
-    return transformPosition({ network, position, vault });
-  });
+  const positions = await Promise.all(
+    data.positions.map(async (position): Promise<LiquidityPosition> => {
+      const vault = getVaultByTokens({
+        inputTokens: position.pool.inputTokens,
+        position,
+        vaults,
+      });
+      const [claimable0, claimable1] = await fetchClaimableAmount({
+        network,
+        tokenId: position.tokenId as TokenId,
+        provider,
+      });
+      return transformPosition({
+        network,
+        position,
+        vault,
+        claimable0,
+        claimable1,
+      });
+    })
+  );
 
   let nextId: Address | undefined;
 

@@ -10,6 +10,7 @@ const fetchLiquidityPools = ({
   vaultAddresses,
   vaultId,
   vaultIds,
+  exists,
 }: {
   network?: number;
   /** Get pools that match the given liquidity pool addresses */
@@ -22,6 +23,8 @@ const fetchLiquidityPools = ({
   vaultId?: string;
   /** Get pools that match the given vault ids */
   vaultIds?: string[];
+  /** Only return pools that actually exist */
+  exists?: boolean;
 } = {}) => {
   return queryApi<LiquidityPool[]>({
     url: `/${network}/pools/liquidity`,
@@ -29,6 +32,7 @@ const fetchLiquidityPools = ({
       liquidityPoolId: poolIds,
       id: vaultAddress ?? vaultAddresses,
       vaultId: vaultId ?? vaultIds,
+      exists,
     },
   });
 };

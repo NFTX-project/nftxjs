@@ -4,3 +4,4 @@ export * from './subgraph';
 export * from './urls';
 export * from './values';
 export * from './feeTiers';
+export * from './ticks';

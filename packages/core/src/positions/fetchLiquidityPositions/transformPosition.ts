@@ -1,7 +1,8 @@
-import type { Address, LiquidityPosition, Vault } from '@nftx/types';
+import type { Address, LiquidityPosition, TokenId, Vault } from '@nftx/types';
 import type { PositionsResponse } from './types';
-import { WeiPerEther, Zero } from '@nftx/constants';
+import { WETH_TOKEN, WeiPerEther, Zero } from '@nftx/constants';
 import calculateVTokenEth from './calculateVTokenEth';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 
 type Position = PositionsResponse['positions'][0];
 
@@ -17,16 +18,26 @@ const transformPosition = ({
   network,
   position,
   vault,
+  claimable0,
+  claimable1,
 }: {
   position: Position;
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'vaultId'>;
   network: number;
+  claimable0: bigint;
+  claimable1: bigint;
 }): LiquidityPosition => {
+  const tokenId = position.tokenId as TokenId;
   const tick = BigInt(position.pool.tick ?? '0');
   const tickLower = BigInt(position.tickLower?.index ?? '0');
   const tickUpper = BigInt(position.tickUpper?.index ?? '0');
   const inRange = tick >= tickLower && tick <= tickUpper;
   const liquidity = BigInt(position.liquidity);
+  const lockedUntil = Number(position.lockedUntil);
+  const isWeth0 = addressEqual(
+    position.pool.inputTokens[0].id,
+    getChainConstant(WETH_TOKEN, network)
+  );
 
   const { eth, vToken, tickLowerPrice, tickUpperPrice } = calculateVTokenEth({
     inputTokens: position.pool.inputTokens.map((t) => t.id as Address),
@@ -35,27 +46,30 @@ const transformPosition = ({
     tickLower,
     tickUpper,
     vTokenToEth: vault.vTokenToEth,
+    currentTick: tick,
   });
+
+  const claimableEth = isWeth0 ? claimable0 : claimable1;
+  const claimableVToken = isWeth0 ? claimable1 : claimable0;
+  const claimableValue =
+    claimableEth + (claimableVToken * vault.vTokenToEth) / WeiPerEther;
 
   // This is ETH price at the upper and lower tick boundaries
   const tickUpperValue = normalizeTickPrice(tickUpperPrice);
   const tickLowerValue = normalizeTickPrice(tickLowerPrice);
 
-  // TODO: all of the pricing/value stuff in this function is completely wrong
-  // https://www.notion.so/nftx/Remove-partial-liquidity-from-pool-5bf28f4ed98d48079b0b78fb91bdd1aa
   const price = vault.vTokenToEth;
 
-  // TODO: surely it's not that simple?
-  const vTokenValue = price * vToken;
+  const vTokenValue = (price * vToken) / WeiPerEther;
   const value = vTokenValue + eth;
 
-  // TODO: get these from... somwhere?
-  const claimableRewards = Zero;
+  // TODO: get this from... somwhere?
   const lifetimeRewards = Zero;
 
   return {
-    id: position.id,
+    id: position.id as Address,
     poolId: position.pool.id,
+    tokenId,
     liquidity,
     tickLower,
     tickUpper,
@@ -69,10 +83,13 @@ const transformPosition = ({
     vTokenValue,
     vaultAddress: vault.id,
     vaultId: vault.vaultId,
-    claimableRewards,
+    claimableEth,
+    claimableValue,
+    claimableVToken,
     lifetimeRewards,
     poolShare: Zero,
     initialValue: value,
+    lockedUntil,
   };
 };
 
