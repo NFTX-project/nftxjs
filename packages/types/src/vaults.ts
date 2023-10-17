@@ -125,15 +125,9 @@ export type VaultActivity =
   | UpdateVaultActivity
   | ShudownVaultActivity;
 
-export type VaultFeeTransfer = {
-  amount: bigint;
-  to: string;
-};
-
 export type VaultFeeReceipt = {
   vaultId: string;
   vaultAddress: string;
-  transfers: VaultFeeTransfer[];
   amount: bigint;
   date: number;
 };

@@ -15,7 +15,7 @@ export const makeFetchInventoryPool =
     network?: number;
     vaultId: string;
     provider: Provider;
-    vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
+    vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'createdAt'>[];
   }) => {
     const pools = await fetchInventoryPools({
       network,

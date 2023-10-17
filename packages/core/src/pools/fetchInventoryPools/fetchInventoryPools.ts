@@ -28,7 +28,7 @@ const fetchInventoryPools = async ({
   vaultAddresses?: Address[];
   vaultIds?: string[];
   provider: Provider;
-  vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
+  vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'createdAt'>[];
   feeReceipts?: VaultFeeReceipt[];
   positions?: InventoryPosition[];
 }): Promise<InventoryPool[]> => {

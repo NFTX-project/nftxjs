@@ -1,4 +1,4 @@
-import { buildWhere, createQuery, gql, querySubgraph } from '@nftx/subgraph';
+import { createQuery, querySubgraph } from '@nftx/subgraph';
 import type { NftxV3, Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import config from '@nftx/config';
@@ -37,6 +37,7 @@ const queryPositionData = ({
       p.isParent,
       p.parent((p) => [p.id]),
       p.children((c) => [c.id]),
+      p.timeLock,
       p.timeLockUntil,
     ]);
 

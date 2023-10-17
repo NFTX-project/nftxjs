@@ -144,11 +144,13 @@ export const estimatePremiumPrice = ({
     return [Zero, Zero];
   }
 
-  const T = PREMIUM_DURATION;
-  const a = 5 * 10 ** 18;
+  const maxPremium = 5 * 10 ** 18; // 5 vTokens
+  const timeStep = 60 * 60; // 1 hour
+  // const endValue = maxPremium * 2 ** (-PREMIUM_DURATION / timeStep)
   const endValue = 4882812500000000;
-  const t = now - holding.dateAdded;
-  const p = a * 2 ** (-t / T) - endValue;
+  const elapsed = now - holding.dateAdded;
+
+  const p = maxPremium * 2 ** (-elapsed / timeStep) - endValue;
   // Bottom out at 0
   const premiumVTokenAmount = BigInt(Math.floor(Math.max(p, 0)));
 
