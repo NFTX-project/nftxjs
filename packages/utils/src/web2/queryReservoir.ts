@@ -15,10 +15,12 @@ const queryReservoir = <T>({
 }: Args) => {
   const base = getChainConstant(RESERVOIR_URL, network);
   const uri = new URL(path, base);
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = { accept: '*/*' };
   const apiKey = getChainConstant(config.keys.RESERVOIR, network, null);
   if (apiKey) {
     headers['x-api-key'] = apiKey;
+  } else {
+    console.warn('No reservoir api key provided');
   }
 
   return query<T>({
