@@ -34,7 +34,7 @@ export const OPENSEA_COLLECTION = a(
 
 /** Zap specifically for creating new vaults */
 export const CREATE_VAULT_ZAP = {
-  [Network.Goerli]: a('0x040fE06ABc3c099772DEe413dE138937bf053543'),
+  [Network.Goerli]: a('0xFE60863328735aE7EB289cAB99B37235add768Fa'),
 };
 
 /** Perform buy/sell/swaps */

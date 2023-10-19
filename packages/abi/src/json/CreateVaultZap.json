@@ -20,45 +20,17 @@
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
-  {
-    "inputs": [],
-    "name": "InsufficientETHSent",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InsufficientVTokensMinted",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotNFTOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "R",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "T",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "UnableToSendETH",
-    "type": "error"
-  },
+  { "inputs": [], "name": "InsufficientETHSent", "type": "error" },
+  { "inputs": [], "name": "InsufficientVTokensMinted", "type": "error" },
+  { "inputs": [], "name": "NotNFTOwner", "type": "error" },
+  { "inputs": [], "name": "R", "type": "error" },
+  { "inputs": [], "name": "T", "type": "error" },
+  { "inputs": [], "name": "UnableToSendETH", "type": "error" },
   {
     "inputs": [],
     "name": "WETH",
     "outputs": [
-      {
-        "internalType": "contract IWETH9",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract IWETH9", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -87,26 +59,14 @@
                 "name": "assetAddress",
                 "type": "address"
               },
-              {
-                "internalType": "bool",
-                "name": "is1155",
-                "type": "bool"
-              },
+              { "internalType": "bool", "name": "is1155", "type": "bool" },
               {
                 "internalType": "bool",
                 "name": "allowAllItems",
                 "type": "bool"
               },
-              {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "symbol",
-                "type": "string"
-              }
+              { "internalType": "string", "name": "name", "type": "string" },
+              { "internalType": "string", "name": "symbol", "type": "string" }
             ],
             "internalType": "struct CreateVaultZap.VaultInfo",
             "name": "vaultInfo",
@@ -119,11 +79,7 @@
                 "name": "moduleIndex",
                 "type": "uint256"
               },
-              {
-                "internalType": "bytes",
-                "name": "initData",
-                "type": "bytes"
-              }
+              { "internalType": "bytes", "name": "initData", "type": "bytes" }
             ],
             "internalType": "struct CreateVaultZap.VaultEligibilityStorage",
             "name": "eligibilityStorage",
@@ -178,11 +134,7 @@
                 "name": "upperNFTPriceInETH",
                 "type": "uint256"
               },
-              {
-                "internalType": "uint24",
-                "name": "fee",
-                "type": "uint24"
-              },
+              { "internalType": "uint24", "name": "fee", "type": "uint24" },
               {
                 "internalType": "uint256",
                 "name": "currentNFTPriceInETH",
@@ -216,11 +168,7 @@
     ],
     "name": "createVault",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "vaultId",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "vaultId", "type": "uint256" }
     ],
     "stateMutability": "payable",
     "type": "function"
@@ -242,109 +190,43 @@
     "inputs": [],
     "name": "nftxRouter",
     "outputs": [
-      {
-        "internalType": "contract INFTXRouter",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract INFTXRouter", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+      { "internalType": "bytes", "name": "", "type": "bytes" }
     ],
     "name": "onERC1155BatchReceived",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes4", "name": "", "type": "bytes4" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "bytes", "name": "", "type": "bytes" }
     ],
     "name": "onERC1155Received",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes4", "name": "", "type": "bytes4" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
+      { "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }
     ],
     "name": "supportsInterface",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -361,8 +243,5 @@
     "stateMutability": "view",
     "type": "function"
   },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
-  }
+  { "stateMutability": "payable", "type": "receive" }
 ]

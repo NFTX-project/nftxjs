@@ -15,6 +15,7 @@ import {
   percentageToFeeTier,
 } from '@nftx/constants';
 import { addressEqual, getChainConstant } from '@nftx/utils';
+import { parseEther } from 'viem';
 
 type Pool = LiquidityPoolsResponse['liquidityPools'][0];
 
@@ -46,6 +47,8 @@ const transformPool = (
     name,
     balance: BigInt(pool.inputTokenBalances[i] ?? '0'),
   }));
+  const wethToken = getChainConstant(WETH_TOKEN, network);
+  const isWeth0 = addressEqual(tokens[0].id, wethToken);
   const activeLiquidity = BigInt(pool.activeLiquidity ?? '0');
   const totalLiquidity = BigInt(pool.totalLiquidity ?? '0');
   const tick = BigInt(pool.tick ?? '0');
@@ -54,7 +57,9 @@ const transformPool = (
       ?.feePercentage ?? 0
   );
   const feeTier = percentageToFeeTier(feePercentage);
-  const totalValueLocked = BigInt(pool.totalValueLockedUSD ?? '0');
+  const totalValueLocked = parseEther(
+    (pool.totalValueLockedETH ?? '0') as `${number}`
+  );
   const inRangeLiquidity =
     totalLiquidity > Zero
       ? (activeLiquidity * WeiPerEther) / totalLiquidity
@@ -66,23 +71,26 @@ const transformPool = (
   const periodFees = calculatePeriodFees(receipts);
 
   const dailyVolume = pool.hourlySnapshots.reduce((total, snapshot) => {
-    return total + BigInt(snapshot.hourlyVolumeUSD ?? '0');
+    const value = BigInt(
+      snapshot.hourlyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
+    );
+    return total + value;
   }, Zero);
   const dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
     return total + BigInt(snapshot.hourlyTotalRevenueUSD ?? '0');
   }, Zero);
   const weeklyVolume = pool.dailySnapshots.reduce((total, snapshot) => {
-    return total + BigInt(snapshot.dailyVolumeUSD ?? '0');
+    const value = BigInt(
+      snapshot.dailyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
+    );
+    return total + value;
   }, Zero);
   const weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
     return total + BigInt(snapshot.dailyTotalRevenueUSD ?? '0');
   }, Zero);
 
-  const wethToken = getChainConstant(WETH_TOKEN, network);
-  const eth =
-    tokens.find((token) => addressEqual(token.id, wethToken))?.balance ?? Zero;
-  const vToken =
-    tokens.find((token) => !addressEqual(token.id, wethToken))?.balance ?? Zero;
+  const eth = tokens[isWeth0 ? 0 : 1].balance;
+  const vToken = tokens[isWeth0 ? 1 : 0].balance;
   const vTokenValue = (vToken * vault.vTokenToEth) / WeiPerEther;
   const poolValue = eth + vTokenValue;
 

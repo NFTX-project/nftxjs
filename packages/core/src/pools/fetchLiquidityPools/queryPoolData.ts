@@ -3,6 +3,9 @@ import { createQuery, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '@nftx/utils';
 import type { NftxV3Uniswap, Address, Vault } from '@nftx/types';
 
+const ONE_DAY = 60 * 60 * 24;
+const ONE_WEEK = ONE_DAY * 7;
+
 const getAddressesForVaultIds = (
   vaultIds: string[],
   vaults: Pick<Vault, 'id' | 'vaultId'>[]
@@ -32,6 +35,10 @@ const queryPoolData = ({
     vaultAddresses = getAddressesForVaultIds(vaultIds, vaults);
   }
 
+  const now = Math.floor(Date.now() / 1000);
+  const oneDayAgo = now - ONE_DAY;
+  const oneWeekAgo = now - ONE_WEEK;
+
   const q = createQuery<NftxV3Uniswap.Query>();
   const query = q.liquidityPools
     .first(1000)
@@ -47,22 +54,24 @@ const queryPoolData = ({
       s.totalLiquidity,
       s.activeLiquidity,
       s.inputTokenBalances,
-      s.totalValueLockedUSD,
+      s.totalValueLockedETH,
       s.fees((fee) => [fee.id, fee.feePercentage, fee.feeType]),
       s.inputTokens((token) => [token.id, token.symbol, token.name]),
       s.hourlySnapshots(
         q.liquidityPoolHourlySnapshots
-          .first(24)
+          .where((w) => [w.timestamp.gte(`${oneDayAgo}`)])
+          .first(1000)
           .orderBy('hour')
           .orderDirection('desc')
-          .select((s) => [s.hourlyVolumeUSD, s.id])
+          .select((s) => [s.hourlyVolumeByTokenAmount, s.id])
       ),
       s.dailySnapshots(
         q.liquidityPoolDailySnapshots
-          .first(7)
+          .where((w) => [w.timestamp.gte(`${oneWeekAgo}`)])
+          .first(1000)
           .orderBy('day')
           .orderDirection('desc')
-          .select((s) => [s.id, s.day, s.dailyVolumeUSD])
+          .select((s) => [s.id, s.day, s.dailyVolumeByTokenAmount])
       ),
       s.openPositionCount,
     ]);

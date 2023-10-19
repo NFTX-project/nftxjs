@@ -27,7 +27,7 @@ export type Account = {
   /**  All deposit events of this account  */
   deposits: Array<Deposit>;
   /**  { Account address }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Number of open positions this account has  */
   openPositionCount: Scalars['Int']['output'];
   /**  Number of positions this account has  */
@@ -101,16 +101,14 @@ export type Account_Filter = {
   depositCount_not?: InputMaybe<Scalars['Int']['input']>;
   depositCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   deposits_?: InputMaybe<Deposit_Filter>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   openPositionCount?: InputMaybe<Scalars['Int']['input']>;
   openPositionCount_gt?: InputMaybe<Scalars['Int']['input']>;
   openPositionCount_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -166,23 +164,21 @@ export enum Account_OrderBy {
 export type ActiveAccount = {
   __typename?: 'ActiveAccount';
   /**  { daily/hourly }-{ Address of the account }-{ Days/hours since Unix epoch }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
 };
 
 export type ActiveAccount_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<ActiveAccount_Filter>>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<ActiveAccount_Filter>>>;
 };
 
@@ -226,7 +222,7 @@ export type Deposit = {
   /**  Transaction hash of the transaction that emitted this event  */
   hash: Scalars['Bytes']['output'];
   /**  { Transaction hash }-{ Log index }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Amount of input tokens in the token's native unit  */
   inputTokenAmounts: Array<Scalars['BigInt']['output']>;
   /**  Input tokens of the pool. E.g. WETH and USDC to a WETH-USDC pool  */
@@ -346,16 +342,14 @@ export type Deposit_Filter = {
   hash_not?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   inputTokenAmounts?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   inputTokenAmounts_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   inputTokenAmounts_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
@@ -512,15 +506,20 @@ export enum Deposit_OrderBy {
   Nonce = 'nonce',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -537,7 +536,9 @@ export enum Deposit_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Position = 'position',
   PositionBlockNumberClosed = 'position__blockNumberClosed',
@@ -551,6 +552,7 @@ export enum Deposit_OrderBy {
   PositionLiquidity = 'position__liquidity',
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
+  PositionLockedUntil = 'position__lockedUntil',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
   PositionWithdrawCount = 'position__withdrawCount',
@@ -618,7 +620,7 @@ export type DexAmmProtocol = Protocol & {
   /**  Hourly usage metrics for this protocol  */
   hourlyUsageMetrics: Array<UsageMetricsHourlySnapshot>;
   /**  Smart contract address of the protocol's main contract (Factory, Registry, etc)  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Day ID of the most recent daily snapshot  */
   lastSnapshotDayID: Scalars['Int']['output'];
   /**  Block number of the last time this entity was updated  */
@@ -776,16 +778,14 @@ export type DexAmmProtocol_Filter = {
   dailyUsageMetrics_?: InputMaybe<UsageMetricsDailySnapshot_Filter>;
   financialMetrics_?: InputMaybe<FinancialsDailySnapshot_Filter>;
   hourlyUsageMetrics_?: InputMaybe<UsageMetricsHourlySnapshot_Filter>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   lastSnapshotDayID?: InputMaybe<Scalars['Int']['input']>;
   lastSnapshotDayID_gt?: InputMaybe<Scalars['Int']['input']>;
   lastSnapshotDayID_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -1283,6 +1283,7 @@ export type LiquidityPool = {
   __typename?: 'LiquidityPool';
   /**  All liquidity `k` that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidity: Scalars['BigInt']['output'];
+  activeLiquidityETH: Scalars['BigDecimal']['output'];
   /**  All liquidity in USD that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidityUSD: Scalars['BigDecimal']['output'];
   /**  Number of closed positions in this market  */
@@ -1293,18 +1294,23 @@ export type LiquidityPool = {
   createdTimestamp: Scalars['BigInt']['output'];
   /**  Total number of deposits (add liquidity)  */
   cumulativeDepositCount: Scalars['Int']['output'];
+  cumulativeProtocolSideRevenueETH: Scalars['BigDecimal']['output'];
   /**  All revenue generated by the liquidity pool, accrued to the protocol.  */
   cumulativeProtocolSideRevenueUSD: Scalars['BigDecimal']['output'];
+  cumulativeSupplySideRevenueETH: Scalars['BigDecimal']['output'];
   /**  All revenue generated by the liquidity pool, accrued to the supply side.  */
   cumulativeSupplySideRevenueUSD: Scalars['BigDecimal']['output'];
   /**  Total number of trades (swaps)  */
   cumulativeSwapCount: Scalars['Int']['output'];
+  cumulativeTotalRevenueETH: Scalars['BigDecimal']['output'];
   /**  All revenue generated by the liquidity pool.  */
   cumulativeTotalRevenueUSD: Scalars['BigDecimal']['output'];
   /**  All trade volume occurred for a specific input token, in native amount. The ordering should be the same as the pool's `inputTokens` field.  */
   cumulativeVolumeByTokenAmount: Array<Scalars['BigInt']['output']>;
+  cumulativeVolumeByTokenETH: Array<Scalars['BigDecimal']['output']>;
   /**  All trade volume occurred for a specific input token, in USD. The ordering should be the same as the pool's `inputTokens` field.  */
   cumulativeVolumeByTokenUSD: Array<Scalars['BigDecimal']['output']>;
+  cumulativeVolumeETH: Scalars['BigDecimal']['output'];
   /**  All historical trade volume occurred in this pool, in USD  */
   cumulativeVolumeUSD: Scalars['BigDecimal']['output'];
   /**  Total number of withdrawals (remove liquidity)  */
@@ -1318,9 +1324,10 @@ export type LiquidityPool = {
   /**  Liquidity pool hourly snapshots  */
   hourlySnapshots: Array<LiquidityPoolHourlySnapshot>;
   /**  Smart contract address of the pool  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Amount of input tokens in the pool. The ordering should be the same as the pool's `inputTokens` field.  */
   inputTokenBalances: Array<Scalars['BigInt']['output']>;
+  inputTokenBalancesETH: Array<Scalars['BigDecimal']['output']>;
   /**  Amount of input tokens in USD in the pool. The ordering should be the same as the pool's `inputTokens` field.  */
   inputTokenBalancesUSD: Array<Scalars['BigDecimal']['output']>;
   /**  Weights of input tokens in the liquidity pool in percentage values. For example, 50/50 for Uniswap pools, 48.2/51.8 for a Curve pool, 10/10/80 for a Balancer pool  */
@@ -1367,16 +1374,20 @@ export type LiquidityPool = {
   tick?: Maybe<Scalars['BigInt']['output']>;
   /**  The sum of all active and non-active liquidity for this pool.  */
   totalLiquidity: Scalars['BigInt']['output'];
+  totalLiquidityETH: Scalars['BigDecimal']['output'];
   /**  The sum of all active and non-active liquidity in USD for this pool.  */
   totalLiquidityUSD: Scalars['BigDecimal']['output'];
+  totalValueLockedETH: Scalars['BigDecimal']['output'];
   /**  Current TVL (Total Value Locked) of this pool in USD  */
   totalValueLockedUSD: Scalars['BigDecimal']['output'];
   /**  All protocol-side value locked in token amounts that remains uncollected and unused in the pool.  */
   uncollectedProtocolSideTokenAmounts: Array<Scalars['BigInt']['output']>;
+  uncollectedProtocolSideValuesETH: Array<Scalars['BigDecimal']['output']>;
   /**  All protocol-side value locking in USD that remains uncollected and unused in the pool.  */
   uncollectedProtocolSideValuesUSD: Array<Scalars['BigDecimal']['output']>;
   /**  All supply-side value locked in token amounts that remains uncollected and unused in the pool.  */
   uncollectedSupplySideTokenAmounts: Array<Scalars['BigInt']['output']>;
+  uncollectedSupplySideValuesETH: Array<Scalars['BigDecimal']['output']>;
   /**  All supply-side value locked in USD that remains uncollected and unused in the pool.  */
   uncollectedSupplySideValuesUSD: Array<Scalars['BigDecimal']['output']>;
   /**  All withdraw (remove liquidity) events occurred in this pool  */
@@ -1540,8 +1551,10 @@ export type LiquidityPoolDailySnapshot = {
   timestamp: Scalars['BigInt']['output'];
   /**  The sum of all active and non-active liquidity for this pool.  */
   totalLiquidity: Scalars['BigInt']['output'];
+  totalLiquidityETH: Scalars['BigDecimal']['output'];
   /**  The sum of all active and non-active liquidity in USD for this pool.  */
   totalLiquidityUSD: Scalars['BigDecimal']['output'];
+  totalValueLockedETH: Scalars['BigDecimal']['output'];
   /**  Current TVL (Total Value Locked) of this pool  */
   totalValueLockedUSD: Scalars['BigDecimal']['output'];
   /**  All protocol-side value locked in token amounts that remains uncollected and unused in the pool.  */
@@ -1858,6 +1871,14 @@ export type LiquidityPoolDailySnapshot_Filter = {
   timestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   totalLiquidity?: InputMaybe<Scalars['BigInt']['input']>;
+  totalLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1873,6 +1894,14 @@ export type LiquidityPoolDailySnapshot_Filter = {
   totalLiquidity_lte?: InputMaybe<Scalars['BigInt']['input']>;
   totalLiquidity_not?: InputMaybe<Scalars['BigInt']['input']>;
   totalLiquidity_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalValueLockedETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalValueLockedETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalValueLockedUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1938,15 +1967,20 @@ export enum LiquidityPoolDailySnapshot_OrderBy {
   OpenPositionCount = 'openPositionCount',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -1963,7 +1997,9 @@ export enum LiquidityPoolDailySnapshot_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   PositionCount = 'positionCount',
   Protocol = 'protocol',
@@ -2001,7 +2037,9 @@ export enum LiquidityPoolDailySnapshot_OrderBy {
   Tick = 'tick',
   Timestamp = 'timestamp',
   TotalLiquidity = 'totalLiquidity',
+  TotalLiquidityEth = 'totalLiquidityETH',
   TotalLiquidityUsd = 'totalLiquidityUSD',
+  TotalValueLockedEth = 'totalValueLockedETH',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   UncollectedProtocolSideTokenAmounts = 'uncollectedProtocolSideTokenAmounts',
   UncollectedProtocolSideValuesUsd = 'uncollectedProtocolSideValuesUSD',
@@ -2016,7 +2054,7 @@ export type LiquidityPoolFee = {
   /**  Type of fee this pool uses  */
   feeType: LiquidityPoolFeeType;
   /**  { Fee type }-{ Pool address }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
 };
 
 export enum LiquidityPoolFeeType {
@@ -2056,16 +2094,14 @@ export type LiquidityPoolFee_Filter = {
   feeType_in?: InputMaybe<Array<LiquidityPoolFeeType>>;
   feeType_not?: InputMaybe<LiquidityPoolFeeType>;
   feeType_not_in?: InputMaybe<Array<LiquidityPoolFeeType>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<LiquidityPoolFee_Filter>>>;
 };
 
@@ -2151,8 +2187,10 @@ export type LiquidityPoolHourlySnapshot = {
   timestamp: Scalars['BigInt']['output'];
   /**  The sum of all active and non-active liquidity for this pool.  */
   totalLiquidity: Scalars['BigInt']['output'];
+  totalLiquidityETH: Scalars['BigDecimal']['output'];
   /**  The sum of all active and non-active liquidity in USD for this pool.  */
   totalLiquidityUSD: Scalars['BigDecimal']['output'];
+  totalValueLockedETH: Scalars['BigDecimal']['output'];
   /**  Current TVL (Total Value Locked) of this pool  */
   totalValueLockedUSD: Scalars['BigDecimal']['output'];
   /**  All protocol-side value locked in token amounts that remains uncollected and unused in the pool.  */
@@ -2469,6 +2507,14 @@ export type LiquidityPoolHourlySnapshot_Filter = {
   timestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   totalLiquidity?: InputMaybe<Scalars['BigInt']['input']>;
+  totalLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2484,6 +2530,14 @@ export type LiquidityPoolHourlySnapshot_Filter = {
   totalLiquidity_lte?: InputMaybe<Scalars['BigInt']['input']>;
   totalLiquidity_not?: InputMaybe<Scalars['BigInt']['input']>;
   totalLiquidity_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalValueLockedETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalValueLockedETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalValueLockedUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2549,15 +2603,20 @@ export enum LiquidityPoolHourlySnapshot_OrderBy {
   OpenPositionCount = 'openPositionCount',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -2574,7 +2633,9 @@ export enum LiquidityPoolHourlySnapshot_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   PositionCount = 'positionCount',
   Protocol = 'protocol',
@@ -2612,7 +2673,9 @@ export enum LiquidityPoolHourlySnapshot_OrderBy {
   Tick = 'tick',
   Timestamp = 'timestamp',
   TotalLiquidity = 'totalLiquidity',
+  TotalLiquidityEth = 'totalLiquidityETH',
   TotalLiquidityUsd = 'totalLiquidityUSD',
+  TotalValueLockedEth = 'totalValueLockedETH',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   UncollectedProtocolSideTokenAmounts = 'uncollectedProtocolSideTokenAmounts',
   UncollectedProtocolSideValuesUsd = 'uncollectedProtocolSideValuesUSD',
@@ -2624,6 +2687,14 @@ export type LiquidityPool_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   activeLiquidity?: InputMaybe<Scalars['BigInt']['input']>;
+  activeLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  activeLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   activeLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2672,6 +2743,14 @@ export type LiquidityPool_Filter = {
   cumulativeDepositCount_lte?: InputMaybe<Scalars['Int']['input']>;
   cumulativeDepositCount_not?: InputMaybe<Scalars['Int']['input']>;
   cumulativeDepositCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  cumulativeProtocolSideRevenueETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeProtocolSideRevenueETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeProtocolSideRevenueETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeProtocolSideRevenueETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeProtocolSideRevenueETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeProtocolSideRevenueETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeProtocolSideRevenueETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeProtocolSideRevenueETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeProtocolSideRevenueUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeProtocolSideRevenueUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeProtocolSideRevenueUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2680,6 +2759,14 @@ export type LiquidityPool_Filter = {
   cumulativeProtocolSideRevenueUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeProtocolSideRevenueUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeProtocolSideRevenueUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeSupplySideRevenueETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeSupplySideRevenueETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeSupplySideRevenueETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeSupplySideRevenueETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeSupplySideRevenueETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeSupplySideRevenueETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeSupplySideRevenueETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeSupplySideRevenueETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeSupplySideRevenueUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeSupplySideRevenueUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeSupplySideRevenueUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2696,6 +2783,14 @@ export type LiquidityPool_Filter = {
   cumulativeSwapCount_lte?: InputMaybe<Scalars['Int']['input']>;
   cumulativeSwapCount_not?: InputMaybe<Scalars['Int']['input']>;
   cumulativeSwapCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  cumulativeTotalRevenueETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeTotalRevenueETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeTotalRevenueETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeTotalRevenueETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeTotalRevenueETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeTotalRevenueETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeTotalRevenueETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeTotalRevenueETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeTotalRevenueUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeTotalRevenueUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeTotalRevenueUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2710,12 +2805,26 @@ export type LiquidityPool_Filter = {
   cumulativeVolumeByTokenAmount_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   cumulativeVolumeByTokenAmount_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   cumulativeVolumeByTokenAmount_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  cumulativeVolumeByTokenETH?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeByTokenETH_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeByTokenETH_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeByTokenETH_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeByTokenETH_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeByTokenETH_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2742,17 +2851,21 @@ export type LiquidityPool_Filter = {
   fees_not_contains?: InputMaybe<Array<Scalars['String']['input']>>;
   fees_not_contains_nocase?: InputMaybe<Array<Scalars['String']['input']>>;
   hourlySnapshots_?: InputMaybe<LiquidityPoolHourlySnapshot_Filter>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   inputTokenBalances?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  inputTokenBalancesETH?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  inputTokenBalancesETH_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  inputTokenBalancesETH_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  inputTokenBalancesETH_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  inputTokenBalancesETH_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  inputTokenBalancesETH_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   inputTokenBalancesUSD?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   inputTokenBalancesUSD_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   inputTokenBalancesUSD_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
@@ -2954,6 +3067,14 @@ export type LiquidityPool_Filter = {
   tick_not?: InputMaybe<Scalars['BigInt']['input']>;
   tick_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   totalLiquidity?: InputMaybe<Scalars['BigInt']['input']>;
+  totalLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2969,6 +3090,14 @@ export type LiquidityPool_Filter = {
   totalLiquidity_lte?: InputMaybe<Scalars['BigInt']['input']>;
   totalLiquidity_not?: InputMaybe<Scalars['BigInt']['input']>;
   totalLiquidity_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalValueLockedETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalValueLockedETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalValueLockedUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2983,6 +3112,12 @@ export type LiquidityPool_Filter = {
   uncollectedProtocolSideTokenAmounts_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   uncollectedProtocolSideTokenAmounts_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   uncollectedProtocolSideTokenAmounts_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  uncollectedProtocolSideValuesETH?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedProtocolSideValuesETH_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedProtocolSideValuesETH_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedProtocolSideValuesETH_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedProtocolSideValuesETH_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedProtocolSideValuesETH_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   uncollectedProtocolSideValuesUSD?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   uncollectedProtocolSideValuesUSD_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   uncollectedProtocolSideValuesUSD_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
@@ -2995,6 +3130,12 @@ export type LiquidityPool_Filter = {
   uncollectedSupplySideTokenAmounts_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   uncollectedSupplySideTokenAmounts_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   uncollectedSupplySideTokenAmounts_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  uncollectedSupplySideValuesETH?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedSupplySideValuesETH_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedSupplySideValuesETH_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedSupplySideValuesETH_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedSupplySideValuesETH_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  uncollectedSupplySideValuesETH_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   uncollectedSupplySideValuesUSD?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   uncollectedSupplySideValuesUSD_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   uncollectedSupplySideValuesUSD_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
@@ -3006,17 +3147,23 @@ export type LiquidityPool_Filter = {
 
 export enum LiquidityPool_OrderBy {
   ActiveLiquidity = 'activeLiquidity',
+  ActiveLiquidityEth = 'activeLiquidityETH',
   ActiveLiquidityUsd = 'activeLiquidityUSD',
   ClosedPositionCount = 'closedPositionCount',
   CreatedBlockNumber = 'createdBlockNumber',
   CreatedTimestamp = 'createdTimestamp',
   CumulativeDepositCount = 'cumulativeDepositCount',
+  CumulativeProtocolSideRevenueEth = 'cumulativeProtocolSideRevenueETH',
   CumulativeProtocolSideRevenueUsd = 'cumulativeProtocolSideRevenueUSD',
+  CumulativeSupplySideRevenueEth = 'cumulativeSupplySideRevenueETH',
   CumulativeSupplySideRevenueUsd = 'cumulativeSupplySideRevenueUSD',
   CumulativeSwapCount = 'cumulativeSwapCount',
+  CumulativeTotalRevenueEth = 'cumulativeTotalRevenueETH',
   CumulativeTotalRevenueUsd = 'cumulativeTotalRevenueUSD',
   CumulativeVolumeByTokenAmount = 'cumulativeVolumeByTokenAmount',
+  CumulativeVolumeByTokenEth = 'cumulativeVolumeByTokenETH',
   CumulativeVolumeByTokenUsd = 'cumulativeVolumeByTokenUSD',
+  CumulativeVolumeEth = 'cumulativeVolumeETH',
   CumulativeVolumeUsd = 'cumulativeVolumeUSD',
   CumulativeWithdrawCount = 'cumulativeWithdrawCount',
   DailySnapshots = 'dailySnapshots',
@@ -3025,6 +3172,7 @@ export enum LiquidityPool_OrderBy {
   HourlySnapshots = 'hourlySnapshots',
   Id = 'id',
   InputTokenBalances = 'inputTokenBalances',
+  InputTokenBalancesEth = 'inputTokenBalancesETH',
   InputTokenBalancesUsd = 'inputTokenBalancesUSD',
   InputTokenWeights = 'inputTokenWeights',
   InputTokens = 'inputTokens',
@@ -3035,14 +3183,17 @@ export enum LiquidityPool_OrderBy {
   LastUpdateTimestamp = 'lastUpdateTimestamp',
   LiquidityToken = 'liquidityToken',
   LiquidityTokenType = 'liquidityTokenType',
+  LiquidityTokenEthPricePool = 'liquidityToken___ethPricePool',
   LiquidityTokenLargePriceChangeBuffer = 'liquidityToken___largePriceChangeBuffer',
   LiquidityTokenLargeTvlImpactBuffer = 'liquidityToken___largeTVLImpactBuffer',
   LiquidityTokenLastPricePool = 'liquidityToken___lastPricePool',
   LiquidityTokenTotalSupply = 'liquidityToken___totalSupply',
+  LiquidityTokenTotalValueLockedEth = 'liquidityToken___totalValueLockedETH',
   LiquidityTokenTotalValueLockedUsd = 'liquidityToken___totalValueLockedUSD',
   LiquidityTokenDecimals = 'liquidityToken__decimals',
   LiquidityTokenId = 'liquidityToken__id',
   LiquidityTokenLastPriceBlockNumber = 'liquidityToken__lastPriceBlockNumber',
+  LiquidityTokenLastPriceEth = 'liquidityToken__lastPriceETH',
   LiquidityTokenLastPriceUsd = 'liquidityToken__lastPriceUSD',
   LiquidityTokenName = 'liquidityToken__name',
   LiquidityTokenSymbol = 'liquidityToken__symbol',
@@ -3087,11 +3238,15 @@ export enum LiquidityPool_OrderBy {
   Symbol = 'symbol',
   Tick = 'tick',
   TotalLiquidity = 'totalLiquidity',
+  TotalLiquidityEth = 'totalLiquidityETH',
   TotalLiquidityUsd = 'totalLiquidityUSD',
+  TotalValueLockedEth = 'totalValueLockedETH',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   UncollectedProtocolSideTokenAmounts = 'uncollectedProtocolSideTokenAmounts',
+  UncollectedProtocolSideValuesEth = 'uncollectedProtocolSideValuesETH',
   UncollectedProtocolSideValuesUsd = 'uncollectedProtocolSideValuesUSD',
   UncollectedSupplySideTokenAmounts = 'uncollectedSupplySideTokenAmounts',
+  UncollectedSupplySideValuesEth = 'uncollectedSupplySideValuesETH',
   UncollectedSupplySideValuesUsd = 'uncollectedSupplySideValuesUSD',
   Withdraws = 'withdraws'
 }
@@ -3118,6 +3273,7 @@ export enum Network {
   NearMainnet = 'NEAR_MAINNET',
   Optimism = 'OPTIMISM',
   Osmosis = 'OSMOSIS',
+  Sepolia = 'SEPOLIA',
   Xdai = 'XDAI'
 }
 
@@ -3154,7 +3310,7 @@ export type Position = {
   /**  The hash of the transaction that opened this position  */
   hashOpened: Scalars['Bytes']['output'];
   /**  { Account address }-{ Market address }-{ Count }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  total position liquidity  */
   liquidity: Scalars['BigInt']['output'];
   /**  Token that is to represent ownership of liquidity  */
@@ -3163,6 +3319,8 @@ export type Position = {
   liquidityTokenType?: Maybe<TokenType>;
   /**  total position liquidity in USD  */
   liquidityUSD: Scalars['BigDecimal']['output'];
+  /**  Timestamp which position is locked until */
+  lockedUntil?: Maybe<Scalars['BigInt']['output']>;
   /**  The liquidity pool in which this position was opened  */
   pool: LiquidityPool;
   /**  Position daily snapshots for open positions  */
@@ -3229,7 +3387,7 @@ export type PositionSnapshot = {
   /**  Transaction hash of the transaction that triggered this snapshot  */
   hash: Scalars['Bytes']['output'];
   /**  { Position ID }-{ Transaction hash }-{ Log index }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  total position liquidity  */
   liquidity?: Maybe<Scalars['BigInt']['output']>;
   /**  Type of token used to track liquidity  */
@@ -3318,16 +3476,14 @@ export type PositionSnapshot_Filter = {
   hash_not?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   liquidity?: InputMaybe<Scalars['BigInt']['input']>;
   liquidityTokenType?: InputMaybe<TokenType>;
   liquidityTokenType_in?: InputMaybe<Array<TokenType>>;
@@ -3432,6 +3588,7 @@ export enum PositionSnapshot_OrderBy {
   PositionLiquidity = 'position__liquidity',
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
+  PositionLockedUntil = 'position__lockedUntil',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
   PositionWithdrawCount = 'position__withdrawCount',
@@ -3543,16 +3700,14 @@ export type Position_Filter = {
   hashOpened_not?: InputMaybe<Scalars['Bytes']['input']>;
   hashOpened_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   hashOpened_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   liquidity?: InputMaybe<Scalars['BigInt']['input']>;
   liquidityToken?: InputMaybe<Scalars['String']['input']>;
   liquidityTokenType?: InputMaybe<TokenType>;
@@ -3594,6 +3749,14 @@ export type Position_Filter = {
   liquidity_lte?: InputMaybe<Scalars['BigInt']['input']>;
   liquidity_not?: InputMaybe<Scalars['BigInt']['input']>;
   liquidity_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  lockedUntil?: InputMaybe<Scalars['BigInt']['input']>;
+  lockedUntil_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  lockedUntil_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  lockedUntil_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  lockedUntil_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  lockedUntil_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  lockedUntil_not?: InputMaybe<Scalars['BigInt']['input']>;
+  lockedUntil_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   or?: InputMaybe<Array<InputMaybe<Position_Filter>>>;
   pool?: InputMaybe<Scalars['String']['input']>;
   pool_?: InputMaybe<LiquidityPool_Filter>;
@@ -3710,29 +3873,38 @@ export enum Position_OrderBy {
   Liquidity = 'liquidity',
   LiquidityToken = 'liquidityToken',
   LiquidityTokenType = 'liquidityTokenType',
+  LiquidityTokenEthPricePool = 'liquidityToken___ethPricePool',
   LiquidityTokenLargePriceChangeBuffer = 'liquidityToken___largePriceChangeBuffer',
   LiquidityTokenLargeTvlImpactBuffer = 'liquidityToken___largeTVLImpactBuffer',
   LiquidityTokenLastPricePool = 'liquidityToken___lastPricePool',
   LiquidityTokenTotalSupply = 'liquidityToken___totalSupply',
+  LiquidityTokenTotalValueLockedEth = 'liquidityToken___totalValueLockedETH',
   LiquidityTokenTotalValueLockedUsd = 'liquidityToken___totalValueLockedUSD',
   LiquidityTokenDecimals = 'liquidityToken__decimals',
   LiquidityTokenId = 'liquidityToken__id',
   LiquidityTokenLastPriceBlockNumber = 'liquidityToken__lastPriceBlockNumber',
+  LiquidityTokenLastPriceEth = 'liquidityToken__lastPriceETH',
   LiquidityTokenLastPriceUsd = 'liquidityToken__lastPriceUSD',
   LiquidityTokenName = 'liquidityToken__name',
   LiquidityTokenSymbol = 'liquidityToken__symbol',
   LiquidityUsd = 'liquidityUSD',
+  LockedUntil = 'lockedUntil',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -3749,7 +3921,9 @@ export enum Position_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Snapshots = 'snapshots',
   TickLower = 'tickLower',
@@ -3800,7 +3974,7 @@ export type Protocol = {
   /**  Hourly usage metrics for this protocol  */
   hourlyUsageMetrics: Array<UsageMetricsHourlySnapshot>;
   /**  Smart contract address of the protocol's main contract (Factory, Registry, etc)  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Version of the methodology used to compute metrics, loosely based on SemVer format (e.g. 1.0.0)  */
   methodologyVersion: Scalars['String']['output'];
   /**  Name of the protocol, including version. e.g. Uniswap v3  */
@@ -3897,16 +4071,14 @@ export type Protocol_Filter = {
   dailyUsageMetrics_?: InputMaybe<UsageMetricsDailySnapshot_Filter>;
   financialMetrics_?: InputMaybe<FinancialsDailySnapshot_Filter>;
   hourlyUsageMetrics_?: InputMaybe<UsageMetricsHourlySnapshot_Filter>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   methodologyVersion?: InputMaybe<Scalars['String']['input']>;
   methodologyVersion_contains?: InputMaybe<Scalars['String']['input']>;
   methodologyVersion_contains_nocase?: InputMaybe<Scalars['String']['input']>;
@@ -4636,14 +4808,17 @@ export type RewardToken_Filter = {
 export enum RewardToken_OrderBy {
   Id = 'id',
   Token = 'token',
+  TokenEthPricePool = 'token___ethPricePool',
   TokenLargePriceChangeBuffer = 'token___largePriceChangeBuffer',
   TokenLargeTvlImpactBuffer = 'token___largeTVLImpactBuffer',
   TokenLastPricePool = 'token___lastPricePool',
   TokenTotalSupply = 'token___totalSupply',
+  TokenTotalValueLockedEth = 'token___totalValueLockedETH',
   TokenTotalValueLockedUsd = 'token___totalValueLockedUSD',
   TokenDecimals = 'token__decimals',
   TokenId = 'token__id',
   TokenLastPriceBlockNumber = 'token__lastPriceBlockNumber',
+  TokenLastPriceEth = 'token__lastPriceETH',
   TokenLastPriceUsd = 'token__lastPriceUSD',
   TokenName = 'token__name',
   TokenSymbol = 'token__symbol',
@@ -5184,7 +5359,7 @@ export type Swap = {
   /**  Transaction hash of the transaction that emitted this event  */
   hash: Scalars['Bytes']['output'];
   /**  { Transaction hash }-{ Log index }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Event log index. For transactions that don't emit event, create arbitrary index starting from 0  */
   logIndex: Scalars['Int']['output'];
   /**  Nonce of the transaction that emitted this event  */
@@ -5304,16 +5479,14 @@ export type Swap_Filter = {
   hash_not?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   logIndex?: InputMaybe<Scalars['Int']['input']>;
   logIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   logIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -5462,15 +5635,20 @@ export enum Swap_OrderBy {
   Nonce = 'nonce',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -5487,7 +5665,9 @@ export enum Swap_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
@@ -5522,26 +5702,32 @@ export enum Swap_OrderBy {
   Tick = 'tick',
   Timestamp = 'timestamp',
   TokenIn = 'tokenIn',
+  TokenInEthPricePool = 'tokenIn___ethPricePool',
   TokenInLargePriceChangeBuffer = 'tokenIn___largePriceChangeBuffer',
   TokenInLargeTvlImpactBuffer = 'tokenIn___largeTVLImpactBuffer',
   TokenInLastPricePool = 'tokenIn___lastPricePool',
   TokenInTotalSupply = 'tokenIn___totalSupply',
+  TokenInTotalValueLockedEth = 'tokenIn___totalValueLockedETH',
   TokenInTotalValueLockedUsd = 'tokenIn___totalValueLockedUSD',
   TokenInDecimals = 'tokenIn__decimals',
   TokenInId = 'tokenIn__id',
   TokenInLastPriceBlockNumber = 'tokenIn__lastPriceBlockNumber',
+  TokenInLastPriceEth = 'tokenIn__lastPriceETH',
   TokenInLastPriceUsd = 'tokenIn__lastPriceUSD',
   TokenInName = 'tokenIn__name',
   TokenInSymbol = 'tokenIn__symbol',
   TokenOut = 'tokenOut',
+  TokenOutEthPricePool = 'tokenOut___ethPricePool',
   TokenOutLargePriceChangeBuffer = 'tokenOut___largePriceChangeBuffer',
   TokenOutLargeTvlImpactBuffer = 'tokenOut___largeTVLImpactBuffer',
   TokenOutLastPricePool = 'tokenOut___lastPricePool',
   TokenOutTotalSupply = 'tokenOut___totalSupply',
+  TokenOutTotalValueLockedEth = 'tokenOut___totalValueLockedETH',
   TokenOutTotalValueLockedUsd = 'tokenOut___totalValueLockedUSD',
   TokenOutDecimals = 'tokenOut__decimals',
   TokenOutId = 'tokenOut__id',
   TokenOutLastPriceBlockNumber = 'tokenOut__lastPriceBlockNumber',
+  TokenOutLastPriceEth = 'tokenOut__lastPriceETH',
   TokenOutLastPriceUsd = 'tokenOut__lastPriceUSD',
   TokenOutName = 'tokenOut__name',
   TokenOutSymbol = 'tokenOut__symbol'
@@ -5554,7 +5740,7 @@ export type Tick = {
   /**  Creation timestamp  */
   createdTimestamp: Scalars['BigInt']['output'];
   /**  { pool address }-{ tick index }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  tick index  */
   index: Scalars['BigInt']['output'];
   /**  Day ID of the most recent daily snapshot  */
@@ -5586,7 +5772,7 @@ export type TickDailySnapshot = {
   /**  Number of days since Unix epoch time  */
   day: Scalars['Int']['output'];
   /**  { pool address }-{ tick index }-{ day ID }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  total liquidity pool has as tick lower or upper  */
   liquidityGross: Scalars['BigInt']['output'];
   /**  total liquidity in USD pool has as tick lower or upper  */
@@ -5623,16 +5809,14 @@ export type TickDailySnapshot_Filter = {
   day_lte?: InputMaybe<Scalars['Int']['input']>;
   day_not?: InputMaybe<Scalars['Int']['input']>;
   day_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   liquidityGross?: InputMaybe<Scalars['BigInt']['input']>;
   liquidityGrossUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   liquidityGrossUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -5728,15 +5912,20 @@ export enum TickDailySnapshot_OrderBy {
   LiquidityNetUsd = 'liquidityNetUSD',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -5753,7 +5942,9 @@ export enum TickDailySnapshot_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Tick = 'tick',
   TickCreatedBlockNumber = 'tick__createdBlockNumber',
@@ -5778,7 +5969,7 @@ export type TickHourlySnapshot = {
   /**  Number of hours since Unix epoch time  */
   hour: Scalars['Int']['output'];
   /**  { pool address }-{ tick index }-{ hour ID }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  total liquidity pool has as tick lower or upper  */
   liquidityGross: Scalars['BigInt']['output'];
   /**  total liquidity in USD pool has as tick lower or upper  */
@@ -5815,16 +6006,14 @@ export type TickHourlySnapshot_Filter = {
   hour_lte?: InputMaybe<Scalars['Int']['input']>;
   hour_not?: InputMaybe<Scalars['Int']['input']>;
   hour_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   liquidityGross?: InputMaybe<Scalars['BigInt']['input']>;
   liquidityGrossUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   liquidityGrossUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -5920,15 +6109,20 @@ export enum TickHourlySnapshot_OrderBy {
   LiquidityNetUsd = 'liquidityNetUSD',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -5945,7 +6139,9 @@ export enum TickHourlySnapshot_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Tick = 'tick',
   TickCreatedBlockNumber = 'tick__createdBlockNumber',
@@ -5983,16 +6179,14 @@ export type Tick_Filter = {
   createdTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
   createdTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
   createdTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   index?: InputMaybe<Scalars['BigInt']['input']>;
   index_gt?: InputMaybe<Scalars['BigInt']['input']>;
   index_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -6110,15 +6304,20 @@ export enum Tick_OrderBy {
   LiquidityNetUsd = 'liquidityNetUSD',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -6135,27 +6334,34 @@ export enum Tick_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Prices = 'prices'
 }
 
 export type Token = {
   __typename?: 'Token';
+  /**  pool with WETH  */
+  _ethPricePool?: Maybe<Scalars['String']['output']>;
   _largePriceChangeBuffer: Scalars['Int']['output'];
   _largeTVLImpactBuffer: Scalars['Int']['output'];
   /**  last pool that gave this token a price  */
   _lastPricePool?: Maybe<Scalars['Bytes']['output']>;
   /**  amount of tokens in the protocol  */
   _totalSupply: Scalars['BigInt']['output'];
+  _totalValueLockedETH: Scalars['BigDecimal']['output'];
   /**  Total value locked in the protocol  */
   _totalValueLockedUSD: Scalars['BigDecimal']['output'];
   /**  The number of decimal places this token uses, default to 18  */
   decimals: Scalars['Int']['output'];
   /**  Smart contract address of the token  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Optional field to track the block number of the last token price  */
   lastPriceBlockNumber?: Maybe<Scalars['BigInt']['output']>;
+  /**  Optional field to track the price of a token, mostly for caching purposes  */
+  lastPriceETH?: Maybe<Scalars['BigDecimal']['output']>;
   /**  Optional field to track the price of a token, mostly for caching purposes  */
   lastPriceUSD?: Maybe<Scalars['BigDecimal']['output']>;
   /**  Name of the token, mirrored from the smart contract  */
@@ -6178,6 +6384,26 @@ export enum TokenType {
 export type Token_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  _ethPricePool?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_contains?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_ends_with?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_gt?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_gte?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  _ethPricePool_lt?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_lte?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_not?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_not_contains?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  _ethPricePool_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_starts_with?: InputMaybe<Scalars['String']['input']>;
+  _ethPricePool_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   _largePriceChangeBuffer?: InputMaybe<Scalars['Int']['input']>;
   _largePriceChangeBuffer_gt?: InputMaybe<Scalars['Int']['input']>;
   _largePriceChangeBuffer_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -6212,6 +6438,14 @@ export type Token_Filter = {
   _totalSupply_lte?: InputMaybe<Scalars['BigInt']['input']>;
   _totalSupply_not?: InputMaybe<Scalars['BigInt']['input']>;
   _totalSupply_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  _totalValueLockedETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  _totalValueLockedETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  _totalValueLockedETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  _totalValueLockedETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  _totalValueLockedETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  _totalValueLockedETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  _totalValueLockedETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  _totalValueLockedETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   _totalValueLockedUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   _totalValueLockedUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   _totalValueLockedUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -6229,16 +6463,14 @@ export type Token_Filter = {
   decimals_lte?: InputMaybe<Scalars['Int']['input']>;
   decimals_not?: InputMaybe<Scalars['Int']['input']>;
   decimals_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   lastPriceBlockNumber?: InputMaybe<Scalars['BigInt']['input']>;
   lastPriceBlockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
   lastPriceBlockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -6247,6 +6479,14 @@ export type Token_Filter = {
   lastPriceBlockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
   lastPriceBlockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
   lastPriceBlockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  lastPriceETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPriceETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPriceETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPriceETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  lastPriceETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPriceETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPriceETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPriceETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   lastPriceUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   lastPriceUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   lastPriceUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -6299,14 +6539,17 @@ export type Token_Filter = {
 };
 
 export enum Token_OrderBy {
+  EthPricePool = '_ethPricePool',
   LargePriceChangeBuffer = '_largePriceChangeBuffer',
   LargeTvlImpactBuffer = '_largeTVLImpactBuffer',
   LastPricePool = '_lastPricePool',
   TotalSupply = '_totalSupply',
+  TotalValueLockedEth = '_totalValueLockedETH',
   TotalValueLockedUsd = '_totalValueLockedUSD',
   Decimals = 'decimals',
   Id = 'id',
   LastPriceBlockNumber = 'lastPriceBlockNumber',
+  LastPriceEth = 'lastPriceETH',
   LastPriceUsd = 'lastPriceUSD',
   Name = 'name',
   Symbol = 'symbol'
@@ -6331,7 +6574,7 @@ export type UsageMetricsDailySnapshot = {
   /**  Number of days since Unix epoch time  */
   day: Scalars['Int']['output'];
   /**  ID is # of days since Unix epoch time  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Protocol this snapshot is associated with  */
   protocol: DexAmmProtocol;
   /**  Timestamp of when this snapshot was taken/last modified (May be taken after interval has passed)  */
@@ -6408,16 +6651,14 @@ export type UsageMetricsDailySnapshot_Filter = {
   day_lte?: InputMaybe<Scalars['Int']['input']>;
   day_not?: InputMaybe<Scalars['Int']['input']>;
   day_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<UsageMetricsDailySnapshot_Filter>>>;
   protocol?: InputMaybe<Scalars['String']['input']>;
   protocol_?: InputMaybe<DexAmmProtocol_Filter>;
@@ -6520,7 +6761,7 @@ export type UsageMetricsHourlySnapshot = {
   /**  Total number of withdrawals (remove liquidity) in an hour  */
   hourlyWithdrawCount: Scalars['Int']['output'];
   /**  { # of hours since Unix epoch time }  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Protocol this snapshot is associated with  */
   protocol: DexAmmProtocol;
   /**  Timestamp of when this snapshot was taken/last modified (May be taken after interval has passed)  */
@@ -6595,16 +6836,14 @@ export type UsageMetricsHourlySnapshot_Filter = {
   hourlyWithdrawCount_lte?: InputMaybe<Scalars['Int']['input']>;
   hourlyWithdrawCount_not?: InputMaybe<Scalars['Int']['input']>;
   hourlyWithdrawCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<UsageMetricsHourlySnapshot_Filter>>>;
   protocol?: InputMaybe<Scalars['String']['input']>;
   protocol_?: InputMaybe<DexAmmProtocol_Filter>;
@@ -6696,7 +6935,7 @@ export type Withdraw = {
   /**  Transaction hash of the transaction that emitted this event  */
   hash: Scalars['Bytes']['output'];
   /**  { Transaction hash }-{ Log index } */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Amount of input tokens in the token's native unit  */
   inputTokenAmounts: Array<Scalars['BigInt']['output']>;
   /**  Input tokens of the pool (not input tokens of the event/transaction). E.g. WETH and USDC from a WETH-USDC pool  */
@@ -6807,16 +7046,14 @@ export type Withdraw_Filter = {
   hash_not?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   hash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   inputTokenAmounts?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   inputTokenAmounts_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   inputTokenAmounts_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
@@ -6973,15 +7210,20 @@ export enum Withdraw_OrderBy {
   Nonce = 'nonce',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
+  PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
   PoolActiveLiquidityUsd = 'pool__activeLiquidityUSD',
   PoolClosedPositionCount = 'pool__closedPositionCount',
   PoolCreatedBlockNumber = 'pool__createdBlockNumber',
   PoolCreatedTimestamp = 'pool__createdTimestamp',
   PoolCumulativeDepositCount = 'pool__cumulativeDepositCount',
+  PoolCumulativeProtocolSideRevenueEth = 'pool__cumulativeProtocolSideRevenueETH',
   PoolCumulativeProtocolSideRevenueUsd = 'pool__cumulativeProtocolSideRevenueUSD',
+  PoolCumulativeSupplySideRevenueEth = 'pool__cumulativeSupplySideRevenueETH',
   PoolCumulativeSupplySideRevenueUsd = 'pool__cumulativeSupplySideRevenueUSD',
   PoolCumulativeSwapCount = 'pool__cumulativeSwapCount',
+  PoolCumulativeTotalRevenueEth = 'pool__cumulativeTotalRevenueETH',
   PoolCumulativeTotalRevenueUsd = 'pool__cumulativeTotalRevenueUSD',
+  PoolCumulativeVolumeEth = 'pool__cumulativeVolumeETH',
   PoolCumulativeVolumeUsd = 'pool__cumulativeVolumeUSD',
   PoolCumulativeWithdrawCount = 'pool__cumulativeWithdrawCount',
   PoolId = 'pool__id',
@@ -6998,7 +7240,9 @@ export enum Withdraw_OrderBy {
   PoolSymbol = 'pool__symbol',
   PoolTick = 'pool__tick',
   PoolTotalLiquidity = 'pool__totalLiquidity',
+  PoolTotalLiquidityEth = 'pool__totalLiquidityETH',
   PoolTotalLiquidityUsd = 'pool__totalLiquidityUSD',
+  PoolTotalValueLockedEth = 'pool__totalValueLockedETH',
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Position = 'position',
   PositionBlockNumberClosed = 'position__blockNumberClosed',
@@ -7012,6 +7256,7 @@ export enum Withdraw_OrderBy {
   PositionLiquidity = 'position__liquidity',
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
+  PositionLockedUntil = 'position__lockedUntil',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
   PositionWithdrawCount = 'position__withdrawCount',
@@ -7063,7 +7308,7 @@ export type _Block_ = {
 /**   Used to keep track of the price of Ether/TVL in USD, pool deposit count, and total unique users  */
 export type _HelperStore = {
   __typename?: '_HelperStore';
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  price of ETH/TVL in USD  */
   valueDecimal?: Maybe<Scalars['BigDecimal']['output']>;
   /**  Token Prices  */
@@ -7076,16 +7321,14 @@ export type _HelperStore_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<_HelperStore_Filter>>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<_HelperStore_Filter>>>;
   valueDecimal?: InputMaybe<Scalars['BigDecimal']['input']>;
   valueDecimalList?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
@@ -7121,7 +7364,7 @@ export enum _HelperStore_OrderBy {
 export type _LiquidityPoolAmount = {
   __typename?: '_LiquidityPoolAmount';
   /**  Smart contract address of the pool  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  Amount of input tokens in the pool. The ordering should be the same as the pool's `inputTokens` field.  */
   inputTokenBalances: Array<Scalars['BigDecimal']['output']>;
   /**  Input tokens of the pool (not input tokens of the event/transaction). E.g. WETH and USDC from a WETH-USDC pool  */
@@ -7142,16 +7385,14 @@ export type _LiquidityPoolAmount_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<_LiquidityPoolAmount_Filter>>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   inputTokenBalances?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   inputTokenBalances_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   inputTokenBalances_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
@@ -7209,7 +7450,7 @@ export enum _SubgraphErrorPolicy_ {
 export type _TokenWhitelist = {
   __typename?: '_TokenWhitelist';
   /**  Token Address  */
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   /**  pools token is in that are white listed for USD pricing  */
   whitelistPools: Array<LiquidityPool>;
 };
@@ -7266,16 +7507,14 @@ export type _TokenWhitelist_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<_TokenWhitelist_Filter>>>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<_TokenWhitelist_Filter>>>;
   whitelistPools?: InputMaybe<Array<Scalars['String']['input']>>;
   whitelistPools_?: InputMaybe<LiquidityPool_Filter>;

@@ -10,6 +10,7 @@ const fetchLiquidityPools = async ({
   poolIds,
   vaults,
   provider,
+  exists,
 }: {
   network?: number;
   /** Only return pools for a specific vault */
@@ -17,6 +18,8 @@ const fetchLiquidityPools = async ({
   /** Only return pools for specific vault ids */
   vaultIds?: string[];
   poolIds?: Address[];
+  /** Only return pools that exist */
+  exists?: boolean;
   vaults: Pick<
     Vault,
     'vaultId' | 'id' | 'vTokenToEth' | 'token' | 'createdAt'
@@ -40,17 +43,19 @@ const fetchLiquidityPools = async ({
     pools.push(...morePools);
   } while (lastId);
 
-  const missingPools = await stubMissingPools({
-    network,
-    pools,
-    provider,
-    vaults,
-    poolIds,
-    vaultAddresses,
-    vaultIds,
-  });
+  if (!exists) {
+    const missingPools = await stubMissingPools({
+      network,
+      pools,
+      provider,
+      vaults,
+      poolIds,
+      vaultAddresses,
+      vaultIds,
+    });
 
-  pools.push(...missingPools);
+    pools.push(...missingPools);
+  }
 
   return pools;
 };
