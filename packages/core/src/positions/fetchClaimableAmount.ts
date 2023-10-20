@@ -13,7 +13,7 @@ const fetchClaimableAmount = async ({
   provider: Provider;
   network: number;
   positionId: Address;
-}) => {
+}): Promise<[bigint, bigint]> => {
   const ownerAddress = await provider.readContract({
     abi: NonfungiblePositionManager,
     address: getChainConstant(NONFUNGIBLE_POSITION_MANAGER, network),
@@ -37,9 +37,7 @@ const fetchClaimableAmount = async ({
     ],
   });
 
-  console.log(amount0, amount1);
-
-  return amount0 + amount1;
+  return [amount0, amount1];
 };
 
 export default fetchClaimableAmount;

@@ -33,8 +33,13 @@ export type LiquidityPosition = {
   poolShare: bigint;
   /** The lifetime amount of rewards earned by this position in ETH */
   lifetimeRewards: bigint;
+  /** The claimable amount of ETH on this position */
+  claimableEth: bigint;
+  /** The claimable amount of vToken on this position */
+  claimableVToken: bigint;
   /** The amount claimable on this position in ETH */
-  claimableRewards: bigint;
+  claimableValue: bigint;
+  lockedUntil: number;
 };
 
 /** A user's Inventory Position, essentially a single xNFT */
@@ -53,6 +58,8 @@ export type InventoryPosition = {
   claimableRewards: bigint;
   /** The % of the pool provided by this position */
   poolShare: bigint;
+  /** Whether the position is timelocked - if false, you cannot unstake to an NFT (so you will instead receive vToken) */
+  timeLocked: boolean;
   /** The timestamp at which the position is no longer timelocked */
   timelockedUntil: number;
 };

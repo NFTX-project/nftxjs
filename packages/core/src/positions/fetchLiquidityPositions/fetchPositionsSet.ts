@@ -57,12 +57,18 @@ const fetchPositionsSet = async ({
         position,
         vaults,
       });
-      const claimableRewards = await fetchClaimableAmount({
+      const [claimable0, claimable1] = await fetchClaimableAmount({
         network,
         positionId: position.id as Address,
         provider,
       });
-      return transformPosition({ network, position, vault, claimableRewards });
+      return transformPosition({
+        network,
+        position,
+        vault,
+        claimable0,
+        claimable1,
+      });
     })
   );
 

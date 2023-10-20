@@ -1,7 +1,8 @@
 import type { Address, LiquidityPosition, Vault } from '@nftx/types';
 import type { PositionsResponse } from './types';
-import { WeiPerEther, Zero } from '@nftx/constants';
+import { WETH_TOKEN, WeiPerEther, Zero } from '@nftx/constants';
 import calculateVTokenEth from './calculateVTokenEth';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 
 type Position = PositionsResponse['positions'][0];
 
@@ -17,18 +18,25 @@ const transformPosition = ({
   network,
   position,
   vault,
-  claimableRewards,
+  claimable0,
+  claimable1,
 }: {
   position: Position;
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'vaultId'>;
   network: number;
-  claimableRewards: bigint;
+  claimable0: bigint;
+  claimable1: bigint;
 }): LiquidityPosition => {
   const tick = BigInt(position.pool.tick ?? '0');
   const tickLower = BigInt(position.tickLower?.index ?? '0');
   const tickUpper = BigInt(position.tickUpper?.index ?? '0');
   const inRange = tick >= tickLower && tick <= tickUpper;
   const liquidity = BigInt(position.liquidity);
+  const lockedUntil = Number(position.lockedUntil);
+  const isWeth0 = addressEqual(
+    position.pool.inputTokens[0].id,
+    getChainConstant(WETH_TOKEN, network)
+  );
 
   const { eth, vToken, tickLowerPrice, tickUpperPrice } = calculateVTokenEth({
     inputTokens: position.pool.inputTokens.map((t) => t.id as Address),
@@ -39,6 +47,11 @@ const transformPosition = ({
     vTokenToEth: vault.vTokenToEth,
     currentTick: tick,
   });
+
+  const claimableEth = isWeth0 ? claimable0 : claimable1;
+  const claimableVToken = isWeth0 ? claimable1 : claimable0;
+  const claimableValue =
+    claimableEth + (claimableVToken * vault.vTokenToEth) / WeiPerEther;
 
   // This is ETH price at the upper and lower tick boundaries
   const tickUpperValue = normalizeTickPrice(tickUpperPrice);
@@ -68,10 +81,13 @@ const transformPosition = ({
     vTokenValue,
     vaultAddress: vault.id,
     vaultId: vault.vaultId,
-    claimableRewards,
+    claimableEth,
+    claimableValue,
+    claimableVToken,
     lifetimeRewards,
     poolShare: Zero,
     initialValue: value,
+    lockedUntil,
   };
 };
 

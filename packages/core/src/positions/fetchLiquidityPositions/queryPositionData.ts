@@ -28,10 +28,11 @@ const queryPositionData = ({
     .select((s) => [
       s.id,
       s.liquidity,
-      s.tickUpper((tick) => [tick.index]),
-      s.tickLower((tick) => [tick.index]),
       s.cumulativeDepositTokenAmounts,
       s.cumulativeWithdrawTokenAmounts,
+      s.lockedUntil,
+      s.tickUpper((tick) => [tick.index]),
+      s.tickLower((tick) => [tick.index]),
       s.pool((pool) => [
         pool.id,
         pool.tick,
