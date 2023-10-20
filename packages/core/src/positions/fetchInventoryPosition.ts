@@ -33,6 +33,7 @@ export const makeFetchInventoryPosition = ({
     vaultId?: string;
     positionId?: Address;
     vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
+    provider: Provider;
   }) {
     const [position] = await fetchInventoryPositions({
       network,

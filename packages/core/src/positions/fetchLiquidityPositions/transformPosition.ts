@@ -17,10 +17,12 @@ const transformPosition = ({
   network,
   position,
   vault,
+  claimableRewards,
 }: {
   position: Position;
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'vaultId'>;
   network: number;
+  claimableRewards: bigint;
 }): LiquidityPosition => {
   const tick = BigInt(position.pool.tick ?? '0');
   const tickLower = BigInt(position.tickLower?.index ?? '0');
@@ -42,20 +44,16 @@ const transformPosition = ({
   const tickUpperValue = normalizeTickPrice(tickUpperPrice);
   const tickLowerValue = normalizeTickPrice(tickLowerPrice);
 
-  // TODO: all of the pricing/value stuff in this function is completely wrong
-  // https://www.notion.so/nftx/Remove-partial-liquidity-from-pool-5bf28f4ed98d48079b0b78fb91bdd1aa
   const price = vault.vTokenToEth;
 
-  // TODO: surely it's not that simple?
   const vTokenValue = (price * vToken) / WeiPerEther;
   const value = vTokenValue + eth;
 
-  // TODO: get these from... somwhere?
-  const claimableRewards = Zero;
+  // TODO: get this from... somwhere?
   const lifetimeRewards = Zero;
 
   return {
-    id: position.id,
+    id: position.id as Address,
     poolId: position.pool.id,
     liquidity,
     tickLower,

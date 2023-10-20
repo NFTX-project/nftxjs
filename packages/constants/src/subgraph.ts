@@ -93,5 +93,3 @@ export const NFTX_SUBGRAPH = {
 export const NFTX_UNISWAP_SUBGRAPH = {
   [Network.Goerli]: `https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-amm`,
 };
-
-// https://thegraph.com/hosted-service/subgraph/gundamdweeb/nftx-amm

@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Address, LiquidityPosition, Vault } from '@nftx/types';
+import type { Address, LiquidityPosition, Provider, Vault } from '@nftx/types';
 import fetchPoolIdsForVaultIds from './fetchPoolIdsForVaultIds';
 import fetchPositionsSet from './fetchPositionsSet';
 
@@ -10,6 +10,7 @@ const fetchLiquidityPositions = async ({
   positionIds,
   network = config.network,
   vaults,
+  provider,
 }: {
   userAddresses?: Address[];
   vaultIds?: string[];
@@ -17,6 +18,7 @@ const fetchLiquidityPositions = async ({
   positionIds?: Address[];
   network?: number;
   vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
+  provider: Provider;
 }): Promise<LiquidityPosition[]> => {
   if (vaultIds) {
     poolIds = await fetchPoolIdsForVaultIds({ network, vaultIds, vaults });
@@ -35,6 +37,7 @@ const fetchLiquidityPositions = async ({
       poolIds,
       positionIds,
       userAddresses,
+      provider,
     });
 
     positions.push(...morePositions);
