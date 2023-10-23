@@ -1,5 +1,4 @@
 export { default as buy } from './buy';
-export { default as increaseGasLimit } from './increaseGasLimit';
 export { default as mint } from './mint';
 export { default as redeem } from './redeem';
 export { default as sell } from './sell';

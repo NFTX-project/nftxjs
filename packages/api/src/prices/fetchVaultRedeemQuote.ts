@@ -6,11 +6,13 @@ const fetchVaultRedeemQuote = ({
   vaultId,
   network,
   userAddress,
+  slippagePercentage,
 }: {
   vaultId: string;
   tokenIds: TokenId[] | [TokenId, number][];
   userAddress: Address;
   network?: number;
+  slippagePercentage?: number;
 }) =>
   fetchQuote({
     quoteType: 'quote',
@@ -19,6 +21,7 @@ const fetchVaultRedeemQuote = ({
     buyTokenIds: tokenIds,
     network,
     userAddress,
+    slippagePercentage,
   });
 
 export default fetchVaultRedeemQuote;

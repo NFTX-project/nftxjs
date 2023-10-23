@@ -21,6 +21,7 @@ type PriceArgs = CommonArgs & {
 type QuoteArgs = CommonArgs & {
   quoteType: 'quote';
   userAddress: Address;
+  slippagePercentage?: number;
 };
 
 function fetchQuote(args: PriceArgs): Promise<MarketplacePrice>;
@@ -62,7 +63,7 @@ function fetchQuote(args: PriceArgs | QuoteArgs) {
     });
   }
 
-  const { userAddress } = args;
+  const { userAddress, slippagePercentage } = args;
 
   return queryApi<MarketplaceQuote>({
     url: `/${network}/quote`,
@@ -74,6 +75,7 @@ function fetchQuote(args: PriceArgs | QuoteArgs) {
       sellTokenIds,
       sellAmounts,
       userAddress,
+      slippagePercentage,
     },
   });
 }

@@ -1,6 +1,6 @@
 import { formatEther, parseEther } from 'viem';
 import { makePriceVaultSwap } from '../priceVaultSwap';
-import { WeiPerEther, Zero } from '@nftx/constants';
+import { Zero } from '@nftx/constants';
 
 type PriceVaultSwap = ReturnType<typeof makePriceVaultSwap>;
 let priceVaultSwap: PriceVaultSwap;

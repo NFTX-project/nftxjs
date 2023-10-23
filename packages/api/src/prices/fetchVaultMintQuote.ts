@@ -6,11 +6,13 @@ const fetchVaultMintQuote = ({
   vaultId,
   network,
   userAddress,
+  slippagePercentage,
 }: {
   vaultId: string;
   tokenIds: TokenId[] | [TokenId, number][];
   userAddress: Address;
   network?: number;
+  slippagePercentage: number;
 }) =>
   fetchQuote({
     quoteType: 'quote',
@@ -19,6 +21,7 @@ const fetchVaultMintQuote = ({
     sellTokenIds: tokenIds,
     network,
     userAddress,
+    slippagePercentage,
   });
 
 export default fetchVaultMintQuote;

@@ -22,7 +22,7 @@ const fetchTokenSpotPrice = async (args: {
     tokenAddress,
     quote,
     network,
-    amount: BigInt(1),
+    amount: 1n,
   });
 
   price.price = price.price * amount;

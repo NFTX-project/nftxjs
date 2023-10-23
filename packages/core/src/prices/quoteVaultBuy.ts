@@ -14,6 +14,7 @@ import {
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
+  increaseByPercentage,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
 import config from '@nftx/config';
@@ -98,6 +99,7 @@ export const makeQuoteVaultBuy =
     userAddress,
     vault,
     holdings: allHoldings,
+    slippagePercentage,
   }: {
     vault: Pick<Vault, 'fees' | 'id' | 'vaultId' | 'is1155'>;
     tokenIds: TokenId[] | [TokenId, number][];
@@ -105,6 +107,7 @@ export const makeQuoteVaultBuy =
     userAddress: Address;
     provider: Provider;
     holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
+    slippagePercentage?: number;
   }) => {
     const totalTokenIds = getTotalTokenIds(tokenIds);
     const buyAmount = parseEther(`${totalTokenIds}`);
@@ -132,6 +135,7 @@ export const makeQuoteVaultBuy =
       amount: buyAmount,
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
       quote: 'WETH',
+      slippagePercentage,
     });
 
     const items = await Promise.all(
@@ -158,6 +162,7 @@ export const makeQuoteVaultBuy =
       buyAmount
     );
     const price = vTokenPrice + premiumPrice + feePrice;
+    const value = increaseByPercentage(price, slippagePercentage);
 
     const result: MarketplaceQuote = {
       type: 'buy',
@@ -168,7 +173,7 @@ export const makeQuoteVaultBuy =
       approveContracts: [],
       items,
       methodParameters: {
-        value: price.toString(),
+        value: value.toString(),
         executeCalldata,
         to: userAddress,
         tokenIdsIn: [],

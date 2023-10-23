@@ -1,4 +1,4 @@
-import { OPENSEA_COLLECTION, Zero } from '@nftx/constants';
+import { OPENSEA_COLLECTION } from '@nftx/constants';
 import fetchSubgraphVaults, { Response } from '../fetchSubgraphVaults';
 import transformVault from './transformVault';
 import fetchVaultHoldings from '../fetchVaultHoldings';
@@ -9,14 +9,7 @@ import {
   isMerkleVault,
   fetchVTokenToEth,
 } from '@nftx/utils';
-import type {
-  Address,
-  MarketplacePrice,
-  Provider,
-  Vault,
-  VaultHolding,
-} from '@nftx/types';
-import { priceVaultBuy, priceVaultSell, priceVaultSwap } from '../../prices';
+import type { Address, Provider, Vault } from '@nftx/types';
 import populateVaultPrices from './populateVaultPrices';
 
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
