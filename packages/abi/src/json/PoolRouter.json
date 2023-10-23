@@ -86,6 +86,12 @@
         "internalType": "address",
         "name": "pool",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
       }
     ],
     "name": "AddLiquidity",
@@ -261,7 +267,8 @@
           { "internalType": "uint256", "name": "vTokenMin", "type": "uint256" },
           { "internalType": "uint256", "name": "wethMin", "type": "uint256" },
           { "internalType": "uint256", "name": "deadline", "type": "uint256" },
-          { "internalType": "bool", "name": "forceTimelock", "type": "bool" }
+          { "internalType": "bool", "name": "forceTimelock", "type": "bool" },
+          { "internalType": "address", "name": "recipient", "type": "address" }
         ],
         "internalType": "struct INFTXRouter.AddLiquidityParams",
         "name": "params",
@@ -306,7 +313,8 @@
           { "internalType": "uint256", "name": "vTokenMin", "type": "uint256" },
           { "internalType": "uint256", "name": "wethMin", "type": "uint256" },
           { "internalType": "uint256", "name": "deadline", "type": "uint256" },
-          { "internalType": "bool", "name": "forceTimelock", "type": "bool" }
+          { "internalType": "bool", "name": "forceTimelock", "type": "bool" },
+          { "internalType": "address", "name": "recipient", "type": "address" }
         ],
         "internalType": "struct INFTXRouter.AddLiquidityParams",
         "name": "params",

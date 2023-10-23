@@ -1,5 +1,5 @@
 import { WeiPerEther, Zero } from '@nftx/constants';
-import { estimatePremiumPrice } from '../../common';
+import { estimatePremiumPrice } from '../premiums';
 import { formatEther } from 'viem';
 
 let holding: { dateAdded: number };

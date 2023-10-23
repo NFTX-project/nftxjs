@@ -27,6 +27,7 @@ export const makeFetchInventoryPosition = ({
     userAddress,
     vaultId,
     vaults,
+    provider,
   }: {
     network?: number;
     userAddress?: Address;
@@ -41,6 +42,7 @@ export const makeFetchInventoryPosition = ({
       userAddresses: userAddress ? [userAddress] : undefined,
       vaultIds: vaultId ? [vaultId] : undefined,
       vaults,
+      provider,
     });
 
     return position;
@@ -49,4 +51,8 @@ export const makeFetchInventoryPosition = ({
   return fetchPosition;
 };
 
-export default makeFetchInventoryPosition({ fetchInventoryPositions });
+const fetchInventoryPosition = makeFetchInventoryPosition({
+  fetchInventoryPositions,
+});
+
+export default fetchInventoryPosition;

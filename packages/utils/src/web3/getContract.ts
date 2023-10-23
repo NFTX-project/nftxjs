@@ -1,6 +1,5 @@
 import type { Address, Contract, Provider, Signer } from '@nftx/types';
 import type { Abi } from 'abitype';
-import { getAccount } from 'viem';
 
 function getContract<T extends Abi>(args: {
   address: Address;
@@ -43,7 +42,7 @@ function getContract<T extends Abi>({
           throw new Error('Cannot perform a write operation without a signer');
         }
         const [userAddress] = await signer.getAddresses();
-        const account = getAccount(userAddress);
+        const account = userAddress;
 
         const { request } = await provider.simulateContract({
           address,
@@ -70,7 +69,7 @@ function getContract<T extends Abi>({
         }
         try {
           const [userAddress] = await signer.getAddresses();
-          const account = getAccount(userAddress);
+          const account = userAddress;
 
           const gasEstimate = await provider.estimateContractGas({
             address,

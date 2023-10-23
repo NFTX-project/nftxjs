@@ -57,8 +57,10 @@ const makeIsAssetEligibleForVault =
     return true;
   };
 
-export default makeIsAssetEligibleForVault({
+const isAssetEligibleForVault = makeIsAssetEligibleForVault({
   checkEligible,
   fetchMerkleLeaves,
   isMerkleVault,
 });
+
+export default isAssetEligibleForVault;

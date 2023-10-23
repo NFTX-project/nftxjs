@@ -44,4 +44,8 @@ const makeGetEligibleAssetVaultIds =
     return vaultIds;
   };
 
-export default makeGetEligibleAssetVaultIds({ isAssetEligibleForVault });
+const getEligibleAssetVaultIds = makeGetEligibleAssetVaultIds({
+  isAssetEligibleForVault,
+});
+
+export default getEligibleAssetVaultIds;

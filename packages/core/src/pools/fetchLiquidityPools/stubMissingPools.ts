@@ -147,15 +147,11 @@ const stubMissingVaultPools = async ({
   const tiers = getMissingTiers(vaultPools);
 
   // For each tier that doesn't have a pool, calculate the address and create a stubbed pool for it
-  await Promise.all(
-    tiers.map(async (feeTier) => {
-      vaultPools.push(
-        await stubVaultPool({ feeTier, network, provider, vault })
-      );
+  return Promise.all(
+    tiers.map((feeTier) => {
+      return stubVaultPool({ feeTier, network, provider, vault });
     })
   );
-
-  return vaultPools;
 };
 
 const stubMissingPools = async ({

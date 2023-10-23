@@ -35,4 +35,6 @@ export const makeCheckEligible = ({
     return tokenIds.map((tokenId, i) => ({ tokenId, eligible: !!results[i] }));
   };
 
-export default makeCheckEligible({ getContract });
+const checkEligible = makeCheckEligible({ getContract });
+
+export default checkEligible;

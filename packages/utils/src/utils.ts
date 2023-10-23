@@ -1,65 +1,24 @@
-export const reduceObj = <T extends Record<string, any>>(
-  obj: T,
-  fn: (
-    acc: Array<[string, any]>,
-    key: string,
-    value: T[keyof T]
-  ) => Array<[string, any]>
-): any => {
-  return Object.fromEntries(
-    Object.entries(obj).reduce((acc: any, [key, value]) => {
-      return fn(acc, key, value);
-    }, [])
-  ) as any;
-};
+import { WeiPerEther } from '@nftx/constants';
+import { parseEther } from 'viem';
 
-export const mapObj = <T extends Record<string, any>>(
-  obj: T,
-  fn: (key: string, value: T[keyof T]) => [string, any]
-): any => {
-  return reduceObj(obj, (acc, key, value) => [...acc, fn(key, value)]);
-};
-
-export const filterObj = <T extends Record<string, any>>(
-  obj: T,
-  fn: (key: string, value: T[keyof T]) => boolean
-): T => {
-  return reduceObj(obj, (acc, key, value) => {
-    if (fn(key, value)) {
-      return [...acc, [key, value]];
-    }
-    return acc;
-  });
-};
-
-export const omitNil = <T extends Record<string, any>>(obj: T) => {
-  return filterObj(obj, (_key, value) => value != null);
-};
-
-export const toLowerCase = (s: string) => s.toLowerCase();
-
-export const compareByAlpha = (a: string, b: string) => {
-  if (a > b) {
-    return 1;
+export const increaseByPercentage = (
+  value: bigint,
+  percentage: number | undefined
+) => {
+  if (!value || !percentage) {
+    return value;
   }
-  if (b > a) {
-    return -1;
-  }
-  return 0;
+  const bigPercentage = parseEther(`${1 + percentage}`);
+  const adjusted = (value * bigPercentage) / WeiPerEther;
+  return adjusted;
 };
 
-/**
- * wraps a promise and returns a tuple of [error, result]
- * @param p Promise
- * @returns [error, result]
- */
-export const t = <T>(p: Promise<T>): Promise<[any, T]> => {
-  return p.then(
-    (result) => {
-      return [undefined, result] as [any, T];
-    },
-    (err) => {
-      return [err, undefined] as [any, T];
-    }
-  );
+export const decreaseByPercentage = (
+  value: bigint,
+  percentage: number | undefined
+) => {
+  if (!value || !percentage) {
+    return value;
+  }
+  return increaseByPercentage(value, -percentage);
 };

@@ -1,4 +1,8 @@
-import { getTokenIdAmounts, getUniqueTokenIds } from '@nftx/utils';
+import {
+  getTokenIdAmounts,
+  getUniqueTokenIds,
+  increaseByPercentage,
+} from '@nftx/utils';
 import type {
   Address,
   MarketplaceQuote,
@@ -15,20 +19,29 @@ const quoteVaultMint = async ({
   tokenIds,
   userAddress,
   vault,
+  slippagePercentage,
 }: {
   network: number;
   tokenIds: TokenId[] | [TokenId, number][];
   userAddress: Address;
   vault: Pick<Vault, 'id' | 'vaultId' | 'fees' | 'is1155' | 'asset'>;
   provider: Provider;
+  slippagePercentage?: number;
 }) => {
   const { feePrice, items, premiumPrice, price, vTokenPrice } =
-    await quoteVaultSell({ network, provider, tokenIds, userAddress, vault });
+    await quoteVaultSell({
+      network,
+      provider,
+      tokenIds,
+      userAddress,
+      vault,
+      slippagePercentage,
+    });
 
   const tokenIdsIn = getUniqueTokenIds(tokenIds);
   const amountsIn = getTokenIdAmounts(tokenIds);
 
-  const value = feePrice.toString();
+  const value = increaseByPercentage(feePrice, slippagePercentage);
 
   const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
 
@@ -54,7 +67,7 @@ const quoteVaultMint = async ({
       tokenIdsOut: [],
       amountsOut: [],
       premiumLimit: '',
-      value,
+      value: value.toString(),
       vaultAddress: vault.id,
       vaultId: vault.vaultId,
       standard,

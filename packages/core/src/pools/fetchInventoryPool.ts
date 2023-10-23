@@ -26,4 +26,6 @@ export const makeFetchInventoryPool =
     return pools?.[0];
   };
 
-export default makeFetchInventoryPool({ fetchInventoryPools });
+const fetchInventoryPool = makeFetchInventoryPool({ fetchInventoryPools });
+
+export default fetchInventoryPool;

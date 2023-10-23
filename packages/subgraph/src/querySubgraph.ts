@@ -1,5 +1,4 @@
 import config from '@nftx/config';
-import { PUBLIC_GRAPH_API_KEY } from '@nftx/constants';
 import { type GraphQueryString, interpolateQuery } from './utils';
 import { query as sendQuery } from '@nftx/utils';
 import { UnknownError } from '@nftx/errors';
@@ -58,16 +57,7 @@ async function querySubgraph({
   }
 
   // Override the default api key with a custom one if set
-  const urls = [baseUrl].flat().map((url) => {
-    if (
-      config.subgraph.API_KEY &&
-      url.includes(PUBLIC_GRAPH_API_KEY) &&
-      config.subgraph.API_KEY !== PUBLIC_GRAPH_API_KEY
-    ) {
-      url = url.replace(PUBLIC_GRAPH_API_KEY, config.subgraph.API_KEY);
-    }
-    return url;
-  });
+  const urls = [baseUrl].flat();
 
   while (urls.length) {
     try {

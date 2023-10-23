@@ -29,4 +29,6 @@ const makeFetchLiquidityPool =
     return pools?.[0];
   };
 
-export default makeFetchLiquidityPool();
+const fetchLiquidityPool = makeFetchLiquidityPool();
+
+export default fetchLiquidityPool;

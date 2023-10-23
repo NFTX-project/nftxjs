@@ -10,7 +10,9 @@ import type { QuoteToken } from './types';
  */
 const fetchSpread = async (args: {
   network?: number;
+  /** The token you want the spread for (address / ETH / USDC / WETH) */
   tokenAddress: Address;
+  /** The currency you want the quote in (address / ETH / USDC / WETH) (defaults to ETH) */
   quote?: QuoteToken;
 }): Promise<bigint> => {
   const { network = config.network, tokenAddress, quote } = args;

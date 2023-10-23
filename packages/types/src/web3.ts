@@ -2,8 +2,8 @@ import type {
   createPublicClient,
   createWalletClient,
   TransactionReceipt,
-  ExtractResultFromAbi,
-  ExtractArgsFromAbi,
+  GetFunctionArgs,
+  ContractFunctionResult,
 } from 'viem';
 import type { Abi, ExtractAbiFunctionNames } from 'abitype';
 
@@ -25,8 +25,8 @@ export type Transaction = {
 
 type ContractRead<T extends Abi> = {
   [K in ExtractAbiFunctionNames<T>]: (
-    args: ExtractArgsFromAbi<T, K>
-  ) => Promise<ExtractResultFromAbi<T, K>>;
+    args: GetFunctionArgs<T, K>
+  ) => Promise<ContractFunctionResult<T, K>>;
 };
 type WriteOpts = {
   value?: bigint;
@@ -38,12 +38,12 @@ type WriteOpts = {
 
 type ContractWrite<T extends Abi> = {
   [K in ExtractAbiFunctionNames<T>]: (
-    args: ExtractArgsFromAbi<T, K> & WriteOpts
+    args: GetFunctionArgs<T, K> & WriteOpts
   ) => Promise<Transaction>;
 };
 type ContractEstimate<T extends Abi> = {
   [K in ExtractAbiFunctionNames<T>]: (
-    args: ExtractArgsFromAbi<T, K> & WriteOpts
+    args: GetFunctionArgs<T, K> & WriteOpts
   ) => Promise<{ gasEstimate: bigint }>;
 };
 

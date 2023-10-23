@@ -14,6 +14,7 @@ import {
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
+  increaseByPercentage,
 } from '@nftx/utils';
 import {
   calculateFeePricePerItem,
@@ -39,12 +40,14 @@ export const makeQuoteVaultSell =
     tokenIds,
     userAddress,
     vault,
+    slippagePercentage,
   }: {
     vault: Pick<Vault, 'id' | 'fees' | 'asset' | 'vaultId' | 'is1155'>;
     network: number;
     tokenIds: TokenId[] | [TokenId, number][];
     userAddress: Address;
     provider: Provider;
+    slippagePercentage?: number;
   }) => {
     const totalTokenIds = getTotalTokenIds(tokenIds);
     const sellAmount = parseEther(`${totalTokenIds}`);
@@ -70,6 +73,7 @@ export const makeQuoteVaultSell =
       network,
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
       quote: 'WETH',
+      slippagePercentage,
     });
     const vTokenPricePerItem = (vTokenPrice * WeiPerEther) / sellAmount;
 
@@ -107,6 +111,8 @@ export const makeQuoteVaultSell =
       spender: getChainConstant(MARKETPLACE_ZAP, network),
     });
 
+    const value = increaseByPercentage(feePrice, slippagePercentage);
+
     const result: MarketplaceQuote = {
       type: 'sell',
       price,
@@ -122,7 +128,7 @@ export const makeQuoteVaultSell =
         amountsIn,
         tokenIdsOut: [],
         amountsOut: [],
-        value: feePrice.toString(),
+        value: value.toString(),
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
         standard,
@@ -133,4 +139,9 @@ export const makeQuoteVaultSell =
     return result;
   };
 
-export default makeQuoteVaultSell({ fetchTokenSellPrice, fetchVTokenToEth });
+const quoteVaultSell = makeQuoteVaultSell({
+  fetchTokenSellPrice,
+  fetchVTokenToEth,
+});
+
+export default quoteVaultSell;

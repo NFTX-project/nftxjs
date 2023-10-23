@@ -1,42 +1,35 @@
 import { CreateVaultZap } from '@nftx/abi';
 import type {
-  CreateVaultArgs,
-  CreateVaultParams,
+  CreateVaultQuote,
   Provider,
   Signer,
+  Transaction,
 } from '@nftx/types';
-import { getChainConstant, query, type getContract } from '@nftx/utils';
+import { getChainConstant, getContract } from '@nftx/utils';
 import { CREATE_VAULT_ZAP } from '@nftx/constants';
-import config from '@nftx/config';
 
 type GetContract = typeof getContract;
 
-// TODO: need to pass in the infinite range parameter from UI and pass it to the api
+type Args = {
+  network: number;
+  signer: Signer;
+  provider: Provider;
+  quote: Pick<CreateVaultQuote, 'methodParameters'>;
+};
 
-export default ({ getContract }: { getContract: GetContract }) =>
+const makeCreateVault = ({
+  getContract,
+}: {
+  getContract: GetContract;
+}): ((args: Args) => Promise<Transaction>) =>
   async function createVault({
     network,
     signer,
     provider,
-    ...args
-  }: CreateVaultArgs & {
-    network: number;
-    signer: Signer;
-    provider: Provider;
-  }) {
-    const url = `${config.urls.NFTX_API_URL}/${network}/vaults/create`;
-    const data: CreateVaultArgs = args;
-    const headers = {
-      Authorization: config.keys.NFTX_API,
-      'Content-Type': 'application/json',
-    };
-    const { value, ...params } = await query<CreateVaultParams>({
-      url,
-      method: 'POST',
-      query: data,
-      headers,
-    });
-
+    quote: {
+      methodParameters: { params, value },
+    },
+  }: Args) {
     const address = getChainConstant(CREATE_VAULT_ZAP, network);
 
     const contract = getContract({
@@ -58,3 +51,7 @@ export default ({ getContract }: { getContract: GetContract }) =>
       value,
     });
   };
+
+const createVault = makeCreateVault({ getContract });
+
+export default createVault;

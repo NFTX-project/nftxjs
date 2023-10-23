@@ -2,6 +2,7 @@ import {
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
+  increaseByPercentage,
 } from '@nftx/utils';
 import type {
   Address,
@@ -21,6 +22,7 @@ const quoteVaultRedeem = async ({
   tokenIds,
   userAddress,
   vault,
+  slippagePercentage,
 }: {
   network: number;
   provider: Provider;
@@ -28,6 +30,7 @@ const quoteVaultRedeem = async ({
   userAddress: Address;
   tokenIds: TokenId[] | [TokenId, number][];
   holdings: VaultHolding[];
+  slippagePercentage?: number;
 }) => {
   const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
   const totalTokenIds = getTotalTokenIds(tokenIds);
@@ -53,9 +56,13 @@ const quoteVaultRedeem = async ({
     userAddress,
     vault,
     network,
+    slippagePercentage,
   });
 
-  const value = (feePrice + premiumPrice).toString();
+  const value = increaseByPercentage(
+    feePrice + premiumPrice,
+    slippagePercentage
+  );
 
   const approveContracts: MarketplaceQuote['approveContracts'] = [];
 
@@ -77,7 +84,7 @@ const quoteVaultRedeem = async ({
       amountsIn: [],
       tokenIdsOut,
       amountsOut,
-      value,
+      value: value.toString(),
       premiumLimit,
     },
   };
