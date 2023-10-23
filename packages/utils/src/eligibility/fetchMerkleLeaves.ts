@@ -52,7 +52,9 @@ export const makeFetchMerkleLeaves = ({
     return leaves;
   };
 
-export default makeFetchMerkleLeaves({
+const fetchMerkleLeaves = makeFetchMerkleLeaves({
   getContract,
   fetch: typeof fetch === 'undefined' ? (undefined as any) : fetch,
 });
+
+export default fetchMerkleLeaves;

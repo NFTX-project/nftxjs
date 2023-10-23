@@ -259,6 +259,7 @@ export enum ActivityEvent_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -390,6 +391,7 @@ export enum AddLiquidity_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -591,6 +593,7 @@ export enum BuyNfts_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -1349,7 +1352,7 @@ export type Earning = {
   __typename?: 'Earning';
   amount?: Maybe<Scalars['BigDecimal']['output']>;
   feeReceipt: VaultInventoryFee;
-  id: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
   positionFee: InventoryPositionFee;
   vault: Vault;
 };
@@ -1387,16 +1390,14 @@ export type Earning_Filter = {
   feeReceipt_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   feeReceipt_starts_with?: InputMaybe<Scalars['String']['input']>;
   feeReceipt_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<Earning_Filter>>>;
   positionFee?: InputMaybe<Scalars['String']['input']>;
   positionFee_?: InputMaybe<InventoryPositionFee_Filter>;
@@ -1460,6 +1461,7 @@ export enum Earning_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -1716,6 +1718,7 @@ export enum Feature_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -1837,6 +1840,7 @@ export enum FeeReceipt_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -1910,6 +1914,7 @@ export enum FeeReceiver_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -2045,6 +2050,7 @@ export enum Fee_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -2313,6 +2319,7 @@ export enum Holding_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -2432,6 +2439,7 @@ export enum IncreaseLiquidity_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -2562,6 +2570,7 @@ export enum InventoryCombinePositions_OrderBy {
   ParentPositionPositionId = 'parentPosition__positionId',
   ParentPositionTimeLock = 'parentPosition__timeLock',
   ParentPositionTimeLockUntil = 'parentPosition__timeLockUntil',
+  ParentPositionVTokenTimeLockUntil = 'parentPosition__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -2572,6 +2581,7 @@ export enum InventoryCombinePositions_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -2712,6 +2722,7 @@ export enum InventoryDepositWithNft_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -2722,6 +2733,7 @@ export enum InventoryDepositWithNft_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -2838,6 +2850,7 @@ export enum InventoryDeposit_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -2848,6 +2861,7 @@ export enum InventoryDeposit_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -2970,6 +2984,7 @@ export enum InventoryIncreasePosition_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -2980,6 +2995,7 @@ export enum InventoryIncreasePosition_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -3124,6 +3140,7 @@ export enum InventoryPool_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -3148,6 +3165,7 @@ export type InventoryPosition = {
   timeLock: Scalars['Boolean']['output'];
   timeLockUntil: Scalars['BigInt']['output'];
   user: User;
+  vTokenTimeLockUntil: Scalars['BigInt']['output'];
   vault: Vault;
 };
 
@@ -3245,6 +3263,7 @@ export enum InventoryPositionFee_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Vault = 'vault',
   VaultAllocTotal = 'vault__allocTotal',
   VaultAllowAllItems = 'vault__allowAllItems',
@@ -3253,6 +3272,7 @@ export enum InventoryPositionFee_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -3431,6 +3451,14 @@ export type InventoryPosition_Filter = {
   user_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   user_starts_with?: InputMaybe<Scalars['String']['input']>;
   user_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vTokenTimeLockUntil?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vTokenTimeLockUntil_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_not?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   vault?: InputMaybe<Scalars['String']['input']>;
   vault_?: InputMaybe<Vault_Filter>;
   vault_contains?: InputMaybe<Scalars['String']['input']>;
@@ -3470,11 +3498,13 @@ export enum InventoryPosition_OrderBy {
   ParentPositionId = 'parent__positionId',
   ParentTimeLock = 'parent__timeLock',
   ParentTimeLockUntil = 'parent__timeLockUntil',
+  ParentVTokenTimeLockUntil = 'parent__vTokenTimeLockUntil',
   PositionId = 'positionId',
   TimeLock = 'timeLock',
   TimeLockUntil = 'timeLockUntil',
   User = 'user',
   UserId = 'user__id',
+  VTokenTimeLockUntil = 'vTokenTimeLockUntil',
   Vault = 'vault',
   VaultAllocTotal = 'vault__allocTotal',
   VaultAllowAllItems = 'vault__allowAllItems',
@@ -3483,6 +3513,7 @@ export enum InventoryPosition_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -3641,6 +3672,7 @@ export enum InventoryTransfer_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   To = 'to',
   ToId = 'to__id',
@@ -3653,6 +3685,7 @@ export enum InventoryTransfer_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -3792,6 +3825,7 @@ export enum InventoryWithdraw_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   VTokenAmount = 'vTokenAmount',
@@ -3804,6 +3838,7 @@ export enum InventoryWithdraw_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -3989,6 +4024,7 @@ export enum Mint_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -4068,6 +4104,7 @@ export enum Pool_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -4177,6 +4214,7 @@ export enum PremiumPaid_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -5498,6 +5536,7 @@ export enum Redeem_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -5618,6 +5657,7 @@ export enum RemoveLiquidity_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -5730,6 +5770,7 @@ export enum SellNfts_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -7105,6 +7146,7 @@ export enum Swap_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -7305,6 +7347,7 @@ export type Vault = {
   inventoryStakingPool?: Maybe<InventoryPool>;
   is1155?: Maybe<Scalars['Boolean']['output']>;
   isFinalized?: Maybe<Scalars['Boolean']['output']>;
+  isNew: Scalars['Boolean']['output'];
   manager?: Maybe<Manager>;
   mints: Array<Mint>;
   redeems: Array<Redeem>;
@@ -7571,6 +7614,7 @@ export enum VaultCreated_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -7736,6 +7780,7 @@ export enum VaultFeeUpdate_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -7813,6 +7858,7 @@ export enum VaultFee_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -7898,6 +7944,7 @@ export enum VaultInventoryFee_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -7983,6 +8030,7 @@ export enum VaultLiquidityFee_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -8162,6 +8210,7 @@ export enum VaultNameChange_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -8253,6 +8302,7 @@ export enum VaultPublished_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -8344,6 +8394,7 @@ export enum VaultShutdown_OrderBy {
   VaultInventoryStakedTotal = 'vault__inventoryStakedTotal',
   VaultIs1155 = 'vault__is1155',
   VaultIsFinalized = 'vault__isFinalized',
+  VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
   VaultTotalHoldings = 'vault__totalHoldings',
@@ -8569,6 +8620,10 @@ export type Vault_Filter = {
   isFinalized_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   isFinalized_not?: InputMaybe<Scalars['Boolean']['input']>;
   isFinalized_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  isNew?: InputMaybe<Scalars['Boolean']['input']>;
+  isNew_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  isNew_not?: InputMaybe<Scalars['Boolean']['input']>;
+  isNew_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   manager?: InputMaybe<Scalars['String']['input']>;
   manager_?: InputMaybe<Manager_Filter>;
   manager_contains?: InputMaybe<Scalars['String']['input']>;
@@ -8721,6 +8776,7 @@ export enum Vault_OrderBy {
   InventoryStakingPoolId = 'inventoryStakingPool__id',
   Is1155 = 'is1155',
   IsFinalized = 'isFinalized',
+  IsNew = 'isNew',
   Manager = 'manager',
   ManagerId = 'manager__id',
   Mints = 'mints',

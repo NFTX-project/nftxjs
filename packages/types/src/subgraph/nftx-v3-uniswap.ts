@@ -3311,7 +3311,7 @@ export type Position = {
   /**  The hash of the transaction that opened this position  */
   hashOpened: Scalars['Bytes']['output'];
   /**  { Account address }-{ Market address }-{ Count }  */
-  id: Scalars['ID']['output'];
+  id: Scalars['Bytes']['output'];
   /**  total position liquidity  */
   liquidity: Scalars['BigInt']['output'];
   /**  Token that is to represent ownership of liquidity  */
@@ -3704,14 +3704,16 @@ export type Position_Filter = {
   hashOpened_not?: InputMaybe<Scalars['Bytes']['input']>;
   hashOpened_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   hashOpened_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id?: InputMaybe<Scalars['ID']['input']>;
-  id_gt?: InputMaybe<Scalars['ID']['input']>;
-  id_gte?: InputMaybe<Scalars['ID']['input']>;
-  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
-  id_lt?: InputMaybe<Scalars['ID']['input']>;
-  id_lte?: InputMaybe<Scalars['ID']['input']>;
-  id_not?: InputMaybe<Scalars['ID']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   liquidity?: InputMaybe<Scalars['BigInt']['input']>;
   liquidityToken?: InputMaybe<Scalars['String']['input']>;
   liquidityTokenType?: InputMaybe<TokenType>;

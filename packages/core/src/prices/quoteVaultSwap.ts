@@ -13,6 +13,7 @@ import {
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
+  increaseByPercentage,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
 import {
@@ -41,6 +42,7 @@ export const makeQuoteVaultSwap =
     sellTokenIds,
     userAddress,
     vault,
+    slippagePercentage,
   }: {
     network: number;
     vault: Pick<Vault, 'id' | 'vaultId' | 'fees' | 'asset' | 'is1155'>;
@@ -49,6 +51,7 @@ export const makeQuoteVaultSwap =
     sellTokenIds: TokenId[] | [TokenId, number][];
     buyTokenIds: TokenId[] | [TokenId, number][];
     holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
+    slippagePercentage?: number;
   }) => {
     const tokenIdsIn = getUniqueTokenIds(sellTokenIds);
     const amountsIn = getTokenIdAmounts(sellTokenIds);
@@ -119,6 +122,7 @@ export const makeQuoteVaultSwap =
     );
 
     const price = premiumPrice + feePrice;
+    const value = increaseByPercentage(price, slippagePercentage);
 
     const approveContracts = getApproveContracts({
       tokenIds: tokenIdsIn,
@@ -141,7 +145,7 @@ export const makeQuoteVaultSwap =
         amountsIn,
         tokenIdsOut,
         amountsOut,
-        value: price.toString(),
+        value: value.toString(),
         vaultAddress: vault.id,
         vaultId: vault.vaultId,
         standard,
@@ -152,4 +156,9 @@ export const makeQuoteVaultSwap =
     return result;
   };
 
-export default makeQuoteVaultSwap({ fetchPremiumPrice, fetchVTokenToEth });
+const quoteVaultSwap = makeQuoteVaultSwap({
+  fetchPremiumPrice,
+  fetchVTokenToEth,
+});
+
+export default quoteVaultSwap;

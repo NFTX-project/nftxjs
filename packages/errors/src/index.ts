@@ -15,6 +15,7 @@ type ErrorCode =
   | 'INSUFFICIENT_LIQUIDITY'
   | 'QUOTE_SLIPPAGE'
   // Transactions
+  | 'SLIPPAGE'
   | 'TRANSACTION_EXCEPTION'
   | 'TRANSACTION_FAILED'
   | 'TRANSACTION_CANCELLED';
@@ -158,14 +159,18 @@ export class InsufficientLiquidityError extends BadRequestError {
   }
 }
 
-export class QuoteSlippageError extends BadRequestError {
-  code: ErrorCode = 'QUOTE_SLIPPAGE';
+export class SlippageError extends BadRequestError {
+  code: ErrorCode = 'SLIPPAGE';
 
   constructor() {
     super(
       'Price impact is high, you may need to increase slippage tolerance for this transaction to succeed.'
     );
   }
+}
+
+export class QuoteSlippageError extends BadRequestError {
+  code: ErrorCode = 'QUOTE_SLIPPAGE';
 }
 
 export class QuoteFailedError extends UnknownError {
@@ -204,6 +209,17 @@ abstract class TransactionError extends UnknownError {
   error: any;
 
   constructor(network: number, baseError: any) {
+    // Handle some common errors
+    if (baseError?.code === 4001 || baseError?.code === 'ACTION_REJECTED') {
+      throw new TransactionCancelledError(network);
+    }
+    switch (baseError?.reason?.toLowerCase()) {
+      case 'price slippage check':
+        throw new SlippageError();
+      default:
+        break;
+    }
+
     const message =
       baseError?.error?.message ??
       baseError?.reason ??

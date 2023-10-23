@@ -14,6 +14,7 @@ let tokenIds: Args['tokenIds'];
 let userAddress: Args['userAddress'];
 let vault: Args['vault'];
 let holdings: Args['holdings'];
+let slippagePercentage: Args['slippagePercentage'];
 
 beforeEach(() => {
   fetchTokenBuyPrice = jest.fn(async ({ amount }) => ({
@@ -41,6 +42,7 @@ beforeEach(() => {
       tokenId: '1',
     },
   ];
+  slippagePercentage = 0;
 
   quoteVaultBuy = makeQuoteVaultBuy({
     fetchPremiumPrice,
@@ -55,6 +57,7 @@ beforeEach(() => {
       userAddress,
       vault,
       network: 1,
+      slippagePercentage,
     });
 });
 
@@ -124,4 +127,8 @@ describe('when items are outside the premium window', () => {
 
     expect(formatEther(result.premiumPrice)).toBe('0');
   });
+});
+
+describe('when slippage percentage is set', () => {
+  it.todo('adjusts the payable amount');
 });

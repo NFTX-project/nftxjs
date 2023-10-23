@@ -3,7 +3,6 @@ import { t } from '../utils';
 import { useAddEvent } from '../contexts/events';
 import { config, Transaction } from 'nftx.js';
 import {
-  TransactionCancelledError,
   TransactionExceptionError,
   TransactionFailedError,
 } from '@nftx/errors';
@@ -42,9 +41,6 @@ export default function useWrapTransaction<F extends Fn>(
     const [txErr, tx] = await t(fn(args));
     if (txErr) {
       const e = txErr.cause ?? txErr;
-      if (e.code === 4001 || e.code === 'ACTION_REJECTED') {
-        throw new TransactionCancelledError(network);
-      }
       // Exception - we couldn't even trigger the transaction
       throw new TransactionExceptionError(e, network);
     }

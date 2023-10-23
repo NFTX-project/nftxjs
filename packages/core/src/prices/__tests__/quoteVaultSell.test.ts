@@ -12,6 +12,7 @@ let run: () => ReturnType<QuoteVaultSell>;
 let tokenIds: Args['tokenIds'];
 let userAddress: Args['userAddress'];
 let vault: Args['vault'];
+let slippagePercentage: Args['slippagePercentage'];
 
 beforeEach(() => {
   fetchTokenSellPrice = jest.fn(async ({ amount }) => ({
@@ -29,6 +30,7 @@ beforeEach(() => {
     fees: { redeemFee: Zero, swapFee: Zero, mintFee: parseEther('0.05') },
     is1155: false,
   };
+  slippagePercentage = 0;
 
   quoteVaultSell = makeQuoteVaultSell({
     fetchTokenSellPrice,
@@ -41,6 +43,7 @@ beforeEach(() => {
       userAddress,
       vault,
       network: 1,
+      slippagePercentage,
     });
 });
 
@@ -77,4 +80,8 @@ it('returns a list of individual item costs', async () => {
   expect(result.items[1].tokenId).toBe('1');
   expect(formatEther(result.items[1].vTokenPrice)).toBe('1');
   expect(formatEther(result.items[1].feePrice)).toBe('0.025');
+});
+
+describe('when slippage percentage is set', () => {
+  it.todo('adjusts the payable amount');
 });

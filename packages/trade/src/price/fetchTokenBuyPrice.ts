@@ -9,10 +9,16 @@ import nftxQuoteToPrice from './quoteToPrice';
  */
 const fetchTokenBuyPrice = async (args: {
   network?: number;
+  /** The token you want to buy (address, ETH, USDC, or WETH) */
   tokenAddress: QuoteToken;
+  /** The amount to buy (defaults to 1e18) */
   amount?: BigIntish;
+  /** The token you want to quote in (address, ETH, USDC, or WETH) (defaults to ETH) */
   quote?: QuoteToken;
+  /** Address of the wallet doing the buy. Required if you want to receive the calldata to make a trade */
   userAddress?: Address;
+  /** The max amount of slippage (0-1) */
+  slippagePercentage?: number;
 }): Promise<Price> => {
   const {
     userAddress,
@@ -20,6 +26,7 @@ const fetchTokenBuyPrice = async (args: {
     tokenAddress: buyToken,
     quote: sellToken = 'ETH',
     amount: buyAmount = WeiPerEther,
+    slippagePercentage,
   } = args;
 
   const quote = await fetchQuote({
@@ -28,6 +35,7 @@ const fetchTokenBuyPrice = async (args: {
     buyAmount,
     network,
     userAddress,
+    slippagePercentage,
   });
 
   return nftxQuoteToPrice(quote);

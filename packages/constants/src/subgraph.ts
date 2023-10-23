@@ -1,12 +1,8 @@
 import { Network } from './networks';
 
-export const PUBLIC_GRAPH_API_KEY = '690cf8d6987a151008c2536454bd3d7a';
-// Locked down to nftx.io
-export const NFTX_GRAPH_API_KEY = '690cf8d6987a151008c2536454bd3d7a';
-
 const SHARED_PATH = 'subgraphs/name';
 const INDEXER_PATH = 'subgraphs/id';
-const GATEWAY_PATH = `api/${PUBLIC_GRAPH_API_KEY}/subgraphs/id`;
+const GATEWAY_PATH = `api/690cf8d6987a151008c2536454bd3d7a/subgraphs/id`;
 
 const SHARED_HOST = 'https://api.thegraph.com';
 const INDEXER_HOST = 'https://query.graph.nftx.xyz';
@@ -60,7 +56,6 @@ export const ERC1155_SUBGRAPH = {
     'https://api.thegraph.com/subgraphs/name/nftx-project/eip1155-looksrare-goerli',
 };
 
-// TODO: update to the v3 subgraph urls
 export const NFTX_SUBGRAPH_MAINNET_URLS = {
   GATEWAY_PROXY: `${GATEWAY_CACHE_PROXY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
   GATEWAY: `${GATEWAY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,

@@ -9,7 +9,7 @@ import queryPositionData from './queryPositionData';
 import { addressEqual } from '@nftx/utils';
 import transformPosition from './transformPosition';
 import { NotFoundError } from '@nftx/errors';
-import fetchClaimableAmount from '../fetchClaimableAmount';
+import fetchClaimableAmount from './fetchClaimableAmount';
 
 const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   inputTokens,

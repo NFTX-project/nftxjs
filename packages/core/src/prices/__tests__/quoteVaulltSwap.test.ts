@@ -14,6 +14,7 @@ let buyTokenIds: Args['buyTokenIds'];
 let userAddress: Args['userAddress'];
 let vault: Args['vault'];
 let holdings: Args['holdings'];
+let slippagePercentage: Args['slippagePercentage'];
 
 beforeEach(() => {
   fetchVTokenToEth = jest.fn().mockResolvedValue(WeiPerEther / 2n);
@@ -39,6 +40,7 @@ beforeEach(() => {
       tokenId: '1',
     },
   ];
+  slippagePercentage = 0;
 
   quoteVaultSwap = makeQuoteVaultSwap({
     fetchPremiumPrice,
@@ -53,6 +55,7 @@ beforeEach(() => {
       network: 1,
       buyTokenIds,
       sellTokenIds,
+      slippagePercentage,
     });
 });
 
@@ -122,4 +125,8 @@ describe('when items are outside the premium window', () => {
 
     expect(formatEther(result.premiumPrice)).toBe('0');
   });
+});
+
+describe('when slippage percentage is set', () => {
+  it.todo('adjusts the payable amount');
 });

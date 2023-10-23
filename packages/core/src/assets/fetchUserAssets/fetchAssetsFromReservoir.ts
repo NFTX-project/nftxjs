@@ -136,7 +136,9 @@ const makeFetchUserAssetsFromReservoir =
     return { assets, cursor: newCursor };
   };
 
-export default makeFetchUserAssetsFromReservoir({
+const fetchUserAssetsFromReservoir = makeFetchUserAssetsFromReservoir({
   getEligibleAssetVaultIds,
   queryReservoir,
 });
+
+export default fetchUserAssetsFromReservoir;

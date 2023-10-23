@@ -29,7 +29,8 @@ export type Price = {
   approveContracts: ApproveContract[];
 };
 
-type ApproveContract = {
+export type ApproveContract = {
+  label: string;
   /** The approval type */
   type: 'on-chain' | 'permit2';
   /** The token we want to spend */

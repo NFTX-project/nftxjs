@@ -1,28 +1,26 @@
-import type { Address, Vault, VaultFeeReceipt } from '@nftx/types';
+import type {
+  Address,
+  LiquidityPool,
+  Vault,
+  VaultFeeReceipt,
+} from '@nftx/types';
 import queryPoolData from './queryPoolData';
 import transformPool from './transformPool';
 import { addressEqual } from '@nftx/utils';
-import { NotFoundError } from '@nftx/errors';
 import fetchFeeReceipts from '../../vaults/fetchFeeReceipts';
 
 const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   inputTokens,
-  pool,
   vaults,
 }: {
   vaults: V[];
   inputTokens: { id: string }[];
-  pool: { id: string };
 }) => {
-  const vault = vaults.find((vault) => {
+  return vaults.find((vault) => {
     return inputTokens.some((inputToken) => {
       return addressEqual(inputToken.id, vault.id);
     });
   });
-  if (vault == null) {
-    throw new NotFoundError('vault for position', pool.id);
-  }
-  return vault;
 };
 
 const fetchPoolsSet = async ({
@@ -55,23 +53,26 @@ const fetchPoolsSet = async ({
     vaultIds,
   });
 
-  const pools = data.liquidityPools.map((pool) => {
+  const pools = data.liquidityPools.reduce((acc, pool) => {
     const vault = getVaultByTokens({
       inputTokens: pool.inputTokens,
-      pool,
       vaults,
     });
+    if (!vault) {
+      return acc;
+    }
     const receipts = feeReceipts.filter(
       (receipt) => receipt.vaultId === vault.vaultId
     );
-    return transformPool(
+    const p = transformPool(
       network,
       pool,
       vault,
       pool.openPositionCount,
       receipts
     );
-  });
+    return [...acc, p];
+  }, [] as LiquidityPool[]);
 
   let nextId: Address | undefined;
   if (data.liquidityPools.length === 1000) {

@@ -51,6 +51,7 @@ const fetchInventoryPools = async ({
       network,
       vaultIds: vaults.map((v) => v.vaultId),
       vaults: allVaults,
+      provider,
     }));
 
   const inventoryContract = getContract({

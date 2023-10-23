@@ -68,7 +68,7 @@ const transformPosition = ({
 
   return {
     id: position.id as Address,
-    poolId: position.pool.id,
+    poolId: position.pool.id as Address,
     tokenId,
     liquidity,
     tickLower,

@@ -85,4 +85,6 @@ export const makeRequiresProcessing = ({
     return result;
   };
 
-export default makeRequiresProcessing({ fetchMerkleLeaves });
+const requiresProcessing = makeRequiresProcessing({ fetchMerkleLeaves });
+
+export default requiresProcessing;

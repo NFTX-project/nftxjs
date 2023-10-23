@@ -7,12 +7,14 @@ const fetchVaultSwapQuote = ({
   userAddress,
   buyTokenIds,
   sellTokenIds,
+  slippagePercentage,
 }: {
   vaultId: string;
   sellTokenIds: `${number}`[];
   buyTokenIds: `${number}`[];
   userAddress: Address;
   network?: number;
+  slippagePercentage?: number;
 }) =>
   fetchQuote({
     quoteType: 'quote',
@@ -22,6 +24,7 @@ const fetchVaultSwapQuote = ({
     sellTokenIds,
     network,
     userAddress,
+    slippagePercentage,
   });
 
 export default fetchVaultSwapQuote;

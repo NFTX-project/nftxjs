@@ -81,7 +81,7 @@ const fetchQuote = async (args: {
     network = config.network,
     buyAmount,
     sellAmount,
-    slippagePercentage,
+    slippagePercentage = 0.01,
     userAddress,
   } = args;
   const sellToken = parseQuoteToken(args.sellToken, network);
@@ -122,7 +122,10 @@ const fetchQuote = async (args: {
     searchParams.append('recipient', userAddress);
     searchParams.append('deadline', '300');
     searchParams.append('enableUniversalRouter', 'true');
-    searchParams.append('slippageTolerance', `${slippagePercentage ?? 1}`);
+    searchParams.append(
+      'slippageTolerance',
+      `${slippagePercentage ?? 0.01 * 100}`
+    );
   }
   searchParams.append('protocols', 'v3');
 

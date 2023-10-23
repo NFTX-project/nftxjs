@@ -34,7 +34,7 @@ export const OPENSEA_COLLECTION = a(
 
 /** Zap specifically for creating new vaults */
 export const CREATE_VAULT_ZAP = {
-  [Network.Goerli]: a('0xFE60863328735aE7EB289cAB99B37235add768Fa'),
+  [Network.Goerli]: a('0xFA7d98Ec2b046e636c45A0291F931b94a5a1CA59'),
 };
 
 /** Perform buy/sell/swaps */
@@ -54,7 +54,7 @@ export const NFTX_ROUTER = {
 
 /** Staking  / Liquidity / Pools (NftxRouter) */
 export const POOL_ROUTER = {
-  [Network.Goerli]: a('0x3b79692Eb189a68E513ad5628A419950E5773e35'),
+  [Network.Goerli]: a('0xb95e2Fb1eDA32BbFbDaE2463BB3E64bb3E1E41D5'),
 };
 
 export const NONFUNGIBLE_POSITION_MANAGER = {

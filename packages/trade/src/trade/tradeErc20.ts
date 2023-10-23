@@ -1,5 +1,4 @@
 import type { Price, Provider, Signer } from '@nftx/types';
-import { getAccount } from 'viem';
 
 const tradeErc20 = async ({
   provider,
@@ -12,7 +11,7 @@ const tradeErc20 = async ({
   quote: Pick<Price, 'methodParameters'>;
 }) => {
   const [address] = await signer.getAddresses();
-  const account = getAccount(address);
+  const account = address;
 
   const {
     methodParameters: { calldata, to, value },
@@ -31,6 +30,7 @@ const tradeErc20 = async ({
     data: calldata,
     value: BigInt(value),
     account,
+    chain: provider.chain,
   });
 
   return { hash, wait: () => provider.waitForTransactionReceipt({ hash }) };

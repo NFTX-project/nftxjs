@@ -30,4 +30,8 @@ export const makeFetchLiquidityPosition = ({
     return position;
   };
 
-export default makeFetchLiquidityPosition({ fetchLiquidityPositions });
+const fetchLiquidityPosition = makeFetchLiquidityPosition({
+  fetchLiquidityPositions,
+});
+
+export default fetchLiquidityPosition;
