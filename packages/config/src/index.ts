@@ -3,7 +3,6 @@ import {
   ERC721_SUBGRAPH,
   NFTX_SUBGRAPH,
   NON_STANDARD_SUBGRAPH,
-  PUBLIC_GRAPH_API_KEY,
   NFTX_APR_URL,
   Network,
   ALCHEMY_URL,
@@ -29,7 +28,6 @@ export interface Config {
    */
   subgraph: {
     /** A user-specific subgraph api key, if you have one */
-    API_KEY: string;
     ERC1155_SUBGRAPH: Record<string, string | string[]>;
     ERC721_SUBGRAPH: Record<string, string | string[]>;
     NFTX_SUBGRAPH: Record<string, string | string[]>;
@@ -96,7 +94,6 @@ const storeSettings = <T extends Record<string, any>>(obj: T) => {
 const defaultConfig: Config = {
   network: Network.Mainnet,
   subgraph: {
-    API_KEY: PUBLIC_GRAPH_API_KEY,
     ERC1155_SUBGRAPH,
     ERC721_SUBGRAPH,
     NFTX_SUBGRAPH,

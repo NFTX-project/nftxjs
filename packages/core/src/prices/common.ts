@@ -1,5 +1,10 @@
 import { VaultFactory } from '@nftx/abi';
-import { VAULT_FACTORY, WeiPerEther, Zero } from '@nftx/constants';
+import {
+  PREMIUM_DURATION,
+  VAULT_FACTORY,
+  WeiPerEther,
+  Zero,
+} from '@nftx/constants';
 import { getChainConstant, getExactTokenIds, isCryptoPunk } from '@nftx/utils';
 import type {
   Address,
@@ -13,9 +18,6 @@ import { getContract } from '@nftx/utils';
 import { NotFoundError } from '@nftx/errors';
 
 type GetContract = typeof getContract;
-
-// TODO: move to @nftx/constants
-const PREMIUM_DURATION = 36000;
 
 export const calculateFeePricePerItem = (fee: bigint, vTokenToEth: bigint) => {
   return (fee * vTokenToEth) / WeiPerEther;
