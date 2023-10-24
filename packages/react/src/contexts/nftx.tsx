@@ -76,7 +76,7 @@ export const NftxProvider = ({
   );
 };
 
-export const useNftx = () => {
+export const useNftx = (): INftxContext => {
   const ctx = useContext(nftxContext);
 
   const network = ctx.network ?? config.network;
