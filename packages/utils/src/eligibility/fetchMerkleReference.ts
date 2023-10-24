@@ -38,4 +38,6 @@ export const makeFetchMerkleReference = ({
     return reference;
   };
 
-export default makeFetchMerkleReference({ getContract });
+const fetchMerkleReference = makeFetchMerkleReference({ getContract });
+
+export default fetchMerkleReference;

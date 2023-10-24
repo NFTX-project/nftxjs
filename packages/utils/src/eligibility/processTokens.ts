@@ -63,4 +63,6 @@ export const makeProcessTokens = ({
     });
   };
 
-export default makeProcessTokens({ fetchMerkleLeaves });
+const processTokens = makeProcessTokens({ fetchMerkleLeaves });
+
+export default processTokens;

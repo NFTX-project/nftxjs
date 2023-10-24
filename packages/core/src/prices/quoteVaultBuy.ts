@@ -190,8 +190,10 @@ export const makeQuoteVaultBuy =
     return result;
   };
 
-export default makeQuoteVaultBuy({
+const quoteVaultBuy = makeQuoteVaultBuy({
   fetchPremiumPrice,
   fetchTokenBuyPrice,
   fetchVTokenToEth,
 });
+
+export default quoteVaultBuy;

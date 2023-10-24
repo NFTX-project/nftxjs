@@ -65,6 +65,8 @@ const makeFetchUserAssets = ({
   return fetchUserAssets;
 };
 
-export default makeFetchUserAssets({
+const fetchUserAssets = makeFetchUserAssets({
   fetchAssetsFromReservoir,
 });
+
+export default fetchUserAssets;

@@ -139,4 +139,9 @@ export const makeQuoteVaultSell =
     return result;
   };
 
-export default makeQuoteVaultSell({ fetchTokenSellPrice, fetchVTokenToEth });
+const quoteVaultSell = makeQuoteVaultSell({
+  fetchTokenSellPrice,
+  fetchVTokenToEth,
+});
+
+export default quoteVaultSell;

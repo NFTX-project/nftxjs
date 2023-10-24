@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "@nftx/errors": "^0.9.4",
-    "viem": "0.1.19"
+    "viem": "^1.16.6",
+    "abitype": "0.9.8"
   },
   "devDependencies": {
     "react": "^18.0.0",

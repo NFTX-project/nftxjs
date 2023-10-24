@@ -4,7 +4,6 @@
     "jsx": "preserve",
     "module": "ESNext",
     "target": "ESNext",
-    "importsNotUsedAsValues": "error",
     "allowJs": false,
     "moduleResolution": "node",
     "strictBindCallApply": true,

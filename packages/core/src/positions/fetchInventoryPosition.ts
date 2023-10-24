@@ -49,4 +49,8 @@ export const makeFetchInventoryPosition = ({
   return fetchPosition;
 };
 
-export default makeFetchInventoryPosition({ fetchInventoryPositions });
+const fetchInventoryPosition = makeFetchInventoryPosition({
+  fetchInventoryPositions,
+});
+
+export default fetchInventoryPosition;

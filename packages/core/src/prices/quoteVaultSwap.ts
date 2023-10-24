@@ -156,4 +156,9 @@ export const makeQuoteVaultSwap =
     return result;
   };
 
-export default makeQuoteVaultSwap({ fetchPremiumPrice, fetchVTokenToEth });
+const quoteVaultSwap = makeQuoteVaultSwap({
+  fetchPremiumPrice,
+  fetchVTokenToEth,
+});
+
+export default quoteVaultSwap;

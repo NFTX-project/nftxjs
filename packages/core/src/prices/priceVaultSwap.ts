@@ -163,4 +163,6 @@ export const makePriceVaultSwap =
     return getRoughPrice({ holdings, buyTokenIds, vault, now });
   };
 
-export default makePriceVaultSwap({ quoteVaultSwap });
+const priceVaultSwap = makePriceVaultSwap({ quoteVaultSwap });
+
+export default priceVaultSwap;

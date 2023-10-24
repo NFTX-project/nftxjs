@@ -180,4 +180,6 @@ export const makePriceVaultBuy =
     });
   };
 
-export default makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });
+const priceVaultBuy = makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });
+
+export default priceVaultBuy;

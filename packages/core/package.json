@@ -37,7 +37,7 @@
     "@uniswap/sdk-core": "^4.0.0",
     "decimal.js": "^10.4.3",
     "jsbi": "^3.1.4",
-    "viem": "0.1.19"
+    "viem": "^1.16.6"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
