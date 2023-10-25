@@ -1,4 +1,4 @@
-import type { Address, LiquidityPosition, Vault } from '@nftx/types';
+import type { Address, LiquidityPosition, TokenId, Vault } from '@nftx/types';
 import type { PositionsResponse } from './types';
 import { WETH_TOKEN, WeiPerEther, Zero } from '@nftx/constants';
 import calculateVTokenEth from './calculateVTokenEth';
@@ -20,12 +20,14 @@ const transformPosition = ({
   vault,
   claimable0,
   claimable1,
+  tokenId,
 }: {
   position: Position;
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'vaultId'>;
   network: number;
   claimable0: bigint;
   claimable1: bigint;
+  tokenId: TokenId;
 }): LiquidityPosition => {
   const tick = BigInt(position.pool.tick ?? '0');
   const tickLower = BigInt(position.tickLower?.index ?? '0');
@@ -68,6 +70,7 @@ const transformPosition = ({
   return {
     id: position.id as Address,
     poolId: position.pool.id,
+    tokenId,
     liquidity,
     tickLower,
     tickUpper,
