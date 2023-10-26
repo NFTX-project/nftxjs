@@ -5,7 +5,7 @@ import {
   WeiPerEther,
   Zero,
 } from '@nftx/constants';
-import { getChainConstant, getExactTokenIds, isCryptoPunk } from '@nftx/utils';
+import { getChainConstant, isCryptoPunk } from '@nftx/utils';
 import type {
   Address,
   MarketplaceQuote,
@@ -130,60 +130,6 @@ const makeFetchPremiumPrice =
     return [premiumVTokenAmount, price];
   };
 export const fetchPremiumPrice = makeFetchPremiumPrice({ getContract });
-
-export const estimatePremiumPrice = ({
-  holding,
-  vTokenToEth,
-  now,
-}: {
-  holding: Pick<VaultHolding, 'dateAdded'> | undefined;
-  vTokenToEth: bigint;
-  now: number;
-}): [vToken: bigint, price: bigint] => {
-  const premiumThreshold = now - PREMIUM_DURATION;
-
-  if (!holding || holding.dateAdded < premiumThreshold) {
-    return [Zero, Zero];
-  }
-
-  const maxPremium = 5 * 10 ** 18; // 5 vTokens
-  const timeStep = 60 * 60; // 1 hour
-  // const endValue = maxPremium * 2 ** (-PREMIUM_DURATION / timeStep)
-  const endValue = 4882812500000000;
-  const elapsed = now - holding.dateAdded;
-
-  const p = maxPremium * 2 ** (-elapsed / timeStep) - endValue;
-  // Bottom out at 0
-  const premiumVTokenAmount = BigInt(Math.floor(Math.max(p, 0)));
-
-  const price = (premiumVTokenAmount * vTokenToEth) / WeiPerEther;
-
-  return [premiumVTokenAmount, price];
-};
-export const estimateTotalPremiumPrice = ({
-  holdings,
-  tokenIds,
-  vTokenToEth,
-  now,
-}: {
-  tokenIds: TokenId[] | [TokenId, number][];
-  holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
-  vTokenToEth: bigint;
-  now: number;
-}): [vToken: bigint, price: bigint] => {
-  return getExactTokenIds(tokenIds).reduce(
-    (total, tokenId) => {
-      const holding = maybeGetHoldingByTokenId(holdings, tokenId);
-      const premium = estimatePremiumPrice({
-        holding,
-        vTokenToEth,
-        now,
-      });
-      return [total[0] + premium[0], total[1] + premium[1]] as [bigint, bigint];
-    },
-    [Zero, Zero] as [vToken: bigint, price: bigint]
-  );
-};
 
 export const calculateTotalPremiumPrice = (
   items: { premiumPrice: bigint; premiumLimit: bigint }[]

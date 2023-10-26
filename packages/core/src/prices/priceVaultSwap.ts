@@ -1,4 +1,8 @@
-import { getTotalTokenIds, getUniqueTokenIds } from '@nftx/utils';
+import {
+  estimateTotalPremiumPrice,
+  getTotalTokenIds,
+  getUniqueTokenIds,
+} from '@nftx/utils';
 import type {
   MarketplacePrice,
   Provider,
@@ -6,7 +10,7 @@ import type {
   Vault,
   VaultHolding,
 } from '@nftx/types';
-import { calculateTotalFeePrice, estimateTotalPremiumPrice } from './common';
+import { calculateTotalFeePrice } from './common';
 import { parseEther } from 'viem';
 import { Zero } from '@nftx/constants';
 import quoteVaultSwap from './quoteVaultSwap';

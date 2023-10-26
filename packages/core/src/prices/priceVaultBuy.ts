@@ -7,9 +7,13 @@ import type {
   VaultHolding,
 } from '@nftx/types';
 import { parseEther } from 'viem';
-import { calculateTotalFeePrice, estimateTotalPremiumPrice } from './common';
+import { calculateTotalFeePrice } from './common';
 import quoteVaultBuy from './quoteVaultBuy';
-import { getTotalTokenIds, getUniqueTokenIds } from '@nftx/utils';
+import {
+  estimateTotalPremiumPrice,
+  getTotalTokenIds,
+  getUniqueTokenIds,
+} from '@nftx/utils';
 import { ValidationError } from '@nftx/errors';
 
 type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
