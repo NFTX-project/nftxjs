@@ -209,6 +209,17 @@ abstract class TransactionError extends UnknownError {
   error: any;
 
   constructor(network: number, baseError: any) {
+    // Handle some common errors
+    if (baseError?.code === 4001 || baseError?.code === 'ACTION_REJECTED') {
+      throw new TransactionCancelledError(network);
+    }
+    switch (baseError?.reason?.toLowerCase()) {
+      case 'price slippage check':
+        throw new SlippageError();
+      default:
+        break;
+    }
+
     const message =
       baseError?.error?.message ??
       baseError?.reason ??
@@ -231,13 +242,6 @@ export class TransactionExceptionError extends TransactionError {
 
   constructor(error: any, network: number) {
     super(network, error);
-    // Handle some common errors
-    switch (error?.message?.toLowerCase()) {
-      case 'price slippage check':
-        throw new SlippageError();
-      default:
-        break;
-    }
   }
 }
 
