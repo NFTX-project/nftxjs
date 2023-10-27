@@ -27,6 +27,7 @@ const queryPositionData = ({
     ])
     .select((s) => [
       s.id,
+      s.tokenId,
       s.liquidity,
       s.cumulativeDepositTokenAmounts,
       s.cumulativeWithdrawTokenAmounts,

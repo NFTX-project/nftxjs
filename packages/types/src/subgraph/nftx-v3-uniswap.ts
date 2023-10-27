@@ -555,6 +555,7 @@ export enum Deposit_OrderBy {
   PositionLockedUntil = 'position__lockedUntil',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
+  PositionTokenId = 'position__tokenId',
   PositionWithdrawCount = 'position__withdrawCount',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
@@ -3333,6 +3334,8 @@ export type Position = {
   timestampClosed?: Maybe<Scalars['BigInt']['output']>;
   /**  Timestamp when the position was opened  */
   timestampOpened: Scalars['BigInt']['output'];
+  /**  TokenId of the Position */
+  tokenId: Scalars['BigInt']['output'];
   /**  Number of withdrawals related to this position  */
   withdrawCount: Scalars['Int']['output'];
   /**  All withdraw events of this position  */
@@ -3591,6 +3594,7 @@ export enum PositionSnapshot_OrderBy {
   PositionLockedUntil = 'position__lockedUntil',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
+  PositionTokenId = 'position__tokenId',
   PositionWithdrawCount = 'position__withdrawCount',
   Timestamp = 'timestamp',
   WithdrawCount = 'withdrawCount'
@@ -3840,6 +3844,14 @@ export type Position_Filter = {
   timestampOpened_lte?: InputMaybe<Scalars['BigInt']['input']>;
   timestampOpened_not?: InputMaybe<Scalars['BigInt']['input']>;
   timestampOpened_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  tokenId?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  tokenId_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_not?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   withdrawCount?: InputMaybe<Scalars['Int']['input']>;
   withdrawCount_gt?: InputMaybe<Scalars['Int']['input']>;
   withdrawCount_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -3956,6 +3968,7 @@ export enum Position_OrderBy {
   TickUpperLiquidityNetUsd = 'tickUpper__liquidityNetUSD',
   TimestampClosed = 'timestampClosed',
   TimestampOpened = 'timestampOpened',
+  TokenId = 'tokenId',
   WithdrawCount = 'withdrawCount',
   Withdraws = 'withdraws'
 }
@@ -7261,6 +7274,7 @@ export enum Withdraw_OrderBy {
   PositionLockedUntil = 'position__lockedUntil',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
+  PositionTokenId = 'position__tokenId',
   PositionWithdrawCount = 'position__withdrawCount',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',

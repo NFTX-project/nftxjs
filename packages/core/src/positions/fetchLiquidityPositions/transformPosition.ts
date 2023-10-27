@@ -20,15 +20,14 @@ const transformPosition = ({
   vault,
   claimable0,
   claimable1,
-  tokenId,
 }: {
   position: Position;
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'vaultId'>;
   network: number;
   claimable0: bigint;
   claimable1: bigint;
-  tokenId: TokenId;
 }): LiquidityPosition => {
+  const tokenId = position.tokenId as TokenId;
   const tick = BigInt(position.pool.tick ?? '0');
   const tickLower = BigInt(position.tickLower?.index ?? '0');
   const tickUpper = BigInt(position.tickUpper?.index ?? '0');

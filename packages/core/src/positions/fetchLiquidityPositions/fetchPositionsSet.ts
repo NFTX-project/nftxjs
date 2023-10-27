@@ -31,12 +31,6 @@ const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   return vault;
 };
 
-const calculateTokenId = (positionId: string) => {
-  const code = positionId.slice(2).replace(/^0+/, '').replace(/0+$/, '');
-  const tokenId = parseInt(code, 16);
-  return tokenId.toString() as TokenId;
-};
-
 const fetchPositionsSet = async ({
   lastId,
   network,
@@ -64,8 +58,6 @@ const fetchPositionsSet = async ({
 
   const positions = await Promise.all(
     data.positions.map(async (position): Promise<LiquidityPosition> => {
-      const tokenId = calculateTokenId(position.id);
-
       const vault = getVaultByTokens({
         inputTokens: position.pool.inputTokens,
         position,
@@ -73,7 +65,7 @@ const fetchPositionsSet = async ({
       });
       const [claimable0, claimable1] = await fetchClaimableAmount({
         network,
-        tokenId,
+        tokenId: position.tokenId as TokenId,
         provider,
       });
       return transformPosition({
@@ -82,7 +74,6 @@ const fetchPositionsSet = async ({
         vault,
         claimable0,
         claimable1,
-        tokenId,
       });
     })
   );
