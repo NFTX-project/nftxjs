@@ -2,6 +2,7 @@ import config from '@nftx/config';
 import type { Address, InventoryPosition, Vault } from '@nftx/types';
 import fetchPositionsSet from './fetchPositionsSet';
 import { WeiPerEther, Zero } from '@nftx/constants';
+import { Provider } from '@nftx/types';
 
 const getVaultAddressesForVaultIds = (
   vaults: Pick<Vault, 'vaultId' | 'id'>[],
@@ -44,12 +45,14 @@ const fetchInventoryPositions = async ({
   userAddresses,
   vaultIds,
   vaults,
+  provider,
 }: {
   userAddresses?: Address[];
   vaultIds?: string[];
   positionIds?: Address[];
   network?: number;
   vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
+  provider: Provider;
 }): Promise<InventoryPosition[]> => {
   const vaultAddresses = getVaultAddressesForVaultIds(vaults, vaultIds);
 
@@ -66,6 +69,7 @@ const fetchInventoryPositions = async ({
       positionIds,
       userAddresses,
       vaultAddresses,
+      provider,
     });
 
     positions.push(...morePositions);

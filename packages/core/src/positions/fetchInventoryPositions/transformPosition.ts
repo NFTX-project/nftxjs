@@ -3,13 +3,13 @@ import { WeiPerEther, Zero } from '@nftx/constants';
 
 const transformPosition = (
   position: NftxV3.InventoryPosition,
-  vault: Pick<Vault, 'vTokenToEth'>
+  vault: Pick<Vault, 'vTokenToEth'>,
+  claimableRewards: bigint
 ): InventoryPosition => {
   const vToken = BigInt(`${position.amount}`);
   const vTokenValue = (vToken * vault.vTokenToEth) / WeiPerEther;
 
   // TODO: where do we get reward data from?
-  const claimableRewards = Zero;
   const lifetimeRewards = Zero;
 
   return {
