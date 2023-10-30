@@ -3,7 +3,7 @@ import type { Address, TokenId } from './web3';
 /** A user's Liquidity Position */
 export type LiquidityPosition = {
   id: Address;
-  poolId: string;
+  poolId: Address;
   tokenId: TokenId;
   userAddress: Address;
   vaultId: string;

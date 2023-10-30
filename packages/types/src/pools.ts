@@ -8,7 +8,7 @@ import type { FeePercentage, FeeTier } from '@nftx/constants';
  */
 export type LiquidityPool = {
   /** A unique identifier for the liquidity pool */
-  id: string;
+  id: Address;
   vaultId: string;
   vaultAddress: Address;
   /** The fee tier for this pool */
