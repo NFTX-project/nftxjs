@@ -106,7 +106,7 @@ const transformPool = (
     exists,
     fees,
     feeTier,
-    id: pool.id,
+    id: pool.id as Address,
     name: pool.name ?? '',
     periodFees,
     tick,
