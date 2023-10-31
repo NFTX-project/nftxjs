@@ -39,6 +39,7 @@ const queryPositionData = ({
       p.children((c) => [c.id]),
       p.timeLock,
       p.timeLockUntil,
+      p.vTokenTimeLockUntil,
     ]);
 
   return querySubgraph({

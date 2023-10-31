@@ -49,7 +49,11 @@ const fetchPositionsSet = async ({
         network,
       });
 
-      return transformPosition(position, vault, claimableRewards);
+      return transformPosition({
+        position,
+        vault,
+        claimableRewards,
+      });
     })
   );
 

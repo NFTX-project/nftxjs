@@ -2562,6 +2562,7 @@ export enum InventoryCombinePositions_OrderBy {
   ParentPositionPositionId = 'parentPosition__positionId',
   ParentPositionTimeLock = 'parentPosition__timeLock',
   ParentPositionTimeLockUntil = 'parentPosition__timeLockUntil',
+  ParentPositionVTokenTimeLockUntil = 'parentPosition__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -2712,6 +2713,7 @@ export enum InventoryDepositWithNft_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -2838,6 +2840,7 @@ export enum InventoryDeposit_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -2970,6 +2973,7 @@ export enum InventoryIncreasePosition_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   Vault = 'vault',
@@ -3148,6 +3152,7 @@ export type InventoryPosition = {
   timeLock: Scalars['Boolean']['output'];
   timeLockUntil: Scalars['BigInt']['output'];
   user: User;
+  vTokenTimeLockUntil: Scalars['BigInt']['output'];
   vault: Vault;
 };
 
@@ -3245,6 +3250,7 @@ export enum InventoryPositionFee_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Vault = 'vault',
   VaultAllocTotal = 'vault__allocTotal',
   VaultAllowAllItems = 'vault__allowAllItems',
@@ -3431,6 +3437,14 @@ export type InventoryPosition_Filter = {
   user_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   user_starts_with?: InputMaybe<Scalars['String']['input']>;
   user_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vTokenTimeLockUntil?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vTokenTimeLockUntil_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_not?: InputMaybe<Scalars['BigInt']['input']>;
+  vTokenTimeLockUntil_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   vault?: InputMaybe<Scalars['String']['input']>;
   vault_?: InputMaybe<Vault_Filter>;
   vault_contains?: InputMaybe<Scalars['String']['input']>;
@@ -3470,11 +3484,13 @@ export enum InventoryPosition_OrderBy {
   ParentPositionId = 'parent__positionId',
   ParentTimeLock = 'parent__timeLock',
   ParentTimeLockUntil = 'parent__timeLockUntil',
+  ParentVTokenTimeLockUntil = 'parent__vTokenTimeLockUntil',
   PositionId = 'positionId',
   TimeLock = 'timeLock',
   TimeLockUntil = 'timeLockUntil',
   User = 'user',
   UserId = 'user__id',
+  VTokenTimeLockUntil = 'vTokenTimeLockUntil',
   Vault = 'vault',
   VaultAllocTotal = 'vault__allocTotal',
   VaultAllowAllItems = 'vault__allowAllItems',
@@ -3641,6 +3657,7 @@ export enum InventoryTransfer_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   To = 'to',
   ToId = 'to__id',
@@ -3792,6 +3809,7 @@ export enum InventoryWithdraw_OrderBy {
   PositionPositionId = 'position__positionId',
   PositionTimeLock = 'position__timeLock',
   PositionTimeLockUntil = 'position__timeLockUntil',
+  PositionVTokenTimeLockUntil = 'position__vTokenTimeLockUntil',
   Source = 'source',
   Type = 'type',
   VTokenAmount = 'vTokenAmount',

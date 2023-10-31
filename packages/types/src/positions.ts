@@ -59,10 +59,10 @@ export type InventoryPosition = {
   claimableRewards: bigint;
   /** The % of the pool provided by this position */
   poolShare: bigint;
-  /** Whether the position is timelocked - if false, you cannot unstake to an NFT (so you will instead receive vToken) */
-  timeLocked: boolean;
-  /** The timestamp at which the position is no longer timelocked */
-  timelockedUntil: number;
+  /** The timestamp at which the position can be withdrawn. During this timelock, you cannot withdraw at all */
+  vTokenLockedUntil: number;
+  /** The timestamp at which the position is no longer timelocked. During the timelock you must pay an early exit fee to withdraw */
+  lockedUntil: number;
 };
 
 /** A fee generation event */
