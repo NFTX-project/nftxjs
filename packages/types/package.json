@@ -20,8 +20,8 @@
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
     "test": "echo \"no tests\"",
     "codegen": "graphql-codegen -c nftx-v3.codegen.yml && graphql-codegen -c nftx-v3-uniswap.codegen.yml",
-    "build": "rm -rf dist && yarn codegen && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
-    "prepublishOnly": "yarn build"
+    "build": "rm -rf dist && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
+    "prepublishOnly": "yarn build && yarn codegen"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"

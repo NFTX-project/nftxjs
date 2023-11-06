@@ -53,7 +53,9 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
 
   const approveContracts: Price['approveContracts'] = [];
 
+  // If you're paying ETH we don't need any approvals
   if (!isEth) {
+    // First you need to approve permit2 to spend your token on your behalf
     approveContracts.push({
       type: 'on-chain',
       spenderAddress: getChainConstant(PERMIT2, network),
@@ -62,6 +64,7 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
       amount: MaxUint256,
     });
 
+    // Next you need to approve the transaction itself via permit2
     approveContracts.push({
       type: 'permit2',
       tokenAddress: sellToken,

@@ -7,3 +7,4 @@ export * from './vaults';
 export * from './users';
 export * from './utils';
 export * from './collections';
+export * from './quotes';
