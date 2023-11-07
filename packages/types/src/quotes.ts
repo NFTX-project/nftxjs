@@ -1,7 +1,9 @@
+import { FeeTier } from '@nftx/constants';
 import { CreatePoolFeatures, CreatePoolFees, LiquidityPool } from './pools';
 import { InventoryPosition, LiquidityPosition } from './positions';
 import { ApproveContract } from './price';
 import { Address, TokenId } from './web3';
+import { Vault } from './vaults';
 
 export type CreateVaultQuoteParams = {
   name: string;
@@ -123,6 +125,43 @@ export type CreateInventoryPositionQuote = {
     nftIds: bigint[];
     nftAmounts: bigint[];
     userAddress: Address;
+  };
+  approveContracts: ApproveContract[];
+};
+
+export type CreateLiquidityPositionQuoteParams = {
+  vault: Pick<Vault, 'id' | 'vaultId' | 'is1155' | 'asset'>;
+  liquidity: {
+    upperPrice: bigint;
+    lowerPrice: bigint;
+    nftsToPair: bigint;
+    vTokenToPair: bigint;
+    ethToPair: bigint;
+  };
+  pool: {
+    feeTier: FeeTier;
+  };
+  tokenIds: [TokenId, number][];
+  slippagePercentage?: number;
+};
+
+export type CreateLiquidityPositionQuote = {
+  methodParameters: {
+    value: bigint;
+    params: {
+      vaultId: bigint;
+      vTokensAmount: bigint;
+      nftIds: bigint[];
+      nftAmounts: bigint[];
+      tickLower: number;
+      tickUpper: number;
+      fee: number;
+      sqrtPriceX96: bigint;
+      vTokenMin: bigint;
+      wethMin: bigint;
+      deadline: bigint;
+      forceTimelock: boolean;
+    };
   };
   approveContracts: ApproveContract[];
 };

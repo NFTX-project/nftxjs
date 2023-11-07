@@ -13,7 +13,7 @@ const createInventoryPosition = ({
   network = config.network,
 }: {
   network?: number;
-  quote: CreateInventoryPositionQuote;
+  quote: Pick<CreateInventoryPositionQuote, 'methodParameters'>;
   provider: Provider;
   signer: Signer;
 }) => {
