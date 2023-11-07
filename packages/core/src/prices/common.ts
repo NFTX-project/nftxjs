@@ -154,6 +154,7 @@ export const getApproveContracts = ({
   if (isCryptoPunk(vault.asset.id)) {
     return tokenIds.map((tokenId) => {
       return {
+        label: `Approve ${vault.asset.name}`,
         type: 'on-chain',
         tokenAddress: vault.asset.id,
         spenderAddress: spender,
@@ -164,6 +165,7 @@ export const getApproveContracts = ({
   } else {
     return [
       {
+        label: `Approve ${vault.asset.name}`,
         type: 'on-chain',
         tokenAddress: vault.asset.id,
         spenderAddress: spender,

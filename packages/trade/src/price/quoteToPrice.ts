@@ -57,6 +57,7 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
   if (!isEth) {
     // First you need to approve permit2 to spend your token on your behalf
     approveContracts.push({
+      label: 'Approve Permit2',
       type: 'on-chain',
       spenderAddress: getChainConstant(PERMIT2, network),
       tokenAddress: sellToken,
@@ -66,6 +67,7 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
 
     // Next you need to approve the transaction itself via permit2
     approveContracts.push({
+      label: `Approve ${route[0].tokenIn.symbol}`,
       type: 'permit2',
       tokenAddress: sellToken,
       spenderAddress: getChainConstant(NFTX_ROUTER, network),

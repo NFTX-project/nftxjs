@@ -65,14 +65,7 @@ export type CreateVaultQuote = {
 export type WithdrawLiquidityQuoteParams = {
   userAddress: Address;
   tokenIds: TokenId[] | [TokenId, number][];
-  position: Pick<
-    LiquidityPosition,
-    'tokenId' | 'liquidity' | 'vToken' | 'eth' | 'claimableEth' | 'lockedUntil'
-  >;
-  pool: {
-    vaultId: LiquidityPool['vaultId'];
-    tokens: { id: LiquidityPool['tokens'][0]['id'] }[];
-  };
+  positionId: Address;
   percentageToWithdraw: number;
   slippagePercentage?: number;
 };
@@ -95,10 +88,9 @@ export type WithdrawLiquidityQuote = {
 };
 
 export type WithdrawInventoryQuoteParams = {
-  position: Pick<InventoryPosition, 'vaultId' | 'id' | 'lockedUntil'>;
+  positionId: Address;
   percentageToWithdraw: number;
   tokenIds: TokenId[];
-  userAddress: Address;
   slippagePercentage?: number;
 };
 
@@ -130,16 +122,14 @@ export type CreateInventoryPositionQuote = {
 };
 
 export type CreateLiquidityPositionQuoteParams = {
-  vault: Pick<Vault, 'id' | 'vaultId' | 'is1155' | 'asset'>;
+  vaultId: string;
+  poolId: Address;
   liquidity: {
     upperPrice: bigint;
     lowerPrice: bigint;
     nftsToPair: bigint;
     vTokenToPair: bigint;
     ethToPair: bigint;
-  };
-  pool: {
-    feeTier: FeeTier;
   };
   tokenIds: [TokenId, number][];
   slippagePercentage?: number;
