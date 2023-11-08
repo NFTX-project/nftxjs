@@ -1,5 +1,9 @@
-import type { Provider, Signer, Transaction } from 'nftx.js';
-import type { TransactionReceipt } from 'viem';
+import type {
+  Provider,
+  Signer,
+  Transaction,
+  TransactionReceipt,
+} from 'nftx.js';
 
 export type TransactionState =
   | 'None'

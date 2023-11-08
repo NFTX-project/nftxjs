@@ -23,7 +23,7 @@ const withdrawInventory = ({
   provider: Provider;
   signer: Signer;
 }) => {
-  console.log({
+  console.debug({
     method: 'withdraw',
     positionId,
     vTokenShares,

@@ -6,8 +6,7 @@ import {
 import { useCallback, useReducer } from 'react';
 import type { TransactionState } from '../types';
 import useWrapTransaction from './useWrapTransaction';
-import type { Transaction } from 'nftx.js';
-import type { TransactionReceipt } from 'viem';
+import type { Transaction, TransactionReceipt } from 'nftx.js';
 
 type Fn = (args: any) => Promise<Transaction>;
 
