@@ -169,7 +169,7 @@ export class SlippageError extends BadRequestError {
   }
 }
 
-export class QuoteSlippageError extends BadRequestError {
+export class QuoteSlippageError extends SlippageError {
   code: ErrorCode = 'QUOTE_SLIPPAGE';
 }
 

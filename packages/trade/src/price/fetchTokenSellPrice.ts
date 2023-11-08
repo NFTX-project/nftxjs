@@ -19,6 +19,8 @@ const fetchTokenSellPrice = async (args: {
   userAddress?: Address;
   /** The max amount of slippage (0-1) */
   slippagePercentage?: number;
+  /** Permit2 parameters in order to do an off-chain permission. If ommitted, you will need to have done an on-chain approval with permit2 */
+  permit2?: Parameters<typeof fetchQuote>[0]['permit2'];
 }) => {
   const {
     network = config.network,
@@ -27,6 +29,7 @@ const fetchTokenSellPrice = async (args: {
     quote: buyToken = 'ETH',
     userAddress,
     slippagePercentage,
+    permit2,
   } = args;
 
   const quote = await fetchQuote({
@@ -36,6 +39,7 @@ const fetchTokenSellPrice = async (args: {
     network,
     userAddress,
     slippagePercentage,
+    permit2,
   });
 
   return nftxQuoteToPrice(quote);
