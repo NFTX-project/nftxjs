@@ -1,7 +1,7 @@
 import type {
   createPublicClient,
   createWalletClient,
-  TransactionReceipt,
+  TransactionReceipt as ViemTrasnsactionReceipt,
   GetFunctionArgs,
   ContractFunctionResult,
 } from 'viem';
@@ -17,6 +17,16 @@ export type BigIntString = `${number}`;
 export type BigIntish = bigint | BigIntString | number;
 
 export type TokenId = BigIntString;
+
+export type TransactionReceipt = ViemTrasnsactionReceipt & {
+  permit2Signature?: {
+    signature: Address;
+    amount: bigint;
+    expiration: bigint;
+    sigDeadline: bigint;
+    nonce: number;
+  };
+};
 
 export type Transaction = {
   hash: Address;

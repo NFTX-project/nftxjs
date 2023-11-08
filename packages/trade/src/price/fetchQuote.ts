@@ -76,6 +76,13 @@ const fetchQuote = async (args: {
   sellAmount?: BigIntish;
   slippagePercentage?: number;
   userAddress?: Address;
+  permit2?: {
+    signature: Address;
+    amount: bigint;
+    expiration: bigint;
+    sigDeadline: bigint;
+    nonce: number;
+  };
 }): Promise<NftxQuote> => {
   const {
     network = config.network,
@@ -83,6 +90,7 @@ const fetchQuote = async (args: {
     sellAmount,
     slippagePercentage = 0.01,
     userAddress,
+    permit2,
   } = args;
   const sellToken = parseQuoteToken(args.sellToken, network);
   const buyToken = parseQuoteToken(args.buyToken, network);
@@ -128,6 +136,13 @@ const fetchQuote = async (args: {
     );
   }
   searchParams.append('protocols', 'v3');
+  if (permit2) {
+    searchParams.append('permitSignature', permit2.signature);
+    searchParams.append('permitAmount', permit2.amount.toString());
+    searchParams.append('permitExpiration', permit2.expiration.toString());
+    searchParams.append('permitSigDeadline', permit2.sigDeadline.toString());
+    searchParams.append('permitNonce', permit2.nonce.toString());
+  }
 
   const query = searchParams.toString();
 
