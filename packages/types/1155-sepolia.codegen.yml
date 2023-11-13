@@ -1,0 +1,19 @@
+schema: https://api.thegraph.com/subgraphs/name/nftx-project/1155-sepolia-data-nexus
+generates:
+  ./src/subgraph/1155-sepolia.ts:
+    config:
+      useTypeImports: true
+      strictScalars: true
+      scalars:
+        Bytes:
+          input: string
+          output: string
+        BigInt:
+          input: string
+          output: string
+        BigDecimal:
+          input: string
+          output: string
+        Int8: string|number
+    plugins:
+      - typescript
