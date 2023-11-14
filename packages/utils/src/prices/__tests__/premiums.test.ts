@@ -1,6 +1,7 @@
 import { WeiPerEther, Zero } from '@nftx/constants';
 import { estimatePremiumPrice } from '../premiums';
 import { formatEther } from 'viem';
+import { Network } from '@nftx/constants';
 
 let holding: { dateAdded: number };
 let vTokenToEth: bigint;
@@ -11,7 +12,13 @@ beforeEach(() => {
   now = Date.now() / 1000;
   holding = { dateAdded: 0 };
   vTokenToEth = WeiPerEther;
-  run = () => estimatePremiumPrice({ holding, vTokenToEth, now });
+  run = () =>
+    estimatePremiumPrice({
+      holding,
+      vTokenToEth,
+      now,
+      network: Network.Goerli,
+    });
 });
 
 describe('when holding is older than 10 hours', () => {

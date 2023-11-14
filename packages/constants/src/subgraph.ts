@@ -47,6 +47,8 @@ export const ERC721_SUBGRAPH = {
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip721-subgraph-arbitrum`,
   [Network.Goerli]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/eip721-looksrare-goerli',
+  [Network.Sepolia]:
+    'https://api.thegraph.com/subgraphs/name/nftx-project/721-sepolia-data-nexus',
 };
 
 export const ERC1155_SUBGRAPH = {
@@ -54,6 +56,8 @@ export const ERC1155_SUBGRAPH = {
   [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip1155-subgraph-arbitrum`,
   [Network.Goerli]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/eip1155-looksrare-goerli',
+  [Network.Sepolia]:
+    'https://api.thegraph.com/subgraphs/name/nftx-project/1155-sepolia-data-nexus',
 };
 
 export const NFTX_SUBGRAPH_MAINNET_URLS = {
@@ -80,11 +84,14 @@ export const NFTX_SUBGRAPH = {
     NFTX_SUBGRAPH_MAINNET_URLS.SHARED,
   ],
   [Network.Arbitrum]: `${SHARED_ROOT}/nftx-project/nftx-v2-arbitrum`,
-  // [Network.Goerli]: `${SHARED_ROOT}/nftx-project/nftx-v2-1-goerli`,
   [Network.Goerli]:
     'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-v3-vaults',
+  [Network.Sepolia]:
+    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-sepolia',
 };
 
 export const NFTX_UNISWAP_SUBGRAPH = {
   [Network.Goerli]: `https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-amm`,
+  [Network.Sepolia]:
+    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-sepolia',
 };

@@ -24,11 +24,13 @@ const getIndexedPrice = ({
   tokenIds,
   vault,
   now,
+  network,
 }: {
   vault: Pick<Vault, 'vTokenToEth' | 'prices'>;
   tokenIds: TokenId[] | [TokenId, number][];
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
   now: number;
+  network: number;
 }) => {
   // We store the prices for buying up to 5 NFTs
   // so we can save ourselves from having to make additional calls/calculations
@@ -44,6 +46,7 @@ const getIndexedPrice = ({
     tokenIds,
     vTokenToEth,
     now,
+    network,
   });
 
   return {
@@ -90,6 +93,7 @@ const getRoughPrice = async ({
     tokenIds,
     vTokenToEth,
     now,
+    network,
   });
 
   const price = vTokenPrice + feePrice + premiumPrice;
@@ -168,7 +172,13 @@ export const makePriceVaultBuy =
     }
 
     if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
-      const result = getIndexedPrice({ holdings, tokenIds, vault, now });
+      const result = getIndexedPrice({
+        holdings,
+        tokenIds,
+        vault,
+        now,
+        network,
+      });
       if (result) {
         return result;
       }
