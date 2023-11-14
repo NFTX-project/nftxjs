@@ -5,7 +5,6 @@ import {
   NON_STANDARD_SUBGRAPH,
   NFTX_APR_URL,
   Network,
-  ALCHEMY_URL,
   NFTX_API_URL,
   NFTX_ROUTER_URL,
   NFTX_UNISWAP_SUBGRAPH,
@@ -40,7 +39,6 @@ export interface Config {
   urls: {
     NFTX_ROUTER_URL: Record<string, string>;
     NFTX_APR_URL: Record<string, string>;
-    ALCHEMY_URL: Record<string, string>;
     NFTX_API_URL: string;
   };
   /** Contract configuration options */
@@ -103,12 +101,12 @@ const defaultConfig: Config = {
   urls: {
     NFTX_ROUTER_URL,
     NFTX_APR_URL,
-    ALCHEMY_URL,
     NFTX_API_URL,
   },
   contracts: {
     ethPrice: {
       [Network.Goerli]: '2500000000', // $2.5k
+      [Network.Sepolia]: '2000000000', // $2k
     },
   },
 

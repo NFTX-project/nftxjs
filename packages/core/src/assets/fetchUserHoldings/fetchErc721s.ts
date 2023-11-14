@@ -1,7 +1,7 @@
-import type { Address } from '@nftx/types';
+import { Address, ERC721Sepolia, TokenId } from '@nftx/types';
 import { createCursor, parseCursor } from './cursor';
 import { Network } from '@nftx/constants';
-import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
+import { buildWhere, createQuery, gql, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '@nftx/utils';
 import config from '@nftx/config';
 import type { Holding } from './types';
@@ -72,12 +72,53 @@ const makeFetchErc721sMainnet =
       holdings = data.account.tokens.map((x) => {
         return {
           assetAddress: x.contract.id,
-          tokenId: x.identifier,
+          tokenId: BigInt(x.identifier).toString() as TokenId,
         };
       });
     }
     if (data?.account?.tokens?.length === 1000) {
       nextId = data.account.tokens[data.account.tokens.length - 1].identifier;
+    }
+
+    return [holdings, nextId] as const;
+  };
+
+const makeFetchErc721sSepolia =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  async ({
+    network,
+    lastId,
+    userAddress,
+  }: {
+    network: number;
+    lastId: string;
+    userAddress: Address;
+  }) => {
+    let holdings: Holding[] = [];
+    let nextId: string | undefined;
+
+    const query = createQuery<ERC721Sepolia.Query>()
+      .tokens.where((w) => [w.owner.is(userAddress), w.id.gt(lastId)])
+      .orderBy('id')
+      .orderDirection('asc')
+      .first(1000)
+      .select((s) => [s.id, s.collection((c) => [c.id]), s.identifier]);
+
+    const data = await querySubgraph({
+      url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
+      query,
+    });
+
+    if (data?.tokens?.length) {
+      holdings = data.tokens.map((x) => {
+        return {
+          assetAddress: x.collection.id as Address,
+          tokenId: BigInt(x.identifier).toString() as TokenId,
+        };
+      });
+    }
+    if (data?.tokens?.length === 1000) {
+      nextId = data.tokens[data.tokens.length - 1].id;
     }
 
     return [holdings, nextId] as const;
@@ -139,7 +180,7 @@ const makeFetchErc721sGoerli =
       holdings = data.owners[0].tokens.map((x) => {
         return {
           assetAddress: x.collection.id,
-          tokenId: x.tokenID,
+          tokenId: BigInt(x.tokenID).toString() as TokenId,
         };
       });
     }
@@ -206,7 +247,7 @@ const makeFetchErc721sArbitrum =
     if (data?.account?.tokens?.length) {
       holdings = data.account.tokens.map((x) => ({
         assetAddress: x.contract.id,
-        tokenId: x.identifier,
+        tokenId: BigInt(x.identifier).toString() as TokenId,
       }));
     }
     if (data?.account?.tokens?.length === 1000) {
@@ -219,16 +260,19 @@ const makeFetchErc721sArbitrum =
 type FetchErc721sMainnet = ReturnType<typeof makeFetchErc721sMainnet>;
 type FetchErc721sGoerli = ReturnType<typeof makeFetchErc721sGoerli>;
 type FetchErc721sArbitrum = ReturnType<typeof makeFetchErc721sArbitrum>;
+type FetchErc721sSepolia = ReturnType<typeof makeFetchErc721sSepolia>;
 
 const makeFetchErc721s =
   ({
     fetchErc721sArbitrum,
     fetchErc721sGoerli,
     fetchErc721sMainnet,
+    fetchErc721sSepolia,
   }: {
     fetchErc721sMainnet: FetchErc721sMainnet;
     fetchErc721sGoerli: FetchErc721sGoerli;
     fetchErc721sArbitrum: FetchErc721sArbitrum;
+    fetchErc721sSepolia: FetchErc721sSepolia;
   }) =>
   async ({
     userAddress,
@@ -261,6 +305,13 @@ const makeFetchErc721s =
           userAddress,
         });
         break;
+      case Network.Sepolia:
+        [holdings, nextId] = await fetchErc721sSepolia({
+          lastId,
+          network,
+          userAddress,
+        });
+        break;
       case Network.Arbitrum:
         [holdings, nextId] = await fetchErc721sArbitrum({
           lastId,
@@ -282,4 +333,5 @@ export default makeFetchErc721s({
   fetchErc721sMainnet: makeFetchErc721sMainnet({ querySubgraph }),
   fetchErc721sGoerli: makeFetchErc721sGoerli({ querySubgraph }),
   fetchErc721sArbitrum: makeFetchErc721sArbitrum({ querySubgraph }),
+  fetchErc721sSepolia: makeFetchErc721sSepolia({ querySubgraph }),
 });

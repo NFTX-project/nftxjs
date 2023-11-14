@@ -1,4 +1,3 @@
-import config from '@nftx/config';
 import { type GraphQueryString, interpolateQuery } from './utils';
 import { query as sendQuery } from '@nftx/utils';
 import { UnknownError } from '@nftx/errors';

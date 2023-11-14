@@ -22,7 +22,7 @@ config.configure({
     ERC721_SUBGRAPH: 'custom-subgraph-endpoint',
   },
   urls: {
-    ALCHEMY_URL: 'custom-alchemy-url',
+    NFTX_API_URL: 'custom-url',
   },
   contracts: {
     multicall: false,

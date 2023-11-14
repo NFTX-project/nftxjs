@@ -1,3 +1,4 @@
+import { normalizeIfAddress } from '../utils';
 import type { Select, SelectFieldPrimitives } from './createSelect';
 import createSelect from './createSelect';
 import type { Where, WhereStatements } from './createWhere';
@@ -117,7 +118,7 @@ const stringify = (args: {
       output.push('orderDirection: ', args.orderDirection, '\n');
     }
     if (args.id) {
-      output.push('id: ', `"${args.id}"`, '\n');
+      output.push('id: ', `"${normalizeIfAddress(args.id)}"`, '\n');
     }
     // Where
     if (w) {

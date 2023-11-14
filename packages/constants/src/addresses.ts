@@ -19,6 +19,7 @@ export const WETH_TOKEN = {
   [Network.Mainnet]: a('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'),
   [Network.Arbitrum]: a('0x82af49447d8a07e3bd95bd0d56f35241523fbab1'),
   [Network.Goerli]: a('0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6'),
+  [Network.Sepolia]: a('0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14'),
 };
 
 /** The address for USDC across networks */
@@ -26,6 +27,7 @@ export const USDC = {
   [Network.Mainnet]: a('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'),
   [Network.Arbitrum]: a('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8'),
   [Network.Goerli]: a('0x2f3a40a3db8a7e3d09b0adfefbce4f6f81927557'),
+  [Network.Sepolia]: a('0x2C032Aa43D119D7bf4Adc42583F1f94f3bf3023a'),
 };
 
 export const OPENSEA_COLLECTION = a(
@@ -35,35 +37,42 @@ export const OPENSEA_COLLECTION = a(
 /** Zap specifically for creating new vaults */
 export const CREATE_VAULT_ZAP = {
   [Network.Goerli]: a('0xFA7d98Ec2b046e636c45A0291F931b94a5a1CA59'),
+  [Network.Sepolia]: a('0x50f69c6556338965bf77C16ADb462Fdb5bE01C09'),
 };
 
 /** Perform buy/sell/swaps */
 export const MARKETPLACE_ZAP = {
   [Network.Goerli]: a('0x5A40C0288d23E83a23bb16C29B790F7e49e49ee6'),
+  [Network.Sepolia]: a('0x5Af324A8c90966Bef28386A67c6bE0A16aA03c19'),
 };
 
 /** Stake NFTs or vTokens for xNFTs */
 export const INVENTORY_STAKING = {
   [Network.Goerli]: a('0xEf771a17e6970d8B4b208a76e94F175277554230'),
+  [Network.Sepolia]: a('0xfBFf0635f7c5327FD138E1EBa72BD9877A6a7C1C'),
 };
 
 /** AMM Router (Universal Router / nftxUniversalRouter) */
 export const NFTX_ROUTER = {
   [Network.Goerli]: a('0xF7c4FC5C2e30258e1E4d1197fc63aeDE371508f3'),
+  [Network.Sepolia]: a('0x12156cCA1958B6591CC49EaE03a5553458a4b424'),
 };
 
 /** Staking  / Liquidity / Pools (NftxRouter) */
 export const POOL_ROUTER = {
   [Network.Goerli]: a('0xb95e2Fb1eDA32BbFbDaE2463BB3E64bb3E1E41D5'),
+  [Network.Sepolia]: a('0xD36ece08F76c50EC3F01db65BBc5Ef5Aa5fbE849'),
 };
 
 export const NONFUNGIBLE_POSITION_MANAGER = {
   [Network.Goerli]: a('0xaEC6537206e8e590603399c714c39947680f1181'),
+  [Network.Sepolia]: a('0x55BDc76262B1e6e791D0636A0bC61cee23CDFa87'),
 };
 
 /** The permit2 contract, needs an approval signature because the UniversalRouter only transfers tokens from user via Permit2 */
 export const PERMIT2 = {
   [Network.Goerli]: a('0x000000000022d473030f116ddee9f6b43ac78ba3'),
+  [Network.Sepolia]: a('0x000000000022d473030f116ddee9f6b43ac78ba3'),
 };
 
 /** ENS Address */
@@ -71,12 +80,15 @@ export const ENS_REGISTRAR = {
   [Network.Mainnet]: a('0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'),
   [Network.Arbitrum]: a('0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'),
   [Network.Goerli]: a('0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'),
+  [Network.Sepolia]: a('0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
 };
 
 export const AMM_FACTORY = {
   [Network.Goerli]: a('0xf25081B098c5929A26F562aa2502795fE89BC73f'),
+  [Network.Sepolia]: a('0xDD2dce9C403f93c10af1846543870D065419E70b'),
 };
 
 export const VAULT_FACTORY = {
   [Network.Goerli]: a('0x1d552A0e6c2f680872C4a88b1e7def05F1858dF0'),
+  [Network.Sepolia]: a('0x31C56CaF49125043e80B4d3C7f8734f949d8178C'),
 };
