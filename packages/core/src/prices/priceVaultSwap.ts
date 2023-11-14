@@ -23,11 +23,13 @@ const getIndexedPrice = ({
   tokenIds,
   vault,
   now,
+  network,
 }: {
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
   tokenIds: TokenId[] | [TokenId, number][];
   vault: Pick<Vault, 'prices' | 'vTokenToEth'>;
   now: number;
+  network: number;
 }) => {
   const totalTokenIds = getTotalTokenIds(tokenIds);
   const { vTokenToEth } = vault;
@@ -40,6 +42,7 @@ const getIndexedPrice = ({
     tokenIds,
     vTokenToEth,
     now,
+    network,
   });
 
   return {
@@ -53,11 +56,13 @@ const getRoughPrice = ({
   holdings,
   vault,
   now,
+  network,
 }: {
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
   buyTokenIds: TokenId[] | [TokenId, number][];
   vault: Pick<Vault, 'fees' | 'vTokenToEth'>;
   now: number;
+  network: number;
 }) => {
   const totalTokenIds = getTotalTokenIds(buyTokenIds);
   const { vTokenToEth } = vault;
@@ -73,6 +78,7 @@ const getRoughPrice = ({
     tokenIds: buyTokenIds,
     vTokenToEth,
     now,
+    network,
   });
   const price = feePrice + premiumPrice;
 
@@ -158,13 +164,14 @@ export const makePriceVaultSwap =
         tokenIds: buyTokenIds,
         vault,
         now,
+        network,
       });
       if (result) {
         return result;
       }
     }
 
-    return getRoughPrice({ holdings, buyTokenIds, vault, now });
+    return getRoughPrice({ holdings, buyTokenIds, vault, now, network });
   };
 
 const priceVaultSwap = makePriceVaultSwap({ quoteVaultSwap });

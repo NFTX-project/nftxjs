@@ -1,17 +1,20 @@
 import { PREMIUM_DURATION, WeiPerEther, Zero } from '@nftx/constants';
 import { TokenId } from '@nftx/types';
 import { getExactTokenIds } from '../tokenIdUtils';
+import { getChainConstant } from '../web3';
 
 export const estimatePremiumPrice = ({
+  network,
   holding,
   vTokenToEth,
   now,
 }: {
+  network: number;
   holding: { dateAdded: number } | undefined;
   vTokenToEth: bigint;
   now: number;
 }): [vToken: bigint, price: bigint] => {
-  const premiumThreshold = now - PREMIUM_DURATION;
+  const premiumThreshold = now - getChainConstant(PREMIUM_DURATION, network);
 
   if (!holding || holding.dateAdded < premiumThreshold) {
     return [Zero, Zero];
@@ -37,11 +40,13 @@ export const estimateTotalPremiumPrice = ({
   tokenIds,
   vTokenToEth,
   now,
+  network,
 }: {
   tokenIds: TokenId[] | [TokenId, number][];
   holdings: { dateAdded: number; tokenId: TokenId }[];
   vTokenToEth: bigint;
   now: number;
+  network: number;
 }): [vToken: bigint, price: bigint] => {
   return getExactTokenIds(tokenIds).reduce(
     (total, tokenId) => {
@@ -50,6 +55,7 @@ export const estimateTotalPremiumPrice = ({
         holding,
         vTokenToEth,
         now,
+        network,
       });
       return [total[0] + premium[0], total[1] + premium[1]] as [bigint, bigint];
     },

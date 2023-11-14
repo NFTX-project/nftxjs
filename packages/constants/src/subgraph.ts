@@ -87,11 +87,11 @@ export const NFTX_SUBGRAPH = {
   [Network.Goerli]:
     'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-v3-vaults',
   [Network.Sepolia]:
-    'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-v3-sepolia',
+    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-sepolia',
 };
 
 export const NFTX_UNISWAP_SUBGRAPH = {
   [Network.Goerli]: `https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-amm`,
   [Network.Sepolia]:
-    'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-amm-sepolia',
+    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-sepolia',
 };
