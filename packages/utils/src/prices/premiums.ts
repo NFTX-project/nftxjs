@@ -14,16 +14,17 @@ export const estimatePremiumPrice = ({
   vTokenToEth: bigint;
   now: number;
 }): [vToken: bigint, price: bigint] => {
-  const premiumThreshold = now - getChainConstant(PREMIUM_DURATION, network);
+  const premiumDuration = getChainConstant(PREMIUM_DURATION, network, 0);
+  const premiumThreshold = now - premiumDuration;
 
   if (!holding || holding.dateAdded < premiumThreshold) {
     return [Zero, Zero];
   }
 
   const maxPremium = 5 * 10 ** 18; // 5 vTokens
-  const timeStep = 60 * 60; // 1 hour
-  // const endValue = maxPremium * 2 ** (-PREMIUM_DURATION / timeStep)
-  const endValue = 4882812500000000;
+  const timeStep = 60 * 60;
+  const endValue = maxPremium * 2 ** (-premiumDuration / timeStep);
+  // const endValue = 4882812500000000;
   const elapsed = now - holding.dateAdded;
 
   const p = maxPremium * 2 ** (-elapsed / timeStep) - endValue;
