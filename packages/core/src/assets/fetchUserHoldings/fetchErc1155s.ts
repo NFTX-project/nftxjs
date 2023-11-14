@@ -1,6 +1,6 @@
 import config from '@nftx/config';
-import { gql, querySubgraph } from '@nftx/subgraph';
-import type { Address } from '@nftx/types';
+import { createQuery, gql, querySubgraph } from '@nftx/subgraph';
+import type { Address, ERC1155Sepolia, TokenId } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { createCursor, parseCursor } from './cursor';
 import { parseEther } from 'viem';
@@ -80,12 +80,64 @@ const makeFetchErc1155sMainnet =
     const holdings = balances.map((x) => {
       return {
         assetAddress: x.contract.id,
-        tokenId: BigInt(x.token.identifier).toString(),
+        tokenId: BigInt(x.token.identifier).toString() as TokenId,
         quantity: Number(x.value) < 1 ? parseEther(x.value) : BigInt(x.value),
       };
     });
 
     return [holdings, createCursor('1155', nextId)] as const;
+  };
+
+const makeFetchErc1155sSepolia =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  async ({
+    lastId,
+    network,
+    userAddress,
+  }: {
+    network: number;
+    lastId: string;
+    userAddress: Address;
+  }) => {
+    let holdings: Array<Holding> = [];
+    let nextId: string | undefined;
+
+    const q = createQuery<ERC1155Sepolia.Query>();
+
+    const query = q.account.id(userAddress).select((s) => [
+      s.holdings(
+        q.holdings
+          .first(1000)
+          .orderBy('id')
+          .orderDirection('asc')
+          .where((w) => [w.id.gt(lastId)])
+          .select((s) => [
+            s.id,
+            s.balance,
+            s.token((t) => [t.identifier, t.collection((c) => [c.id])]),
+          ])
+      ),
+    ]);
+
+    const data = await querySubgraph({
+      url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
+      query,
+    });
+
+    if (data?.account?.holdings?.length) {
+      holdings = data.account.holdings.map((x) => {
+        return {
+          assetAddress: x.token.collection.id as Address,
+          tokenId: BigInt(x.token.identifier).toString() as TokenId,
+          quantity: BigInt(x.balance || '1'),
+        };
+      });
+    }
+    if (data?.account?.holdings?.length === 1000) {
+      nextId = data.account.holdings[data.account.holdings.length - 1].id;
+    }
+
+    return [holdings, nextId] as const;
   };
 
 const makeFetchErc1155sGoerli =
@@ -144,7 +196,7 @@ const makeFetchErc1155sGoerli =
       holdings = data.owners[0].tokens.map((x) => {
         return {
           assetAddress: x.collection.id,
-          tokenId: x.tokenID,
+          tokenId: BigInt(x.tokenID).toString() as TokenId,
         };
       });
     }
@@ -161,16 +213,19 @@ const makeFetchErc1155sArbitrum = makeFetchErc1155sMainnet;
 type FetchErc1155sMainnet = ReturnType<typeof makeFetchErc1155sMainnet>;
 type FetchErc1155sGoerli = ReturnType<typeof makeFetchErc1155sGoerli>;
 type FetchErc1155sArbitrum = ReturnType<typeof makeFetchErc1155sArbitrum>;
+type FetchErc1155sSepolia = ReturnType<typeof makeFetchErc1155sSepolia>;
 
 const makeFetchErc1155s =
   ({
     fetchErc1155sArbitrum,
     fetchErc1155sGoerli,
     fetchErc1155sMainnet,
+    fetchErc1155sSepolia,
   }: {
     fetchErc1155sMainnet: FetchErc1155sMainnet;
     fetchErc1155sGoerli: FetchErc1155sGoerli;
     fetchErc1155sArbitrum: FetchErc1155sArbitrum;
+    fetchErc1155sSepolia: FetchErc1155sSepolia;
   }) =>
   async ({
     userAddress,
@@ -203,6 +258,13 @@ const makeFetchErc1155s =
           userAddress,
         });
         break;
+      case Network.Sepolia:
+        [holdings, nextId] = await fetchErc1155sSepolia({
+          lastId,
+          network,
+          userAddress,
+        });
+        break;
       case Network.Arbitrum:
         [holdings, nextId] = await fetchErc1155sArbitrum({
           lastId,
@@ -224,4 +286,5 @@ export default makeFetchErc1155s({
   fetchErc1155sArbitrum: makeFetchErc1155sArbitrum({ querySubgraph }),
   fetchErc1155sGoerli: makeFetchErc1155sGoerli({ querySubgraph }),
   fetchErc1155sMainnet: makeFetchErc1155sMainnet({ querySubgraph }),
+  fetchErc1155sSepolia: makeFetchErc1155sSepolia({ querySubgraph }),
 });

@@ -111,7 +111,7 @@ const makeFetchPremiumPrice =
     vaultId: string;
   }): Promise<[vToken: bigint, price: bigint]> => {
     const now = Math.floor(Date.now() / 1000);
-    const premiumThreshold = now - PREMIUM_DURATION;
+    const premiumThreshold = now - getChainConstant(PREMIUM_DURATION, network);
 
     if (holding.dateAdded < premiumThreshold) {
       return [Zero, Zero];

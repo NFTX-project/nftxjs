@@ -550,6 +550,7 @@ export enum Deposit_OrderBy {
   PositionHashOpened = 'position__hashOpened',
   PositionId = 'position__id',
   PositionLiquidity = 'position__liquidity',
+  PositionLiquidityEth = 'position__liquidityETH',
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
   PositionLockedUntil = 'position__lockedUntil',
@@ -559,6 +560,7 @@ export enum Deposit_OrderBy {
   PositionWithdrawCount = 'position__withdrawCount',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -567,6 +569,7 @@ export enum Deposit_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -580,8 +583,10 @@ export enum Deposit_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
@@ -596,6 +601,8 @@ export type DexAmmProtocol = Protocol & {
   __typename?: 'DexAmmProtocol';
   /**  This is a boolean to indicate whether or not the pools have been instantiated the were initialized before Optimism regenesis  */
   _regenesis: Scalars['Boolean']['output'];
+  /**  All liquidity in ETH that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
+  activeLiquidityETH: Scalars['BigDecimal']['output'];
   /**  All liquidity in USD that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidityUSD: Scalars['BigDecimal']['output'];
   /**  Total number of positions (open and closed)  */
@@ -612,6 +619,8 @@ export type DexAmmProtocol = Protocol & {
   cumulativeUniqueTraders: Scalars['Int']['output'];
   /**  Number of cumulative unique users  */
   cumulativeUniqueUsers: Scalars['Int']['output'];
+  /**  All historical volume in ETH  */
+  cumulativeVolumeETH: Scalars['BigDecimal']['output'];
   /**  All historical volume in USD  */
   cumulativeVolumeUSD: Scalars['BigDecimal']['output'];
   /**  Daily usage metrics for this protocol  */
@@ -646,10 +655,14 @@ export type DexAmmProtocol = Protocol & {
   slug: Scalars['String']['output'];
   /**  Version of the subgraph implementation, in SemVer format (e.g. 1.0.0)  */
   subgraphVersion: Scalars['String']['output'];
+  /**  The sum of all active and non-active liquidity in ETH for this pool.  */
+  totalLiquidityETH: Scalars['BigDecimal']['output'];
   /**  The sum of all active and non-active liquidity in USD for this pool.  */
   totalLiquidityUSD: Scalars['BigDecimal']['output'];
   /**  Total number of pools  */
   totalPoolCount: Scalars['Int']['output'];
+  /**  Current TVL (Total Value Locked) of the entire protocol in ETH */
+  totalValueLockedETH: Scalars['BigDecimal']['output'];
   /**  Current TVL (Total Value Locked) of the entire protocol  */
   totalValueLockedUSD: Scalars['BigDecimal']['output'];
   /**  The type of protocol (e.g. DEX, Lending, Yield, etc)  */
@@ -703,6 +716,14 @@ export type DexAmmProtocol_Filter = {
   _regenesis_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   _regenesis_not?: InputMaybe<Scalars['Boolean']['input']>;
   _regenesis_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  activeLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  activeLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   activeLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -768,6 +789,14 @@ export type DexAmmProtocol_Filter = {
   cumulativeUniqueUsers_lte?: InputMaybe<Scalars['Int']['input']>;
   cumulativeUniqueUsers_not?: InputMaybe<Scalars['Int']['input']>;
   cumulativeUniqueUsers_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  cumulativeVolumeETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -933,6 +962,14 @@ export type DexAmmProtocol_Filter = {
   subgraphVersion_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   subgraphVersion_starts_with?: InputMaybe<Scalars['String']['input']>;
   subgraphVersion_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  totalLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -949,6 +986,14 @@ export type DexAmmProtocol_Filter = {
   totalPoolCount_lte?: InputMaybe<Scalars['Int']['input']>;
   totalPoolCount_not?: InputMaybe<Scalars['Int']['input']>;
   totalPoolCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  totalValueLockedETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalValueLockedETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalValueLockedUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -981,6 +1026,7 @@ export type DexAmmProtocol_Filter = {
 
 export enum DexAmmProtocol_OrderBy {
   Regenesis = '_regenesis',
+  ActiveLiquidityEth = 'activeLiquidityETH',
   ActiveLiquidityUsd = 'activeLiquidityUSD',
   CumulativePositionCount = 'cumulativePositionCount',
   CumulativeProtocolSideRevenueUsd = 'cumulativeProtocolSideRevenueUSD',
@@ -989,6 +1035,7 @@ export enum DexAmmProtocol_OrderBy {
   CumulativeUniqueLPs = 'cumulativeUniqueLPs',
   CumulativeUniqueTraders = 'cumulativeUniqueTraders',
   CumulativeUniqueUsers = 'cumulativeUniqueUsers',
+  CumulativeVolumeEth = 'cumulativeVolumeETH',
   CumulativeVolumeUsd = 'cumulativeVolumeUSD',
   DailyUsageMetrics = 'dailyUsageMetrics',
   FinancialMetrics = 'financialMetrics',
@@ -1006,8 +1053,10 @@ export enum DexAmmProtocol_OrderBy {
   SchemaVersion = 'schemaVersion',
   Slug = 'slug',
   SubgraphVersion = 'subgraphVersion',
+  TotalLiquidityEth = 'totalLiquidityETH',
   TotalLiquidityUsd = 'totalLiquidityUSD',
   TotalPoolCount = 'totalPoolCount',
+  TotalValueLockedEth = 'totalValueLockedETH',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   Type = 'type',
   UncollectedProtocolSideValueUsd = 'uncollectedProtocolSideValueUSD',
@@ -1016,6 +1065,8 @@ export enum DexAmmProtocol_OrderBy {
 
 export type FinancialsDailySnapshot = {
   __typename?: 'FinancialsDailySnapshot';
+  /**  All liquidity in ETH that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
+  activeLiquidityETH: Scalars['BigDecimal']['output'];
   /**  All liquidity in USD that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidityUSD: Scalars['BigDecimal']['output'];
   /**  Block number of when this snapshot was taken/last modified (May be taken after interval has passed)  */
@@ -1026,6 +1077,8 @@ export type FinancialsDailySnapshot = {
   cumulativeSupplySideRevenueUSD: Scalars['BigDecimal']['output'];
   /**  All revenue generated by the protocol. e.g. 0.30% of swap fee in Sushiswap, all yield generated by Yearn.  */
   cumulativeTotalRevenueUSD: Scalars['BigDecimal']['output'];
+  /**  All historical trade volume in ETH  */
+  cumulativeVolumeETH: Scalars['BigDecimal']['output'];
   /**  All historical trade volume in USD  */
   cumulativeVolumeUSD: Scalars['BigDecimal']['output'];
   /**  Gross revenue for the protocol (revenue claimed by protocol). Examples: AMM protocol fee (Sushi’s 0.05%). OpenSea 10% sell fee.  */
@@ -1034,6 +1087,8 @@ export type FinancialsDailySnapshot = {
   dailySupplySideRevenueUSD: Scalars['BigDecimal']['output'];
   /**  All revenue generated by the protocol. e.g. 0.30% of swap fee in Sushiswap, all yield generated by Yearn.  */
   dailyTotalRevenueUSD: Scalars['BigDecimal']['output'];
+  /**  All trade volume occurred in a given day, in ETH  */
+  dailyVolumeETH: Scalars['BigDecimal']['output'];
   /**  All trade volume occurred in a given day, in USD  */
   dailyVolumeUSD: Scalars['BigDecimal']['output'];
   /**  Number of days since Unix epoch time  */
@@ -1046,8 +1101,12 @@ export type FinancialsDailySnapshot = {
   protocolControlledValueUSD?: Maybe<Scalars['BigDecimal']['output']>;
   /**  Timestamp of when this snapshot was taken/last modified (May be taken after interval has passed)  */
   timestamp: Scalars['BigInt']['output'];
+  /**  The sum of all active and non-active liquidity in ETH for this pool.  */
+  totalLiquidityETH: Scalars['BigDecimal']['output'];
   /**  The sum of all active and non-active liquidity in USD for this pool.  */
   totalLiquidityUSD: Scalars['BigDecimal']['output'];
+  /**  Current TVL (Total Value Locked) of the entire protocol  */
+  totalValueLockedETH: Scalars['BigDecimal']['output'];
   /**  Current TVL (Total Value Locked) of the entire protocol  */
   totalValueLockedUSD: Scalars['BigDecimal']['output'];
   /**  All protocol-side value locking in USD that remains uncollected and unused in the protocol.  */
@@ -1059,6 +1118,14 @@ export type FinancialsDailySnapshot = {
 export type FinancialsDailySnapshot_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  activeLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  activeLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   activeLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1100,6 +1167,14 @@ export type FinancialsDailySnapshot_Filter = {
   cumulativeTotalRevenueUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeTotalRevenueUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeTotalRevenueUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1132,6 +1207,14 @@ export type FinancialsDailySnapshot_Filter = {
   dailyTotalRevenueUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   dailyTotalRevenueUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   dailyTotalRevenueUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  dailyVolumeETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyVolumeETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyVolumeETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyVolumeETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  dailyVolumeETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyVolumeETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyVolumeETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  dailyVolumeETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   dailyVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   dailyVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   dailyVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1196,6 +1279,14 @@ export type FinancialsDailySnapshot_Filter = {
   timestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
   timestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1204,6 +1295,14 @@ export type FinancialsDailySnapshot_Filter = {
   totalLiquidityUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalLiquidityUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalValueLockedETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalValueLockedETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalValueLockedUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1231,21 +1330,25 @@ export type FinancialsDailySnapshot_Filter = {
 };
 
 export enum FinancialsDailySnapshot_OrderBy {
+  ActiveLiquidityEth = 'activeLiquidityETH',
   ActiveLiquidityUsd = 'activeLiquidityUSD',
   BlockNumber = 'blockNumber',
   CumulativeProtocolSideRevenueUsd = 'cumulativeProtocolSideRevenueUSD',
   CumulativeSupplySideRevenueUsd = 'cumulativeSupplySideRevenueUSD',
   CumulativeTotalRevenueUsd = 'cumulativeTotalRevenueUSD',
+  CumulativeVolumeEth = 'cumulativeVolumeETH',
   CumulativeVolumeUsd = 'cumulativeVolumeUSD',
   DailyProtocolSideRevenueUsd = 'dailyProtocolSideRevenueUSD',
   DailySupplySideRevenueUsd = 'dailySupplySideRevenueUSD',
   DailyTotalRevenueUsd = 'dailyTotalRevenueUSD',
+  DailyVolumeEth = 'dailyVolumeETH',
   DailyVolumeUsd = 'dailyVolumeUSD',
   Day = 'day',
   Id = 'id',
   Protocol = 'protocol',
   ProtocolControlledValueUsd = 'protocolControlledValueUSD',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -1254,6 +1357,7 @@ export enum FinancialsDailySnapshot_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -1267,14 +1371,18 @@ export enum FinancialsDailySnapshot_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
   ProtocolUncollectedSupplySideValueUsd = 'protocol__uncollectedSupplySideValueUSD',
   Timestamp = 'timestamp',
+  TotalLiquidityEth = 'totalLiquidityETH',
   TotalLiquidityUsd = 'totalLiquidityUSD',
+  TotalValueLockedEth = 'totalValueLockedETH',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   UncollectedProtocolSideValueUsd = 'uncollectedProtocolSideValueUSD',
   UncollectedSupplySideValueUsd = 'uncollectedSupplySideValueUSD'
@@ -1480,6 +1588,8 @@ export type LiquidityPoolDailySnapshot = {
   __typename?: 'LiquidityPoolDailySnapshot';
   /**  All liquidity `k` that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidity: Scalars['BigInt']['output'];
+  /**  All liquidity in ETH that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
+  activeLiquidityETH: Scalars['BigDecimal']['output'];
   /**  All liquidity in USD that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidityUSD: Scalars['BigDecimal']['output'];
   /**  Block number of when this snapshot was taken/last modified (May be taken after interval has passed)  */
@@ -1500,6 +1610,8 @@ export type LiquidityPoolDailySnapshot = {
   cumulativeVolumeByTokenAmount: Array<Scalars['BigInt']['output']>;
   /**  All trade volume, in USD. The ordering should be the same as the pool's `inputTokens` field.  */
   cumulativeVolumeByTokenUSD: Array<Scalars['BigDecimal']['output']>;
+  /**  All historical trade volume occurred in this pool, in ETH  */
+  cumulativeVolumeETH: Scalars['BigDecimal']['output'];
   /**  All historical trade volume occurred in this pool, in USD  */
   cumulativeVolumeUSD: Scalars['BigDecimal']['output'];
   /**  Total number of withdrawals (remove liquidity)  */
@@ -1572,6 +1684,14 @@ export type LiquidityPoolDailySnapshot_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   activeLiquidity?: InputMaybe<Scalars['BigInt']['input']>;
+  activeLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  activeLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   activeLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1656,6 +1776,14 @@ export type LiquidityPoolDailySnapshot_Filter = {
   cumulativeVolumeByTokenUSD_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -1939,6 +2067,7 @@ export type LiquidityPoolDailySnapshot_Filter = {
 
 export enum LiquidityPoolDailySnapshot_OrderBy {
   ActiveLiquidity = 'activeLiquidity',
+  ActiveLiquidityEth = 'activeLiquidityETH',
   ActiveLiquidityUsd = 'activeLiquidityUSD',
   BlockNumber = 'blockNumber',
   ClosedPositionCount = 'closedPositionCount',
@@ -1949,6 +2078,7 @@ export enum LiquidityPoolDailySnapshot_OrderBy {
   CumulativeTotalRevenueUsd = 'cumulativeTotalRevenueUSD',
   CumulativeVolumeByTokenAmount = 'cumulativeVolumeByTokenAmount',
   CumulativeVolumeByTokenUsd = 'cumulativeVolumeByTokenUSD',
+  CumulativeVolumeEth = 'cumulativeVolumeETH',
   CumulativeVolumeUsd = 'cumulativeVolumeUSD',
   CumulativeWithdrawCount = 'cumulativeWithdrawCount',
   DailyDepositCount = 'dailyDepositCount',
@@ -2005,6 +2135,7 @@ export enum LiquidityPoolDailySnapshot_OrderBy {
   PositionCount = 'positionCount',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -2013,6 +2144,7 @@ export enum LiquidityPoolDailySnapshot_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -2026,8 +2158,10 @@ export enum LiquidityPoolDailySnapshot_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
@@ -2116,6 +2250,8 @@ export type LiquidityPoolHourlySnapshot = {
   __typename?: 'LiquidityPoolHourlySnapshot';
   /**  All liquidity `k` that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidity: Scalars['BigInt']['output'];
+  /**  All liquidity in ETH that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
+  activeLiquidityETH: Scalars['BigDecimal']['output'];
   /**  All liquidity in USD that is active. Will be equal to totalLiquidity except for in concentrated liquidity - where activeLiquidity is all liquidity positions that contain the pools current tick.  */
   activeLiquidityUSD: Scalars['BigDecimal']['output'];
   /**  Block number of when this snapshot was taken/last modified (May be taken after interval has passed)  */
@@ -2136,6 +2272,8 @@ export type LiquidityPoolHourlySnapshot = {
   cumulativeVolumeByTokenAmount: Array<Scalars['BigInt']['output']>;
   /**  All trade volume, in USD. The ordering should be the same as the pool's `inputTokens` field.  */
   cumulativeVolumeByTokenUSD: Array<Scalars['BigDecimal']['output']>;
+  /**  All historical trade volume occurred in this pool, in ETH  */
+  cumulativeVolumeETH: Scalars['BigDecimal']['output'];
   /**  All historical trade volume occurred in this pool, in USD  */
   cumulativeVolumeUSD: Scalars['BigDecimal']['output'];
   /**  Total number of withdrawals (remove liquidity)  */
@@ -2208,6 +2346,14 @@ export type LiquidityPoolHourlySnapshot_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   activeLiquidity?: InputMaybe<Scalars['BigInt']['input']>;
+  activeLiquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  activeLiquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  activeLiquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   activeLiquidityUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   activeLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2292,6 +2438,14 @@ export type LiquidityPoolHourlySnapshot_Filter = {
   cumulativeVolumeByTokenUSD_not?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_not_contains?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeByTokenUSD_not_contains_nocase?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  cumulativeVolumeETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  cumulativeVolumeETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   cumulativeVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   cumulativeVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2575,6 +2729,7 @@ export type LiquidityPoolHourlySnapshot_Filter = {
 
 export enum LiquidityPoolHourlySnapshot_OrderBy {
   ActiveLiquidity = 'activeLiquidity',
+  ActiveLiquidityEth = 'activeLiquidityETH',
   ActiveLiquidityUsd = 'activeLiquidityUSD',
   BlockNumber = 'blockNumber',
   ClosedPositionCount = 'closedPositionCount',
@@ -2585,6 +2740,7 @@ export enum LiquidityPoolHourlySnapshot_OrderBy {
   CumulativeTotalRevenueUsd = 'cumulativeTotalRevenueUSD',
   CumulativeVolumeByTokenAmount = 'cumulativeVolumeByTokenAmount',
   CumulativeVolumeByTokenUsd = 'cumulativeVolumeByTokenUSD',
+  CumulativeVolumeEth = 'cumulativeVolumeETH',
   CumulativeVolumeUsd = 'cumulativeVolumeUSD',
   CumulativeWithdrawCount = 'cumulativeWithdrawCount',
   Hour = 'hour',
@@ -2641,6 +2797,7 @@ export enum LiquidityPoolHourlySnapshot_OrderBy {
   PositionCount = 'positionCount',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -2649,6 +2806,7 @@ export enum LiquidityPoolHourlySnapshot_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -2662,8 +2820,10 @@ export enum LiquidityPoolHourlySnapshot_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
@@ -3204,6 +3364,7 @@ export enum LiquidityPool_OrderBy {
   Positions = 'positions',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -3212,6 +3373,7 @@ export enum LiquidityPool_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -3225,8 +3387,10 @@ export enum LiquidityPool_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
@@ -3314,6 +3478,8 @@ export type Position = {
   id: Scalars['Bytes']['output'];
   /**  total position liquidity  */
   liquidity: Scalars['BigInt']['output'];
+  /**  total position liquidity in ETH  */
+  liquidityETH: Scalars['BigDecimal']['output'];
   /**  Token that is to represent ownership of liquidity  */
   liquidityToken?: Maybe<Token>;
   /**  Type of token used to track liquidity  */
@@ -3589,6 +3755,7 @@ export enum PositionSnapshot_OrderBy {
   PositionHashOpened = 'position__hashOpened',
   PositionId = 'position__id',
   PositionLiquidity = 'position__liquidity',
+  PositionLiquidityEth = 'position__liquidityETH',
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
   PositionLockedUntil = 'position__lockedUntil',
@@ -3715,6 +3882,14 @@ export type Position_Filter = {
   id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   liquidity?: InputMaybe<Scalars['BigInt']['input']>;
+  liquidityETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  liquidityETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  liquidityETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  liquidityETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  liquidityETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  liquidityETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  liquidityETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  liquidityETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   liquidityToken?: InputMaybe<Scalars['String']['input']>;
   liquidityTokenType?: InputMaybe<TokenType>;
   liquidityTokenType_in?: InputMaybe<Array<TokenType>>;
@@ -3885,6 +4060,7 @@ export enum Position_OrderBy {
   HashOpened = 'hashOpened',
   Id = 'id',
   Liquidity = 'liquidity',
+  LiquidityEth = 'liquidityETH',
   LiquidityToken = 'liquidityToken',
   LiquidityTokenType = 'liquidityTokenType',
   LiquidityTokenEthPricePool = 'liquidityToken___ethPricePool',
@@ -4006,6 +4182,8 @@ export type Protocol = {
   subgraphVersion: Scalars['String']['output'];
   /**  Total number of pools  */
   totalPoolCount: Scalars['Int']['output'];
+  /**  Current TVL (Total Value Locked) of the entire protocol in ETH */
+  totalValueLockedETH: Scalars['BigDecimal']['output'];
   /**  Current TVL (Total Value Locked) of the entire protocol  */
   totalValueLockedUSD: Scalars['BigDecimal']['output'];
   /**  The type of protocol (e.g. DEX, Lending, Yield, etc)  */
@@ -4215,6 +4393,14 @@ export type Protocol_Filter = {
   totalPoolCount_lte?: InputMaybe<Scalars['Int']['input']>;
   totalPoolCount_not?: InputMaybe<Scalars['Int']['input']>;
   totalPoolCount_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  totalValueLockedETH?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalValueLockedETH_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalValueLockedETH_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalValueLockedUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalValueLockedUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -4246,6 +4432,7 @@ export enum Protocol_OrderBy {
   Slug = 'slug',
   SubgraphVersion = 'subgraphVersion',
   TotalPoolCount = 'totalPoolCount',
+  TotalValueLockedEth = 'totalValueLockedETH',
   TotalValueLockedUsd = 'totalValueLockedUSD',
   Type = 'type'
 }
@@ -5686,6 +5873,7 @@ export enum Swap_OrderBy {
   PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -5694,6 +5882,7 @@ export enum Swap_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -5707,8 +5896,10 @@ export enum Swap_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
@@ -6726,6 +6917,7 @@ export enum UsageMetricsDailySnapshot_OrderBy {
   Id = 'id',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -6734,6 +6926,7 @@ export enum UsageMetricsDailySnapshot_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -6747,8 +6940,10 @@ export enum UsageMetricsDailySnapshot_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
@@ -6903,6 +7098,7 @@ export enum UsageMetricsHourlySnapshot_OrderBy {
   Id = 'id',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -6911,6 +7107,7 @@ export enum UsageMetricsHourlySnapshot_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -6924,8 +7121,10 @@ export enum UsageMetricsHourlySnapshot_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',
@@ -7269,6 +7468,7 @@ export enum Withdraw_OrderBy {
   PositionHashOpened = 'position__hashOpened',
   PositionId = 'position__id',
   PositionLiquidity = 'position__liquidity',
+  PositionLiquidityEth = 'position__liquidityETH',
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
   PositionLockedUntil = 'position__lockedUntil',
@@ -7278,6 +7478,7 @@ export enum Withdraw_OrderBy {
   PositionWithdrawCount = 'position__withdrawCount',
   Protocol = 'protocol',
   ProtocolRegenesis = 'protocol___regenesis',
+  ProtocolActiveLiquidityEth = 'protocol__activeLiquidityETH',
   ProtocolActiveLiquidityUsd = 'protocol__activeLiquidityUSD',
   ProtocolCumulativePositionCount = 'protocol__cumulativePositionCount',
   ProtocolCumulativeProtocolSideRevenueUsd = 'protocol__cumulativeProtocolSideRevenueUSD',
@@ -7286,6 +7487,7 @@ export enum Withdraw_OrderBy {
   ProtocolCumulativeUniqueLPs = 'protocol__cumulativeUniqueLPs',
   ProtocolCumulativeUniqueTraders = 'protocol__cumulativeUniqueTraders',
   ProtocolCumulativeUniqueUsers = 'protocol__cumulativeUniqueUsers',
+  ProtocolCumulativeVolumeEth = 'protocol__cumulativeVolumeETH',
   ProtocolCumulativeVolumeUsd = 'protocol__cumulativeVolumeUSD',
   ProtocolId = 'protocol__id',
   ProtocolLastSnapshotDayId = 'protocol__lastSnapshotDayID',
@@ -7299,8 +7501,10 @@ export enum Withdraw_OrderBy {
   ProtocolSchemaVersion = 'protocol__schemaVersion',
   ProtocolSlug = 'protocol__slug',
   ProtocolSubgraphVersion = 'protocol__subgraphVersion',
+  ProtocolTotalLiquidityEth = 'protocol__totalLiquidityETH',
   ProtocolTotalLiquidityUsd = 'protocol__totalLiquidityUSD',
   ProtocolTotalPoolCount = 'protocol__totalPoolCount',
+  ProtocolTotalValueLockedEth = 'protocol__totalValueLockedETH',
   ProtocolTotalValueLockedUsd = 'protocol__totalValueLockedUSD',
   ProtocolType = 'protocol__type',
   ProtocolUncollectedProtocolSideValueUsd = 'protocol__uncollectedProtocolSideValueUSD',

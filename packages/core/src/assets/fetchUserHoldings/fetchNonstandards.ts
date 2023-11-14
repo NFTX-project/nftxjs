@@ -35,6 +35,15 @@ const makeFetchNonStandards =
 
     const { lastId } = parseCursor('nonstandard', cursor);
 
+    const url = getChainConstant(
+      config.subgraph.NON_STANDARD_SUBGRAPH,
+      network
+    );
+    if (url == null) {
+      // Network doesn't support non-standard
+      return { holdings: [], cursor: createCursor('nonstandard', undefined) };
+    }
+
     const query = gql<Response, Params>`
       {
         account(id: $userAddress) {
@@ -53,7 +62,7 @@ const makeFetchNonStandards =
     `;
 
     const data = await querySubgraph({
-      url: getChainConstant(config.subgraph.NON_STANDARD_SUBGRAPH, network),
+      url,
       query,
       variables: { lastId, userAddress },
     });
