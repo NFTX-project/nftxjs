@@ -128,6 +128,8 @@ export const makeQuoteVaultBuy =
 
     const {
       price: vTokenPrice,
+      route,
+      routeString,
       methodParameters: { calldata: executeCalldata },
     } = await fetchTokenBuyPrice({
       network,
@@ -170,6 +172,8 @@ export const makeQuoteVaultBuy =
       vTokenPrice,
       feePrice,
       premiumPrice,
+      route,
+      routeString,
       approveContracts: [],
       items,
       methodParameters: {

@@ -66,6 +66,8 @@ export const makeQuoteVaultSell =
 
     const {
       price: vTokenPrice,
+      route,
+      routeString,
       methodParameters: { calldata: executeCalldata },
     } = await fetchTokenSellPrice({
       tokenAddress: vault.id,
@@ -119,6 +121,8 @@ export const makeQuoteVaultSell =
       vTokenPrice,
       feePrice,
       premiumPrice: Zero,
+      route,
+      routeString,
       items,
       approveContracts,
       methodParameters: {

@@ -14,7 +14,6 @@ export type CreateVaultQuoteParams = {
   eligibilityList: bigint[] | undefined;
   tokenIds: Array<[TokenId, number]>;
   currentNftPriceInEth: bigint;
-  deadline: bigint;
   fee: number;
   lowerNftPriceInEth: bigint;
   upperNftPriceInEth: bigint;

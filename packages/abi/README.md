@@ -1,11 +1,9 @@
-# `abi`
+# `@nftx/abi`
 
-> TODO: description
+This package contains all ABI schemas used by nftx.js and the NFTX v3 ecosystem
 
 ## Usage
 
-```
-const abi = require('abi');
-
-// TODO: DEMONSTRATE API
+```ts
+import { CreateVaultZap } from '@nftx/abi';
 ```
