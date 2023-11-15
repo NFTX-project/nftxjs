@@ -14,10 +14,17 @@ import {
   getTotalTokenIds,
   getUniqueTokenIds,
 } from '@nftx/utils';
-import { ValidationError } from '@nftx/errors';
+import { InsufficientLiquidityError, ValidationError } from '@nftx/errors';
 
 type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
 type QuoteVaultBuy = typeof quoteVaultBuy;
+
+const checkLiquidity = <P extends { vTokenPrice: bigint }>(price: P) => {
+  if (!price.vTokenPrice) {
+    throw new InsufficientLiquidityError();
+  }
+  return price;
+};
 
 const getIndexedPrice = ({
   holdings,
@@ -78,7 +85,11 @@ const getRoughPrice = async ({
   const { vTokenToEth } = vault;
   const buyAmount = parseEther(`${totalTokenIds}`);
 
-  const { price: vTokenPrice } = await fetchTokenBuyPrice({
+  const {
+    price: vTokenPrice,
+    route,
+    routeString,
+  } = await fetchTokenBuyPrice({
     network,
     tokenAddress: vault.id,
     amount: buyAmount,
@@ -108,6 +119,8 @@ const getRoughPrice = async ({
     feePrice,
     // The amount of ETH you'll pay in premiums
     premiumPrice,
+    route,
+    routeString,
   };
 
   return result;
@@ -166,7 +179,7 @@ export const makePriceVaultBuy =
             userAddress: '0x',
             vault,
             network,
-          });
+          }).then(checkLiquidity);
         }
       }
     }
@@ -180,7 +193,7 @@ export const makePriceVaultBuy =
         network,
       });
       if (result) {
-        return result;
+        return checkLiquidity(result);
       }
     }
 
@@ -191,7 +204,7 @@ export const makePriceVaultBuy =
       vault,
       fetchTokenBuyPrice,
       now,
-    });
+    }).then(checkLiquidity);
   };
 
 const priceVaultBuy = makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });

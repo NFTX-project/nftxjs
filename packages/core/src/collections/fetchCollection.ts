@@ -53,7 +53,7 @@ const fetchCollection = async ({
       address: x.id,
       name: x.name,
       slug: x.slug,
-      image: x.image,
+      image: x.image || x.sampleImages?.[0],
       banner: x.banner,
       symbol: x.slug,
       discordUrl: x.discordUrl,

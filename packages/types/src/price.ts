@@ -1,6 +1,20 @@
 import type { Token } from './tokens';
 import type { Address, TokenId } from './web3';
 
+type PriceRoute = Array<{
+  type: string;
+  proportion: string;
+  amountIn: bigint;
+  amountOut: bigint;
+  tokenIn: Token;
+  tokenOut: Token;
+  path: Array<{
+    tokenIn: Token;
+    tokenOut: Token;
+    amount: bigint;
+  }>;
+}>;
+
 /** A price object returned by all pricing methods (@nftx/trade) */
 export type Price = {
   price: bigint;
@@ -10,19 +24,7 @@ export type Price = {
    * A list of sources providing liquidity for the given price
    */
   sources?: Array<{ name: string; proportion: string }>;
-  route?: Array<{
-    type: string;
-    proportion: string;
-    amountIn: bigint;
-    amountOut: bigint;
-    tokenIn: Token;
-    tokenOut: Token;
-    path: Array<{
-      tokenIn: Token;
-      tokenOut: Token;
-      amount: bigint;
-    }>;
-  }>;
+  route?: PriceRoute;
   routeString?: string;
   priceImpact?: number;
   methodParameters: { calldata: Address; value: Address; to: Address };
@@ -56,6 +58,8 @@ export type MarketplacePrice = {
   feePrice: bigint;
   /** The ETH price paid for premium items */
   premiumPrice: bigint;
+  route?: PriceRoute;
+  routeString?: string;
 };
 
 type MarketplaceParameters = {

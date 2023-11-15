@@ -5,9 +5,6 @@ const calculatePeriodFees = (
   receipts: VaultFeeReceipt[]
 ): InventoryPool['periodFees'] => {
   const periodFees: InventoryPool['periodFees'] = {
-    // TODO: calculate period fees
-    // I think in theory we should be able to just pull in all activityEvents for the given period
-    // and add up the fee receipts to get the total
     '1m': Zero,
     '24h': Zero,
     '7d': Zero,

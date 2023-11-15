@@ -16,7 +16,7 @@ beforeEach(() => {
   fetchTokenBuyPrice = jest.fn(({ amount }: { amount: bigint }) => ({
     price: amount,
   }));
-  quoteVaultBuy = jest.fn().mockResolvedValue({});
+  quoteVaultBuy = jest.fn().mockResolvedValue({ vTokenPrice: 0.6 });
   tokenIds = ['0', '1'];
   vault = {
     fees: {
@@ -180,7 +180,7 @@ describe('when vault is an 1155', () => {
     const result = await run();
 
     expect(quoteVaultBuy).toBeCalled();
-    expect(result).toEqual({});
+    expect(result).toEqual({ vTokenPrice: 0.6 });
   });
   it('does not fetch any prices', async () => {
     await run();
