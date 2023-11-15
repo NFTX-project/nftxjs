@@ -48,7 +48,7 @@ export interface Config {
   };
   /** API keys */
   keys: {
-    /** Your specific nftx.js API key, this must be provided in order to use the library */
+    /** Your specific nftx.js API key, this must be provided in order to use @nftx/api methods */
     NFTX_API: string;
     ALCHEMY: Record<string, string>;
     RESERVOIR: Record<string, string>;
