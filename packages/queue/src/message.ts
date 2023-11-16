@@ -1,5 +1,5 @@
 import { Address } from '@nftx/types';
-import { getSignalQueue } from './queues';
+import { getMessageQueue } from './queues';
 
 type Messages = {
   'collection-indexed': { collectionAddress: Address; network: number };
@@ -7,7 +7,7 @@ type Messages = {
 };
 
 const message = <S extends keyof Messages>(name: S, payload: Messages[S]) => {
-  const queue = getSignalQueue();
+  const queue = getMessageQueue();
   return queue.add(name, payload);
 };
 
