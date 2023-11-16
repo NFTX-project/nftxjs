@@ -85,7 +85,11 @@ const getRoughPrice = async ({
   const { vTokenToEth } = vault;
   const buyAmount = parseEther(`${totalTokenIds}`);
 
-  const { price: vTokenPrice } = await fetchTokenBuyPrice({
+  const {
+    price: vTokenPrice,
+    route,
+    routeString,
+  } = await fetchTokenBuyPrice({
     network,
     tokenAddress: vault.id,
     amount: buyAmount,
@@ -115,6 +119,8 @@ const getRoughPrice = async ({
     feePrice,
     // The amount of ETH you'll pay in premiums
     premiumPrice,
+    route,
+    routeString,
   };
 
   return result;

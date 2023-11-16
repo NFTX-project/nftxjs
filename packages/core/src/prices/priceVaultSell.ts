@@ -43,7 +43,11 @@ const getRoughPrice = async ({
   const { vTokenToEth } = vault;
   const sellAmount = parseEther(`${totalTokenIds}`);
 
-  const { price: vTokenPrice } = await fetchTokenSellPrice({
+  const {
+    price: vTokenPrice,
+    route,
+    routeString,
+  } = await fetchTokenSellPrice({
     tokenAddress: vault.id,
     amount: sellAmount,
     network,
@@ -65,6 +69,8 @@ const getRoughPrice = async ({
     feePrice,
     // There is never any premium price for selling
     premiumPrice: Zero,
+    route,
+    routeString,
   };
 
   return result;
