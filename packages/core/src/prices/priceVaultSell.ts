@@ -4,9 +4,16 @@ import { parseEther } from 'viem';
 import { calculateTotalFeePrice } from './common';
 import { Zero } from '@nftx/constants';
 import { getTotalTokenIds } from '@nftx/utils';
-import { ValidationError } from '@nftx/errors';
+import { InsufficientLiquidityError, ValidationError } from '@nftx/errors';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
+
+const checkLiquidity = <P extends { vTokenPrice: bigint }>(price: P) => {
+  if (!price.vTokenPrice) {
+    throw new InsufficientLiquidityError();
+  }
+  return price;
+};
 
 const getIndexedPrice = ({
   tokenIds,
@@ -65,7 +72,7 @@ const getRoughPrice = async ({
 
 export const makePriceVaultSell =
   ({ fetchTokenSellPrice }: { fetchTokenSellPrice: FetchTokenSellPrice }) =>
-  ({
+  async ({
     bypassIndexedPrice,
     network,
     tokenIds,
@@ -85,11 +92,16 @@ export const makePriceVaultSell =
     if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
       const result = getIndexedPrice({ tokenIds, vault });
       if (result) {
-        return result;
+        return checkLiquidity(result);
       }
     }
 
-    return getRoughPrice({ network, tokenIds, vault, fetchTokenSellPrice });
+    return getRoughPrice({
+      network,
+      tokenIds,
+      vault,
+      fetchTokenSellPrice,
+    }).then(checkLiquidity);
   };
 
 export default makePriceVaultSell({ fetchTokenSellPrice });

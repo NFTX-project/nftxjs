@@ -14,10 +14,17 @@ import {
   getTotalTokenIds,
   getUniqueTokenIds,
 } from '@nftx/utils';
-import { ValidationError } from '@nftx/errors';
+import { InsufficientLiquidityError, ValidationError } from '@nftx/errors';
 
 type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
 type QuoteVaultBuy = typeof quoteVaultBuy;
+
+const checkLiquidity = <P extends { vTokenPrice: bigint }>(price: P) => {
+  if (!price.vTokenPrice) {
+    throw new InsufficientLiquidityError();
+  }
+  return price;
+};
 
 const getIndexedPrice = ({
   holdings,
@@ -166,7 +173,7 @@ export const makePriceVaultBuy =
             userAddress: '0x',
             vault,
             network,
-          });
+          }).then(checkLiquidity);
         }
       }
     }
@@ -180,7 +187,7 @@ export const makePriceVaultBuy =
         network,
       });
       if (result) {
-        return result;
+        return checkLiquidity(result);
       }
     }
 
@@ -191,7 +198,7 @@ export const makePriceVaultBuy =
       vault,
       fetchTokenBuyPrice,
       now,
-    });
+    }).then(checkLiquidity);
   };
 
 const priceVaultBuy = makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });
