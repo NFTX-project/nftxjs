@@ -1,4 +1,3 @@
-import type { CreatePoolFeatures, CreatePoolFees } from './pools';
 import type { MarketplacePrice } from './price';
 import type { ActivityEventType } from './subgraph/nftx-v3';
 import type { Token } from './tokens';
@@ -34,6 +33,8 @@ export type VaultFees = {
 export type Vault = {
   vaultId: string;
   id: Address;
+  slug: string;
+  collectionSlug: string;
   asset: Token;
   createdBy: { id: Address };
   createdAt: number;
