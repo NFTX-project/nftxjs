@@ -2,7 +2,7 @@ import type { InventoryPool, VaultFeeReceipt } from '@nftx/types';
 import { Zero } from '@nftx/constants';
 
 const calculatePeriodFees = (
-  receipts: VaultFeeReceipt[]
+  receipts: Pick<VaultFeeReceipt, 'date' | 'amount'>[]
 ): InventoryPool['periodFees'] => {
   const periodFees: InventoryPool['periodFees'] = {
     '1m': Zero,

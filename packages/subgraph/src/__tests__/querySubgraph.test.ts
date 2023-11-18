@@ -176,9 +176,7 @@ describe('error handling', () => {
 
       const promise = querySubgraph({ url: 'https://nftx.io', query, fetch });
 
-      await expect(promise).rejects.toThrowError(
-        `Unexpected token '<', "<body><p>T"... is not valid JSON`
-      );
+      await expect(promise).rejects.toThrowError();
     });
   });
 

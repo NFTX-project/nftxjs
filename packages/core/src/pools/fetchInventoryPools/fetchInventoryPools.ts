@@ -3,14 +3,13 @@ import type {
   Address,
   InventoryPool,
   InventoryPosition,
+  LiquidityPool,
   Provider,
   Vault,
   VaultFeeReceipt,
 } from '@nftx/types';
-import { fetchInventoryPositions } from '../../positions';
 import filterVaults from './filterVaults';
 import transformPool from './transformPool';
-import fetchFeeReceipts from '../../vaults/fetchFeeReceipts';
 import { getChainConstant, getContract } from '@nftx/utils';
 import { INVENTORY_STAKING } from '@nftx/constants';
 import { InventoryStaking } from '@nftx/abi';
@@ -21,38 +20,27 @@ const fetchInventoryPools = async ({
   vaultIds,
   provider,
   vaults: allVaults,
-  feeReceipts: givenFeeReceipts,
-  positions: givenPositions,
+  feeReceipts,
+  positions,
+  liquidityPools: allLiquidityPools,
 }: {
   network?: number;
   vaultAddresses?: Address[];
   vaultIds?: string[];
   provider: Provider;
   vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'createdAt'>[];
-  feeReceipts?: VaultFeeReceipt[];
-  positions?: InventoryPosition[];
+  feeReceipts: Pick<VaultFeeReceipt, 'date' | 'amount' | 'vaultId'>[];
+  positions: Pick<InventoryPosition, 'vaultId' | 'vToken' | 'vTokenValue'>[];
+  liquidityPools: Pick<
+    LiquidityPool,
+    'dailyVolume' | 'weeklyVolume' | 'vaultId'
+  >[];
 }): Promise<InventoryPool[]> => {
   const vaults = filterVaults({
     vaults: allVaults,
     vaultAddresses,
     vaultIds,
   });
-
-  const feeReceipts =
-    givenFeeReceipts ??
-    (await fetchFeeReceipts({
-      network,
-      vaultAddresses: vaults.map((v) => v.id),
-    }));
-
-  const positions =
-    givenPositions ??
-    (await fetchInventoryPositions({
-      network,
-      vaultIds: vaults.map((v) => v.vaultId),
-      vaults: allVaults,
-      provider,
-    }));
 
   const inventoryContract = getContract({
     provider,
@@ -66,8 +54,17 @@ const fetchInventoryPools = async ({
     const receipts = feeReceipts.filter(
       (receipt) => receipt.vaultId === vault.vaultId
     );
+    const liquidityPools = allLiquidityPools.filter(
+      (pool) => pool.vaultId === vault.vaultId
+    );
 
-    return transformPool({ positions, vault, receipts, timelock });
+    return transformPool({
+      positions,
+      vault,
+      receipts,
+      timelock,
+      liquidityPools,
+    });
   });
 };
 

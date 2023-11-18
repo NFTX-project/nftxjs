@@ -19,6 +19,7 @@ export type CreateVaultQuoteParams = {
   upperNftPriceInEth: bigint;
   vTokenMin: bigint;
   wethMin: bigint;
+  infiniteRange: boolean;
 };
 
 export type CreateVaultQuote = {
@@ -126,6 +127,7 @@ export type CreateLiquidityPositionQuoteParams = {
     nftsToPair: bigint;
     vTokenToPair: bigint;
     ethToPair: bigint;
+    infiniteRange: boolean;
   };
   tokenIds: [TokenId, number][];
   slippagePercentage?: number;

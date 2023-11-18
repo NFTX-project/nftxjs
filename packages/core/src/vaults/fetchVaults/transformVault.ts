@@ -8,11 +8,13 @@ const transformVault = ({
   globalFees,
   merkleReference,
   vTokenToEth,
+  collection,
 }: {
   vault: Response['vaults'][0];
   globalFees: Response['globals'][0]['fees'];
   merkleReference?: string;
   vTokenToEth: bigint;
+  collection: { slug: string };
 }) => {
   const rawFees = (x.usesFactoryFees && globalFees ? globalFees : x.fees) ?? {};
   const fees: Vault['fees'] = mapObj(rawFees, (key, value) => {
@@ -43,6 +45,8 @@ const transformVault = ({
     ...x,
     id: x.id as Address,
     vaultId: `${x.vaultId}`,
+    slug: `${x.token.symbol}-${x.vaultId}`.toLowerCase(),
+    collectionSlug: (collection?.slug || x.asset.symbol).toLowerCase(),
     asset: {
       ...x.asset,
       id: x.asset.id as Address,

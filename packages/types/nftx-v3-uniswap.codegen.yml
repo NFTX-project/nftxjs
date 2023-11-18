@@ -1,4 +1,4 @@
-schema: https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-amm
+schema: https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-sepolia
 generates:
   ./src/subgraph/nftx-v3-uniswap.ts:
     config:
