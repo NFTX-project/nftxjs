@@ -78,6 +78,8 @@ export type InventoryPool = {
   timelock: number;
   /** The total number of positions */
   totalPositions: number;
+  dailyVolume: bigint;
+  weeklyVolume: bigint;
 };
 
 export type CreatePoolFees = [mint: number, redeem: number, swap: number];

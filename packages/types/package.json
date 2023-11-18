@@ -21,7 +21,7 @@
     "test": "echo \"no tests\"",
     "codegen": "graphql-codegen -c nftx-v3.codegen.yml && graphql-codegen -c nftx-v3-uniswap.codegen.yml && graphql-codegen -c 721-sepolia.codegen.yml && graphql-codegen -c 1155-sepolia.codegen.yml",
     "build": "rm -rf dist && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
-    "prepublishOnly": "yarn build && yarn codegen"
+    "prepublishOnly": "yarn codegen && yarn build"
   },
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"

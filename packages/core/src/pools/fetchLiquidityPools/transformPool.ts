@@ -77,7 +77,7 @@ const transformPool = (
     return total + value;
   }, Zero);
   const dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
-    return total + BigInt(snapshot.hourlyTotalRevenueUSD ?? '0');
+    return total + BigInt(snapshot.hourlyTotalRevenueETH ?? '0');
   }, Zero);
   const weeklyVolume = pool.dailySnapshots.reduce((total, snapshot) => {
     const value = BigInt(
@@ -86,7 +86,7 @@ const transformPool = (
     return total + value;
   }, Zero);
   const weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
-    return total + BigInt(snapshot.dailyTotalRevenueUSD ?? '0');
+    return total + BigInt(snapshot.dailyTotalRevenueETH ?? '0');
   }, Zero);
 
   const eth = tokens[isWeth0 ? 0 : 1].balance;

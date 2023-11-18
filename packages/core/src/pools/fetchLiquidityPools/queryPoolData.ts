@@ -55,6 +55,7 @@ const queryPoolData = ({
       s.activeLiquidity,
       s.inputTokenBalances,
       s.totalValueLockedETH,
+      s.openPositionCount,
       s.fees((fee) => [fee.id, fee.feePercentage, fee.feeType]),
       s.inputTokens((token) => [token.id, token.symbol, token.name]),
       s.hourlySnapshots(
@@ -63,7 +64,11 @@ const queryPoolData = ({
           .first(1000)
           .orderBy('hour')
           .orderDirection('desc')
-          .select((s) => [s.hourlyVolumeByTokenAmount, s.id])
+          .select((s) => [
+            s.hourlyVolumeByTokenAmount,
+            s.hourlyTotalRevenueETH,
+            s.id,
+          ])
       ),
       s.dailySnapshots(
         q.liquidityPoolDailySnapshots
@@ -71,9 +76,13 @@ const queryPoolData = ({
           .first(1000)
           .orderBy('day')
           .orderDirection('desc')
-          .select((s) => [s.id, s.day, s.dailyVolumeByTokenAmount])
+          .select((s) => [
+            s.id,
+            s.day,
+            s.dailyVolumeByTokenAmount,
+            s.dailyTotalRevenueETH,
+          ])
       ),
-      s.openPositionCount,
     ]);
 
   return querySubgraph({

@@ -3,7 +3,7 @@ import type { Address, Vault } from '@nftx/types';
 import { addressEqual, getChainConstant } from '@nftx/utils';
 import { RESERVOIR_URL } from '@nftx/constants';
 import fetchUserCollectionsReservoir from './reservoir';
-import { fetchSubgraphVaults } from '../../vaults';
+import fetchSubgraphVaults from '../../vaults/fetchSubgraphVaults';
 
 type FetchUserCollectionsReservoir = typeof fetchUserCollectionsReservoir;
 
