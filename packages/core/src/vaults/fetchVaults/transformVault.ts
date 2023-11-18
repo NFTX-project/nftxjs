@@ -46,7 +46,7 @@ const transformVault = ({
     id: x.id as Address,
     vaultId: `${x.vaultId}`,
     slug: `${x.token.symbol}-${x.vaultId}`.toLowerCase(),
-    collectionSlug: (collection.slug || x.asset.symbol).toLowerCase(),
+    collectionSlug: (collection?.slug || x.asset.symbol).toLowerCase(),
     asset: {
       ...x.asset,
       id: x.asset.id as Address,
