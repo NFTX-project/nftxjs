@@ -19,6 +19,7 @@ export type CreateVaultQuoteParams = {
   upperNftPriceInEth: bigint;
   vTokenMin: bigint;
   wethMin: bigint;
+  infiniteRange: boolean;
 };
 
 export type CreateVaultQuote = {

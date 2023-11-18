@@ -64,7 +64,7 @@ export const getTickAtSqrtRatio = (
     return 0;
   }
   const tick = TickMath.getTickAtSqrtRatio(bigintToJsbi(sqrtRatioX96));
-  const tickWithSpacing = Math.ceil(tick / tickSpacing) * tickSpacing;
+  const tickWithSpacing = getNearestValidTick(tick, tickSpacing);
   return tickWithSpacing;
 };
 
@@ -83,4 +83,11 @@ export const calculatePriceFromTick = (tick: number): bigint => {
   } else {
     return BigInt(Math.pow(TICK_PRICE_BASE, tickNum) * 1e18);
   }
+};
+
+export const getNearestValidTick = (
+  tick: number,
+  tickSpacing: FeeTickSpacing
+): number => {
+  return Math.ceil(tick / tickSpacing) * tickSpacing;
 };
