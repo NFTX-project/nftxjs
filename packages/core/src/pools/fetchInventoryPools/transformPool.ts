@@ -1,6 +1,7 @@
 import type {
   InventoryPool,
   InventoryPosition,
+  LiquidityPool,
   Vault,
   VaultFeeReceipt,
 } from '@nftx/types';
@@ -9,7 +10,7 @@ import calculateAprs from './calculateAprs';
 import calculatePeriodFees from './calculatePeriodFees';
 
 const calculatePoolValue = (
-  positions: InventoryPosition[],
+  positions: Pick<InventoryPosition, 'vaultId' | 'vToken' | 'vTokenValue'>[],
   vaultId: string
 ) => {
   type ValueTuple = [bigint, bigint, number];
@@ -36,17 +37,26 @@ const transformPool = ({
   positions,
   receipts,
   timelock,
+  liquidityPools,
 }: {
   vault: Pick<Vault, 'id' | 'vaultId' | 'createdAt'>;
-  positions: InventoryPosition[];
-  receipts: VaultFeeReceipt[];
+  positions: Pick<InventoryPosition, 'vaultId' | 'vToken' | 'vTokenValue'>[];
+  receipts: Pick<VaultFeeReceipt, 'date' | 'amount'>[];
   timelock: number;
+  liquidityPools: Pick<LiquidityPool, 'dailyVolume' | 'weeklyVolume'>[];
 }): InventoryPool => {
   const [vToken, vTokenValue, xNFTCount] = calculatePoolValue(
     positions,
     vault.vaultId
   );
   const periodFees = calculatePeriodFees(receipts);
+
+  let dailyVolume = Zero;
+  let weeklyVolume = Zero;
+  liquidityPools.forEach((pool) => {
+    dailyVolume += pool.dailyVolume;
+    weeklyVolume += pool.weeklyVolume;
+  });
 
   return {
     apr: calculateAprs({
@@ -62,6 +72,8 @@ const transformPool = ({
     xNFTCount,
     timelock,
     totalPositions: positions.length,
+    dailyVolume,
+    weeklyVolume,
   };
 };
 

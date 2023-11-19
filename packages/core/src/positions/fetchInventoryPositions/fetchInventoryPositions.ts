@@ -19,16 +19,16 @@ function updatePoolShares(positions: InventoryPosition[]) {
   // First we need to get the total vToken for each pool
   const poolVTokens: Record<string, bigint> = {};
   positions.forEach((position) => {
-    const { vaultId: id, vToken } = position;
-    const current = poolVTokens[id] ?? Zero;
+    const { vaultId: poolId, vToken } = position;
+    const current = poolVTokens[poolId] ?? Zero;
     const updated = current + vToken;
 
     poolVTokens[position.vaultId] = updated;
   });
   // Then we need to work out the share of each position
   positions.forEach((position) => {
-    const { vToken, vaultId: id } = position;
-    const total = poolVTokens[id];
+    const { vToken, vaultId: poolId } = position;
+    const total = poolVTokens[poolId];
 
     if (!total) {
       return;
