@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/NFTX-project/nftxjs/compare/v1.0.0...v1.1.0) (2023-11-22)
+
+
+### Features
+
+* better error handlers ([7674e25](https://github.com/NFTX-project/nftxjs/commit/7674e25c80b2e9548924838eb6e000395580f496))
+* implement @nftx/queue for indexer communication ([4b41585](https://github.com/NFTX-project/nftxjs/commit/4b4158572c46eb0f465abcef44469033bc16baa9))
+* replace ethers with viem ([38e05ea](https://github.com/NFTX-project/nftxjs/commit/38e05ea2da229c35d2aebc50344301eb4923e226))
+
+
+
+
+
 ## [0.9.5](https://github.com/NFTX-project/nftxjs/compare/v0.9.4...v0.9.5) (2023-10-02)
 
 **Note:** Version bump only for package nftx.js
