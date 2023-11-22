@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1](https://github.com/NFTX-project/nftxjs/compare/v1.1.0...v1.1.1) (2023-11-22)
+
+
+### Bug Fixes
+
+* **@nftx/abi:** force release ([dcf4f02](https://github.com/NFTX-project/nftxjs/commit/dcf4f02343d210184d5b330897ff2e8fcb7b9a27))
+
+
+
+
+
 # [1.1.0](https://github.com/NFTX-project/nftxjs/compare/v1.0.0...v1.1.0) (2023-11-22)
 
 
