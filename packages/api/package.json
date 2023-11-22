@@ -1,6 +1,6 @@
 {
   "name": "@nftx/api",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "@nftx/config": "^1.1.0",
     "@nftx/errors": "^1.1.0",
     "@nftx/types": "^1.1.0",
-    "@nftx/utils": "^1.1.1",
+    "@nftx/utils": "^1.1.2",
     "viem": "^1.16.6"
   },
   "bugs": {
