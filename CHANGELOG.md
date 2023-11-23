@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/NFTX-project/nftxjs/compare/v1.2.0...v1.2.1) (2023-11-23)
+
+
+### Bug Fixes
+
+* provide current pool price when creating lp ([77c727d](https://github.com/NFTX-project/nftxjs/commit/77c727d2582e18f74c90c765ce3cdafb2bae8fed))
+
+
+
+
+
 # [1.2.0](https://github.com/NFTX-project/nftxjs/compare/v1.1.2...v1.2.0) (2023-11-23)
 
 
