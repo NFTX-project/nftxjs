@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/NFTX-project/nftxjs/compare/v1.1.2...v1.2.0) (2023-11-23)
+
+
+### Bug Fixes
+
+* contract logging ([34e5edf](https://github.com/NFTX-project/nftxjs/commit/34e5edf70634d9cedf133edaf4edacec55886694))
+
+
+### Features
+
+* support permit2 ([39621bc](https://github.com/NFTX-project/nftxjs/commit/39621bc78e99398f990c45effcd2ef0471990153))
+
+
+
+
+
 ## [1.1.2](https://github.com/NFTX-project/nftxjs/compare/v1.1.1...v1.1.2) (2023-11-22)
 
 
