@@ -123,6 +123,7 @@ export type CreateLiquidityPositionQuoteParams = {
   poolId: Address;
   liquidity: {
     upperPrice: bigint;
+    currentPrice: bigint;
     lowerPrice: bigint;
     nftsToPair: bigint;
     vTokenToPair: bigint;
