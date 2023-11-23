@@ -29,34 +29,13 @@ const sell = ({
   const to = params.to;
   // TODO: handle royalties?
   const deductRoyalty = false;
-  const value = BigInt(params.value);
 
   if (params.standard === 'ERC1155') {
-    console.debug({
-      method: 'sell1155',
-      vaultId,
-      idsIn,
-      amounts,
-      calldata,
-      to,
-      deductRoyalty,
-    });
-
     return contract.write.sell1155({
       args: [vaultId, idsIn, amounts, calldata, to, deductRoyalty],
       // value,
     });
   }
-
-  console.debug({
-    method: 'sell721',
-    vaultId,
-    idsIn,
-    calldata,
-    to,
-    deductRoyalty,
-    value,
-  });
 
   return contract.write.sell721({
     args: [vaultId, idsIn, calldata, to, deductRoyalty],

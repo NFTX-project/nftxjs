@@ -38,32 +38,11 @@ const swap = ({
   const value = BigInt(params.value);
 
   if (params.standard === 'ERC1155') {
-    console.debug({
-      method: 'swap1155',
-      vaultId,
-      idsIn,
-      amounts,
-      idsOut,
-      vTokenPremiumLimit,
-      to,
-      value,
-    });
-
     return contract.write.swap1155({
       args: [vaultId, idsIn, amounts, idsOut, vTokenPremiumLimit, to],
       value,
     });
   }
-
-  console.debug({
-    method: 'swap721',
-    vaultId,
-    idsIn,
-    idsOut,
-    vTokenPremiumLimit,
-    to,
-    value,
-  });
 
   return contract.write.swap721({
     args: [vaultId, idsIn, idsOut, vTokenPremiumLimit, to],

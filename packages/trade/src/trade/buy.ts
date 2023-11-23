@@ -36,17 +36,6 @@ const buy = ({
   const vTokenPremiumLimit = BigInt(params.premiumLimit);
   const deductRoyalty = false;
 
-  console.debug({
-    method: 'buyNFTsWithETH',
-    vaultId,
-    idsOut,
-    calldata,
-    to,
-    vTokenPremiumLimit,
-    deductRoyalty,
-    value: BigInt(params.value),
-  });
-
   return contract.write.buyNFTsWithETH({
     args: [vaultId, idsOut, calldata, to, vTokenPremiumLimit, deductRoyalty],
     value: BigInt(params.value),

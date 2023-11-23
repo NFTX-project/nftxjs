@@ -23,14 +23,6 @@ const withdrawInventory = ({
   provider: Provider;
   signer: Signer;
 }) => {
-  console.debug({
-    method: 'withdraw',
-    positionId,
-    vTokenShares,
-    nftIds,
-    vTokenPremiumLimit,
-  });
-
   const contract = getContract({
     abi: InventoryStaking,
     address: getChainConstant(INVENTORY_STAKING, network),

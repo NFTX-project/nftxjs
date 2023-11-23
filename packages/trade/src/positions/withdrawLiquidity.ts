@@ -24,12 +24,6 @@ const withdrawLiquidity = ({
     signer,
   });
 
-  console.debug({
-    method: 'removeLiquidity',
-    params,
-    value,
-  });
-
   return contract.write.removeLiquidity({
     args: [params],
     value,

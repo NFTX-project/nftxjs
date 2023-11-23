@@ -44,6 +44,13 @@ function getContract<T extends Abi>({
         const [userAddress] = await signer.getAddresses();
         const account = userAddress;
 
+        console.debug({
+          method: functionName,
+          contractAddress: address,
+          account,
+          ...args,
+        });
+
         const { request } = await provider.simulateContract({
           address,
           abi,

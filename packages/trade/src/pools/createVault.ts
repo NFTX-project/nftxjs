@@ -39,13 +39,6 @@ const makeCreateVault = ({
       signer,
     });
 
-    console.debug({
-      method: 'createVault',
-      address,
-      value,
-      params,
-    });
-
     return contract.write.createVault({
       args: [params],
       value,

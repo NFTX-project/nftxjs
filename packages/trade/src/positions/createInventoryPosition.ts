@@ -24,14 +24,6 @@ const createInventoryPosition = ({
     signer,
   });
 
-  console.debug({
-    method: 'depositWithNFT',
-    vaultId,
-    nftIds,
-    nftAmounts,
-    userAddress,
-  });
-
   return contract.write.depositWithNFT({
     args: [BigInt(vaultId), nftIds, nftAmounts, userAddress],
   });

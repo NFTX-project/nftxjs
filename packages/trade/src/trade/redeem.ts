@@ -28,16 +28,6 @@ const redeem = async ({
   const value = BigInt(params.value);
   const vTokenPremiumLimit = BigInt(params.premiumLimit);
 
-  console.debug({
-    method: 'redeem',
-    tokenIds,
-    to,
-    wethAmount,
-    vTokenPremiumLimit,
-    forceFees,
-    value,
-  });
-
   return contract.write.redeem({
     args: [tokenIds, to, wethAmount, vTokenPremiumLimit, forceFees],
     value,

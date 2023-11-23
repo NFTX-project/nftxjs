@@ -24,8 +24,6 @@ const mint = async ({
   const to = params.to;
   const value = BigInt(params.value);
 
-  console.debug({ method: 'mint', tokenIds, amounts, depositor, to, value });
-
   // Not sure if vaultAddress is correct
   return contract.write.mint({
     args: [tokenIds, amounts, depositor, to],

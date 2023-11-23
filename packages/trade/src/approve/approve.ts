@@ -15,7 +15,7 @@ import type {
 import { MaxUint256, PERMIT2, Zero } from '@nftx/constants';
 import { ValidationError } from '@nftx/errors';
 import config from '@nftx/config';
-import { zeroAddress } from 'viem';
+import { encodeAbiParameters, zeroAddress } from 'viem';
 
 function approvePunk({
   tokenId,
@@ -156,7 +156,7 @@ async function approvePermit2({
     details: {
       token: tokenAddress,
       amount,
-      expiration: deadline,
+      expiration: Number(deadline),
       nonce,
     },
     spender: spenderAddress,
@@ -175,6 +175,50 @@ async function approvePermit2({
     hash: zeroAddress,
     wait: async () => {
       const signature = await promise;
+
+      const permit2encoded = encodeAbiParameters(
+        [
+          {
+            name: 'owner',
+            type: 'address',
+          },
+          {
+            name: 'permitSingle',
+            type: 'tuple',
+            components: [
+              {
+                name: 'details',
+                type: 'tuple',
+                components: [
+                  {
+                    name: 'token',
+                    type: 'address',
+                  },
+                  {
+                    name: 'amount',
+                    type: 'uint160',
+                  },
+                  {
+                    name: 'expiration',
+                    type: 'uint48',
+                  },
+                  {
+                    name: 'nonce',
+                    type: 'uint48',
+                  },
+                ],
+              },
+              { name: 'spender', type: 'address' },
+              { name: 'sigDeadline', type: 'uint256' },
+            ],
+          },
+          {
+            name: 'signature',
+            type: 'bytes',
+          },
+        ],
+        [userAddress, permitSingleStruct, signature]
+      );
 
       return {
         blockHash: '0x',
@@ -197,6 +241,7 @@ async function approvePermit2({
           expiration: permitSingleStruct.details.expiration,
           sigDeadline: permitSingleStruct.sigDeadline,
           nonce: permitSingleStruct.details.nonce,
+          permit2encoded,
         },
       };
     },
