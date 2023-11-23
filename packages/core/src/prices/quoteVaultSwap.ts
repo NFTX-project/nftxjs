@@ -16,12 +16,9 @@ import {
   increaseByPercentage,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
-import {
-  getHoldingByTokenId,
-  fetchPremiumPrice,
-  getApproveContracts,
-} from './common';
+import { getHoldingByTokenId, fetchPremiumPrice } from './common';
 import { ValidationError } from '@nftx/errors';
+import { getApproveContracts } from '@nftx/trade';
 
 type FetchVTokenToEth = typeof fetchVTokenToEth;
 type FetchPremiumPrice = typeof fetchPremiumPrice;
@@ -125,9 +122,12 @@ export const makeQuoteVaultSwap =
     const value = increaseByPercentage(price, slippagePercentage);
 
     const approveContracts = getApproveContracts({
+      network,
+      label: `Approve ${vault.asset.name}`,
+      spenderAddress: getChainConstant(MARKETPLACE_ZAP, network),
+      tokenAddress: vault.asset.id,
+      standard,
       tokenIds: tokenIdsIn,
-      vault,
-      spender: getChainConstant(MARKETPLACE_ZAP, network),
     });
 
     const result: MarketplaceQuote = {

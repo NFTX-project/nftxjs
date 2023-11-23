@@ -76,6 +76,15 @@ type MarketplaceParameters = {
   standard: 'ERC721' | 'ERC1155' | 'ERC20';
 };
 
+export type Permit2Quote = {
+  signature: Address;
+  amount: bigint;
+  expiration: number;
+  sigDeadline: bigint;
+  nonce: number;
+  permit2encoded: Address;
+};
+
 export type MarketplaceQuote = MarketplacePrice & {
   /** A breakdown of the price */
   items: Array<{

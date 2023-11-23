@@ -6,6 +6,7 @@ import type {
   ContractFunctionResult,
 } from 'viem';
 import type { Abi, ExtractAbiFunctionNames } from 'abitype';
+import { Permit2Quote } from './price';
 
 export type Provider = ReturnType<typeof createPublicClient>;
 export type Signer = ReturnType<typeof createWalletClient>;
@@ -19,13 +20,7 @@ export type BigIntish = bigint | BigIntString | number;
 export type TokenId = BigIntString;
 
 export type TransactionReceipt = ViemTrasnsactionReceipt & {
-  permit2Signature?: {
-    signature: Address;
-    amount: bigint;
-    expiration: bigint;
-    sigDeadline: bigint;
-    nonce: number;
-  };
+  permit2Signature?: Permit2Quote;
 };
 
 export type Transaction = {

@@ -1,5 +1,5 @@
 import { MARKETPLACE_ZAP, WeiPerEther, Zero } from '@nftx/constants';
-import { fetchTokenSellPrice } from '@nftx/trade';
+import { fetchTokenSellPrice, getApproveContracts } from '@nftx/trade';
 import type {
   Address,
   MarketplaceQuote,
@@ -16,11 +16,7 @@ import {
   getUniqueTokenIds,
   increaseByPercentage,
 } from '@nftx/utils';
-import {
-  calculateFeePricePerItem,
-  calculateTotalFeePrice,
-  getApproveContracts,
-} from './common';
+import { calculateFeePricePerItem, calculateTotalFeePrice } from './common';
 import { ValidationError } from '@nftx/errors';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
@@ -108,9 +104,12 @@ export const makeQuoteVaultSell =
     const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
 
     const approveContracts = getApproveContracts({
-      vault,
+      network,
+      label: `Approve ${vault.asset.name}`,
+      spenderAddress: getChainConstant(MARKETPLACE_ZAP, network),
+      tokenAddress: vault.asset.id,
+      standard,
       tokenIds: tokenIdsIn,
-      spender: getChainConstant(MARKETPLACE_ZAP, network),
     });
 
     const value = increaseByPercentage(feePrice, slippagePercentage);

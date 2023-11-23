@@ -1,6 +1,6 @@
 import config from '@nftx/config';
 import { WeiPerEther } from '@nftx/constants';
-import type { Address, BigIntish } from '@nftx/types';
+import type { Address, BigIntish, Permit2Quote } from '@nftx/types';
 import type { QuoteToken } from './types';
 import fetchQuote from './fetchQuote';
 import nftxQuoteToPrice from './quoteToPrice';
@@ -20,7 +20,7 @@ const fetchTokenSellPrice = async (args: {
   /** The max amount of slippage (0-1) */
   slippagePercentage?: number;
   /** Permit2 parameters in order to do an off-chain permission. If ommitted, you will need to have done an on-chain approval with permit2 */
-  permit2?: Parameters<typeof fetchQuote>[0]['permit2'];
+  permit2?: Permit2Quote;
 }) => {
   const {
     network = config.network,

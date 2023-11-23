@@ -5,15 +5,8 @@ import {
   WeiPerEther,
   Zero,
 } from '@nftx/constants';
-import { getChainConstant, isCryptoPunk } from '@nftx/utils';
-import type {
-  Address,
-  MarketplaceQuote,
-  Provider,
-  TokenId,
-  Vault,
-  VaultHolding,
-} from '@nftx/types';
+import { getChainConstant } from '@nftx/utils';
+import type { Provider, VaultHolding } from '@nftx/types';
 import { getContract } from '@nftx/utils';
 import { NotFoundError } from '@nftx/errors';
 
@@ -138,40 +131,4 @@ export const calculateTotalPremiumPrice = (
   return items.reduce((total, item) => {
     return [total[0] + item.premiumLimit, total[1] + item.premiumPrice];
   }, initial);
-};
-
-export const getApproveContracts = ({
-  tokenIds,
-  vault,
-  spender,
-}: {
-  vault: Pick<Vault, 'is1155' | 'asset'>;
-  tokenIds: TokenId[];
-  spender: Address;
-}): MarketplaceQuote['approveContracts'] => {
-  const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
-
-  if (isCryptoPunk(vault.asset.id)) {
-    return tokenIds.map((tokenId) => {
-      return {
-        label: `Approve ${vault.asset.name}`,
-        type: 'on-chain',
-        tokenAddress: vault.asset.id,
-        spenderAddress: spender,
-        standard,
-        tokenIds: [tokenId],
-      };
-    });
-  } else {
-    return [
-      {
-        label: `Approve ${vault.asset.name}`,
-        type: 'on-chain',
-        tokenAddress: vault.asset.id,
-        spenderAddress: spender,
-        standard,
-        tokenIds: tokenIds,
-      },
-    ];
-  }
 };

@@ -1,4 +1,4 @@
-import type { Address, BigIntish } from '@nftx/types';
+import type { Address, BigIntish, Permit2Quote } from '@nftx/types';
 import type { QuoteToken } from './types';
 import config from '@nftx/config';
 import { NFTX_ROUTER, WeiPerEther } from '@nftx/constants';
@@ -76,13 +76,7 @@ const fetchQuote = async (args: {
   sellAmount?: BigIntish;
   slippagePercentage?: number;
   userAddress?: Address;
-  permit2?: {
-    signature: Address;
-    amount: bigint;
-    expiration: bigint;
-    sigDeadline: bigint;
-    nonce: number;
-  };
+  permit2?: Permit2Quote;
 }): Promise<NftxQuote> => {
   const {
     network = config.network,

@@ -132,6 +132,7 @@ export type CreateLiquidityPositionQuoteParams = {
   tokenIds: [TokenId, number][];
   slippagePercentage?: number;
   userAddress: Address;
+  usePermit2?: boolean;
 };
 
 export type CreateLiquidityPositionQuote = {
@@ -152,6 +153,7 @@ export type CreateLiquidityPositionQuote = {
       forceTimelock: boolean;
       recipient: Address;
     };
+    usePermit2: boolean;
   };
   approveContracts: ApproveContract[];
 };
@@ -167,6 +169,7 @@ export type IncreaseLiquidityQuoteParams = {
     vTokenToPair: bigint;
     ethToPair: bigint;
   };
+  usePermit2?: boolean;
 };
 
 export type IncreaseLiquidityQuote = {
@@ -183,6 +186,7 @@ export type IncreaseLiquidityQuote = {
       forceTimelock: boolean;
       positionId: bigint;
     };
+    usePermit2: boolean;
   };
   approveContracts: ApproveContract[];
 };

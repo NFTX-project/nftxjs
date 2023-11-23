@@ -1,14 +1,9 @@
 import type { Price } from '@nftx/types';
 import type { NftxQuote } from './fetchQuote';
-import {
-  MaxUint256,
-  NFTX_ROUTER,
-  PERMIT2,
-  WeiPerEther,
-  Zero,
-} from '@nftx/constants';
+import { NFTX_ROUTER, WeiPerEther, Zero } from '@nftx/constants';
 import { formatEther } from 'viem';
 import { getChainConstant } from '@nftx/utils';
+import { getApproveContracts } from '../approve';
 
 const nftxQuoteToPrice = (quote: NftxQuote) => {
   const { network, sellToken } = quote;
@@ -55,24 +50,17 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
 
   // If you're paying ETH we don't need any approvals
   if (!isEth) {
-    // First you need to approve permit2 to spend your token on your behalf
-    approveContracts.push({
-      label: 'Approve Permit2',
-      type: 'on-chain',
-      spenderAddress: getChainConstant(PERMIT2, network),
-      tokenAddress: sellToken,
-      standard: 'ERC20',
-      amount: MaxUint256,
-    });
-
-    // Next you need to approve the transaction itself via permit2
-    approveContracts.push({
-      label: `Approve ${route[0].tokenIn.symbol}`,
-      type: 'permit2',
-      tokenAddress: sellToken,
-      spenderAddress: getChainConstant(NFTX_ROUTER, network),
-      amount: BigInt(quote.amount),
-    });
+    approveContracts.push(
+      ...getApproveContracts({
+        network,
+        label: `Approve ${route[0].tokenIn.symbol}`,
+        spenderAddress: getChainConstant(NFTX_ROUTER, network),
+        tokenAddress: sellToken,
+        amount: BigInt(quote.amount),
+        standard: 'ERC20',
+        usePermit2: true,
+      })
+    );
   }
 
   const price: Price = {
