@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/NFTX-project/nftxjs/compare/v1.2.1...v1.2.2) (2023-11-24)
+
+
+### Bug Fixes
+
+* store inventory position tokenId ([371a38f](https://github.com/NFTX-project/nftxjs/commit/371a38f93b5ebc41503433727f142e9965efb7ac))
+
+
+
+
+
 ## [1.2.1](https://github.com/NFTX-project/nftxjs/compare/v1.2.0...v1.2.1) (2023-11-23)
 
 
