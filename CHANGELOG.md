@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/NFTX-project/nftxjs/compare/v1.2.2...v1.2.3) (2023-11-24)
+
+
+### Bug Fixes
+
+* expose apr calculations ([35ed043](https://github.com/NFTX-project/nftxjs/commit/35ed04317bec18fa2fbaf37b9c3cd4293bcc18e4))
+
+
+
+
+
 ## [1.2.2](https://github.com/NFTX-project/nftxjs/compare/v1.2.1...v1.2.2) (2023-11-24)
 
 
