@@ -1,5 +1,6 @@
 export * from './assets';
 export * from './eligibility';
+export * from './pools';
 export * from './prices';
 export * from './tokenIdUtils';
 export * from './utils';

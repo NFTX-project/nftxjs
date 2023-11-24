@@ -6,8 +6,8 @@ import type {
   VaultFeeReceipt,
 } from '@nftx/types';
 import { Zero } from '@nftx/constants';
+import { calculatePoolPeriodFees } from '@nftx/utils';
 import calculateAprs from './calculateAprs';
-import calculatePeriodFees from './calculatePeriodFees';
 
 const calculatePoolValue = (
   positions: Pick<InventoryPosition, 'vaultId' | 'vToken' | 'vTokenValue'>[],
@@ -49,7 +49,7 @@ const transformPool = ({
     positions,
     vault.vaultId
   );
-  const periodFees = calculatePeriodFees(receipts);
+  const periodFees = calculatePoolPeriodFees(receipts);
 
   let dailyVolume = Zero;
   let weeklyVolume = Zero;

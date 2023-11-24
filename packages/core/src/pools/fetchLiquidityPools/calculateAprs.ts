@@ -1,7 +1,5 @@
-import calculateAprs, {
-  LIQUIDITY_SHARE,
-} from '../fetchInventoryPools/calculateAprs';
 import type { LiquidityPool } from '@nftx/types';
+import { LIQUIDITY_SHARE, calculatePoolAprs } from '@nftx/utils';
 
 // // https://medium.com/@alexeuler/navigating-uniswap-v3-a-comprehensive-guide-to-apr-estimation-and-pool-risk-analysis-22cdab21e2db
 // export const calculateApr = ({
@@ -116,15 +114,13 @@ export default ({
   createdAt,
   periodFees,
   poolValue,
-  share = LIQUIDITY_SHARE,
 }: {
   createdAt: number;
   periodFees: LiquidityPool['periodFees'];
   poolValue: bigint;
-  share?: bigint;
 }) => {
-  return calculateAprs({
-    share,
+  return calculatePoolAprs({
+    share: LIQUIDITY_SHARE,
     createdAt,
     periodFees,
     poolValue,

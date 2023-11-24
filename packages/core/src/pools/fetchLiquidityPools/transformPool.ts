@@ -5,7 +5,6 @@ import type {
   VaultFeeReceipt,
 } from '@nftx/types';
 import type { LiquidityPoolsResponse } from './types';
-import calculatePeriodFees from './calculatePeriodFees';
 import calcualateAprs from './calculateAprs';
 import {
   FeePercentage,
@@ -14,7 +13,11 @@ import {
   Zero,
   percentageToFeeTier,
 } from '@nftx/constants';
-import { addressEqual, getChainConstant } from '@nftx/utils';
+import {
+  addressEqual,
+  calculatePoolPeriodFees,
+  getChainConstant,
+} from '@nftx/utils';
 import { parseEther } from 'viem';
 
 type Pool = LiquidityPoolsResponse['liquidityPools'][0];
@@ -68,7 +71,7 @@ const transformPool = (
   // We build a list of "missing" pools later on
   const exists = true;
 
-  const periodFees = calculatePeriodFees(receipts);
+  const periodFees = calculatePoolPeriodFees(receipts);
 
   const dailyVolume = pool.hourlySnapshots.reduce((total, snapshot) => {
     const value = BigInt(
