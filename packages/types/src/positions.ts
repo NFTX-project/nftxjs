@@ -46,6 +46,7 @@ export type LiquidityPosition = {
 /** A user's Inventory Position, essentially a single xNFT */
 export type InventoryPosition = {
   id: Address;
+  tokenId: TokenId;
   userAddress: Address;
   vaultId: string;
   vaultAddress: Address;

@@ -1,4 +1,10 @@
-import type { InventoryPosition, Vault, NftxV3, Address } from '@nftx/types';
+import type {
+  InventoryPosition,
+  Vault,
+  NftxV3,
+  Address,
+  TokenId,
+} from '@nftx/types';
 import { WeiPerEther, Zero } from '@nftx/constants';
 
 const transformPosition = ({
@@ -18,6 +24,7 @@ const transformPosition = ({
 
   return {
     id: position.id as Address,
+    tokenId: position.positionId as TokenId,
     userAddress: position.user.id as Address,
     vaultAddress: position.vault.id as Address,
     vaultId: position.vault.vaultId,
