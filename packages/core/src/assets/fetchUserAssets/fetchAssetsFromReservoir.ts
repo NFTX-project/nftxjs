@@ -7,7 +7,7 @@ import { createCursor, parseCursor } from './cursor';
 type QueryReservoir = typeof queryReservoir;
 type GetEligibleAssetVaultIds = typeof getEligibleAssetVaultIds;
 
-type ReservoirResponse = {
+export type ReservoirResponse = {
   tokens: Array<{
     token: {
       contract: Address;
