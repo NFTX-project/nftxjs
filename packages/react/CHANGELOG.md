@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.4](https://github.com/NFTX-project/nftxjs/compare/v1.2.3...v1.2.4) (2023-11-26)
+
+
+### Bug Fixes
+
+* store separate block numbers for each chain ([07a4d33](https://github.com/NFTX-project/nftxjs/commit/07a4d335ff0f530147149e5224e9640b75635e90))
+
+
+
+
+
 ## [1.2.3](https://github.com/NFTX-project/nftxjs/compare/v1.2.2...v1.2.3) (2023-11-24)
 
 **Note:** Version bump only for package @nftx/react
