@@ -2,7 +2,9 @@ import config from '@nftx/config';
 import queryApi from './queryApi';
 
 const isApiBehind = () => {
-  const { apiBlockNumber, requiredBlockNumber } = config.internal;
+  const { network, internal } = config;
+  const apiBlockNumber = internal.apiBlockNumber[network];
+  const requiredBlockNumber = internal.requiredBlockNumber[network];
 
   return apiBlockNumber < requiredBlockNumber;
 };
@@ -47,7 +49,8 @@ const updateApiBlock = ({ source }: { source: 'live' | 'api' }) => {
   // Wait a few seconds before polling the api again
   setTimeout(async () => {
     // Get the last indexed block on the api
-    config.internal.apiBlockNumber = await fetchLastIndexedBlock();
+    config.internal.apiBlockNumber[config.network] =
+      await fetchLastIndexedBlock();
     // Run this fn again until we're up to date...
     checkApiBlock();
   }, 5000);
@@ -55,13 +58,14 @@ const updateApiBlock = ({ source }: { source: 'live' | 'api' }) => {
 
 const resetRequiredBlock = () => {
   // Reset the required block number
-  config.internal.requiredBlockNumber = 0;
+  config.internal.requiredBlockNumber[config.network] = 0;
   // Switch back to using the api as the SoT
   config.internal.source = 'api';
 };
 
 const checkApiBlock = (): void => {
-  const { requiredBlockNumber } = config.internal;
+  const requiredBlockNumber =
+    config.internal.requiredBlockNumber[config.network];
 
   // We don't need to worry about syncing if there's no required block number
   if (!requiredBlockNumber) {

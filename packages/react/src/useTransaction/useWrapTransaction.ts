@@ -113,7 +113,9 @@ export default function useWrapTransaction<F extends Fn>(
           description,
         });
 
-        config.internal.requiredBlockNumber = Number(receipt.blockNumber);
+        config.internal.requiredBlockNumber[network] = Number(
+          receipt.blockNumber
+        );
 
         return receipt;
       },

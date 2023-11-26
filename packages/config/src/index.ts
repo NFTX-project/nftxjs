@@ -56,21 +56,36 @@ export interface Config {
   /** Internal config settings managed by nftx.js */
   internal: {
     source: 'api' | 'live';
-    requiredBlockNumber: number;
-    apiBlockNumber: number;
+    requiredBlockNumber: Record<string, number>;
+    apiBlockNumber: Record<string, number>;
   };
 }
 
-const storeSetting = <T, K extends keyof T>(obj: T, name: K) => {
+const storeSetting = (
+  obj: Record<string, any>,
+  propertyName: string,
+  storageKey: string,
+  value: any
+) => {
   if (
     typeof window === 'undefined' ||
     typeof window?.localStorage?.getItem !== 'function'
   ) {
     return;
   }
-  let defaultValue = JSON.stringify(obj[name]);
-  const key = `nftxjs_itl_${String(name)}`;
-  Object.defineProperty(obj, name, {
+
+  if (value && typeof value === 'object') {
+    Object.entries(value).forEach(([k, v]) => {
+      const key = `${storageKey}_${k}`;
+      storeSetting(value, k, key, v);
+    });
+    return;
+  }
+
+  let defaultValue = JSON.stringify(value);
+
+  const key = `nftxjs_itl_${storageKey}`;
+  Object.defineProperty(obj, propertyName, {
     configurable: true,
     enumerable: true,
     get() {
@@ -83,9 +98,9 @@ const storeSetting = <T, K extends keyof T>(obj: T, name: K) => {
     },
   });
 };
-const storeSettings = <T extends Record<string, any>>(obj: T) => {
-  Object.keys(obj).forEach((key: keyof T) => {
-    storeSetting(obj, key);
+const storeSettings = (obj: Record<string, any>) => {
+  Object.entries(obj).forEach(([key, value]) => {
+    storeSetting(obj, key, key, value);
   });
 };
 
@@ -118,8 +133,14 @@ const defaultConfig: Config = {
 
   internal: {
     source: 'api',
-    requiredBlockNumber: 0,
-    apiBlockNumber: 0,
+    requiredBlockNumber: {
+      [Network.Goerli]: 0,
+      [Network.Sepolia]: 0,
+    },
+    apiBlockNumber: {
+      [Network.Goerli]: 0,
+      [Network.Sepolia]: 0,
+    },
   },
 };
 
