@@ -1,5 +1,5 @@
 import 'isomorphic-fetch';
-import type { NftxV3, NftxV3Uniswap } from '@nftx/types';
+import { NftxV3, NftxV3Uniswap } from '@nftx/types';
 import createQuery from '../createQuery';
 import querySubgraph from '../querySubgraph';
 
@@ -102,6 +102,7 @@ it('strips out nullish values', () => {
       w.createdTimestamp(undefined),
       w.totalLiquidity(null),
       w.activeLiquidity.in(undefined),
+      w.protocol((w) => [w.id.in(null), w.pools((w) => [w.id.is(undefined)])]),
     ])
     .select((s) => [s.id]);
 
@@ -210,14 +211,15 @@ it('searches on nested fields', () => {
   const g = createQuery<Query>();
 
   const query = g.liquidityPools
-    .where((w) => [w.inputTokens((w) => [w.id('0x00000')])])
+    .where((w) => [w.inputTokens((w) => [w.id('0x00000'), w.decimals(18)])])
     .select((s) => [s.id]);
   const actual = query.toString();
   const expected = `{
     liquidityPools(
       where: {
         inputTokens_: {
-          id: "0x00000"
+          id: "0x00000",
+          decimals: 18
         }
       }
     ) {
