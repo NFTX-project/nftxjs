@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/NFTX-project/nftxjs/compare/v1.3.0...v1.4.0) (2023-11-28)
+
+
+### Bug Fixes
+
+* calculate pool revenue ([1f43a47](https://github.com/NFTX-project/nftxjs/commit/1f43a472ee084a066c959a50d22bed5eb3c5cc9c))
+
+
+### Features
+
+* **@nftx/core:** fetchPremiumPaids method to get all premium fees paid out ([6168a0d](https://github.com/NFTX-project/nftxjs/commit/6168a0de6043bc3efd8f58acff14ad7c683dc239))
+
+
+
+
+
 # [1.3.0](https://github.com/NFTX-project/nftxjs/compare/v1.2.4...v1.3.0) (2023-11-26)
 
 
