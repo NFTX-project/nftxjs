@@ -2,6 +2,8 @@ import config from '@nftx/config';
 import type { Address, LiquidityPool, Provider, Vault } from '@nftx/types';
 import fetchPoolsSet from './fetchPoolsSet';
 import stubMissingPools from './stubMissingPools';
+import { fetchFeeReceipts } from '../../vaults';
+import fetchPremiumPaids from '../fetchPremiumPaids';
 
 const fetchLiquidityPools = async ({
   network = config.network,
@@ -26,6 +28,16 @@ const fetchLiquidityPools = async ({
   >[];
   provider: Provider;
 }): Promise<LiquidityPool[]> => {
+  const allVaultAddresses = vaults.map((v) => v.id);
+  const feeReceipts = await fetchFeeReceipts({
+    network,
+    vaultAddresses: allVaultAddresses,
+  });
+  const premiumPaids = await fetchPremiumPaids({
+    network,
+    vaultAddresses: allVaultAddresses,
+  });
+
   const pools: LiquidityPool[] = [];
   let lastId: Address | undefined;
 
@@ -38,6 +50,8 @@ const fetchLiquidityPools = async ({
       poolIds,
       vaultAddresses,
       vaultIds,
+      feeReceipts,
+      premiumPaids,
     });
 
     pools.push(...morePools);

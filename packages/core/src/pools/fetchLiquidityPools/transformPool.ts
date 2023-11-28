@@ -8,6 +8,7 @@ import type { LiquidityPoolsResponse } from './types';
 import calcualateAprs from './calculateAprs';
 import {
   FeePercentage,
+  VAULT_FEE_TIER,
   WETH_TOKEN,
   WeiPerEther,
   Zero,
@@ -41,7 +42,8 @@ const transformPool = (
   pool: Pool,
   vault: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth' | 'createdAt'>,
   totalPositions: number,
-  receipts: VaultFeeReceipt[]
+  receipts: VaultFeeReceipt[],
+  premiumPaids: { amount: bigint; date: number }[]
 ): LiquidityPool => {
   const fees = transformFees(pool.fees);
   const tokens = pool.inputTokens.map(({ id, symbol, name }, i) => ({
@@ -79,18 +81,43 @@ const transformPool = (
     );
     return total + value;
   }, Zero);
-  const dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
-    return total + BigInt(snapshot.hourlyTotalRevenueETH ?? '0');
-  }, Zero);
+
   const weeklyVolume = pool.dailySnapshots.reduce((total, snapshot) => {
     const value = BigInt(
       snapshot.dailyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
     );
     return total + value;
   }, Zero);
-  const weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
-    return total + BigInt(snapshot.dailyTotalRevenueETH ?? '0');
-  }, Zero);
+
+  const now = Math.floor(Date.now() / 1000);
+  const oneDayAgo = now - 60 * 60 * 24;
+  const oneWeekAgo = now - 60 * 60 * 24 * 7;
+  let dailyRevenue = Zero;
+  let weeklyRevenue = Zero;
+
+  // Only the 0.3% pool gets vault fees
+  if (feeTier === VAULT_FEE_TIER) {
+    dailyRevenue = [...receipts, ...premiumPaids].reduce((total, receipt) => {
+      if (receipt.date >= oneDayAgo) {
+        return total + receipt.amount;
+      }
+      return total;
+    }, Zero);
+    weeklyRevenue = [...receipts, ...premiumPaids].reduce((total, receipt) => {
+      if (receipt.date >= oneWeekAgo) {
+        return total + receipt.amount;
+      }
+      return total;
+    }, Zero);
+    // All other pools only get the AMM fees
+  } else {
+    dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
+      return total + BigInt(snapshot.hourlyTotalRevenueETH ?? '0');
+    }, Zero);
+    weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
+      return total + BigInt(snapshot.dailyTotalRevenueETH ?? '0');
+    }, Zero);
+  }
 
   const eth = tokens[isWeth0 ? 0 : 1].balance;
   const vToken = tokens[isWeth0 ? 1 : 0].balance;
