@@ -48,7 +48,7 @@ type ContractWrite<T extends Abi> = {
 };
 type ContractEstimate<T extends Abi> = {
   [K in ExtractAbiFunctionNames<T>]: (
-    args: GetFunctionArgs<T, K> & WriteOpts
+    args: GetFunctionArgs<T, K> & WriteOpts & { account: Address }
   ) => Promise<{ gasEstimate: bigint }>;
 };
 

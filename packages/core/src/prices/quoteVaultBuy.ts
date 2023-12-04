@@ -1,4 +1,4 @@
-import { MARKETPLACE_ZAP, WeiPerEther } from '@nftx/constants';
+import { MARKETPLACE_ZAP, WeiPerEther, Zero } from '@nftx/constants';
 import { fetchTokenBuyPrice } from '@nftx/trade';
 import type {
   Address,
@@ -11,10 +11,13 @@ import type {
 import {
   fetchVTokenToEth,
   getChainConstant,
+  getContract,
+  getExactTokenIds,
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
   increaseByPercentage,
+  zipTokenIds,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
 import config from '@nftx/config';
@@ -26,6 +29,7 @@ import {
   calculateTotalPremiumPrice,
 } from './common';
 import { ValidationError } from '@nftx/errors';
+import { MarketplaceZap } from '@nftx/abi';
 
 type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
 type FetchVTokenToEth = typeof fetchVTokenToEth;
@@ -166,6 +170,29 @@ export const makeQuoteVaultBuy =
     const price = vTokenPrice + premiumPrice + feePrice;
     const value = increaseByPercentage(price, slippagePercentage);
 
+    let estimatedGas = Zero;
+    try {
+      const { gasEstimate } = await getContract({
+        abi: MarketplaceZap,
+        address: getChainConstant(MARKETPLACE_ZAP, network),
+        provider,
+      }).estimate.buyNFTsWithETH({
+        account: userAddress,
+        args: [
+          BigInt(vault.vaultId),
+          getExactTokenIds(zipTokenIds(tokenIdsOut, amountsOut)).map(BigInt),
+          executeCalldata,
+          userAddress,
+          premiumLimit,
+          false,
+        ],
+        value,
+      });
+      estimatedGas = gasEstimate;
+    } catch {
+      // Could not estimate gas
+    }
+
     const result: MarketplaceQuote = {
       type: 'buy',
       price,
@@ -176,6 +203,7 @@ export const makeQuoteVaultBuy =
       routeString,
       approveContracts: [],
       items,
+      estimatedGas,
       methodParameters: {
         value: value.toString(),
         executeCalldata,

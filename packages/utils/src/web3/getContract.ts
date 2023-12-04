@@ -1,3 +1,4 @@
+import config from '@nftx/config';
 import type { Address, Contract, Provider, Signer } from '@nftx/types';
 import type { Abi } from 'abitype';
 
@@ -5,7 +6,7 @@ function getContract<T extends Abi>(args: {
   address: Address;
   abi: T;
   provider: Provider;
-}): Pick<Contract<T>, 'read'>;
+}): Pick<Contract<T>, 'read' | 'estimate'>;
 function getContract<T extends Abi>(args: {
   address: Address;
   abi: T;
@@ -45,12 +46,12 @@ function getContract<T extends Abi>({
         const account = userAddress;
 
         if (config.debug) {
-        console.debug({
-          method: functionName,
-          contractAddress: address,
-          account,
-          ...args,
-        });
+          console.debug({
+            method: functionName,
+            contractAddress: address,
+            account,
+            ...args,
+          });
         }
 
         const { request } = await provider.simulateContract({
@@ -73,18 +74,24 @@ function getContract<T extends Abi>({
   const estimate = new Proxy({} as Contract<T>['estimate'], {
     get(_target, functionName: any) {
       return async (args: any) => {
-        if (!signer) {
-          throw new Error('Cannot estimate gas without a signer');
-        }
         try {
-          const [userAddress] = await signer.getAddresses();
-          const account = userAddress;
+          if (config.debug) {
+            const method = [
+              'estimate',
+              functionName[0].toUpperCase(),
+              functionName.slice(1),
+            ].join('');
+            console.debug({
+              method,
+              contractAddress: address,
+              ...args,
+            });
+          }
 
           const gasEstimate = await provider.estimateContractGas({
             address,
             abi,
             functionName,
-            account,
             ...args,
           } as any);
 

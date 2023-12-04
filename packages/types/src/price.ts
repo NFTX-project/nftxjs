@@ -96,6 +96,7 @@ export type MarketplaceQuote = MarketplacePrice & {
     premiumPrice: bigint;
     premiumLimit: bigint;
   }>;
+  estimatedGas: bigint;
   methodParameters: MarketplaceParameters;
   approveContracts: ApproveContract[];
 };

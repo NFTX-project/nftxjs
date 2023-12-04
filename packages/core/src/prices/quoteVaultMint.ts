@@ -1,4 +1,5 @@
 import {
+  getContract,
   getTokenIdAmounts,
   getUniqueTokenIds,
   increaseByPercentage,
@@ -12,6 +13,8 @@ import type {
 } from '@nftx/types';
 import quoteVaultSell from './quoteVaultSell';
 import { getApproveContracts } from '@nftx/trade';
+import { NFTXVaultUpgradeable } from '@nftx/abi';
+import { Zero } from '@nftx/constants';
 
 const quoteVaultMint = async ({
   network,
@@ -54,6 +57,27 @@ const quoteVaultMint = async ({
     tokenIds: tokenIdsIn,
   });
 
+  let estimatedGas = Zero;
+  try {
+    const { gasEstimate } = await getContract({
+      abi: NFTXVaultUpgradeable,
+      address: vault.id,
+      provider,
+    }).estimate.mint({
+      value,
+      account: userAddress,
+      args: [
+        tokenIdsIn.map(BigInt),
+        amountsIn.map(BigInt),
+        userAddress,
+        userAddress,
+      ],
+    });
+    estimatedGas = gasEstimate;
+  } catch {
+    // Could not estimate gas
+  }
+
   const result: MarketplaceQuote = {
     type: 'mint',
     vTokenPrice,
@@ -61,6 +85,7 @@ const quoteVaultMint = async ({
     premiumPrice,
     price,
     items,
+    estimatedGas,
     approveContracts,
     methodParameters: {
       executeCalldata: '0x',

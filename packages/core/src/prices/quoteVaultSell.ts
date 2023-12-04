@@ -11,6 +11,7 @@ import { parseEther } from 'viem';
 import {
   fetchVTokenToEth,
   getChainConstant,
+  getContract,
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
@@ -18,6 +19,7 @@ import {
 } from '@nftx/utils';
 import { calculateFeePricePerItem, calculateTotalFeePrice } from './common';
 import { ValidationError } from '@nftx/errors';
+import { MarketplaceZap } from '@nftx/abi';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
 type FetchVTokenToEth = typeof fetchVTokenToEth;
@@ -114,6 +116,40 @@ export const makeQuoteVaultSell =
 
     const value = increaseByPercentage(feePrice, slippagePercentage);
 
+    let estimatedGas = Zero;
+    try {
+      const contract = getContract({
+        abi: MarketplaceZap,
+        address: getChainConstant(MARKETPLACE_ZAP, network),
+        provider,
+      });
+      const { gasEstimate } = await (standard === 'ERC1155'
+        ? contract.estimate.sell1155({
+            account: userAddress,
+            args: [
+              BigInt(vault.vaultId),
+              tokenIdsIn.map(BigInt),
+              amountsIn.map(BigInt),
+              executeCalldata,
+              userAddress,
+              false,
+            ],
+          })
+        : contract.estimate.sell721({
+            account: userAddress,
+            args: [
+              BigInt(vault.vaultId),
+              tokenIdsIn.map(BigInt),
+              executeCalldata,
+              userAddress,
+              false,
+            ],
+          }));
+      estimatedGas = gasEstimate;
+    } catch {
+      // Could not estimate gas
+    }
+
     const result: MarketplaceQuote = {
       type: 'sell',
       price,
@@ -123,6 +159,7 @@ export const makeQuoteVaultSell =
       route,
       routeString,
       items,
+      estimatedGas,
       approveContracts,
       methodParameters: {
         executeCalldata,

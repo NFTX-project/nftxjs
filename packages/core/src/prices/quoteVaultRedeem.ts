@@ -1,8 +1,11 @@
 import {
+  getContract,
+  getExactTokenIds,
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
   increaseByPercentage,
+  zipTokenIds,
 } from '@nftx/utils';
 import type {
   Address,
@@ -14,6 +17,8 @@ import type {
 } from '@nftx/types';
 import quoteVaultBuy from './quoteVaultBuy';
 import { ValidationError } from '@nftx/errors';
+import { NFTXVaultUpgradeable } from '@nftx/abi';
+import { Zero } from '@nftx/constants';
 
 const quoteVaultRedeem = async ({
   holdings,
@@ -64,6 +69,28 @@ const quoteVaultRedeem = async ({
     slippagePercentage
   );
 
+  let estimatedGas = Zero;
+  try {
+    const { gasEstimate } = await getContract({
+      abi: NFTXVaultUpgradeable,
+      address: vault.id,
+      provider,
+    }).estimate.redeem({
+      account: userAddress,
+      value,
+      args: [
+        getExactTokenIds(zipTokenIds(tokenIdsOut, amountsOut)).map(BigInt),
+        userAddress,
+        Zero,
+        BigInt(premiumLimit),
+        true,
+      ],
+    });
+    estimatedGas = gasEstimate;
+  } catch {
+    // Could not estimate gas
+  }
+
   const approveContracts: MarketplaceQuote['approveContracts'] = [];
 
   const result: MarketplaceQuote = {
@@ -73,6 +100,7 @@ const quoteVaultRedeem = async ({
     premiumPrice,
     price,
     items,
+    estimatedGas,
     approveContracts,
     methodParameters: {
       executeCalldata: '0x',

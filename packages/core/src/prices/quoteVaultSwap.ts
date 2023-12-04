@@ -10,15 +10,19 @@ import type {
 import {
   fetchVTokenToEth,
   getChainConstant,
+  getContract,
+  getExactTokenIds,
   getTokenIdAmounts,
   getTotalTokenIds,
   getUniqueTokenIds,
   increaseByPercentage,
+  zipTokenIds,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
 import { getHoldingByTokenId, fetchPremiumPrice } from './common';
 import { ValidationError } from '@nftx/errors';
 import { getApproveContracts } from '@nftx/trade';
+import { MarketplaceZap } from '@nftx/abi';
 
 type FetchVTokenToEth = typeof fetchVTokenToEth;
 type FetchPremiumPrice = typeof fetchPremiumPrice;
@@ -130,6 +134,45 @@ export const makeQuoteVaultSwap =
       tokenIds: tokenIdsIn,
     });
 
+    let estimatedGas = Zero;
+
+    try {
+      const contract = getContract({
+        address: getChainConstant(MARKETPLACE_ZAP, network),
+        abi: MarketplaceZap,
+        provider,
+      });
+      const { gasEstimate } = await (standard === 'ERC1155'
+        ? contract.estimate.swap1155({
+            account: userAddress,
+            value,
+            args: [
+              BigInt(vault.vaultId),
+              tokenIdsIn.map(BigInt),
+              amountsIn.map(BigInt),
+              getExactTokenIds(zipTokenIds(tokenIdsOut, amountsOut)).map(
+                BigInt
+              ),
+              premiumLimit,
+              userAddress,
+            ],
+          })
+        : contract.estimate.swap721({
+            args: [
+              BigInt(vault.vaultId),
+              tokenIdsIn.map(BigInt),
+              tokenIdsOut.map(BigInt),
+              premiumLimit,
+              userAddress,
+            ],
+            value,
+            account: userAddress,
+          }));
+      estimatedGas = gasEstimate;
+    } catch {
+      // Could not estimate gas
+    }
+
     const result: MarketplaceQuote = {
       type: 'swap',
       price,
@@ -137,6 +180,7 @@ export const makeQuoteVaultSwap =
       feePrice,
       premiumPrice,
       items,
+      estimatedGas,
       approveContracts,
       methodParameters: {
         executeCalldata: null as any,
