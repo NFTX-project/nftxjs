@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/NFTX-project/nftxjs/compare/v1.4.0...v1.5.0) (2023-12-04)
+
+
+### Features
+
+* debug config flag ([2e38a81](https://github.com/NFTX-project/nftxjs/commit/2e38a819f4367999dc293b302fd7156b5bb9984d))
+* estimate gas for trading quotes ([ca25955](https://github.com/NFTX-project/nftxjs/commit/ca25955c5cab79d8d8f8236555ed106542adc89c))
+* include swap intent in AMM quote requests ([0156dcb](https://github.com/NFTX-project/nftxjs/commit/0156dcbf4b93a439ea82579ceb948ce46c4466cc))
+* update marketplace zap address ([6a0e77c](https://github.com/NFTX-project/nftxjs/commit/6a0e77cf38268c2fb96c005427b36a351e2b5cec))
+* update nftx-v3 subgraph schema ([f8f1887](https://github.com/NFTX-project/nftxjs/commit/f8f18879c890044e3feb4e7d610eb8913ea9520e))
+
+
+
+
+
 # [1.4.0](https://github.com/NFTX-project/nftxjs/compare/v1.3.0...v1.4.0) (2023-11-28)
 
 

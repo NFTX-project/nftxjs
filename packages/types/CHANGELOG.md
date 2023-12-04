@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/NFTX-project/nftxjs/compare/v1.4.0...v1.5.0) (2023-12-04)
+
+
+### Features
+
+* estimate gas for trading quotes ([ca25955](https://github.com/NFTX-project/nftxjs/commit/ca25955c5cab79d8d8f8236555ed106542adc89c))
+* update nftx-v3 subgraph schema ([f8f1887](https://github.com/NFTX-project/nftxjs/commit/f8f18879c890044e3feb4e7d610eb8913ea9520e))
+
+
+
+
+
 ## [1.2.2](https://github.com/NFTX-project/nftxjs/compare/v1.2.1...v1.2.2) (2023-11-24)
 
 

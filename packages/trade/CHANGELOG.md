@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/NFTX-project/nftxjs/compare/v1.4.0...v1.5.0) (2023-12-04)
+
+
+### Features
+
+* debug config flag ([2e38a81](https://github.com/NFTX-project/nftxjs/commit/2e38a819f4367999dc293b302fd7156b5bb9984d))
+* include swap intent in AMM quote requests ([0156dcb](https://github.com/NFTX-project/nftxjs/commit/0156dcbf4b93a439ea82579ceb948ce46c4466cc))
+
+
+
+
+
 ## [1.2.4](https://github.com/NFTX-project/nftxjs/compare/v1.2.3...v1.2.4) (2023-11-26)
 
 **Note:** Version bump only for package @nftx/trade
