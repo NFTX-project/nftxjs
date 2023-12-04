@@ -42,8 +42,8 @@ export const CREATE_VAULT_ZAP = {
 
 /** Perform buy/sell/swaps */
 export const MARKETPLACE_ZAP = {
-  [Network.Goerli]: a('0x5A40C0288d23E83a23bb16C29B790F7e49e49ee6'),
-  [Network.Sepolia]: a('0x5Af324A8c90966Bef28386A67c6bE0A16aA03c19'),
+  [Network.Goerli]: a('0x0be2D766Eef4b6a72F1fAe2e49619F013d647B8A'),
+  [Network.Sepolia]: a('0xd88a3B9D0Fb2d39ec8394CfFD983aFBB2D4a6410'),
 };
 
 /** Stake NFTs or vTokens for xNFTs */
