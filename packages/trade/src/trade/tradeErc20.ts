@@ -1,3 +1,4 @@
+import config from '@nftx/config';
 import type { Price, Provider, Signer } from '@nftx/types';
 
 const tradeErc20 = async ({
@@ -17,13 +18,15 @@ const tradeErc20 = async ({
     methodParameters: { calldata, to, value },
   } = quote;
 
-  console.debug({
-    method: 'tradeErc20',
-    to,
-    data: calldata,
-    value: BigInt(value),
-    account,
-  });
+  if (config.debug) {
+    console.debug({
+      method: 'tradeErc20',
+      to,
+      data: calldata,
+      value: BigInt(value),
+      account,
+    });
+  }
 
   const hash = await signer.sendTransaction({
     to,

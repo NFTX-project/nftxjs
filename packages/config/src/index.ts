@@ -15,6 +15,8 @@ import merge from 'deepmerge';
 export interface Config {
   /** The default network to use if not explicitly given */
   network: number;
+  /** Additional log info */
+  debug: boolean;
   /** Subgraph URLs and keys
    * Each item should be an object keyed by network
    * The value can either be a URL string, or an array of strings
@@ -106,6 +108,7 @@ const storeSettings = (obj: Record<string, any>) => {
 
 const defaultConfig: Config = {
   network: Network.Mainnet,
+  debug: false,
   subgraph: {
     ERC1155_SUBGRAPH,
     ERC721_SUBGRAPH,

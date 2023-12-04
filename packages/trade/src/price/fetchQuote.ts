@@ -152,6 +152,9 @@ const fetchQuote = async (args: {
   if (userAddress && !data?.methodParameters) {
     throw new QuoteSlippageError();
   }
+  if (userAddress && config.debug) {
+    console.debug(data);
+  }
 
   if (data?.methodParameters?.to) {
     // We need to override the to property as it's pointing to the Uniswap router instead of our own
