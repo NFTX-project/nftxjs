@@ -262,6 +262,7 @@ export enum ActivityEvent_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -394,6 +395,7 @@ export enum AddLiquidity_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -596,6 +598,7 @@ export enum BuyNfts_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -607,11 +610,11 @@ export enum BuyNfts_OrderBy {
 
 export type DustReturned = {
   __typename?: 'DustReturned';
-  ethAmount: Scalars['BigInt']['output'];
+  ethAmount: Scalars['BigDecimal']['output'];
   id: Scalars['ID']['output'];
-  linkedEvents: Array<ActivityEvent>;
+  linkedEvents?: Maybe<Array<ActivityEvent>>;
   to: Scalars['String']['output'];
-  vTokenAmount: Scalars['BigInt']['output'];
+  vTokenAmount: Scalars['BigDecimal']['output'];
 };
 
 
@@ -627,14 +630,14 @@ export type DustReturned_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<DustReturned_Filter>>>;
-  ethAmount?: InputMaybe<Scalars['BigInt']['input']>;
-  ethAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  ethAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  ethAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  ethAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  ethAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  ethAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
-  ethAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  ethAmount?: InputMaybe<Scalars['BigDecimal']['input']>;
+  ethAmount_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  ethAmount_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  ethAmount_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  ethAmount_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  ethAmount_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  ethAmount_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  ethAmount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -671,14 +674,14 @@ export type DustReturned_Filter = {
   to_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   to_starts_with?: InputMaybe<Scalars['String']['input']>;
   to_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  vTokenAmount?: InputMaybe<Scalars['BigInt']['input']>;
-  vTokenAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  vTokenAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  vTokenAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  vTokenAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  vTokenAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  vTokenAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
-  vTokenAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vTokenAmount?: InputMaybe<Scalars['BigDecimal']['input']>;
+  vTokenAmount_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  vTokenAmount_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  vTokenAmount_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  vTokenAmount_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  vTokenAmount_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  vTokenAmount_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  vTokenAmount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
 };
 
 export enum DustReturned_OrderBy {
@@ -1464,6 +1467,7 @@ export enum Earning_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -1721,6 +1725,7 @@ export enum Feature_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -1843,6 +1848,7 @@ export enum FeeReceipt_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -1917,6 +1923,7 @@ export enum FeeReceiver_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -1928,7 +1935,7 @@ export enum FeeReceiver_OrderBy {
 
 export type FeeTransfer = {
   __typename?: 'FeeTransfer';
-  amount: Scalars['BigInt']['output'];
+  amount: Scalars['BigDecimal']['output'];
   feeReceipt: FeeReceipt;
   id: Scalars['ID']['output'];
   to: Scalars['Bytes']['output'];
@@ -1937,14 +1944,14 @@ export type FeeTransfer = {
 export type FeeTransfer_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  amount?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  amount?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  amount_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   and?: InputMaybe<Array<InputMaybe<FeeTransfer_Filter>>>;
   feeReceipt?: InputMaybe<Scalars['String']['input']>;
   feeReceipt_?: InputMaybe<FeeReceipt_Filter>;
@@ -2053,6 +2060,7 @@ export enum Fee_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -2322,6 +2330,7 @@ export enum Holding_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -2442,6 +2451,7 @@ export enum IncreaseLiquidity_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -2584,6 +2594,7 @@ export enum InventoryCombinePositions_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -2736,6 +2747,7 @@ export enum InventoryDepositWithNft_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -2864,6 +2876,7 @@ export enum InventoryDeposit_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -2998,6 +3011,7 @@ export enum InventoryIncreasePosition_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -3143,6 +3157,7 @@ export enum InventoryPool_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -3154,7 +3169,7 @@ export enum InventoryPool_OrderBy {
 
 export type InventoryPosition = {
   __typename?: 'InventoryPosition';
-  amount: Scalars['BigInt']['output'];
+  amount: Scalars['BigDecimal']['output'];
   children?: Maybe<Array<InventoryPosition>>;
   closed: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
@@ -3275,6 +3290,7 @@ export enum InventoryPositionFee_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -3286,7 +3302,7 @@ export enum InventoryPositionFee_OrderBy {
 
 export type InventoryPositionPayout = {
   __typename?: 'InventoryPositionPayout';
-  amount: Scalars['BigInt']['output'];
+  amount: Scalars['BigDecimal']['output'];
   id: Scalars['Bytes']['output'];
   positionFee: InventoryPositionFee;
   timestamp: Scalars['BigInt']['output'];
@@ -3295,14 +3311,14 @@ export type InventoryPositionPayout = {
 export type InventoryPositionPayout_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  amount?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  amount?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  amount_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   and?: InputMaybe<Array<InputMaybe<InventoryPositionPayout_Filter>>>;
   id?: InputMaybe<Scalars['Bytes']['input']>;
   id_contains?: InputMaybe<Scalars['Bytes']['input']>;
@@ -3358,14 +3374,14 @@ export enum InventoryPositionPayout_OrderBy {
 export type InventoryPosition_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  amount?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  amount?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  amount_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   and?: InputMaybe<Array<InputMaybe<InventoryPosition_Filter>>>;
   children_?: InputMaybe<InventoryPosition_Filter>;
   closed?: InputMaybe<Scalars['Boolean']['input']>;
@@ -3516,6 +3532,7 @@ export enum InventoryPosition_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -3688,6 +3705,7 @@ export enum InventoryTransfer_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -3841,6 +3859,7 @@ export enum InventoryWithdraw_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -4027,6 +4046,7 @@ export enum Mint_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -4107,6 +4127,7 @@ export enum Pool_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -4118,7 +4139,7 @@ export enum Pool_OrderBy {
 
 export type PremiumPaid = {
   __typename?: 'PremiumPaid';
-  amount: Scalars['BigInt']['output'];
+  amount: Scalars['BigDecimal']['output'];
   date: Scalars['BigInt']['output'];
   id: Scalars['Bytes']['output'];
   to: User;
@@ -4128,14 +4149,14 @@ export type PremiumPaid = {
 export type PremiumPaid_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  amount?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
-  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  amount?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  amount_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   and?: InputMaybe<Array<InputMaybe<PremiumPaid_Filter>>>;
   date?: InputMaybe<Scalars['BigInt']['input']>;
   date_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -4217,6 +4238,7 @@ export enum PremiumPaid_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -5539,6 +5561,7 @@ export enum Redeem_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -5660,6 +5683,7 @@ export enum RemoveLiquidity_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -5773,6 +5797,7 @@ export enum SellNfts_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -7149,6 +7174,7 @@ export enum Swap_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -7343,7 +7369,7 @@ export type Vault = {
   holdings: Array<Holding>;
   id: Scalars['ID']['output'];
   inventoryPositions: Array<InventoryPosition>;
-  inventoryStakedTotal: Scalars['BigInt']['output'];
+  inventoryStakedTotal: Scalars['BigDecimal']['output'];
   inventoryStakingPool?: Maybe<InventoryPool>;
   is1155?: Maybe<Scalars['Boolean']['output']>;
   isFinalized?: Maybe<Scalars['Boolean']['output']>;
@@ -7354,7 +7380,8 @@ export type Vault = {
   shutdownDate: Scalars['BigInt']['output'];
   swaps: Array<Swap>;
   token: Token;
-  totalFees: Scalars['BigInt']['output'];
+  totalFees: Scalars['BigDecimal']['output'];
+  totalFeesQ128: Scalars['BigDecimal']['output'];
   totalHoldings: Scalars['BigInt']['output'];
   totalMints: Scalars['BigInt']['output'];
   totalRedeems: Scalars['BigInt']['output'];
@@ -7617,6 +7644,7 @@ export enum VaultCreated_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -7783,6 +7811,7 @@ export enum VaultFeeUpdate_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -7861,6 +7890,7 @@ export enum VaultFee_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -7947,6 +7977,7 @@ export enum VaultInventoryFee_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -8033,6 +8064,7 @@ export enum VaultLiquidityFee_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -8213,6 +8245,7 @@ export enum VaultNameChange_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -8305,6 +8338,7 @@ export enum VaultPublished_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -8397,6 +8431,7 @@ export enum VaultShutdown_OrderBy {
   VaultIsNew = 'vault__isNew',
   VaultShutdownDate = 'vault__shutdownDate',
   VaultTotalFees = 'vault__totalFees',
+  VaultTotalFeesQ128 = 'vault__totalFeesQ128',
   VaultTotalHoldings = 'vault__totalHoldings',
   VaultTotalMints = 'vault__totalMints',
   VaultTotalRedeems = 'vault__totalRedeems',
@@ -8583,14 +8618,14 @@ export type Vault_Filter = {
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   inventoryPositions_?: InputMaybe<InventoryPosition_Filter>;
-  inventoryStakedTotal?: InputMaybe<Scalars['BigInt']['input']>;
-  inventoryStakedTotal_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  inventoryStakedTotal_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  inventoryStakedTotal_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  inventoryStakedTotal_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  inventoryStakedTotal_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  inventoryStakedTotal_not?: InputMaybe<Scalars['BigInt']['input']>;
-  inventoryStakedTotal_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  inventoryStakedTotal?: InputMaybe<Scalars['BigDecimal']['input']>;
+  inventoryStakedTotal_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  inventoryStakedTotal_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  inventoryStakedTotal_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  inventoryStakedTotal_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  inventoryStakedTotal_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  inventoryStakedTotal_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  inventoryStakedTotal_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   inventoryStakingPool?: InputMaybe<Scalars['String']['input']>;
   inventoryStakingPool_?: InputMaybe<InventoryPool_Filter>;
   inventoryStakingPool_contains?: InputMaybe<Scalars['String']['input']>;
@@ -8678,14 +8713,22 @@ export type Vault_Filter = {
   token_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   token_starts_with?: InputMaybe<Scalars['String']['input']>;
   token_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  totalFees?: InputMaybe<Scalars['BigInt']['input']>;
-  totalFees_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  totalFees_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  totalFees_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  totalFees_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  totalFees_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  totalFees_not?: InputMaybe<Scalars['BigInt']['input']>;
-  totalFees_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalFees?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFeesQ128?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFeesQ128_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFeesQ128_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFeesQ128_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalFeesQ128_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFeesQ128_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFeesQ128_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFeesQ128_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalFees_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFees_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFees_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalFees_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFees_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFees_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalFees_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   totalHoldings?: InputMaybe<Scalars['BigInt']['input']>;
   totalHoldings_gt?: InputMaybe<Scalars['BigInt']['input']>;
   totalHoldings_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -8789,6 +8832,7 @@ export enum Vault_OrderBy {
   TokenSymbol = 'token__symbol',
   TokenTotalSupply = 'token__totalSupply',
   TotalFees = 'totalFees',
+  TotalFeesQ128 = 'totalFeesQ128',
   TotalHoldings = 'totalHoldings',
   TotalMints = 'totalMints',
   TotalRedeems = 'totalRedeems',
