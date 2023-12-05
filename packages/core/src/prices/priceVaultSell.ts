@@ -4,13 +4,20 @@ import { parseEther } from 'viem';
 import { calculateTotalFeePrice } from './common';
 import { Zero } from '@nftx/constants';
 import { getTotalTokenIds } from '@nftx/utils';
-import { InsufficientLiquidityError, ValidationError } from '@nftx/errors';
+import {
+  InsufficientLiquidityError,
+  MintFeeExceedsValueError,
+  ValidationError,
+} from '@nftx/errors';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
 
-const checkLiquidity = <P extends { vTokenPrice: bigint }>(price: P) => {
+const checkLiquidity = (price: MarketplacePrice) => {
   if (!price.vTokenPrice) {
     throw new InsufficientLiquidityError();
+  }
+  if (price.price < Zero) {
+    throw new MintFeeExceedsValueError();
   }
   return price;
 };

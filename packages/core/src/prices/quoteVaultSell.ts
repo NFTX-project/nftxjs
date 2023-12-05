@@ -18,7 +18,7 @@ import {
   increaseByPercentage,
 } from '@nftx/utils';
 import { calculateFeePricePerItem, calculateTotalFeePrice } from './common';
-import { ValidationError } from '@nftx/errors';
+import { MintFeeExceedsValueError, ValidationError } from '@nftx/errors';
 import { MarketplaceZap } from '@nftx/abi';
 
 type FetchTokenSellPrice = typeof fetchTokenSellPrice;
@@ -88,6 +88,10 @@ export const makeQuoteVaultSell =
     );
 
     const price = vTokenPrice - feePrice;
+
+    if (price < Zero) {
+      throw new MintFeeExceedsValueError();
+    }
 
     const items = tokenIdsIn.map((tokenId, i) => {
       const amount = amountsIn[i];
