@@ -1,6 +1,6 @@
 {
   "name": "@nftx/react",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -27,12 +27,12 @@
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
   "dependencies": {
-    "@nftx/errors": "^1.1.0",
+    "@nftx/errors": "^1.6.0",
     "abitype": "0.9.8",
     "viem": "^1.16.6"
   },
   "devDependencies": {
-    "nftx.js": "^1.5.0",
+    "nftx.js": "^1.6.0",
     "react": "^18.0.0"
   },
   "peerDependencies": {

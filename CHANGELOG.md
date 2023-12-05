@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/NFTX-project/nftxjs/compare/v1.5.0...v1.6.0) (2023-12-05)
+
+
+### Features
+
+* add a new MintFeeExceedsValueError ([0f81258](https://github.com/NFTX-project/nftxjs/commit/0f81258d3eea9c1c51195ec2a80c89c975e29fa3))
+
+
+
+
+
 # [1.5.0](https://github.com/NFTX-project/nftxjs/compare/v1.4.0...v1.5.0) (2023-12-04)
 
 
