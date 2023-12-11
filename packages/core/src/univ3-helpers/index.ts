@@ -81,7 +81,7 @@ export const calculatePriceFromTick = (tick: number): bigint => {
   } else if (tickNum >= MAX_TICK) {
     return MaxUint256;
   } else {
-    return BigInt(Math.pow(TICK_PRICE_BASE, tickNum) * 1e18);
+    return decimalToEthers(new Decimal(TICK_PRICE_BASE).pow(tickNum));
   }
 };
 
