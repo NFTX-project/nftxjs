@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/NFTX-project/nftxjs/compare/v1.6.0...v1.6.1) (2023-12-11)
+
+
+### Bug Fixes
+
+* number error when calculating prices from edge ticks ([cca31ee](https://github.com/NFTX-project/nftxjs/commit/cca31eeac1a1e08f6eab71ecf3d4743ecd86e6d4))
+
+
+
+
+
 # [1.6.0](https://github.com/NFTX-project/nftxjs/compare/v1.5.0...v1.6.0) (2023-12-05)
 
 
