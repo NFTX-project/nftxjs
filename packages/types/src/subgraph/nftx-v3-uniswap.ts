@@ -6982,7 +6982,7 @@ export enum Tick_OrderBy {
 export type Token = {
   __typename?: 'Token';
   /**  pool with WETH  */
-  _ethPricePool?: Maybe<Scalars['String']['output']>;
+  _ethPricePool: Scalars['String']['output'];
   _largePriceChangeBuffer: Scalars['Int']['output'];
   _largeTVLImpactBuffer: Scalars['Int']['output'];
   /**  last pool that gave this token a price  */

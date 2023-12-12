@@ -1,7 +1,7 @@
-import { Address, ERC721Sepolia, TokenId } from '@nftx/types';
+import { Address, ERC721Mainnet, ERC721Sepolia, TokenId } from '@nftx/types';
 import { createCursor, parseCursor } from './cursor';
 import { Network } from '@nftx/constants';
-import { buildWhere, createQuery, gql, querySubgraph } from '@nftx/subgraph';
+import { createQuery, gql, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '@nftx/utils';
 import config from '@nftx/config';
 import type { Holding } from './types';
@@ -19,65 +19,31 @@ const makeFetchErc721sMainnet =
     lastId: string;
     userAddress: Address;
   }) => {
-    let holdings: Array<Holding> = [];
+    let holdings: Holding[] = [];
     let nextId: string | undefined;
 
-    type Response = {
-      account: {
-        id: Address;
-        tokens: Array<{
-          id: Address;
-          identifier: `${number}`;
-          contract: {
-            id: Address;
-          };
-        }>;
-      };
-    };
-    type Params = { userAddress: Address };
-
-    const where = buildWhere({
-      identifier_gt: lastId,
-    });
-
-    const query = gql<Response, Params>`
-      {
-        account(id: $userAddress) {
-          id
-          tokens: ERC721tokens(
-            first: 1000
-            where: ${where}
-            orderBy: identifier
-            orderDirection: asc
-          ) {
-            id
-            identifier
-            contract {
-              id
-            }
-          }
-        }
-      }
-    `;
+    const query = createQuery<ERC721Mainnet.Query>()
+      .tokens.where((w) => [w.owner.is(userAddress), w.id.gt(lastId)])
+      .orderBy('id')
+      .orderDirection('asc')
+      .first(1000)
+      .select((s) => [s.id, s.collection((c) => [c.id]), s.identifier]);
 
     const data = await querySubgraph({
       url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
       query,
-      variables: {
-        userAddress,
-      },
     });
 
-    if (data?.account?.tokens?.length) {
-      holdings = data.account.tokens.map((x) => {
+    if (data?.tokens?.length) {
+      holdings = data.tokens.map((x) => {
         return {
-          assetAddress: x.contract.id,
+          assetAddress: x.collection.id as Address,
           tokenId: BigInt(x.identifier).toString() as TokenId,
         };
       });
     }
-    if (data?.account?.tokens?.length === 1000) {
-      nextId = data.account.tokens[data.account.tokens.length - 1].identifier;
+    if (data?.tokens?.length === 1000) {
+      nextId = data.tokens[data.tokens.length - 1].id;
     }
 
     return [holdings, nextId] as const;

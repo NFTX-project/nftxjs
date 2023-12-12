@@ -137,10 +137,12 @@ const defaultConfig: Config = {
   internal: {
     source: 'api',
     requiredBlockNumber: {
+      [Network.Mainnet]: 0,
       [Network.Goerli]: 0,
       [Network.Sepolia]: 0,
     },
     apiBlockNumber: {
+      [Network.Mainnet]: 0,
       [Network.Goerli]: 0,
       [Network.Sepolia]: 0,
     },

@@ -20,72 +20,45 @@ const makeFetchErc1155sMainnet =
     userAddress: Address;
     lastId: string;
   }) => {
-    type Response = {
-      account: {
-        id: Address;
-        balances: Array<{
-          id: Address;
-          contract: { id: Address };
-          token: {
-            identifier: string;
-          };
-          value: `${number}`;
-        }>;
-      };
-    };
-    type Params = {
-      userAddress: Address;
-      lastId: string;
-    };
+    let holdings: Array<Holding> = [];
+    let nextId: string | undefined;
 
-    const query = gql<Response, Params>`
-      {
-        account(id: $userAddress) {
-          id
-          balances: ERC1155balances(
-            first: 1000
-            where: { value_gt: $lastId }
-            orderBy: value
-            orderDirection: asc
-          ) {
-            id
-            contract {
-              id
-            }
-            token {
-              identifier
-            }
-            value
-          }
-        }
-      }
-    `;
+    const q = createQuery<ERC1155Sepolia.Query>();
+
+    const query = q.account.id(userAddress).select((s) => [
+      s.holdings(
+        q.holdings
+          .first(1000)
+          .orderBy('id')
+          .orderDirection('asc')
+          .where((w) => [w.id.gt(lastId)])
+          .select((s) => [
+            s.id,
+            s.balance,
+            s.token((t) => [t.identifier, t.collection((c) => [c.id])]),
+          ])
+      ),
+    ]);
 
     const data = await querySubgraph({
       url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
       query,
-      variables: {
-        lastId,
-        userAddress,
-      },
     });
 
-    let nextId: string | undefined;
-    if (data?.account?.balances?.length === 1000) {
-      nextId = data.account.balances[data.account.balances.length - 1].value;
+    if (data?.account?.holdings?.length) {
+      holdings = data.account.holdings.map((x) => {
+        return {
+          assetAddress: x.token.collection.id as Address,
+          tokenId: BigInt(x.token.identifier).toString() as TokenId,
+          quantity: BigInt(x.balance || '1'),
+        };
+      });
+    }
+    if (data?.account?.holdings?.length === 1000) {
+      nextId = data.account.holdings[data.account.holdings.length - 1].id;
     }
 
-    const balances = data?.account?.balances ?? [];
-
-    const holdings = balances.map((x) => {
-      return {
-        assetAddress: x.contract.id,
-        tokenId: BigInt(x.token.identifier).toString() as TokenId,
-        quantity: Number(x.value) < 1 ? parseEther(x.value) : BigInt(x.value),
-      };
-    });
-
-    return [holdings, createCursor('1155', nextId)] as const;
+    return [holdings, nextId] as const;
   };
 
 const makeFetchErc1155sSepolia =
