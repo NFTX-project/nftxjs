@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/NFTX-project/nftxjs/compare/v1.6.1...v1.7.0) (2023-12-12)
+
+
+### Features
+
+* support mainnet ([cd5fdf8](https://github.com/NFTX-project/nftxjs/commit/cd5fdf80bffff1db8d0359fa80722a524403fb49))
+
+
+
+
+
 # [1.6.0](https://github.com/NFTX-project/nftxjs/compare/v1.5.0...v1.6.0) (2023-12-05)
 
 **Note:** Version bump only for package @nftx/constants
