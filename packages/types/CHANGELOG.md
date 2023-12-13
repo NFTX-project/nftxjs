@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/NFTX-project/nftxjs/compare/v1.7.0...v1.8.0) (2023-12-13)
+
+
+### Features
+
+* include token count in collection metadata ([0656ef9](https://github.com/NFTX-project/nftxjs/commit/0656ef9b06f27744520c623e1e5c4eac12a21b66))
+* vault state property ([327f15e](https://github.com/NFTX-project/nftxjs/commit/327f15ef9b59a898ecc1709d4c599acf503cf148))
+
+
+
+
+
 # [1.7.0](https://github.com/NFTX-project/nftxjs/compare/v1.6.1...v1.7.0) (2023-12-12)
 
 
