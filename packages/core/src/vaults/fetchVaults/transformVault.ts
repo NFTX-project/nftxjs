@@ -1,7 +1,7 @@
 import { Zero } from '@nftx/constants';
 import { mapObj } from '../../utils';
 import type { Response } from '../fetchSubgraphVaults';
-import type { Address, Vault } from '@nftx/types';
+import type { Address, Vault, VaultState } from '@nftx/types';
 
 const transformVault = ({
   vault: x,
@@ -16,6 +16,19 @@ const transformVault = ({
   vTokenToEth: bigint;
   collection: { slug: string };
 }) => {
+  const state: VaultState = (() => {
+    if (x.shutdownDate && x.shutdownDate !== '0') {
+      return 'shutdown';
+    }
+    if (!x.isFinalized) {
+      return 'unfinalized';
+    }
+    if (x.totalHoldings === '0') {
+      return 'empty';
+    }
+    return 'active';
+  })();
+
   const rawFees = (x.usesFactoryFees && globalFees ? globalFees : x.fees) ?? {};
   const fees: Vault['fees'] = mapObj(rawFees, (key, value) => {
     return [key, BigInt(value as string)];
@@ -47,6 +60,7 @@ const transformVault = ({
     vaultId: `${x.vaultId}`,
     slug: `${x.token.symbol}-${x.vaultId}`.toLowerCase(),
     collectionSlug: (collection?.slug || x.asset.symbol).toLowerCase(),
+    state,
     asset: {
       ...x.asset,
       id: x.asset.id as Address,

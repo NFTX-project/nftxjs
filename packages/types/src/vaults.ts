@@ -30,11 +30,15 @@ export type VaultFees = {
   swapFee: bigint;
 };
 
+export type VaultState = 'unfinalized' | 'empty' | 'active' | 'shutdown';
+
 export type Vault = {
   vaultId: string;
   id: Address;
   slug: string;
   collectionSlug: string;
+  /** The current state of the vault */
+  state: VaultState;
   asset: Token;
   createdBy: { id: Address };
   createdAt: number;
