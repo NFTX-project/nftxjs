@@ -61,6 +61,7 @@ const fetchCollection = async ({
       twitterUsername: x.twitterUsername,
       standard: x.contractKind.toUpperCase() as 'ERC721',
       floorPrice: BigInt(x.floorAsk?.price?.amount?.raw ?? '0'),
+      tokenCount: Number(x.tokenCount),
     };
   })[0];
 
