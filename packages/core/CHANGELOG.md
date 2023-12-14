@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.1](https://github.com/NFTX-project/nftxjs/compare/v1.8.0...v1.8.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* dailyTotalRevenueETH should be parsed as a decimal number, not wei ([5d8e027](https://github.com/NFTX-project/nftxjs/commit/5d8e027989c253288d9e37f82ebee3e87178af91))
+
+
+
+
+
 # [1.8.0](https://github.com/NFTX-project/nftxjs/compare/v1.7.0...v1.8.0) (2023-12-13)
 
 
