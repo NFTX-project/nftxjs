@@ -112,10 +112,10 @@ const transformPool = (
     // All other pools only get the AMM fees
   } else {
     dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
-      return total + BigInt(snapshot.hourlyTotalRevenueETH ?? '0');
+      return total + parseEther(snapshot.hourlyTotalRevenueETH ?? '0');
     }, Zero);
     weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
-      return total + BigInt(snapshot.dailyTotalRevenueETH ?? '0');
+      return total + parseEther(snapshot.dailyTotalRevenueETH ?? '0');
     }, Zero);
   }
 
