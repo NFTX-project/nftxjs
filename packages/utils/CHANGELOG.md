@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.2](https://github.com/NFTX-project/nftxjs/compare/v1.8.1...v1.8.2) (2023-12-16)
+
+
+### Bug Fixes
+
+* rewrite apr calculation logic ([add35e1](https://github.com/NFTX-project/nftxjs/commit/add35e17958b37106962116dad74d9fbffe66c39))
+
+
+
+
+
 # [1.8.0](https://github.com/NFTX-project/nftxjs/compare/v1.7.0...v1.8.0) (2023-12-13)
 
 **Note:** Version bump only for package @nftx/utils
