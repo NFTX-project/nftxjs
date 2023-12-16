@@ -51,7 +51,7 @@ const createStub = ({
 
   return {
     activeLiquidity: Zero,
-    apr: { '1m': Zero, '24h': Zero, '7d': Zero, all: Zero },
+    apr: { '1m': Zero, '24h': Zero, '7d': Zero, '1y': Zero },
     exists: false,
     fees: [
       {
@@ -69,7 +69,7 @@ const createStub = ({
     feeTier,
     id: poolAddress,
     name: `${vault.token.symbol} ${feePercentage * 100}% Pool`,
-    periodFees: { '1m': Zero, '24h': Zero, '7d': Zero, all: Zero },
+    periodFees: { '1m': Zero, '24h': Zero, '7d': Zero, '1y': Zero },
     tick: Zero,
     tokens: [
       { ...vault.token, balance: Zero },

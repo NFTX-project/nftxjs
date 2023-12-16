@@ -5,7 +5,6 @@ import type {
   VaultFeeReceipt,
 } from '@nftx/types';
 import type { LiquidityPoolsResponse } from './types';
-import calcualateAprs from './calculateAprs';
 import {
   FeePercentage,
   VAULT_FEE_TIER,
@@ -20,6 +19,7 @@ import {
   getChainConstant,
 } from '@nftx/utils';
 import { parseEther } from 'viem';
+import calculateAprs from './calculateAprs';
 
 type Pool = LiquidityPoolsResponse['liquidityPools'][0];
 
@@ -119,15 +119,13 @@ const transformPool = (
     }, Zero);
   }
 
-  const eth = tokens[isWeth0 ? 0 : 1].balance;
-  const vToken = tokens[isWeth0 ? 1 : 0].balance;
-  const vTokenValue = (vToken * vault.vTokenToEth) / WeiPerEther;
-  const poolValue = eth + vTokenValue;
-
-  const apr = calcualateAprs({
-    periodFees,
-    createdAt: vault.createdAt,
-    poolValue,
+  const apr = calculateAprs({
+    createdAt: Number(pool.createdTimestamp),
+    dailySnapshots: pool.dailySnapshots,
+    isWeth0,
+    vaultFeeReceipts: receipts,
+    vTokenToEth: vault.vTokenToEth,
+    feeTier,
   });
 
   return {

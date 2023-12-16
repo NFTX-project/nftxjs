@@ -56,6 +56,7 @@ const queryPoolData = ({
       s.inputTokenBalances,
       s.totalValueLockedETH,
       s.openPositionCount,
+      s.createdTimestamp,
       s.fees((fee) => [fee.id, fee.feePercentage, fee.feeType]),
       s.inputTokens((token) => [token.id, token.symbol, token.name]),
       s.hourlySnapshots(
@@ -68,6 +69,8 @@ const queryPoolData = ({
             s.hourlyVolumeByTokenAmount,
             s.hourlyTotalRevenueETH,
             s.id,
+            s.inputTokenBalances,
+            s.timestamp,
           ])
       ),
       s.dailySnapshots(
@@ -81,6 +84,8 @@ const queryPoolData = ({
             s.day,
             s.dailyVolumeByTokenAmount,
             s.dailyTotalRevenueETH,
+            s.inputTokenBalances,
+            s.timestamp,
           ])
       ),
     ]);

@@ -35,13 +35,13 @@ export type LiquidityPool = {
     '24h': bigint;
     '7d': bigint;
     '1m': bigint;
-    all: bigint;
+    '1y': bigint;
   };
   apr: {
     '24h': bigint;
     '7d': bigint;
     '1m': bigint;
-    all: bigint;
+    '1y': bigint;
   };
   totalValueLocked: bigint;
   dailyVolume: bigint;
@@ -66,13 +66,13 @@ export type InventoryPool = {
     '24h': bigint;
     '7d': bigint;
     '1m': bigint;
-    all: bigint;
+    '1y': bigint;
   };
   apr: {
     '24h': bigint;
     '7d': bigint;
     '1m': bigint;
-    all: bigint;
+    '1y': bigint;
   };
   /** The length of time a position is locked for */
   timelock: number;

@@ -87,10 +87,10 @@ const calculateAprs = ({
       share,
       poolValue,
     }),
-    all: calculateAprForPeriod({
+    '1y': calculateAprForPeriod({
       vaultAge,
-      periodFees: periodFees.all,
-      periodLength: now - createdAt,
+      periodFees: periodFees['1y'],
+      periodLength: ONE_YEAR,
       share,
       poolValue,
     }),

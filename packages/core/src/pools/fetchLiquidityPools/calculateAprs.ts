@@ -1,128 +1,258 @@
-import type { LiquidityPool } from '@nftx/types';
-import { LIQUIDITY_SHARE, calculatePoolAprs } from '@nftx/utils';
+import { FeeTier, VAULT_FEE_TIER, WeiPerEther } from '@nftx/constants';
+import type {
+  LiquidityPool,
+  NftxV3Uniswap,
+  VaultFeeReceipt,
+} from '@nftx/types';
+import { parseEther } from 'viem';
 
-// // https://medium.com/@alexeuler/navigating-uniswap-v3-a-comprehensive-guide-to-apr-estimation-and-pool-risk-analysis-22cdab21e2db
-// export const calculateApr = ({
-//   activeLiquidity,
-//   currentTick,
-//   periodFees,
-//   price,
-//   tickSpacing,
-//   totalLiquidity,
-// }: {
-//   activeLiquidity: bigint;
-//   totalLiquidity: bigint;
-//   price: bigint;
-//   currentTick: bigint;
-//   tickSpacing: FeeTickSpacing;
-//   periodFees: bigint;
-// }) => {
-//   try {
-//     const tickUpper = bigintToDecimal(currentTick).add(tickSpacing);
-//     const tickLower = bigintToDecimal(currentTick).sub(tickSpacing);
-//     const tick = new Decimal('1.0001');
-//     const upperPrice = tick.pow(tickUpper);
-//     const lowerPrice = tick.pow(tickLower);
+const ONE_DAY = 86400;
+const ONE_WEEK = ONE_DAY * 7;
+const ONE_MONTH = ONE_DAY * 30;
+const ONE_YEAR = ONE_DAY * 365;
 
-//     // Liquidity
-//     const L = ethersToDecimal(activeLiquidity);
-//     // Price
-//     const P = ethersToDecimal(price);
-//     // Py was in the formula but feck knows what it means
-//     const Py = P;
-//     // TVL
-//     const TVL = ethersToDecimal(totalLiquidity);
+const calculatePoolValue = ({
+  isWeth0,
+  balances,
+  vTokenToEth,
+}: {
+  balances: string[] | undefined;
+  isWeth0: boolean;
+  vTokenToEth: bigint;
+}) => {
+  const eth = BigInt(balances?.[isWeth0 ? 0 : 1] ?? '0');
+  const vToken = BigInt(balances?.[isWeth0 ? 1 : 0] ?? '0');
+  const vTokenValue = (vToken * vTokenToEth) / WeiPerEther;
+  const poolValue = eth + vTokenValue;
+  return poolValue;
+};
 
-//     // Normalized TVL
-//     // TVLn = (L / √P)P + L√P = 2L√P
-//     const TVLn = L.div(P.sqrt()).mul(P).add(L.mul(P.sqrt()));
-//     // Liquidity concentration factor
-//     // LCF = (TVLn * Py)/TVL = (2Py * L√P) / TVL
-//     const LCF = TVLn.mul(Py).div(TVL);
-//     // Relative price movement
-//     const r = upperPrice.div(lowerPrice);
-//     // Impermanent Loss
-//     // IL = 1 - 2√r / 1 + r
-//     const IL = new Decimal('1')
-//       .sub(new Decimal('2').mul(r.sqrt()))
-//       .div(new Decimal('1').add(r));
-//     // Return
-//     // APR = (fees - IL) / (TVL * LCF)
-//     const APR = ethersToDecimal(periodFees).sub(IL).div(TVL.mul(LCF));
+const calculateAMMApr = ({
+  createdAt,
+  dailySnapshots,
+  isWeth0,
+  periodEnd,
+  periodStart,
+  vTokenToEth,
+}: {
+  dailySnapshots: NftxV3Uniswap.LiquidityPoolDailySnapshot[];
+  isWeth0: boolean;
+  periodStart: number;
+  periodEnd: number;
+  createdAt: number;
+  vTokenToEth: bigint;
+}) => {
+  const aprs: bigint[] = [];
 
-//     // Convert back into bigint
-//     return decimalToEthers(APR);
-//   } catch (e) {
-//     console.warn('Failed to calculate liquidity APR');
-//     console.warn(e);
-//     return Zero;
-//   }
-// };
+  let start = periodStart > createdAt ? periodStart : createdAt;
+  let end = start + 86400;
+  const initialSnapshot = dailySnapshots.findLast(
+    (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+  );
+  let lastPoolValue = calculatePoolValue({
+    isWeth0,
+    balances: initialSnapshot?.inputTokenBalances,
+    vTokenToEth,
+  });
 
-// const calculateAprs = ({
-//   activeLiquidity,
-//   currentTick,
-//   periodFees,
-//   price,
-//   tickSpacing,
-//   totalLiquidity,
-// }: {
-//   activeLiquidity: bigint;
-//   totalLiquidity: bigint;
-//   price: bigint;
-//   currentTick: bigint;
-//   tickSpacing: FeeTickSpacing;
-//   periodFees: ReturnType<typeof calculatePeriodFees>;
-// }) => {
-//   return {
-//     '24h': calculateApr({
-//       activeLiquidity,
-//       currentTick,
-//       periodFees: periodFees['24h'],
-//       price,
-//       tickSpacing,
-//       totalLiquidity,
-//     }),
-//     '7d': calculateApr({
-//       activeLiquidity,
-//       currentTick,
-//       periodFees: periodFees['7d'],
-//       price,
-//       tickSpacing,
-//       totalLiquidity,
-//     }),
-//     '1m': calculateApr({
-//       activeLiquidity,
-//       currentTick,
-//       periodFees: periodFees['1m'],
-//       price,
-//       tickSpacing,
-//       totalLiquidity,
-//     }),
-//     all: calculateApr({
-//       activeLiquidity,
-//       currentTick,
-//       periodFees: periodFees.all,
-//       price,
-//       tickSpacing,
-//       totalLiquidity,
-//     }),
-//   };
-// };
+  while (end <= periodEnd) {
+    const dailySnapshot = dailySnapshots.find(
+      (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+    );
+    let apr = 0n;
+
+    if (dailySnapshot) {
+      lastPoolValue = calculatePoolValue({
+        isWeth0,
+        vTokenToEth,
+        balances: dailySnapshot.inputTokenBalances,
+      });
+
+      const poolValue = lastPoolValue;
+      const periodFees = parseEther(dailySnapshot.dailyTotalRevenueETH);
+      if (periodFees && poolValue) {
+        apr = (periodFees * WeiPerEther * 365n) / poolValue;
+        if (apr < 0n) {
+          apr = 0n;
+        }
+      }
+    }
+
+    aprs.push(apr);
+
+    start += 86400;
+    end += 86400;
+  }
+
+  if (!aprs.length) {
+    return 0n;
+  }
+
+  const totalApr = aprs.reduce((total, apr) => total + apr, 0n);
+  const averageApr = totalApr / BigInt(aprs.length);
+  return averageApr;
+};
+
+const calculateVaultFeeApr = ({
+  dailySnapshots,
+  isWeth0,
+  periodEnd,
+  periodStart,
+  vTokenToEth,
+  vaultFeeReceipts,
+  createdAt,
+}: {
+  periodStart: number;
+  periodEnd: number;
+  dailySnapshots: NftxV3Uniswap.LiquidityPoolDailySnapshot[];
+  vaultFeeReceipts: VaultFeeReceipt[];
+  vTokenToEth: bigint;
+  isWeth0: boolean;
+  createdAt: number;
+}) => {
+  const aprs: bigint[] = [];
+
+  let start = periodStart > createdAt ? periodStart : createdAt;
+  let end = start + 86400;
+  const initialSnapshot = dailySnapshots.findLast(
+    (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+  );
+  let lastPoolValue = calculatePoolValue({
+    isWeth0,
+    balances: initialSnapshot?.inputTokenBalances,
+    vTokenToEth,
+  });
+
+  while (end <= periodEnd) {
+    const dailySnapshot = dailySnapshots.find(
+      (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+    );
+    const vaultFeeReceipt = vaultFeeReceipts.find(
+      (r) => r.date >= start && r.date <= end
+    );
+
+    const periodFees = vaultFeeReceipt?.amount || 0n;
+    if (dailySnapshot) {
+      lastPoolValue = calculatePoolValue({
+        isWeth0,
+        vTokenToEth,
+        balances: dailySnapshot.inputTokenBalances,
+      });
+    }
+    const poolValue = lastPoolValue;
+
+    let apr = 0n;
+    if (periodFees && poolValue) {
+      apr = (periodFees * 800000000000000000n * 365n) / poolValue;
+      if (apr < 0n) {
+        apr = 0n;
+      }
+    }
+    aprs.push(apr);
+
+    start += 86400;
+    end += 86400;
+  }
+
+  if (!aprs.length) {
+    return 0n;
+  }
+
+  const totalApr = aprs.reduce((total, apr) => total + apr, 0n);
+  const averageApr = totalApr / BigInt(aprs.length);
+  return averageApr;
+};
 
 export default ({
   createdAt,
-  periodFees,
-  poolValue,
+  dailySnapshots,
+  isWeth0,
+  vaultFeeReceipts,
+  vTokenToEth,
+  feeTier,
 }: {
   createdAt: number;
-  periodFees: LiquidityPool['periodFees'];
-  poolValue: bigint;
-}) => {
-  return calculatePoolAprs({
-    share: LIQUIDITY_SHARE,
-    createdAt,
-    periodFees,
-    poolValue,
-  });
+  dailySnapshots: NftxV3Uniswap.LiquidityPoolDailySnapshot[];
+  vaultFeeReceipts: VaultFeeReceipt[];
+  vTokenToEth: bigint;
+  isWeth0: boolean;
+  feeTier: FeeTier;
+}): LiquidityPool['apr'] => {
+  const now = Math.floor(Date.now() / 1000);
+
+  if (feeTier === VAULT_FEE_TIER) {
+    return {
+      '24h': calculateVaultFeeApr({
+        dailySnapshots,
+        isWeth0,
+        vaultFeeReceipts,
+        vTokenToEth,
+        periodStart: now - ONE_DAY,
+        periodEnd: now,
+        createdAt,
+      }),
+      '7d': calculateVaultFeeApr({
+        dailySnapshots,
+        isWeth0,
+        vaultFeeReceipts,
+        vTokenToEth,
+        periodStart: now - ONE_WEEK,
+        periodEnd: now,
+        createdAt,
+      }),
+      '1m': calculateVaultFeeApr({
+        dailySnapshots,
+        isWeth0,
+        vaultFeeReceipts,
+        vTokenToEth,
+        periodStart: now - ONE_MONTH,
+        periodEnd: now,
+        createdAt,
+      }),
+      '1y': calculateVaultFeeApr({
+        dailySnapshots,
+        isWeth0,
+        vaultFeeReceipts,
+        vTokenToEth,
+        periodStart: now - ONE_YEAR,
+        periodEnd: now,
+        createdAt,
+      }),
+    };
+  }
+
+  return {
+    '24h': calculateAMMApr({
+      dailySnapshots,
+      isWeth0,
+      vTokenToEth,
+      periodStart: now - ONE_DAY,
+      periodEnd: now,
+      createdAt,
+    }),
+    '7d': calculateAMMApr({
+      dailySnapshots,
+      isWeth0,
+      vTokenToEth,
+      periodStart: now - ONE_WEEK,
+      periodEnd: now,
+      createdAt,
+    }),
+    '1m': calculateAMMApr({
+      dailySnapshots,
+      isWeth0,
+      vTokenToEth,
+      periodStart: now - ONE_MONTH,
+      periodEnd: now,
+      createdAt,
+    }),
+    '1y': calculateAMMApr({
+      dailySnapshots,
+      isWeth0,
+      vTokenToEth,
+      periodStart: now - ONE_YEAR,
+      periodEnd: now,
+      createdAt,
+    }),
+  };
 };
