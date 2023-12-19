@@ -104,16 +104,20 @@ export type WithdrawInventoryQuote = {
 
 export type CreateInventoryPositionQuoteParams = {
   vaultId: string;
-  tokenIds: [TokenId, number][] | TokenId[];
   userAddress: Address;
+  vToken?: bigint;
+  usePermit2?: boolean;
+  tokenIds?: [TokenId, number][] | TokenId[];
 };
 
 export type CreateInventoryPositionQuote = {
   methodParameters: {
     vaultId: bigint;
     nftIds: bigint[];
+    vToken: bigint;
     nftAmounts: bigint[];
     userAddress: Address;
+    usePermit2: boolean;
   };
   approveContracts: ApproveContract[];
 };

@@ -69,8 +69,6 @@ export type Vault = {
   shutdownDate: number;
   /** The ETH price of 1 vToken (comes from vaultContract.vTokenToETH(WeiPerEther)) */
   vTokenToEth: bigint;
-  // feeReceipts: Pick<VaultFeeReceipt, 'amount' | 'date' | 'transfers'>[];
-  // activity: Pick<VaultActivity, 'vaultAddress' | 'vaultId'>;
 };
 
 export type VaultActivityType =
