@@ -9,11 +9,12 @@ const useApprove = (opts?: UseTransactionOptions) => {
   const {
     provider,
     signer,
+    network,
     core: { approve },
   } = useNftx();
 
   return useTransaction(
-    (args: Args) => approve({ ...args, provider, signer }),
+    (args: Args) => approve({ ...args, provider, signer, network }),
     {
       description: 'Approve',
       ...opts,
