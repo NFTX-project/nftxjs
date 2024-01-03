@@ -1,7 +1,7 @@
 import { makeFetchAssets } from '../fetchAssets';
 import type _getEligibleAssetVaultIds from '../../fetchUserAssets/getEligibleAssetVaultIds';
-import { ReservoirResponse } from '../../fetchUserAssets/fetchAssetsFromReservoir';
 import { TokenId, Vault } from '@nftx/types';
+import { ReservoirResponse } from '../../fetchUserAssets/types';
 
 let fetchAssets: ReturnType<typeof makeFetchAssets>;
 let getEligibleAssetVaultIds: jest.Mock;

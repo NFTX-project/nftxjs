@@ -2,9 +2,9 @@ import config from '@nftx/config';
 import { Address, Asset, Provider, TokenId, Vault } from '@nftx/types';
 import { createCursor, parseCursor } from './cursor';
 import { queryReservoir } from '@nftx/utils';
-import { ReservoirResponse } from '../fetchUserAssets/fetchAssetsFromReservoir';
 import getEligibleAssetVaultIds from '../fetchUserAssets/getEligibleAssetVaultIds';
 import reservoirTokenToAsset from '../fetchUserAssets/reservoirTokenToAsset';
+import { ReservoirResponse } from '../fetchUserAssets/types';
 
 type QueryReservoir = typeof queryReservoir;
 type GetEligibleAssetVaultIds = typeof getEligibleAssetVaultIds;
