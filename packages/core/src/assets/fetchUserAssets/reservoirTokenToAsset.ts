@@ -29,7 +29,7 @@ const reservoirTokenToAsset = ({
     name: token.name,
     rarity: token.rarityScore,
     rarityRank: token.rarityRank,
-    animationUrl: token.media,
+    animationUrl: token.media?.includes('.mp4') ? token.media : undefined,
     quantity: token.supply ? BigInt(token.supply) : undefined,
     traits: (token.attributes ?? []).reduce((acc, { key, value }) => {
       return { ...acc, [key]: value };
