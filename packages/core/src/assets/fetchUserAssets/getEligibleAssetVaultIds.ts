@@ -4,7 +4,7 @@ import isAssetEligibleForVault from '../isAssetEligibleForVault';
 
 type IsAssetEligibleForVault = typeof isAssetEligibleForVault;
 
-const makeGetEligibleAssetVaultIds =
+export const makeGetEligibleAssetVaultIds =
   ({
     isAssetEligibleForVault,
   }: {

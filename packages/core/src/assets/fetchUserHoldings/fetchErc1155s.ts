@@ -3,141 +3,140 @@ import { createQuery, gql, querySubgraph } from '@nftx/subgraph';
 import type { Address, ERC1155Sepolia, TokenId } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { createCursor, parseCursor } from './cursor';
-import { parseEther } from 'viem';
 import type { Holding } from './types';
 import { Network } from '@nftx/constants';
 
 type QuerySubgraph = typeof querySubgraph;
 
-const makeFetchErc1155sMainnet =
-  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
-  async ({
-    userAddress,
-    lastId,
-    network,
-  }: {
-    network: number;
-    userAddress: Address;
-    lastId: string;
-  }) => {
-    let holdings: Array<Holding> = [];
-    let nextId: string | undefined;
+const fetchErc1155sMainnet = async ({
+  userAddress,
+  lastId,
+  network,
+  querySubgraph,
+}: {
+  network: number;
+  userAddress: Address;
+  lastId: string;
+  querySubgraph: QuerySubgraph;
+}) => {
+  let holdings: Array<Holding> = [];
+  let nextId: string | undefined;
 
-    const q = createQuery<ERC1155Sepolia.Query>();
+  const q = createQuery<ERC1155Sepolia.Query>();
 
-    const query = q.account.id(userAddress).select((s) => [
-      s.holdings(
-        q.holdings
-          .first(1000)
-          .orderBy('id')
-          .orderDirection('asc')
-          .where((w) => [w.id.gt(lastId)])
-          .select((s) => [
-            s.id,
-            s.balance,
-            s.token((t) => [t.identifier, t.collection((c) => [c.id])]),
-          ])
-      ),
-    ]);
+  const query = q.account.id(userAddress).select((s) => [
+    s.holdings(
+      q.holdings
+        .first(1000)
+        .orderBy('id')
+        .orderDirection('asc')
+        .where((w) => [w.id.gt(lastId)])
+        .select((s) => [
+          s.id,
+          s.balance,
+          s.token((t) => [t.identifier, t.collection((c) => [c.id])]),
+        ])
+    ),
+  ]);
 
-    const data = await querySubgraph({
-      url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
-      query,
+  const data = await querySubgraph({
+    url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
+    query,
+  });
+
+  if (data?.account?.holdings?.length) {
+    holdings = data.account.holdings.map((x) => {
+      return {
+        assetAddress: x.token.collection.id as Address,
+        tokenId: BigInt(x.token.identifier).toString() as TokenId,
+        quantity: BigInt(x.balance || '1'),
+      };
     });
+  }
+  if (data?.account?.holdings?.length === 1000) {
+    nextId = data.account.holdings[data.account.holdings.length - 1].id;
+  }
 
-    if (data?.account?.holdings?.length) {
-      holdings = data.account.holdings.map((x) => {
-        return {
-          assetAddress: x.token.collection.id as Address,
-          tokenId: BigInt(x.token.identifier).toString() as TokenId,
-          quantity: BigInt(x.balance || '1'),
-        };
-      });
-    }
-    if (data?.account?.holdings?.length === 1000) {
-      nextId = data.account.holdings[data.account.holdings.length - 1].id;
-    }
+  return [holdings, nextId] as const;
+};
 
-    return [holdings, nextId] as const;
-  };
+const fetchErc1155sSepolia = async ({
+  lastId,
+  network,
+  userAddress,
+  querySubgraph,
+}: {
+  network: number;
+  lastId: string;
+  userAddress: Address;
+  querySubgraph: QuerySubgraph;
+}) => {
+  let holdings: Array<Holding> = [];
+  let nextId: string | undefined;
 
-const makeFetchErc1155sSepolia =
-  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
-  async ({
-    lastId,
-    network,
-    userAddress,
-  }: {
-    network: number;
-    lastId: string;
-    userAddress: Address;
-  }) => {
-    let holdings: Array<Holding> = [];
-    let nextId: string | undefined;
+  const q = createQuery<ERC1155Sepolia.Query>();
 
-    const q = createQuery<ERC1155Sepolia.Query>();
+  const query = q.account.id(userAddress).select((s) => [
+    s.holdings(
+      q.holdings
+        .first(1000)
+        .orderBy('id')
+        .orderDirection('asc')
+        .where((w) => [w.id.gt(lastId)])
+        .select((s) => [
+          s.id,
+          s.balance,
+          s.token((t) => [t.identifier, t.collection((c) => [c.id])]),
+        ])
+    ),
+  ]);
 
-    const query = q.account.id(userAddress).select((s) => [
-      s.holdings(
-        q.holdings
-          .first(1000)
-          .orderBy('id')
-          .orderDirection('asc')
-          .where((w) => [w.id.gt(lastId)])
-          .select((s) => [
-            s.id,
-            s.balance,
-            s.token((t) => [t.identifier, t.collection((c) => [c.id])]),
-          ])
-      ),
-    ]);
+  const data = await querySubgraph({
+    url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
+    query,
+  });
 
-    const data = await querySubgraph({
-      url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
-      query,
+  if (data?.account?.holdings?.length) {
+    holdings = data.account.holdings.map((x) => {
+      return {
+        assetAddress: x.token.collection.id as Address,
+        tokenId: BigInt(x.token.identifier).toString() as TokenId,
+        quantity: BigInt(x.balance || '1'),
+      };
     });
+  }
+  if (data?.account?.holdings?.length === 1000) {
+    nextId = data.account.holdings[data.account.holdings.length - 1].id;
+  }
 
-    if (data?.account?.holdings?.length) {
-      holdings = data.account.holdings.map((x) => {
-        return {
-          assetAddress: x.token.collection.id as Address,
-          tokenId: BigInt(x.token.identifier).toString() as TokenId,
-          quantity: BigInt(x.balance || '1'),
-        };
-      });
-    }
-    if (data?.account?.holdings?.length === 1000) {
-      nextId = data.account.holdings[data.account.holdings.length - 1].id;
-    }
+  return [holdings, nextId] as const;
+};
 
-    return [holdings, nextId] as const;
-  };
-
-const makeFetchErc1155sGoerli =
-  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
-  async ({
-    lastId,
-    network,
-    userAddress,
-  }: {
-    network: number;
-    lastId: string;
-    userAddress: Address;
-  }) => {
-    let holdings: Array<Holding> = [];
-    let nextId: string | undefined;
-    type Response = {
-      owners: {
-        id: Address;
-        totalTokens: string;
-        tokens: {
-          tokenID: `${number}`;
-          collection: { id: Address };
-        }[];
+const fetchErc1155sGoerli = async ({
+  lastId,
+  network,
+  userAddress,
+  querySubgraph,
+}: {
+  network: number;
+  lastId: string;
+  userAddress: Address;
+  querySubgraph: QuerySubgraph;
+}) => {
+  let holdings: Array<Holding> = [];
+  let nextId: string | undefined;
+  type Response = {
+    owners: {
+      id: Address;
+      totalTokens: string;
+      tokens: {
+        tokenID: `${number}`;
+        collection: { id: Address };
       }[];
-    };
+    }[];
+  };
 
-    const query = gql<Response>`{
+  const query = gql<Response>`{
     owners(
       where: {
         id: "${userAddress}"
@@ -160,46 +159,31 @@ const makeFetchErc1155sGoerli =
     }
   }`;
 
-    const data = await querySubgraph({
-      url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
-      query,
+  const data = await querySubgraph({
+    url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
+    query,
+  });
+
+  if (data?.owners?.[0]?.tokens?.length) {
+    holdings = data.owners[0].tokens.map((x) => {
+      return {
+        assetAddress: x.collection.id,
+        tokenId: BigInt(x.tokenID).toString() as TokenId,
+      };
     });
+  }
+  if (data?.owners?.[0]?.tokens?.length === 1000) {
+    nextId =
+      data.owners?.[0].tokens[data.owners?.[0].tokens.length - 1].tokenID;
+  }
 
-    if (data?.owners?.[0]?.tokens?.length) {
-      holdings = data.owners[0].tokens.map((x) => {
-        return {
-          assetAddress: x.collection.id,
-          tokenId: BigInt(x.tokenID).toString() as TokenId,
-        };
-      });
-    }
-    if (data?.owners?.[0]?.tokens?.length === 1000) {
-      nextId =
-        data.owners?.[0].tokens[data.owners?.[0].tokens.length - 1].tokenID;
-    }
+  return [holdings, nextId] as const;
+};
 
-    return [holdings, nextId] as const;
-  };
+const fetchErc1155sArbitrum = fetchErc1155sMainnet;
 
-const makeFetchErc1155sArbitrum = makeFetchErc1155sMainnet;
-
-type FetchErc1155sMainnet = ReturnType<typeof makeFetchErc1155sMainnet>;
-type FetchErc1155sGoerli = ReturnType<typeof makeFetchErc1155sGoerli>;
-type FetchErc1155sArbitrum = ReturnType<typeof makeFetchErc1155sArbitrum>;
-type FetchErc1155sSepolia = ReturnType<typeof makeFetchErc1155sSepolia>;
-
-const makeFetchErc1155s =
-  ({
-    fetchErc1155sArbitrum,
-    fetchErc1155sGoerli,
-    fetchErc1155sMainnet,
-    fetchErc1155sSepolia,
-  }: {
-    fetchErc1155sMainnet: FetchErc1155sMainnet;
-    fetchErc1155sGoerli: FetchErc1155sGoerli;
-    fetchErc1155sArbitrum: FetchErc1155sArbitrum;
-    fetchErc1155sSepolia: FetchErc1155sSepolia;
-  }) =>
+export const makeFetchErc1155s =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
   async ({
     userAddress,
     cursor,
@@ -222,6 +206,7 @@ const makeFetchErc1155s =
           lastId,
           network,
           userAddress,
+          querySubgraph,
         });
         break;
       case Network.Goerli:
@@ -229,6 +214,7 @@ const makeFetchErc1155s =
           lastId,
           network,
           userAddress,
+          querySubgraph,
         });
         break;
       case Network.Sepolia:
@@ -236,6 +222,7 @@ const makeFetchErc1155s =
           lastId,
           network,
           userAddress,
+          querySubgraph,
         });
         break;
       case Network.Arbitrum:
@@ -243,6 +230,7 @@ const makeFetchErc1155s =
           lastId,
           network,
           userAddress,
+          querySubgraph,
         });
         break;
       default:
@@ -255,9 +243,4 @@ const makeFetchErc1155s =
     };
   };
 
-export default makeFetchErc1155s({
-  fetchErc1155sArbitrum: makeFetchErc1155sArbitrum({ querySubgraph }),
-  fetchErc1155sGoerli: makeFetchErc1155sGoerli({ querySubgraph }),
-  fetchErc1155sMainnet: makeFetchErc1155sMainnet({ querySubgraph }),
-  fetchErc1155sSepolia: makeFetchErc1155sSepolia({ querySubgraph }),
-});
+export default makeFetchErc1155s({ querySubgraph });

@@ -6,7 +6,7 @@ import { addressEqual } from '@nftx/utils';
 
 type FetchAll = typeof fetchAll;
 
-const makeFetchUserHoldings =
+export const makeFetchUserHoldings =
   ({ fetchAll }: { fetchAll: FetchAll }) =>
   async ({
     assetAddresses,

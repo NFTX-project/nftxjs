@@ -6,7 +6,7 @@ type FetchAssetsFromReservoir = typeof fetchAssetsFromReservoir;
 
 const isDefined = <T>(x: T | undefined): x is T => x != null;
 
-const makeFetchUserAssets = ({
+export const makeFetchUserAssets = ({
   fetchAssetsFromReservoir,
 }: {
   fetchAssetsFromReservoir: FetchAssetsFromReservoir;

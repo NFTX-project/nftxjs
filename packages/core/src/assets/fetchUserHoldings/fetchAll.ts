@@ -10,7 +10,7 @@ type FetchErc1155s = typeof fetchErc1155s;
 type FetchErc721s = typeof fetchErc721s;
 type FetchNonStandards = typeof fetchNonstandards;
 
-const makeFetchAll =
+export const makeFetchAll =
   ({
     fetchErc1155s,
     fetchErc721s,

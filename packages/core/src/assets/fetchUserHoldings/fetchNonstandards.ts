@@ -17,7 +17,7 @@ type Response = {
 };
 type Params = { userAddress: Address; lastId: string };
 
-const makeFetchNonStandards =
+export const makeFetchNonStandards =
   ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
   async ({
     userAddress,

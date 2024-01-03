@@ -10,7 +10,7 @@ type IsMerkleVault = typeof isMerkleVault;
 type FetchMerkleLeaves = typeof fetchMerkleLeaves;
 type CheckEligible = typeof checkEligible;
 
-const makeIsAssetEligibleForVault =
+export const makeIsAssetEligibleForVault =
   ({
     checkEligible,
     fetchMerkleLeaves,
