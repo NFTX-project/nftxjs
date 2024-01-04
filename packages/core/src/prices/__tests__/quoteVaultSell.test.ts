@@ -13,6 +13,7 @@ let tokenIds: Args['tokenIds'];
 let userAddress: Args['userAddress'];
 let vault: Args['vault'];
 let slippagePercentage: Args['slippagePercentage'];
+let provider: any;
 
 beforeEach(() => {
   fetchTokenSellPrice = jest.fn(async ({ amount }) => ({
@@ -31,6 +32,9 @@ beforeEach(() => {
     is1155: false,
   };
   slippagePercentage = 0;
+  provider = {
+    estimateContractGas: jest.fn().mockResolvedValue(0n),
+  };
 
   quoteVaultSell = makeQuoteVaultSell({
     fetchTokenSellPrice,
@@ -38,7 +42,7 @@ beforeEach(() => {
   });
   run = () =>
     quoteVaultSell({
-      provider: null as any,
+      provider,
       tokenIds,
       userAddress,
       vault,
@@ -82,6 +86,22 @@ it('returns a list of individual item costs', async () => {
   expect(formatEther(result.items[1].feePrice)).toBe('0.025');
 });
 
+describe('when slippage percentage is not set', () => {
+  it('does not adjust the payable amount', async () => {
+    const result = await run();
+
+    expect(result.methodParameters.value).toBe('50000000000000000');
+  });
+});
+
 describe('when slippage percentage is set', () => {
-  it.todo('adjusts the payable amount');
+  beforeEach(() => {
+    slippagePercentage = 0.1;
+  });
+
+  it('adjusts the payable amount', async () => {
+    const result = await run();
+
+    expect(result.methodParameters.value).toBe('55000000000000000');
+  });
 });

@@ -4,6 +4,9 @@ import queryPositionData from './queryPositionData';
 import transformPosition from './transformPosition';
 import fetchClaimableAmount from './fetchClaimableAmount';
 
+type QueryPositionData = typeof queryPositionData;
+type FetchClaimableAmount = typeof fetchClaimableAmount;
+
 const getVaultByVaultId = <V extends Pick<Vault, 'vaultId'>>(
   vaults: V[],
   vaultId: string
@@ -15,55 +18,68 @@ const getVaultByVaultId = <V extends Pick<Vault, 'vaultId'>>(
   return vault;
 };
 
-const fetchPositionsSet = async ({
-  network,
-  lastId,
-  positionIds,
-  userAddresses,
-  vaultAddresses,
-  vaults,
-  provider,
-}: {
-  network: number;
-  lastId?: Address;
-  positionIds?: Address[];
-  userAddresses?: Address[];
-  vaultAddresses?: Address[];
-  vaults: Pick<Vault, 'vaultId' | 'vTokenToEth'>[];
-  provider: Provider;
-}) => {
-  const data = await queryPositionData({
+export const makeFetchPositionsSet =
+  ({
+    fetchClaimableAmount,
+    queryPositionData,
+  }: {
+    queryPositionData: QueryPositionData;
+    fetchClaimableAmount: FetchClaimableAmount;
+  }) =>
+  async ({
     network,
     lastId,
     positionIds,
     userAddresses,
     vaultAddresses,
-  });
+    vaults,
+    provider,
+  }: {
+    network: number;
+    lastId?: Address;
+    positionIds?: Address[];
+    userAddresses?: Address[];
+    vaultAddresses?: Address[];
+    vaults: Pick<Vault, 'vaultId' | 'vTokenToEth'>[];
+    provider: Provider;
+  }) => {
+    const data = await queryPositionData({
+      network,
+      lastId,
+      positionIds,
+      userAddresses,
+      vaultAddresses,
+    });
 
-  const positions = await Promise.all(
-    data.inventoryPositions.map(async (position) => {
-      const vault = getVaultByVaultId(vaults, position.vault.vaultId);
-      const claimableRewards = await fetchClaimableAmount({
-        positionId: position.positionId,
-        provider,
-        network,
-      });
+    const positions = await Promise.all(
+      data.inventoryPositions.map(async (position) => {
+        const vault = getVaultByVaultId(vaults, position.vault.vaultId);
+        const claimableRewards = await fetchClaimableAmount({
+          positionId: position.positionId,
+          provider,
+          network,
+        });
 
-      return transformPosition({
-        position,
-        vault,
-        claimableRewards,
-      });
-    })
-  );
+        return transformPosition({
+          position,
+          vault,
+          claimableRewards,
+        });
+      })
+    );
 
-  let nextId: Address | undefined;
+    let nextId: Address | undefined;
 
-  if (data.inventoryPositions.length === 1000) {
-    nextId = data.inventoryPositions.pop()?.id as Address;
-  }
+    if (data.inventoryPositions.length === 1000) {
+      nextId = data.inventoryPositions.pop()?.id as Address;
+    }
 
-  return [positions, nextId] as const;
-};
+    return [positions, nextId] as const;
+  };
+
+const fetchPositionsSet = makeFetchPositionsSet({
+  fetchClaimableAmount,
+  queryPositionData,
+});
 
 export default fetchPositionsSet;

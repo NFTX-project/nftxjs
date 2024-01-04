@@ -1,25 +1,42 @@
 import type { Provider, TokenId, Vault, VaultHolding } from '@nftx/types';
 import { priceVaultBuy, priceVaultSell, priceVaultSwap } from '../../prices';
 
+type PriceVaultBuy = typeof priceVaultBuy;
+type PriceVaultSell = typeof priceVaultSell;
+type PriceVaultSwap = typeof priceVaultSwap;
+
+// Basically we want to get the buy/sell/swap prices for 1-5 items
+
 const PRICE_COUNT = 5;
 
-const populateVault__Prices = async (
-  key: 'redeem' | 'mint' | 'swap',
-  vault: Vault,
-  cb: (args: { tokenIds: TokenId[] }) => Promise<Vault['prices'][0]['mint']>
-) => {
+const populateVaultXPrices = async ({
+  fetchPrice,
+  key,
+  vault,
+}: {
+  key: 'redeem' | 'mint' | 'swap';
+  vault: Vault;
+  fetchPrice: (args: {
+    tokenIds: TokenId[];
+  }) => Promise<Vault['prices'][0]['mint']>;
+}) => {
   for (let i = 0; i < PRICE_COUNT; i++) {
     try {
+      // Generate some duff tokenIDs, 9991, 9992, 9993, etc.
+      // There is the potential that these tokenIDs could be real and in the vault
       const tokenIds = new Array(i + 1)
         .fill(null)
         .map((_, i) => `999${i}` as `${number}`);
 
-      const price = await cb({
+      const price = await fetchPrice({
         tokenIds,
       });
 
       vault.prices[i][key] = price;
     } catch (e) {
+      // If the price calc fails, we'll just let it fall back to the default price (0)
+      // There are many, many reasons why it might fail. The pricing API could be down,
+      // there could be insufficient liquidity, etc.
       console.warn(
         `Couldn't get ${key} price [${i}] for vault ${vault.vaultId}`
       );
@@ -29,58 +46,63 @@ const populateVault__Prices = async (
   }
 };
 
-const populateVaultBuyPrices = async (
-  vault: Vault,
-  network: number,
-  holdings: VaultHolding[],
-  provider: Provider
-) => {
-  await populateVault__Prices('redeem', vault, ({ tokenIds }) =>
-    priceVaultBuy({
-      holdings,
-      network,
-      provider,
-      tokenIds,
+export const makePopulateVaultPrices =
+  ({
+    priceVaultBuy,
+    priceVaultSell,
+    priceVaultSwap,
+  }: {
+    priceVaultBuy: PriceVaultBuy;
+    priceVaultSell: PriceVaultSell;
+    priceVaultSwap: PriceVaultSwap;
+  }) =>
+  async (
+    vault: Vault,
+    network: number,
+    holdings: VaultHolding[],
+    provider: Provider
+  ) => {
+    await populateVaultXPrices({
+      key: 'redeem',
       vault,
-      bypassIndexedPrice: true,
-    })
-  );
-};
+      fetchPrice: ({ tokenIds }) =>
+        priceVaultBuy({
+          holdings,
+          network,
+          provider,
+          tokenIds,
+          vault,
+          bypassIndexedPrice: true,
+        }),
+    });
 
-const populateVaultSellPrices = async (vault: Vault, network: number) => {
-  await populateVault__Prices('mint', vault, async ({ tokenIds }) =>
-    priceVaultSell({ network, tokenIds, vault, bypassIndexedPrice: true })
-  );
-};
-
-const populateVaultSwaprices = async (
-  vault: Vault,
-  network: number,
-  holdings: VaultHolding[],
-  provider: Provider
-) => {
-  await populateVault__Prices('swap', vault, ({ tokenIds }) =>
-    priceVaultSwap({
-      buyTokenIds: tokenIds,
-      holdings,
-      network,
-      provider,
-      sellTokenIds: tokenIds,
+    await populateVaultXPrices({
+      key: 'mint',
       vault,
-      bypassIndexedPrice: true,
-    })
-  );
-};
+      fetchPrice: ({ tokenIds }) =>
+        priceVaultSell({ network, tokenIds, vault, bypassIndexedPrice: true }),
+    });
 
-const populateVaultPrices = async (
-  vault: Vault,
-  network: number,
-  holdings: VaultHolding[],
-  provider: Provider
-) => {
-  await populateVaultBuyPrices(vault, network, holdings, provider);
-  await populateVaultSellPrices(vault, network);
-  await populateVaultSwaprices(vault, network, holdings, provider);
-};
+    await populateVaultXPrices({
+      key: 'swap',
+      vault,
+      fetchPrice: ({ tokenIds }) =>
+        priceVaultSwap({
+          buyTokenIds: tokenIds,
+          holdings,
+          network,
+          provider,
+          sellTokenIds: tokenIds,
+          vault,
+          bypassIndexedPrice: true,
+        }),
+    });
+  };
+
+const populateVaultPrices = makePopulateVaultPrices({
+  priceVaultBuy,
+  priceVaultSell,
+  priceVaultSwap,
+});
 
 export default populateVaultPrices;

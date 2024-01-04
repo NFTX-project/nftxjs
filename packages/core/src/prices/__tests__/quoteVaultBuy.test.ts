@@ -52,7 +52,9 @@ beforeEach(() => {
   run = () =>
     quoteVaultBuy({
       holdings,
-      provider: null as any,
+      provider: {
+        estimateContractGas: jest.fn().mockResolvedValue(0n),
+      } as any,
       tokenIds,
       userAddress,
       vault,
@@ -129,6 +131,22 @@ describe('when items are outside the premium window', () => {
   });
 });
 
+describe('when slippage percentage is not set', () => {
+  it('does not adjust the payable amount', async () => {
+    const result = await run();
+
+    expect(result.methodParameters.value).toBe('2050000000000000000');
+  });
+});
+
 describe('when slippage percentage is set', () => {
-  it.todo('adjusts the payable amount');
+  beforeEach(() => {
+    slippagePercentage = 0.1;
+  });
+
+  it('adjusts the payable amount', async () => {
+    const result = await run();
+
+    expect(result.methodParameters.value).toBe('2255000000000000000');
+  });
 });

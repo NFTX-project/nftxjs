@@ -62,7 +62,7 @@ beforeEach(() => {
           image: 'example.com/image',
           imageSmall: 'example.com/imageSmall',
           isFlagged: false,
-          media: 'example.com/media',
+          media: 'example.com/media.mp4',
           name: 'CryptoPunks',
           imageLarge: 'example.com/imageLarge',
           rarityRank: 0,
@@ -104,7 +104,7 @@ beforeEach(() => {
           image: 'example.com/image',
           imageSmall: 'example.com/imageSmall',
           isFlagged: false,
-          media: 'example.com/media',
+          media: 'example.com/media.mp4',
           name: 'CryptoPunks',
           imageLarge: 'example.com/imageLarge',
           rarityRank: 0,
@@ -126,7 +126,7 @@ it('returns a list of assets', async () => {
 
   const expected = [
     {
-      animationUrl: 'example.com/media',
+      animationUrl: 'example.com/media.mp4',
       assetAddress: '0x0000000',
       id: '0x0000000/0',
       imagePreviewUrl: 'example.com/imageSmall',
@@ -142,7 +142,6 @@ it('returns a list of assets', async () => {
       vaultIds: ['0'],
     },
     {
-      animationUrl: 'example.com/media',
       assetAddress: '0x0000000',
       id: '0x0000000/1',
       imagePreviewUrl: 'example.com/imageSmall',
@@ -158,7 +157,7 @@ it('returns a list of assets', async () => {
       vaultIds: ['0'],
     },
     {
-      animationUrl: 'example.com/media',
+      animationUrl: 'example.com/media.mp4',
       assetAddress: '0x0000000',
       id: '0x0000000/2',
       imagePreviewUrl: 'example.com/imageSmall',

@@ -13,6 +13,13 @@ import type { Address, Collection, Provider, Vault } from '@nftx/types';
 import populateVaultPrices from './populateVaultPrices';
 import { fetchCollection } from '../../collections';
 
+type FetchSubgraphVaults = typeof fetchSubgraphVaults;
+type FetchVaultHoldings = typeof fetchVaultHoldings;
+type FetchMerkleReference = typeof fetchMerkleReference;
+type FetchVTokenToEth = typeof fetchVTokenToEth;
+type FetchCollection = typeof fetchCollection;
+type PopulateVaultPrices = typeof populateVaultPrices;
+
 const isVaultEnabled = (vault: Response['vaults'][0]) => {
   // finalized or DAO vaults only
   if (!vault.isFinalized) {
@@ -32,89 +39,114 @@ const isVaultEnabled = (vault: Response['vaults'][0]) => {
   return true;
 };
 
-const fetchVaults = async ({
-  network = config.network,
-  provider,
-  vaultAddresses,
-  vaultIds,
-  manager,
-  enabledOnly = true,
-}: {
-  network?: number;
-  provider: Provider;
-  vaultAddresses?: Address[];
-  vaultIds?: string[];
-  enabledOnly?: boolean;
-  manager?: Address;
-}): Promise<Vault[]> => {
-  const data = await fetchSubgraphVaults({
-    network,
-    manager,
+export const makeFetchVaults =
+  ({
+    fetchCollection,
+    fetchMerkleReference,
+    fetchSubgraphVaults,
+    fetchVTokenToEth,
+    fetchVaultHoldings,
+    populateVaultPrices,
+  }: {
+    fetchSubgraphVaults: FetchSubgraphVaults;
+    fetchVaultHoldings: FetchVaultHoldings;
+    fetchMerkleReference: FetchMerkleReference;
+    fetchVTokenToEth: FetchVTokenToEth;
+    fetchCollection: FetchCollection;
+    populateVaultPrices: PopulateVaultPrices;
+  }) =>
+  async ({
+    network = config.network,
+    provider,
     vaultAddresses,
     vaultIds,
-  });
+    manager,
+    enabledOnly = true,
+  }: {
+    network?: number;
+    provider: Provider;
+    vaultAddresses?: Address[];
+    vaultIds?: string[];
+    enabledOnly?: boolean;
+    manager?: Address;
+  }): Promise<Vault[]> => {
+    const data = await fetchSubgraphVaults({
+      network,
+      manager,
+      vaultAddresses,
+      vaultIds,
+    });
 
-  let vaultData = data?.vaults ?? [];
-  const globalFees = data?.globals?.[0]?.fees;
+    let vaultData = data?.vaults ?? [];
+    const globalFees = data?.globals?.[0]?.fees;
 
-  // Filter out any vaults that aren't set up for use
-  if (enabledOnly) {
-    vaultData = vaultData.filter(isVaultEnabled);
-  }
+    // Filter out any vaults that aren't set up for use
+    if (enabledOnly) {
+      vaultData = vaultData.filter(isVaultEnabled);
+    }
 
-  const allHoldings = await fetchVaultHoldings({
-    network,
-    vaultIds: vaultData.map((v) => v.vaultId),
-  });
+    const allHoldings = await fetchVaultHoldings({
+      network,
+      vaultIds: vaultData.map((v) => v.vaultId),
+    });
 
-  const collections: Record<string, Collection> = {};
+    const collections: Record<string, Collection> = {};
 
-  const vaultPromises =
-    vaultData.map(async (x) => {
-      const y = {
-        id: x.id as Address,
-        holdings: x.holdings.map((h) => ({ ...h, tokenId: `${h.tokenId}` })),
-        eligibilityModule: x.eligibilityModule
-          ? { ...x.eligibilityModule, id: x.eligibilityModule.id as Address }
-          : undefined,
-      };
+    const vaultPromises =
+      vaultData.map(async (x) => {
+        const y = {
+          id: x.id as Address,
+          holdings: x.holdings.map((h) => ({ ...h, tokenId: `${h.tokenId}` })),
+          eligibilityModule: x.eligibilityModule
+            ? { ...x.eligibilityModule, id: x.eligibilityModule.id as Address }
+            : undefined,
+        };
 
-      const merkleReference =
-        (isMerkleVault(y)
-          ? await fetchMerkleReference({ provider, vault: y })
-          : null) ?? undefined;
+        const merkleReference =
+          (isMerkleVault(y)
+            ? await fetchMerkleReference({ provider, vault: y })
+            : null) ?? undefined;
 
-      const vTokenToEth = await fetchVTokenToEth({
-        provider,
-        vaultAddress: y.id,
-      });
-
-      let collection = collections[x.asset.id];
-      if (!collection) {
-        collection = collections[x.asset.id] = await fetchCollection({
-          network,
-          assetAddress: x.asset.id as Address,
+        const vTokenToEth = await fetchVTokenToEth({
+          provider,
+          vaultAddress: y.id,
         });
-      }
 
-      const vault = transformVault({
-        globalFees,
-        vault: x,
-        merkleReference,
-        vTokenToEth,
-        collection,
-      });
+        let collection = collections[x.asset.id];
+        if (!collection) {
+          collection = collections[x.asset.id] = await fetchCollection({
+            network,
+            assetAddress: x.asset.id as Address,
+          });
+        }
 
-      const holdings = allHoldings.filter((h) => h.vaultId === x.vaultId);
+        const vault = transformVault({
+          globalFees,
+          vault: x,
+          merkleReference,
+          vTokenToEth,
+          collection,
+        });
 
-      await populateVaultPrices(vault, network, holdings, provider);
+        const holdings = allHoldings.filter((h) => h.vaultId === x.vaultId);
 
-      return vault;
-    }) ?? [];
+        await populateVaultPrices(vault, network, holdings, provider);
 
-  const vaults = await Promise.all(vaultPromises);
+        return vault;
+      }) ?? [];
 
-  return vaults;
-};
+    const vaults = await Promise.all(vaultPromises);
+
+    return vaults;
+  };
+
+const fetchVaults = makeFetchVaults({
+  fetchCollection,
+  fetchMerkleReference,
+  fetchSubgraphVaults,
+  fetchVaultHoldings,
+  fetchVTokenToEth,
+  populateVaultPrices,
+});
 
 export default fetchVaults;

@@ -10,6 +10,9 @@ import { addressEqual } from '@nftx/utils';
 import transformPosition from './transformPosition';
 import { NotFoundError } from '@nftx/errors';
 import fetchClaimableAmount from './fetchClaimableAmount';
+
+type QueryPositionData = typeof queryPositionData;
+type FetchClaimableAmount = typeof fetchClaimableAmount;
 import getManager from './getManager';
 
 const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
@@ -32,60 +35,73 @@ const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   return vault;
 };
 
-const fetchPositionsSet = async ({
-  lastId,
-  network,
-  vaults,
-  poolIds,
-  positionIds,
-  userAddresses,
-  provider,
-}: {
-  network: number;
-  vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
-  provider: Provider;
-  lastId?: Address;
-  poolIds?: Address[];
-  positionIds?: Address[];
-  userAddresses?: Address[];
-}) => {
-  const data = await queryPositionData({
+export const makeFetchPositionsSet =
+  ({
+    fetchClaimableAmount,
+    queryPositionData,
+  }: {
+    queryPositionData: QueryPositionData;
+    fetchClaimableAmount: FetchClaimableAmount;
+  }) =>
+  async ({
     lastId,
     network,
+    vaults,
     poolIds,
     positionIds,
     userAddresses,
-  });
+    provider,
+  }: {
+    network: number;
+    vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
+    provider: Provider;
+    lastId?: Address;
+    poolIds?: Address[];
+    positionIds?: Address[];
+    userAddresses?: Address[];
+  }) => {
+    const data = await queryPositionData({
+      lastId,
+      network,
+      poolIds,
+      positionIds,
+      userAddresses,
+    });
 
-  const positions = await Promise.all(
-    data.positions.map(async (position): Promise<LiquidityPosition> => {
-      const vault = getVaultByTokens({
-        inputTokens: position.pool.inputTokens,
-        position,
-        vaults,
-      });
-      const [claimable0, claimable1] = await fetchClaimableAmount({
-        tokenId: position.tokenId as TokenId,
-        provider,
-        manager: getManager(network, position.timestampOpened),
-      });
-      return transformPosition({
-        network,
-        position,
-        vault,
-        claimable0,
-        claimable1,
-      });
-    })
-  );
+    const positions = await Promise.all(
+      data.positions.map(async (position): Promise<LiquidityPosition> => {
+        const vault = getVaultByTokens({
+          inputTokens: position.pool.inputTokens,
+          position,
+          vaults,
+        });
+        const [claimable0, claimable1] = await fetchClaimableAmount({
+          tokenId: position.tokenId as TokenId,
+          provider,
+          manager: getManager(network, position.timestampOpened),
+        });
+        return transformPosition({
+          network,
+          position,
+          vault,
+          claimable0,
+          claimable1,
+        });
+      })
+    );
 
-  let nextId: Address | undefined;
+    let nextId: Address | undefined;
 
-  if (data.positions.length === 1000) {
-    nextId = data.positions.pop()?.id as Address;
-  }
+    if (data.positions.length === 1000) {
+      nextId = data.positions.pop()?.id as Address;
+    }
 
-  return [positions, nextId] as const;
-};
+    return [positions, nextId] as const;
+  };
+
+const fetchPositionsSet = makeFetchPositionsSet({
+  fetchClaimableAmount,
+  queryPositionData,
+});
 
 export default fetchPositionsSet;

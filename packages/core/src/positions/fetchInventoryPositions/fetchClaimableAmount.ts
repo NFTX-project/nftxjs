@@ -4,22 +4,28 @@ import { INVENTORY_STAKING } from '@nftx/constants';
 import { Provider } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
 
-const fetchClaimableAmount = ({
-  network = config.network,
-  positionId,
-  provider,
-}: {
-  network?: number;
-  provider: Provider;
-  positionId: string;
-}) => {
-  const contract = getContract({
-    abi: InventoryStaking,
-    address: getChainConstant(INVENTORY_STAKING, network),
-    provider,
-  });
+type GetContract = typeof getContract;
 
-  return contract.read.wethBalance({ args: [BigInt(positionId)] });
-};
+export const makeFetchClaimableAmount =
+  ({ getContract }: { getContract: GetContract }) =>
+  ({
+    network = config.network,
+    positionId,
+    provider,
+  }: {
+    network?: number;
+    provider: Provider;
+    positionId: string;
+  }) => {
+    const contract = getContract({
+      abi: InventoryStaking,
+      address: getChainConstant(INVENTORY_STAKING, network),
+      provider,
+    });
+
+    return contract.read.wethBalance({ args: [BigInt(positionId)] });
+  };
+
+const fetchClaimableAmount = makeFetchClaimableAmount({ getContract });
 
 export default fetchClaimableAmount;

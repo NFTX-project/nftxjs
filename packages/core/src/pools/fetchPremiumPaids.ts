@@ -3,66 +3,72 @@ import { getChainConstant } from '@nftx/utils';
 import { createQuery, querySubgraph } from '@nftx/subgraph';
 import config from '@nftx/config';
 
-const fetchPremiumPaids = async ({
-  network,
-  vaultAddresses,
-  vaultIds,
-}: {
-  network: number;
-  vaultAddresses?: Address[];
-  vaultIds?: string[];
-}) => {
-  const premiumPaids: {
-    date: number;
-    amount: bigint;
-    vaultId: string;
-    to: Address;
-    vaultAddress: Address;
-  }[] = [];
-  let lastId: string | undefined;
+type QuerySubgraph = typeof querySubgraph;
 
-  do {
-    const query = createQuery<NftxV3.Query>()
-      .premiumPaids.orderBy('id')
-      .orderDirection('asc')
-      .first(1000)
-      .where((w) => [
-        w.id.gt(lastId),
-        w.vault.in(vaultAddresses),
-        w.vault((vault) => [vault.vaultId.in(vaultIds)]),
-      ])
-      .select((s) => [
-        s.amount,
-        s.date,
-        s.id,
-        s.to((to) => [to.id]),
-        s.vault((vault) => [vault.id, vault.vaultId]),
-      ]);
-    const data = await querySubgraph({
-      query,
-      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
-    });
+export const makeFetchPremiumPaids =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  async ({
+    network,
+    vaultAddresses,
+    vaultIds,
+  }: {
+    network: number;
+    vaultAddresses?: Address[];
+    vaultIds?: string[];
+  }) => {
+    const premiumPaids: {
+      date: number;
+      amount: bigint;
+      vaultId: string;
+      to: Address;
+      vaultAddress: Address;
+    }[] = [];
+    let lastId: string | undefined;
 
-    premiumPaids.push(
-      ...data.premiumPaids.map((p) => {
-        return {
-          date: Number(p.date),
-          amount: BigInt(p.amount),
-          vaultId: p.vault.vaultId,
-          to: p.to.id as Address,
-          vaultAddress: p.vault.id as Address,
-        };
-      })
-    );
+    do {
+      const query = createQuery<NftxV3.Query>()
+        .premiumPaids.orderBy('id')
+        .orderDirection('asc')
+        .first(1000)
+        .where((w) => [
+          w.id.gt(lastId),
+          w.vault.in(vaultAddresses),
+          w.vault((vault) => [vault.vaultId.in(vaultIds)]),
+        ])
+        .select((s) => [
+          s.amount,
+          s.date,
+          s.id,
+          s.to((to) => [to.id]),
+          s.vault((vault) => [vault.id, vault.vaultId]),
+        ]);
+      const data = await querySubgraph({
+        query,
+        url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
+      });
 
-    if (data.premiumPaids.length === 1000) {
-      lastId = data.premiumPaids[data.premiumPaids.length - 1].id;
-    } else {
-      lastId = undefined;
-    }
-  } while (lastId);
+      premiumPaids.push(
+        ...data.premiumPaids.map((p) => {
+          return {
+            date: Number(p.date),
+            amount: BigInt(p.amount),
+            vaultId: p.vault.vaultId,
+            to: p.to.id as Address,
+            vaultAddress: p.vault.id as Address,
+          };
+        })
+      );
 
-  return premiumPaids;
-};
+      if (data.premiumPaids.length === 1000) {
+        lastId = data.premiumPaids[data.premiumPaids.length - 1].id;
+      } else {
+        lastId = undefined;
+      }
+    } while (lastId);
+
+    return premiumPaids;
+  };
+
+const fetchPremiumPaids = makeFetchPremiumPaids({ querySubgraph });
 
 export default fetchPremiumPaids;

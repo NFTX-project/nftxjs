@@ -35,7 +35,10 @@ const calculateAMMApr = ({
   periodStart,
   vTokenToEth,
 }: {
-  dailySnapshots: NftxV3Uniswap.LiquidityPoolDailySnapshot[];
+  dailySnapshots: Pick<
+    NftxV3Uniswap.LiquidityPoolDailySnapshot,
+    'timestamp' | 'inputTokenBalances' | 'dailyTotalRevenueETH'
+  >[];
   isWeth0: boolean;
   periodStart: number;
   periodEnd: number;
@@ -104,8 +107,11 @@ const calculateVaultFeeApr = ({
 }: {
   periodStart: number;
   periodEnd: number;
-  dailySnapshots: NftxV3Uniswap.LiquidityPoolDailySnapshot[];
-  vaultFeeReceipts: VaultFeeReceipt[];
+  dailySnapshots: Pick<
+    NftxV3Uniswap.LiquidityPoolDailySnapshot,
+    'timestamp' | 'inputTokenBalances'
+  >[];
+  vaultFeeReceipts: Pick<VaultFeeReceipt, 'date' | 'amount'>[];
   vTokenToEth: bigint;
   isWeth0: boolean;
   createdAt: number;
@@ -172,7 +178,10 @@ export default ({
   feeTier,
 }: {
   createdAt: number;
-  dailySnapshots: NftxV3Uniswap.LiquidityPoolDailySnapshot[];
+  dailySnapshots: Pick<
+    NftxV3Uniswap.LiquidityPoolDailySnapshot,
+    'timestamp' | 'dailyTotalRevenueETH' | 'inputTokenBalances'
+  >[];
   vaultFeeReceipts: VaultFeeReceipt[];
   vTokenToEth: bigint;
   isWeth0: boolean;

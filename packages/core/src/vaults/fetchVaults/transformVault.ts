@@ -3,6 +3,40 @@ import { mapObj } from '../../utils';
 import type { Response } from '../fetchSubgraphVaults';
 import type { Address, Vault, VaultState } from '@nftx/types';
 
+const getDefaultPrice = (): Vault['prices'][0]['mint'] => {
+  return {
+    feePrice: Zero,
+    premiumPrice: Zero,
+    price: Zero,
+    vTokenPrice: Zero,
+    type: 'buy',
+  };
+};
+const getDefaultPrices = (): Vault['prices'][0] => {
+  return {
+    mint: getDefaultPrice(),
+    redeem: getDefaultPrice(),
+    swap: getDefaultPrice(),
+  };
+};
+
+const getVaultState = (vault: {
+  shutdownDate: string;
+  isFinalized?: boolean | null;
+  totalHoldings: string;
+}): VaultState => {
+  if (vault.shutdownDate && vault.shutdownDate !== '0') {
+    return 'shutdown';
+  }
+  if (!vault.isFinalized) {
+    return 'unfinalized';
+  }
+  if (vault.totalHoldings === '0') {
+    return 'empty';
+  }
+  return 'active';
+};
+
 const transformVault = ({
   vault: x,
   globalFees,
@@ -16,40 +50,15 @@ const transformVault = ({
   vTokenToEth: bigint;
   collection: { slug: string };
 }) => {
-  const state: VaultState = (() => {
-    if (x.shutdownDate && x.shutdownDate !== '0') {
-      return 'shutdown';
-    }
-    if (!x.isFinalized) {
-      return 'unfinalized';
-    }
-    if (x.totalHoldings === '0') {
-      return 'empty';
-    }
-    return 'active';
-  })();
+  const state: VaultState = getVaultState(x);
 
   const rawFees = (x.usesFactoryFees && globalFees ? globalFees : x.fees) ?? {};
   const fees: Vault['fees'] = mapObj(rawFees, (key, value) => {
     return [key, BigInt(value as string)];
   });
-  const getDefaultPrice = (): Vault['prices'][0]['mint'] => {
-    return {
-      feePrice: Zero,
-      premiumPrice: Zero,
-      price: Zero,
-      vTokenPrice: Zero,
-      type: 'buy',
-    };
-  };
-  const getDefaultPrices = (): Vault['prices'][0] => {
-    return {
-      mint: getDefaultPrice(),
-      redeem: getDefaultPrice(),
-      swap: getDefaultPrice(),
-    };
-  };
 
+  // At this stage we just want to default the pricing data
+  // In the next step of fetchVaults we will populate the prices with real data
   const prices = new Array(5)
     .fill(null)
     .map(() => getDefaultPrices()) as Vault['prices'];
@@ -83,8 +92,6 @@ const transformVault = ({
     totalFees: BigInt(x.totalFees),
     shutdownDate: Number(x.shutdownDate || '0'),
     fees,
-    // We'll be calculating the price further down the line
-    // prices: [] as unknown as Vault['prices'],
     prices,
     eligibilityModule: x.eligibilityModule
       ? {

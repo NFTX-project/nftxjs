@@ -4,6 +4,8 @@ import fetchPositionsSet from './fetchPositionsSet';
 import { WeiPerEther, Zero } from '@nftx/constants';
 import { Provider } from '@nftx/types';
 
+type FetchPositionsSet = typeof fetchPositionsSet;
+
 const getVaultAddressesForVaultIds = (
   vaults: Pick<Vault, 'vaultId' | 'id'>[],
   vaultIds?: string[]
@@ -39,46 +41,52 @@ function updatePoolShares(positions: InventoryPosition[]) {
   });
 }
 
-const fetchInventoryPositions = async ({
-  network = config.network,
-  positionIds,
-  userAddresses,
-  vaultIds,
-  vaults,
-  provider,
-}: {
-  userAddresses?: Address[];
-  vaultIds?: string[];
-  positionIds?: Address[];
-  network?: number;
-  vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
-  provider: Provider;
-}): Promise<InventoryPosition[]> => {
-  const vaultAddresses = getVaultAddressesForVaultIds(vaults, vaultIds);
+export const makeFetchInventoryPositions =
+  ({ fetchPositionsSet }: { fetchPositionsSet: FetchPositionsSet }) =>
+  async ({
+    network = config.network,
+    positionIds,
+    userAddresses,
+    vaultIds,
+    vaults,
+    provider,
+  }: {
+    userAddresses?: Address[];
+    vaultIds?: string[];
+    positionIds?: Address[];
+    network?: number;
+    vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
+    provider: Provider;
+  }): Promise<InventoryPosition[]> => {
+    const vaultAddresses = getVaultAddressesForVaultIds(vaults, vaultIds);
 
-  const positions: InventoryPosition[] = [];
-  let lastId: Address | undefined;
+    const positions: InventoryPosition[] = [];
+    let lastId: Address | undefined;
 
-  do {
-    let morePositions: InventoryPosition[];
+    do {
+      let morePositions: InventoryPosition[];
 
-    [morePositions, lastId] = await fetchPositionsSet({
-      network,
-      vaults,
-      lastId,
-      positionIds,
-      userAddresses,
-      vaultAddresses,
-      provider,
-    });
+      [morePositions, lastId] = await fetchPositionsSet({
+        network,
+        vaults,
+        lastId,
+        positionIds,
+        userAddresses,
+        vaultAddresses,
+        provider,
+      });
 
-    positions.push(...morePositions);
-  } while (lastId);
+      positions.push(...morePositions);
+    } while (lastId);
 
-  // We can't calculate pool share until we've got all data
-  updatePoolShares(positions);
+    // We can't calculate pool share until we've got all data
+    updatePoolShares(positions);
 
-  return positions;
-};
+    return positions;
+  };
+
+const fetchInventoryPositions = makeFetchInventoryPositions({
+  fetchPositionsSet,
+});
 
 export default fetchInventoryPositions;

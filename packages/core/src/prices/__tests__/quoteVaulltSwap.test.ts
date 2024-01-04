@@ -15,6 +15,7 @@ let userAddress: Args['userAddress'];
 let vault: Args['vault'];
 let holdings: Args['holdings'];
 let slippagePercentage: Args['slippagePercentage'];
+let provider: any;
 
 beforeEach(() => {
   fetchVTokenToEth = jest.fn().mockResolvedValue(WeiPerEther / 2n);
@@ -41,6 +42,9 @@ beforeEach(() => {
     },
   ];
   slippagePercentage = 0;
+  provider = {
+    estimateContractGas: jest.fn().mockResolvedValue(0n),
+  };
 
   quoteVaultSwap = makeQuoteVaultSwap({
     fetchPremiumPrice,
@@ -49,7 +53,7 @@ beforeEach(() => {
   run = () =>
     quoteVaultSwap({
       holdings,
-      provider: null as any,
+      provider,
       userAddress,
       vault,
       network: 1,
@@ -127,6 +131,22 @@ describe('when items are outside the premium window', () => {
   });
 });
 
+describe('when slippage percentage is not set', () => {
+  it('does not adjust the payable amount', async () => {
+    const result = await run();
+
+    expect(result.methodParameters.value).toBe('50000000000000000');
+  });
+});
+
 describe('when slippage percentage is set', () => {
-  it.todo('adjusts the payable amount');
+  beforeEach(() => {
+    slippagePercentage = 0.1;
+  });
+
+  it('adjusts the payable amount', async () => {
+    const result = await run();
+
+    expect(result.methodParameters.value).toBe('55000000000000000');
+  });
 });

@@ -9,6 +9,8 @@ import {
 } from '@nftx/constants';
 import { PoolRouter } from '@nftx/abi';
 
+type GetContract = typeof getContract;
+
 const FEE_TIERS: FeeTier[] = [3_000, 10_000, 30_000];
 
 const fetchPoolAddress = async ({
@@ -16,11 +18,13 @@ const fetchPoolAddress = async ({
   network,
   provider,
   vaultAddress,
+  getContract,
 }: {
   vaultAddress: Address;
   feeTier: FeeTier;
   network: number;
   provider: Provider;
+  getContract: GetContract;
 }) => {
   const contract = getContract({
     address: getChainConstant(POOL_ROUTER, network),
@@ -93,17 +97,20 @@ const stubVaultPool = async ({
   network,
   provider,
   vault,
+  getContract,
 }: {
   feeTier: FeeTier;
   network: number;
   provider: Provider;
   vault: Pick<Vault, 'id' | 'vaultId' | 'token'>;
+  getContract: GetContract;
 }) => {
   const poolAddress = await fetchPoolAddress({
     feeTier,
     network,
     provider,
     vaultAddress: vault.id,
+    getContract,
   });
   return createStub({ feeTier, network, poolAddress, vault });
 };
@@ -136,11 +143,13 @@ const stubMissingVaultPools = async ({
   network,
   provider,
   vault,
+  getContract,
 }: {
   vault: Pick<Vault, 'id' | 'vaultId' | 'token'>;
-  pools: LiquidityPool[];
+  pools: Pick<LiquidityPool, 'vaultId' | 'feeTier'>[];
   network: number;
   provider: Provider;
+  getContract: GetContract;
 }) => {
   // Find all pools for this vault
   const vaultPools = getPoolsByVaultId(allPools, vault.vaultId);
@@ -149,55 +158,60 @@ const stubMissingVaultPools = async ({
   // For each tier that doesn't have a pool, calculate the address and create a stubbed pool for it
   return Promise.all(
     tiers.map((feeTier) => {
-      return stubVaultPool({ feeTier, network, provider, vault });
+      return stubVaultPool({ feeTier, network, provider, vault, getContract });
     })
   );
 };
 
-const stubMissingPools = async ({
-  network,
-  pools: allPools,
-  vaults,
-  poolIds,
-  vaultAddresses,
-  vaultIds,
-  provider,
-}: {
-  network: number;
-  vaults: Pick<Vault, 'id' | 'vaultId' | 'token'>[];
-  vaultIds?: string[];
-  vaultAddresses?: Address[];
-  poolIds?: Address[];
-  pools: LiquidityPool[];
-  provider: Provider;
-}) => {
-  if (poolIds) {
-    // We're fetching a specific set of poolIds we don't need to stub anything
-    return allPools;
-  }
+export const makeStubMissingPools =
+  ({ getContract }: { getContract: GetContract }) =>
+  async ({
+    network,
+    pools: allPools,
+    vaults,
+    poolIds,
+    vaultAddresses,
+    vaultIds,
+    provider,
+  }: {
+    network: number;
+    vaults: Pick<Vault, 'id' | 'vaultId' | 'token'>[];
+    vaultIds?: string[];
+    vaultAddresses?: Address[];
+    poolIds?: Address[];
+    pools: Pick<LiquidityPool, 'vaultId' | 'feeTier'>[];
+    provider: Provider;
+  }): Promise<LiquidityPool[]> => {
+    if (poolIds) {
+      // We're fetching a specific set of poolIds we don't need to stub anything
+      return [];
+    }
 
-  const missingPools = await Promise.all(
-    vaults.map((vault) => {
-      if (vaultIds && vaultIds.includes(vault.vaultId) === false) {
-        return [];
-      }
-      if (
-        vaultAddresses &&
-        vaultAddresses.some((a) => addressEqual(a, vault.id)) === false
-      ) {
-        return [];
-      }
+    const missingPools = await Promise.all(
+      vaults.map((vault) => {
+        if (vaultIds && vaultIds.includes(vault.vaultId) === false) {
+          return [];
+        }
+        if (
+          vaultAddresses &&
+          vaultAddresses.some((a) => addressEqual(a, vault.id)) === false
+        ) {
+          return [];
+        }
 
-      return stubMissingVaultPools({
-        network,
-        pools: allPools,
-        provider,
-        vault,
-      });
-    })
-  );
+        return stubMissingVaultPools({
+          network,
+          pools: allPools,
+          provider,
+          vault,
+          getContract,
+        });
+      })
+    );
 
-  return missingPools.flat();
-};
+    return missingPools.flat();
+  };
+
+const stubMissingPools = makeStubMissingPools({ getContract });
 
 export default stubMissingPools;

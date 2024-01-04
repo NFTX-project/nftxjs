@@ -3,47 +3,63 @@ import type { Address, LiquidityPosition, Provider, Vault } from '@nftx/types';
 import fetchPoolIdsForVaultIds from './fetchPoolIdsForVaultIds';
 import fetchPositionsSet from './fetchPositionsSet';
 
-const fetchLiquidityPositions = async ({
-  userAddresses,
-  vaultIds,
-  poolIds,
-  positionIds,
-  network = config.network,
-  vaults,
-  provider,
-}: {
-  userAddresses?: Address[];
-  vaultIds?: string[];
-  poolIds?: Address[];
-  positionIds?: Address[];
-  network?: number;
-  vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
-  provider: Provider;
-}): Promise<LiquidityPosition[]> => {
-  if (vaultIds) {
-    poolIds = await fetchPoolIdsForVaultIds({ network, vaultIds, vaults });
-  }
+type FetchPoolIdsForVaultIds = typeof fetchPoolIdsForVaultIds;
+type FetchPositionsSet = typeof fetchPositionsSet;
 
-  const positions: LiquidityPosition[] = [];
-  let lastId: Address | undefined;
+export const makeFetchLiquidityPositions =
+  ({
+    fetchPoolIdsForVaultIds,
+    fetchPositionsSet,
+  }: {
+    fetchPoolIdsForVaultIds: FetchPoolIdsForVaultIds;
+    fetchPositionsSet: FetchPositionsSet;
+  }) =>
+  async ({
+    userAddresses,
+    vaultIds,
+    poolIds,
+    positionIds,
+    network = config.network,
+    vaults,
+    provider,
+  }: {
+    userAddresses?: Address[];
+    vaultIds?: string[];
+    poolIds?: Address[];
+    positionIds?: Address[];
+    network?: number;
+    vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
+    provider: Provider;
+  }): Promise<LiquidityPosition[]> => {
+    if (vaultIds) {
+      poolIds = await fetchPoolIdsForVaultIds({ network, vaultIds, vaults });
+    }
 
-  do {
-    let morePositions: LiquidityPosition[];
+    const positions: LiquidityPosition[] = [];
+    let lastId: Address | undefined;
 
-    [morePositions, lastId] = await fetchPositionsSet({
-      lastId,
-      network,
-      vaults,
-      poolIds,
-      positionIds,
-      userAddresses,
-      provider,
-    });
+    do {
+      let morePositions: LiquidityPosition[];
 
-    positions.push(...morePositions);
-  } while (lastId);
+      [morePositions, lastId] = await fetchPositionsSet({
+        lastId,
+        network,
+        vaults,
+        poolIds,
+        positionIds,
+        userAddresses,
+        provider,
+      });
 
-  return positions;
-};
+      positions.push(...morePositions);
+    } while (lastId);
+
+    return positions;
+  };
+
+const fetchLiquidityPositions = makeFetchLiquidityPositions({
+  fetchPoolIdsForVaultIds,
+  fetchPositionsSet,
+});
 
 export default fetchLiquidityPositions;

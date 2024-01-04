@@ -3,14 +3,18 @@ import type { NftxV3Uniswap, Address, Vault } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { NFTX_UNISWAP_SUBGRAPH } from '@nftx/constants';
 
+type QuerySubgraph = typeof querySubgraph;
+
 const fetchPoolIdsNextSet = async ({
   lastId,
   network,
   addresses,
+  querySubgraph,
 }: {
   lastId: Address | undefined;
   addresses: Address[];
   network: number;
+  querySubgraph: QuerySubgraph;
 }) => {
   const query = createQuery<NftxV3Uniswap.Query>()
     .liquidityPools.first(1000)
@@ -38,9 +42,11 @@ const fetchPoolIdsNextSet = async ({
 const fetchPoolIdsByInputToken = async ({
   addresses,
   network,
+  querySubgraph,
 }: {
   network: number;
   addresses: Address[];
+  querySubgraph: QuerySubgraph;
 }) => {
   const poolIds: Address[] = [];
   let lastId: Address | undefined;
@@ -52,6 +58,7 @@ const fetchPoolIdsByInputToken = async ({
       lastId,
       network,
       addresses,
+      querySubgraph,
     });
     poolIds.push(...morePoolIds);
   } while (lastId);
@@ -71,23 +78,31 @@ const getAddressesForVaultIds = (
   }, [] as Address[]);
 };
 
-const fetchPoolIdsForVaultIds = ({
-  network,
-  vaultIds,
-  vaults,
-}: {
-  network: number;
-  vaultIds: string[];
-  vaults: Pick<Vault, 'id' | 'vaultId'>[];
-}) => {
-  // We can't directly query positions on vaultId
-  // so we need to get the vault addresses (which is the vToken address)
-  // then use that to get the pool ids
-  // then use that to fetch positions by pool id
-  const addresses = getAddressesForVaultIds(vaultIds, vaults);
-  const poolIds = fetchPoolIdsByInputToken({ network, addresses });
+export const makeFetchPoolIdsForVaultIds =
+  ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
+  ({
+    network,
+    vaultIds,
+    vaults,
+  }: {
+    network: number;
+    vaultIds: string[];
+    vaults: Pick<Vault, 'id' | 'vaultId'>[];
+  }) => {
+    // We can't directly query positions on vaultId
+    // so we need to get the vault addresses (which is the vToken address)
+    // then use that to get the pool ids
+    // then use that to fetch positions by pool id
+    const addresses = getAddressesForVaultIds(vaultIds, vaults);
+    const poolIds = fetchPoolIdsByInputToken({
+      network,
+      addresses,
+      querySubgraph,
+    });
 
-  return poolIds;
-};
+    return poolIds;
+  };
+
+const fetchPoolIdsForVaultIds = makeFetchPoolIdsForVaultIds({ querySubgraph });
 
 export default fetchPoolIdsForVaultIds;
