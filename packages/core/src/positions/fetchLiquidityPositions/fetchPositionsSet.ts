@@ -10,6 +10,7 @@ import { addressEqual } from '@nftx/utils';
 import transformPosition from './transformPosition';
 import { NotFoundError } from '@nftx/errors';
 import fetchClaimableAmount from './fetchClaimableAmount';
+import getManager from './getManager';
 
 const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   inputTokens,
@@ -64,9 +65,9 @@ const fetchPositionsSet = async ({
         vaults,
       });
       const [claimable0, claimable1] = await fetchClaimableAmount({
-        network,
         tokenId: position.tokenId as TokenId,
         provider,
+        manager: getManager(network, position.timestampOpened),
       });
       return transformPosition({
         network,

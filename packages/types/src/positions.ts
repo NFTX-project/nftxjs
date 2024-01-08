@@ -41,6 +41,8 @@ export type LiquidityPosition = {
   /** The amount claimable on this position in ETH */
   claimableValue: bigint;
   lockedUntil: number;
+  /** The address of the manager contract for this position */
+  manager: Address;
 };
 
 /** A user's Inventory Position, essentially a single xNFT */

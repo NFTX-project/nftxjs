@@ -1,23 +1,22 @@
 import { NonfungiblePositionManager } from '@nftx/abi';
-import { NONFUNGIBLE_POSITION_MANAGER, Zero } from '@nftx/constants';
-import type { Provider, TokenId } from '@nftx/types';
-import { getChainConstant } from '@nftx/utils';
+import { Zero } from '@nftx/constants';
+import type { Address, Provider, TokenId } from '@nftx/types';
 
 const MAX_UINT128 = 340282366920938463463374607431768211455n;
 
 const fetchClaimableAmount = async ({
-  network,
   tokenId,
   provider,
+  manager,
 }: {
   provider: Provider;
-  network: number;
   tokenId: TokenId;
+  manager: Address;
 }): Promise<[bigint, bigint]> => {
   try {
     const ownerAddress = await provider.readContract({
       abi: NonfungiblePositionManager,
-      address: getChainConstant(NONFUNGIBLE_POSITION_MANAGER, network),
+      address: manager,
       functionName: 'ownerOf',
       args: [BigInt(tokenId)],
     });
@@ -26,7 +25,7 @@ const fetchClaimableAmount = async ({
       result: [amount0, amount1],
     } = await provider.simulateContract({
       abi: NonfungiblePositionManager,
-      address: getChainConstant(NONFUNGIBLE_POSITION_MANAGER, network),
+      address: manager,
       functionName: 'collect',
       args: [
         {

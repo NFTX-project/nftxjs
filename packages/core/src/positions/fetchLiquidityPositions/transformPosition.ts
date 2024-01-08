@@ -3,6 +3,7 @@ import type { PositionsResponse } from './types';
 import { WETH_TOKEN, WeiPerEther, Zero } from '@nftx/constants';
 import calculateVTokenEth from './calculateVTokenEth';
 import { addressEqual, getChainConstant } from '@nftx/utils';
+import getManager from './getManager';
 
 type Position = PositionsResponse['positions'][0];
 
@@ -66,6 +67,8 @@ const transformPosition = ({
   // TODO: get this from... somwhere?
   const lifetimeRewards = Zero;
 
+  const manager = getManager(network, position.timestampOpened);
+
   return {
     id: position.id as Address,
     poolId: position.pool.id as Address,
@@ -90,6 +93,7 @@ const transformPosition = ({
     poolShare: Zero,
     initialValue: value,
     lockedUntil,
+    manager,
   };
 };
 

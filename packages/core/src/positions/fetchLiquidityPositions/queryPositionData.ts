@@ -32,6 +32,7 @@ const queryPositionData = ({
       s.cumulativeDepositTokenAmounts,
       s.cumulativeWithdrawTokenAmounts,
       s.lockedUntil,
+      s.timestampOpened,
       s.tickUpper((tick) => [tick.index]),
       s.tickLower((tick) => [tick.index]),
       s.pool((pool) => [
