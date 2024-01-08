@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/NFTX-project/nftxjs/compare/v1.9.1...v1.10.0) (2024-01-08)
+
+
+### Bug Fixes
+
+* only store animation urls for mp4 files ([1aefb1a](https://github.com/NFTX-project/nftxjs/commit/1aefb1acbd1829fbb8f3f73723b014427df23b4f))
+
+
+### Features
+
+* store nonfngable manager against position ([4d69dff](https://github.com/NFTX-project/nftxjs/commit/4d69dff15d23ef8de61eca05105247cb6ec50ce6))
+
+
+
+
+
 ## [1.9.1](https://github.com/NFTX-project/nftxjs/compare/v1.9.0...v1.9.1) (2024-01-03)
 
 **Note:** Version bump only for package @nftx/core
