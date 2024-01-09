@@ -10,7 +10,7 @@ export const parseJson = <T extends Record<string, any>>(str: string): T => {
 
 export const stringifyJson = <T extends Record<string, any>>(
   obj: T,
-  escapeBigNumber: boolean
+  escapeBigNumber?: boolean
 ): string => {
   return JSON.stringify(obj, (key, value) => {
     if (key === '_id') {
@@ -28,7 +28,7 @@ export const stringifyJson = <T extends Record<string, any>>(
 
 export const formatJson = <T extends Record<string, any>>(
   obj: T,
-  escapeBigNumber: boolean
+  escapeBigNumber?: boolean
 ): T => {
   return JSON.parse(stringifyJson(obj, escapeBigNumber));
 };

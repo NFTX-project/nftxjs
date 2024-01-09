@@ -9,6 +9,8 @@ import type {
 } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
+type QuerySubgraph = typeof querySubgraph;
+
 type Type =
   | 'MINT'
   | 'REDEEM'
@@ -226,82 +228,89 @@ const activityEventToActivity = (
 
 const isDefined = <T>(x: T | undefined): x is T => x != null;
 
-const fetchVaultActivity = async ({
-  fromTimestamp,
-  includeAllActivity = false,
-  lastId,
-  network = config.network,
-  toTimestamp,
-  vaultAddresses,
-  vaultIds,
+export const makeFetchVaultActivity = ({
+  querySubgraph,
 }: {
-  network?: number;
-  fromTimestamp?: number;
-  toTimestamp?: number;
-  vaultAddresses?: Address[];
-  vaultIds?: string[];
-  includeAllActivity?: boolean;
-  lastId?: string;
-}): Promise<VaultActivity[]> => {
-  const query = createQuery<Response>()
-    .activityEvents.first(1000)
-    .orderBy('id')
-    .where((w) => [
-      w.id.gt(lastId),
-      w.date.gt(fromTimestamp == null ? null : `${fromTimestamp}`),
-      w.date.lte(toTimestamp == null ? null : `${toTimestamp}`),
-      w.vault.in(vaultAddresses),
-      w.vault((v) => [v.vaultId.in(vaultIds)]),
-    ])
-    .select((s) => [
-      s.id,
-      s.source,
-      s.type,
-      s.date,
-      s.vault((v) => [v.id, v.vaultId]),
-      s.on<NftxV3.Mint>('Mint', (s) => [
-        s.nftIds.as('mintIds'),
-        s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
-      ]),
-      s.on<NftxV3.Redeem>('Redeem', (s) => [
-        s.targetCount,
-        s.nftIds.as('redeemIds'),
-        s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
-      ]),
-      s.on<NftxV3.Swap>('Swap', (s) => [
-        s.mintedIds.as('swapMintIds'),
-        s.specificIds.as('swapRedeemIds'),
-        s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
-      ]),
-    ]);
+  querySubgraph: QuerySubgraph;
+}) =>
+  async function fetchVaultActivity({
+    fromTimestamp,
+    includeAllActivity = false,
+    lastId,
+    network = config.network,
+    toTimestamp,
+    vaultAddresses,
+    vaultIds,
+  }: {
+    network?: number;
+    fromTimestamp?: number;
+    toTimestamp?: number;
+    vaultAddresses?: Address[];
+    vaultIds?: string[];
+    includeAllActivity?: boolean;
+    lastId?: string;
+  }): Promise<VaultActivity[]> {
+    const query = createQuery<Response>()
+      .activityEvents.first(1000)
+      .orderBy('id')
+      .where((w) => [
+        w.id.gt(lastId),
+        w.date.gt(fromTimestamp == null ? null : `${fromTimestamp}`),
+        w.date.lte(toTimestamp == null ? null : `${toTimestamp}`),
+        w.vault.in(vaultAddresses),
+        w.vault((v) => [v.vaultId.in(vaultIds)]),
+      ])
+      .select((s) => [
+        s.id,
+        s.source,
+        s.type,
+        s.date,
+        s.vault((v) => [v.id, v.vaultId]),
+        s.on<NftxV3.Mint>('Mint', (s) => [
+          s.nftIds.as('mintIds'),
+          s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+        ]),
+        s.on<NftxV3.Redeem>('Redeem', (s) => [
+          s.targetCount,
+          s.nftIds.as('redeemIds'),
+          s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+        ]),
+        s.on<NftxV3.Swap>('Swap', (s) => [
+          s.mintedIds.as('swapMintIds'),
+          s.specificIds.as('swapRedeemIds'),
+          s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+        ]),
+      ]);
 
-  const response = await querySubgraph({
-    url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
-    query,
-  });
-
-  const allActivity = response.activityEvents.map((e) =>
-    activityEventToActivity(e as any, includeAllActivity)
-  );
-
-  let activity = allActivity.filter(isDefined);
-
-  if (response.activityEvents.length === 1000) {
-    const lastId =
-      response.activityEvents[response.activityEvents.length - 1].id;
-    const moreActivity = await fetchVaultActivity({
-      fromTimestamp,
-      includeAllActivity,
-      network,
-      toTimestamp,
-      vaultAddresses,
-      vaultIds,
-      lastId,
+    const response = await querySubgraph({
+      url: getChainConstant(config.subgraph.NFTX_SUBGRAPH, network),
+      query,
     });
-    activity = [...activity, ...moreActivity];
-  }
 
-  return activity.sort((a, b) => a.date - b.date);
-};
+    const allActivity = response.activityEvents.map((e) =>
+      activityEventToActivity(e as any, includeAllActivity)
+    );
+
+    let activity = allActivity.filter(isDefined);
+
+    if (response.activityEvents.length === 1000) {
+      const lastId =
+        response.activityEvents[response.activityEvents.length - 1].id;
+      const moreActivity = await fetchVaultActivity({
+        fromTimestamp,
+        includeAllActivity,
+        network,
+        toTimestamp,
+        vaultAddresses,
+        vaultIds,
+        lastId,
+      });
+      activity = [...activity, ...moreActivity];
+    }
+
+    return activity.sort((a, b) => a.date - b.date);
+  };
+
+const fetchVaultActivity = makeFetchVaultActivity({ querySubgraph });
 
 export default fetchVaultActivity;

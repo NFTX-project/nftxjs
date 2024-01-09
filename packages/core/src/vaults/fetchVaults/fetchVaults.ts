@@ -94,22 +94,20 @@ export const makeFetchVaults =
 
     const vaultPromises =
       vaultData.map(async (x) => {
-        const y = {
-          id: x.id as Address,
-          holdings: x.holdings.map((h) => ({ ...h, tokenId: `${h.tokenId}` })),
+        const merkleData = {
           eligibilityModule: x.eligibilityModule
             ? { ...x.eligibilityModule, id: x.eligibilityModule.id as Address }
             : undefined,
         };
 
         const merkleReference =
-          (isMerkleVault(y)
-            ? await fetchMerkleReference({ provider, vault: y })
+          (isMerkleVault(merkleData)
+            ? await fetchMerkleReference({ provider, vault: merkleData })
             : null) ?? undefined;
 
         const vTokenToEth = await fetchVTokenToEth({
           provider,
-          vaultAddress: y.id,
+          vaultAddress: x.id as Address,
         });
 
         let collection = collections[x.asset.id];
