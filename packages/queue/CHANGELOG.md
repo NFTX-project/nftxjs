@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.2](https://github.com/NFTX-project/nftxjs/compare/v1.10.1...v1.10.2) (2024-01-11)
+
+
+### Bug Fixes
+
+* store pool router used to create position ([83fb739](https://github.com/NFTX-project/nftxjs/commit/83fb739be5e38ce72dceadc59a2a2254a570a21f))
+
+
+
+
+
 # [1.10.0](https://github.com/NFTX-project/nftxjs/compare/v1.9.1...v1.10.0) (2024-01-08)
 
 **Note:** Version bump only for package @nftx/queue

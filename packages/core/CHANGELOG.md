@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.2](https://github.com/NFTX-project/nftxjs/compare/v1.10.1...v1.10.2) (2024-01-11)
+
+
+### Bug Fixes
+
+* get position manager address directly from subgraph ([6bdf681](https://github.com/NFTX-project/nftxjs/commit/6bdf6817f4e0ce204c3c2aa0ae3d30d883f81679))
+* store pool router used to create position ([83fb739](https://github.com/NFTX-project/nftxjs/commit/83fb739be5e38ce72dceadc59a2a2254a570a21f))
+
+
+
+
+
 ## [1.10.1](https://github.com/NFTX-project/nftxjs/compare/v1.10.0...v1.10.1) (2024-01-09)
 
 **Note:** Version bump only for package @nftx/core
