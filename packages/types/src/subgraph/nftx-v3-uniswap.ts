@@ -554,6 +554,7 @@ export enum Deposit_OrderBy {
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
   PositionLockedUntil = 'position__lockedUntil',
+  PositionNfpmAddress = 'position__nfpmAddress',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
   PositionTokenId = 'position__tokenId',
@@ -3882,6 +3883,7 @@ export type Position = {
   liquidityUSD: Scalars['BigDecimal']['output'];
   /**  Timestamp which position is locked until */
   lockedUntil?: Maybe<Scalars['BigInt']['output']>;
+  nfpmAddress: Scalars['Bytes']['output'];
   /**  The liquidity pool in which this position was opened  */
   pool: LiquidityPool;
   /**  Position daily snapshots for open positions  */
@@ -4153,6 +4155,7 @@ export enum PositionSnapshot_OrderBy {
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
   PositionLockedUntil = 'position__lockedUntil',
+  PositionNfpmAddress = 'position__nfpmAddress',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
   PositionTokenId = 'position__tokenId',
@@ -4332,6 +4335,16 @@ export type Position_Filter = {
   lockedUntil_lte?: InputMaybe<Scalars['BigInt']['input']>;
   lockedUntil_not?: InputMaybe<Scalars['BigInt']['input']>;
   lockedUntil_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  nfpmAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  nfpmAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  nfpmAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   or?: InputMaybe<Array<InputMaybe<Position_Filter>>>;
   pool?: InputMaybe<Scalars['String']['input']>;
   pool_?: InputMaybe<LiquidityPool_Filter>;
@@ -4473,6 +4486,7 @@ export enum Position_OrderBy {
   LiquidityTokenSymbol = 'liquidityToken__symbol',
   LiquidityUsd = 'liquidityUSD',
   LockedUntil = 'lockedUntil',
+  NfpmAddress = 'nfpmAddress',
   Pool = 'pool',
   PoolActiveLiquidity = 'pool__activeLiquidity',
   PoolActiveLiquidityEth = 'pool__activeLiquidityETH',
@@ -7914,6 +7928,7 @@ export enum Withdraw_OrderBy {
   PositionLiquidityTokenType = 'position__liquidityTokenType',
   PositionLiquidityUsd = 'position__liquidityUSD',
   PositionLockedUntil = 'position__lockedUntil',
+  PositionNfpmAddress = 'position__nfpmAddress',
   PositionTimestampClosed = 'position__timestampClosed',
   PositionTimestampOpened = 'position__timestampOpened',
   PositionTokenId = 'position__tokenId',

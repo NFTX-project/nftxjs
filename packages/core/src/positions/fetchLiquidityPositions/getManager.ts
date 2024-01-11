@@ -3,20 +3,28 @@ import {
   Network,
   POOL_ROUTER,
 } from '@nftx/constants';
+import { Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
-const getManager = (network: number, timestampOpened: string) => {
-  const lastTimeOldContractUsed = 1704206700;
-  const timestamp = Number(timestampOpened);
+const poolRouterAddresses: Record<string, Record<string, Address>> = {
+  [Network.Sepolia]: {
+    '0x55bdc76262b1e6e791d0636a0bc61cee23cdfa87':
+      '0xd36ece08f76c50ec3f01db65bbc5ef5aa5fbe849',
+  },
+};
 
-  let manager = getChainConstant(NONFUNGIBLE_POSITION_MANAGER, network);
-  let poolRouter = getChainConstant(POOL_ROUTER, network);
+const getPoolRouterAddress = (network: number, managerAddress: Address) => {
+  return (
+    poolRouterAddresses[network]?.[managerAddress.toLowerCase()] ??
+    getChainConstant(POOL_ROUTER, network)
+  );
+};
 
-  // If older than this, it's the old contract
-  if (timestamp <= lastTimeOldContractUsed && network === Network.Sepolia) {
-    manager = '0x55bdc76262b1e6e791d0636a0bc61cee23cdfa87';
-    poolRouter = '0xD36ece08F76c50EC3F01db65BBc5Ef5Aa5fbE849';
-  }
+const getManager = (network: number, position: { nfpmAddress: string }) => {
+  const manager =
+    (position.nfpmAddress as Address) ||
+    getChainConstant(NONFUNGIBLE_POSITION_MANAGER, network);
+  const poolRouter = getPoolRouterAddress(network, manager);
   return { manager, poolRouter };
 };
 

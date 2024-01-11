@@ -67,7 +67,7 @@ const transformPosition = ({
   // TODO: get this from... somwhere?
   const lifetimeRewards = Zero;
 
-  const { manager, poolRouter } = getManager(network, position.timestampOpened);
+  const { manager, poolRouter } = getManager(network, position);
 
   return {
     id: position.id as Address,
