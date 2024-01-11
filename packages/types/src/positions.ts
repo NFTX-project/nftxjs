@@ -43,6 +43,8 @@ export type LiquidityPosition = {
   lockedUntil: number;
   /** The address of the manager contract for this position */
   manager: Address;
+  /** The pool router for this position */
+  poolRouter: Address;
 };
 
 /** A user's Inventory Position, essentially a single xNFT */

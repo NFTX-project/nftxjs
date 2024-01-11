@@ -78,7 +78,7 @@ export const makeFetchPositionsSet =
         const [claimable0, claimable1] = await fetchClaimableAmount({
           tokenId: position.tokenId as TokenId,
           provider,
-          manager: getManager(network, position.timestampOpened),
+          manager: getManager(network, position.timestampOpened).manager,
         });
         return transformPosition({
           network,
