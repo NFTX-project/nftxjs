@@ -1,14 +1,11 @@
 import { PoolRouter } from '@nftx/abi';
-import config from '@nftx/config';
-import { POOL_ROUTER } from '@nftx/constants';
 import { Provider, Signer, WithdrawLiquidityQuote } from '@nftx/types';
-import { getChainConstant, getContract } from '@nftx/utils';
+import { getContract } from '@nftx/utils';
 
 const withdrawLiquidity = ({
-  network = config.network,
   provider,
   quote: {
-    methodParameters: { params, value },
+    methodParameters: { params, value, contractAddress },
   },
   signer,
 }: {
@@ -19,7 +16,7 @@ const withdrawLiquidity = ({
 }) => {
   const contract = getContract({
     abi: PoolRouter,
-    address: getChainConstant(POOL_ROUTER, network),
+    address: contractAddress,
     provider,
     signer,
   });

@@ -1,21 +1,18 @@
 import { PoolRouter } from '@nftx/abi';
-import config from '@nftx/config';
-import { POOL_ROUTER } from '@nftx/constants';
 import {
   IncreaseLiquidityQuote,
   Permit2Quote,
   Provider,
   Signer,
 } from '@nftx/types';
-import { getChainConstant, getContract } from '@nftx/utils';
+import { getContract } from '@nftx/utils';
 
 const increaseLiquidity = ({
   provider,
   quote: {
-    methodParameters: { params, value, usePermit2 },
+    methodParameters: { params, value, usePermit2, contractAddress },
   },
   signer,
-  network = config.network,
   permit2,
 }: {
   network?: number;
@@ -25,7 +22,7 @@ const increaseLiquidity = ({
   permit2?: Permit2Quote;
 }) => {
   const contract = getContract({
-    address: getChainConstant(POOL_ROUTER, network),
+    address: contractAddress,
     abi: PoolRouter,
     provider,
     signer,

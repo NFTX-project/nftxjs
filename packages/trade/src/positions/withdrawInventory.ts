@@ -1,8 +1,6 @@
 import { InventoryStaking } from '@nftx/abi';
-import config from '@nftx/config';
-import { INVENTORY_STAKING } from '@nftx/constants';
 import { Provider, Signer, WithdrawInventoryQuote } from '@nftx/types';
-import { getChainConstant, getContract } from '@nftx/utils';
+import { getContract } from '@nftx/utils';
 
 const withdrawInventory = ({
   provider,
@@ -13,10 +11,10 @@ const withdrawInventory = ({
       vTokenPremiumLimit,
       vTokenShares,
       value,
+      contractAddress,
     },
   },
   signer,
-  network = config.network,
 }: {
   network?: number;
   quote: WithdrawInventoryQuote;
@@ -25,7 +23,7 @@ const withdrawInventory = ({
 }) => {
   const contract = getContract({
     abi: InventoryStaking,
-    address: getChainConstant(INVENTORY_STAKING, network),
+    address: contractAddress,
     provider,
     signer,
   });

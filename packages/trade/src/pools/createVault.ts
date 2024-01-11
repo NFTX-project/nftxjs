@@ -5,8 +5,7 @@ import type {
   Signer,
   Transaction,
 } from '@nftx/types';
-import { getChainConstant, getContract } from '@nftx/utils';
-import { CREATE_VAULT_ZAP } from '@nftx/constants';
+import { getContract } from '@nftx/utils';
 
 type GetContract = typeof getContract;
 
@@ -23,18 +22,15 @@ const makeCreateVault = ({
   getContract: GetContract;
 }): ((args: Args) => Promise<Transaction>) =>
   async function createVault({
-    network,
     signer,
     provider,
     quote: {
-      methodParameters: { params, value },
+      methodParameters: { params, value, contractAddress },
     },
   }: Args) {
-    const address = getChainConstant(CREATE_VAULT_ZAP, network);
-
     const contract = getContract({
       abi: CreateVaultZap,
-      address,
+      address: contractAddress,
       provider,
       signer,
     });

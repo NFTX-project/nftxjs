@@ -55,6 +55,7 @@ export type CreateVaultQuote = {
       };
     };
     value: bigint;
+    contractAddress: Address;
   };
   approveContracts: ApproveContract[];
 };
@@ -80,6 +81,7 @@ export type WithdrawLiquidityQuote = {
       vTokenPremiumLimit: bigint;
     };
     value: bigint;
+    contractAddress: Address;
   };
   approveContracts: ApproveContract[];
 };
@@ -98,6 +100,7 @@ export type WithdrawInventoryQuote = {
     nftIds: bigint[];
     vTokenPremiumLimit: bigint;
     value: bigint;
+    contractAddress: Address;
   };
   approveContracts: ApproveContract[];
 };
@@ -118,6 +121,7 @@ export type CreateInventoryPositionQuote = {
     nftAmounts: bigint[];
     userAddress: Address;
     usePermit2: boolean;
+    contractAddress: Address;
   };
   approveContracts: ApproveContract[];
 };
@@ -159,6 +163,7 @@ export type CreateLiquidityPositionQuote = {
       recipient: Address;
     };
     usePermit2: boolean;
+    contractAddress: Address;
   };
   approveContracts: ApproveContract[];
 };
@@ -192,6 +197,7 @@ export type IncreaseLiquidityQuote = {
       positionId: bigint;
     };
     usePermit2: boolean;
+    contractAddress: Address;
   };
   approveContracts: ApproveContract[];
 };

@@ -11,7 +11,7 @@ import { getChainConstant, getContract } from '@nftx/utils';
 
 const createLiquidityPosition = ({
   quote: {
-    methodParameters: { params, value, usePermit2 },
+    methodParameters: { params, value, usePermit2, contractAddress },
   },
   provider,
   signer,
@@ -24,10 +24,8 @@ const createLiquidityPosition = ({
   signer: Signer;
   permit2?: Permit2Quote;
 }) => {
-  const address = getChainConstant(POOL_ROUTER, network);
-
   const contract = getContract({
-    address: address,
+    address: contractAddress,
     abi: PoolRouter,
     provider,
     signer,

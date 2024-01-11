@@ -1,13 +1,11 @@
 import { InventoryStaking } from '@nftx/abi';
-import config from '@nftx/config';
-import { INVENTORY_STAKING } from '@nftx/constants';
 import {
   CreateInventoryPositionQuote,
   Permit2Quote,
   Provider,
   Signer,
 } from '@nftx/types';
-import { getChainConstant, getContract } from '@nftx/utils';
+import { getContract } from '@nftx/utils';
 
 const createInventoryPosition = ({
   provider,
@@ -19,10 +17,10 @@ const createInventoryPosition = ({
       vaultId,
       vToken,
       usePermit2,
+      contractAddress,
     },
   },
   signer,
-  network = config.network,
   permit2,
 }: {
   network?: number;
@@ -32,7 +30,7 @@ const createInventoryPosition = ({
   permit2?: Permit2Quote;
 }) => {
   const contract = getContract({
-    address: getChainConstant(INVENTORY_STAKING, network),
+    address: contractAddress,
     provider,
     abi: InventoryStaking,
     signer,
