@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.3](https://github.com/NFTX-project/nftxjs/compare/v1.10.2...v1.10.3) (2024-01-11)
+
+
+### Bug Fixes
+
+* missing nfpmAddress field in gql query ([2d36333](https://github.com/NFTX-project/nftxjs/commit/2d3633300492c767e2d368fbc79e31bbf59fec62))
+
+
+
+
+
 ## [1.10.2](https://github.com/NFTX-project/nftxjs/compare/v1.10.1...v1.10.2) (2024-01-11)
 
 
