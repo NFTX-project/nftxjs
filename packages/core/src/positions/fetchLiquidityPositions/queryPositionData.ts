@@ -37,6 +37,7 @@ export const makeQueryPositionData =
         s.cumulativeWithdrawTokenAmounts,
         s.lockedUntil,
         s.timestampOpened,
+        s.nfpmAddress,
         s.tickUpper((tick) => [tick.index]),
         s.tickLower((tick) => [tick.index]),
         s.pool((pool) => [
