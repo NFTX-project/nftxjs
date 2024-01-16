@@ -1,6 +1,7 @@
 import type { Address, Collection } from '@nftx/types';
-import { queryReservoir } from '@nftx/utils';
+import { addressEqual, queryReservoir } from '@nftx/utils';
 import config from '@nftx/config';
+import { ARTBLOCK_COLLECTIONS } from '@nftx/constants';
 
 export type Response = {
   collections: {
@@ -32,13 +33,39 @@ export type Response = {
   }[];
 };
 
+const artblockCollection: Collection = {
+  address: '0x',
+  name: 'Art Blocks',
+  slug: 'art-blocks',
+  image:
+    'https://img.reservoir.tools/images/v2/mainnet/7%2FrdF%2Fe%2F0iXY8HduhRCoIehkmFeXPeOQQFbbmIPfjCZplRJ0oE1Aa4uukcOlWsKqhPNsGrnvIbA60TipHbXT%2BKqIHAoQ8%2BHjrUf19dKwJexYK8TCV4CbOzH4Qr7uEPBCVOOQcDngY5EyB66zCUVe%2BE6euqqxYCzSAedOBKkQ0Ww%3D.png?width=512',
+  banner: '',
+  symbol: 'ARTBLOCKS',
+  discordUrl: 'https://discord.com/invite/artblocks',
+  externalUrl: 'https://artblocks.io/',
+  twitterUsername: 'artblocks_io',
+  standard: 'ERC721',
+  floorPrice: undefined as any,
+  tokenCount: 0,
+};
+
 const fetchCollection = async ({
   assetAddress,
   network = config.network,
 }: {
   network?: number;
   assetAddress: Address;
-}) => {
+}): Promise<Collection> => {
+  if (ARTBLOCK_COLLECTIONS.some((x) => addressEqual(x, assetAddress))) {
+    // Reservoir can't fetch the entire artblocks collection,
+    // you must pass a predefined token range which we don't have upfront,
+    // so we'll return a hardcoded collection object instead.
+    return {
+      ...artblockCollection,
+      address: assetAddress,
+    };
+  }
+
   const path = '/collections/v7';
   const query = { id: assetAddress };
 

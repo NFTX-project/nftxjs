@@ -14,6 +14,15 @@ export const CRYPTOKITTIES = a('0x06012c8cf97bead5deae237070f9587f8e7a266d');
  */
 export const CRYPTOPUNKS = a('0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb');
 
+/**
+ * The Artblocks contract
+ */
+export const ARTBLOCK_COLLECTIONS = [
+  a('0x059edd72cd353df5106d2b9cc5ab83a52287ac3a'), // Squiggles
+  a('0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270'), // GenArt721Core
+  a('0x99a9b7c1116f9ceeb1652de04d5969cce509b069'), // GenArt721CoreV3
+];
+
 /** The address for WETH across networks */
 export const WETH_TOKEN = {
   [Network.Mainnet]: a('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'),
