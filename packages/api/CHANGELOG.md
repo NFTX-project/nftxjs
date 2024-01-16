@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.4](https://github.com/NFTX-project/nftxjs/compare/v1.10.3...v1.10.4) (2024-01-16)
+
+**Note:** Version bump only for package @nftx/api
+
+
+
+
+
 ## [1.10.2](https://github.com/NFTX-project/nftxjs/compare/v1.10.1...v1.10.2) (2024-01-11)
 
 **Note:** Version bump only for package @nftx/api

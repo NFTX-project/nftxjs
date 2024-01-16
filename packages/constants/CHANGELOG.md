@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.4](https://github.com/NFTX-project/nftxjs/compare/v1.10.3...v1.10.4) (2024-01-16)
+
+
+### Bug Fixes
+
+* support artblocks ([8313c69](https://github.com/NFTX-project/nftxjs/commit/8313c693ad63faf7ec85743f0e6a351acde30070))
+
+
+
+
+
 ## [1.9.1](https://github.com/NFTX-project/nftxjs/compare/v1.9.0...v1.9.1) (2024-01-03)
 
 
