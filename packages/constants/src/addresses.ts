@@ -46,7 +46,7 @@ export const OPENSEA_COLLECTION = a(
 /** Zap specifically for creating new vaults - CreateVaultZap */
 export const CREATE_VAULT_ZAP = {
   [Network.Mainnet]: a('0x56dab32697B4A313f353DA0CE42B5113eD8E6f74'),
-  [Network.Goerli]: a('0xd58A1627bF1C2F8C724A9493A979C0369ab17AaB'),
+  [Network.Goerli]: a('0xc6464CC63bC20b64e1633A0293C2C9b202F4f1b6'),
   [Network.Sepolia]: a('0xD80b916470F8e79FD8d09874cb159CbB8D13d8da'),
 };
 
@@ -74,14 +74,14 @@ export const NFTX_ROUTER = {
 /** Staking  / Liquidity / Pools - NftxRouter */
 export const POOL_ROUTER = {
   [Network.Mainnet]: a('0x70A741A12262d4b5Ff45C0179c783a380EebE42a'),
-  [Network.Goerli]: a('0xb95e2Fb1eDA32BbFbDaE2463BB3E64bb3E1E41D5'),
+  [Network.Goerli]: a('0x8E16cdd0D9A15d2d0EFeA531660e8DbD0F6eE12D'),
   [Network.Sepolia]: a('0x441b7DE4340AAa5aA86dB4DA43d9Badf7B2DAA66'),
 };
 
 /** NonfungiblePositionManager */
 export const NONFUNGIBLE_POSITION_MANAGER = {
   [Network.Mainnet]: a('0x26387fcA3692FCac1C1e8E4E2B22A6CF0d4b71bF'),
-  [Network.Goerli]: a('0xaEC6537206e8e590603399c714c39947680f1181'),
+  [Network.Goerli]: a('0xDa9411C5455a1bfDb527d0988c0A2764E2a104be'),
   [Network.Sepolia]: a('0xA9bCC1e29d3460177875f68fDCC0264D22c40BF0'),
 };
 
