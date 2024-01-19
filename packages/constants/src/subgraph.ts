@@ -40,7 +40,7 @@ export const NFTX_SUBGRAPH = {
     'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-mainnet',
   [Network.Arbitrum]: `${SHARED_ROOT}/nftx-project/nftx-v2-arbitrum`,
   [Network.Goerli]:
-    'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-v3-vaults',
+    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-goerli',
   [Network.Sepolia]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-sepolia',
 };
@@ -48,7 +48,8 @@ export const NFTX_SUBGRAPH = {
 export const NFTX_UNISWAP_SUBGRAPH = {
   [Network.Mainnet]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-mainnet',
-  [Network.Goerli]: `https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-amm`,
+  [Network.Goerli]:
+    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-goerli',
   [Network.Sepolia]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-sepolia',
 };
