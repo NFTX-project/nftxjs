@@ -1,6 +1,6 @@
 {
   "name": "nftx.js",
-  "version": "1.10.4",
+  "version": "1.11.0",
   "author": "Jack Ellis <jack.m.ellis@hotmail.co.uk>",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -27,14 +27,14 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@nftx/api": "^1.10.4",
-    "@nftx/config": "^1.10.4",
-    "@nftx/constants": "^1.10.4",
+    "@nftx/api": "^1.11.0",
+    "@nftx/config": "^1.11.0",
+    "@nftx/constants": "^1.11.0",
     "@nftx/errors": "^1.6.0",
-    "@nftx/subgraph": "^1.10.4",
-    "@nftx/trade": "^1.10.4",
-    "@nftx/types": "^1.10.4",
-    "@nftx/utils": "^1.10.4",
+    "@nftx/subgraph": "^1.11.0",
+    "@nftx/trade": "^1.11.0",
+    "@nftx/types": "^1.11.0",
+    "@nftx/utils": "^1.11.0",
     "ethers": "^5.6.4"
   }
 }

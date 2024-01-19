@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/NFTX-project/nftxjs/compare/v1.10.4...v1.11.0) (2024-01-19)
+
+
+### Bug Fixes
+
+* update goerli contract addresses ([4bdee3c](https://github.com/NFTX-project/nftxjs/commit/4bdee3cd1102491f4ffc31855515eb4217fc110c))
+
+
+
+
+
 ## [1.10.4](https://github.com/NFTX-project/nftxjs/compare/v1.10.3...v1.10.4) (2024-01-16)
 
 

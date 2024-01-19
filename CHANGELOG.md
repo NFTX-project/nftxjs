@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/NFTX-project/nftxjs/compare/v1.10.4...v1.11.0) (2024-01-19)
+
+
+### Bug Fixes
+
+* imageUrl should fallback to media property ([042a707](https://github.com/NFTX-project/nftxjs/commit/042a707cc8a2de33d8f129e5e7294eca11aa0fae))
+* update goerli contract addresses ([4bdee3c](https://github.com/NFTX-project/nftxjs/commit/4bdee3cd1102491f4ffc31855515eb4217fc110c))
+
+
+### Features
+
+* support ERC1155 assets ([98c716f](https://github.com/NFTX-project/nftxjs/commit/98c716fa79520d0ce778e6c673e2ea15e44ea932))
+
+
+
+
+
 ## [1.10.4](https://github.com/NFTX-project/nftxjs/compare/v1.10.3...v1.10.4) (2024-01-16)
 
 
