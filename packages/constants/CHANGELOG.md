@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.1](https://github.com/NFTX-project/nftxjs/compare/v1.11.0...v1.11.1) (2024-01-19)
+
+
+### Bug Fixes
+
+* update goerli subgraph endpoints ([4ed83b0](https://github.com/NFTX-project/nftxjs/commit/4ed83b04e1abd1b3f472c72c65d9912308676f89))
+
+
+
+
+
 # [1.11.0](https://github.com/NFTX-project/nftxjs/compare/v1.10.4...v1.11.0) (2024-01-19)
 
 
