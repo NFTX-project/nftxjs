@@ -77,7 +77,6 @@ const fetchSubgraphVaults = async ({
           .select((h) => [h.id, h.tokenId, h.amount, h.dateAdded]),
       ]);
 
-    // const query = g.combine(globalsQuery, vaultsQuery);
     const query = globalsQuery.combine(vaultsQuery);
 
     const data = await querySubgraph({

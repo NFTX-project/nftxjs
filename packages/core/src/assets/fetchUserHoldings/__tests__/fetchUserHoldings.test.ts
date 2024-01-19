@@ -94,7 +94,10 @@ beforeEach(() => {
     userAddress: '0x555',
     network: 1,
   };
-  run = () => fetchUserHoldings(args);
+  run = async () => {
+    const result = await fetchUserHoldings(args);
+    return formatJson(result);
+  };
 });
 
 it('returns all ERC721 holdings for a user', async () => {
@@ -102,7 +105,7 @@ it('returns all ERC721 holdings for a user', async () => {
     holdings: [holding],
   } = await run();
 
-  const expected = { assetAddress: '0x222', tokenId: '1' };
+  const expected = { assetAddress: '0x222', tokenId: '1', quantity: '1' };
 
   expect(holding).toEqual(expected);
 });
@@ -112,16 +115,13 @@ it('returns all ERC1155 holdings for a user', async () => {
     holdings: [, holding],
   } = await run();
 
-  const expected = formatJson(
-    {
-      assetAddress: '0x444',
-      tokenId: '2',
-      quantity: '9',
-    },
-    false
-  );
+  const expected = {
+    assetAddress: '0x444',
+    tokenId: '2',
+    quantity: '9',
+  };
 
-  expect(formatJson(holding, false)).toEqual(expected);
+  expect(holding).toEqual(expected);
 });
 
 it('fetches all nonstandard holdings for a user', async () => {
@@ -129,7 +129,7 @@ it('fetches all nonstandard holdings for a user', async () => {
     holdings: [, , holding],
   } = await run();
 
-  const expected = { assetAddress: '0x555', tokenId: '3' };
+  const expected = { assetAddress: '0x555', tokenId: '3', quantity: '1' };
 
   expect(holding).toEqual(expected);
 });

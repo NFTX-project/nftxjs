@@ -3,7 +3,7 @@ import type {
   Address,
   MarketplaceQuote,
   Provider,
-  TokenId,
+  TokenIds,
   Vault,
   VaultHolding,
 } from '@nftx/types';
@@ -49,8 +49,8 @@ export const makeQuoteVaultSwap =
     vault: Pick<Vault, 'id' | 'vaultId' | 'fees' | 'asset' | 'is1155'>;
     userAddress: Address;
     provider: Provider;
-    sellTokenIds: TokenId[] | [TokenId, number][];
-    buyTokenIds: TokenId[] | [TokenId, number][];
+    sellTokenIds: TokenIds;
+    buyTokenIds: TokenIds;
     holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
     slippagePercentage?: number;
   }) => {

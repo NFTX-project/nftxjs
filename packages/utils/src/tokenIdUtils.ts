@@ -66,12 +66,18 @@ export const getTotalTokenIds = (
 /** Takes a list of token ids and amounts and returns them in tuple format.
  * @example (['1', '2', '3'], [1, 2, 1]) -> [['1', 1], ['2', 2], ['3', 1]]
  * @example (['1', '2', '3']) -> [['1', 1], ['2', 1], ['3', 1]]
+ * @example (['1', '1', '2', '3']) -> [['1', 2], ['2', 1], ['3', 1]]
  */
 export const zipTokenIds = (
   tokenIds: TokenId[],
   amounts?: number[]
 ): [TokenId, number][] => {
-  return tokenIds.map((tokenId, i) => {
-    return [tokenId, amounts?.[i] ?? 1];
+  const grouped: Record<string, number> = {};
+
+  tokenIds.forEach((tokenId, i) => {
+    const count = amounts?.[i] ?? 1;
+    grouped[tokenId] = (grouped[tokenId] ?? 0) + count;
   });
+
+  return Object.entries(grouped) as [TokenId, number][];
 };

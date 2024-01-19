@@ -57,12 +57,12 @@ beforeEach(() => {
     {
       tokenId: '0',
       dateAdded: Date.now() / 1000 - 60 * 60 * 24,
-      amount: 1n,
+      quantity: 1n,
     },
     {
       tokenId: '1',
       dateAdded: Date.now() / 1000 - 60 * 60 * 24,
-      amount: 1n,
+      quantity: 1n,
     },
   ];
 
@@ -173,7 +173,7 @@ describe('when there are 5 or less token ids', () => {
 describe('when vault is an 1155', () => {
   beforeEach(() => {
     vault.is1155 = true;
-    holdings[0].amount = 2n;
+    holdings[0].quantity = 2n;
   });
 
   it('gets an on-chain quote', async () => {

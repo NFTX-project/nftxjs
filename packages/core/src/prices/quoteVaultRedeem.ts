@@ -11,7 +11,7 @@ import type {
   Address,
   MarketplaceQuote,
   Provider,
-  TokenId,
+  TokenIds,
   Vault,
   VaultHolding,
 } from '@nftx/types';
@@ -33,7 +33,7 @@ const quoteVaultRedeem = async ({
   provider: Provider;
   vault: Vault;
   userAddress: Address;
-  tokenIds: TokenId[] | [TokenId, number][];
+  tokenIds: TokenIds;
   holdings: VaultHolding[];
   slippagePercentage?: number;
 }) => {

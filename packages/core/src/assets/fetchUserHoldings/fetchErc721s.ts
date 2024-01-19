@@ -39,6 +39,7 @@ const fetchErc721sMainnet = async ({
       return {
         assetAddress: x.collection.id as Address,
         tokenId: BigInt(x.identifier).toString() as TokenId,
+        quantity: 1n,
       };
     });
   }
@@ -80,6 +81,7 @@ const fetchErc721sSepolia = async ({
       return {
         assetAddress: x.collection.id as Address,
         tokenId: BigInt(x.identifier).toString() as TokenId,
+        quantity: 1n,
       };
     });
   }
@@ -147,6 +149,7 @@ const fetchErc721sGoerli = async ({
       return {
         assetAddress: x.collection.id,
         tokenId: BigInt(x.tokenID).toString() as TokenId,
+        quantity: 1n,
       };
     });
   }
@@ -214,6 +217,7 @@ const fetchErc721sArbitrum = async ({
     holdings = data.account.tokens.map((x) => ({
       assetAddress: x.contract.id,
       tokenId: BigInt(x.identifier).toString() as TokenId,
+      quantity: 1n,
     }));
   }
   if (data?.account?.tokens?.length === 1000) {

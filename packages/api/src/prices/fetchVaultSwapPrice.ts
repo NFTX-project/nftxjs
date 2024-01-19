@@ -1,3 +1,4 @@
+import { TokenIds } from '@nftx/types';
 import fetchQuote from './fetchQuote';
 
 const fetchVaultSwapPrice = ({
@@ -7,8 +8,8 @@ const fetchVaultSwapPrice = ({
   network,
 }: {
   vaultId: string;
-  sellTokenIds: `${number}`[];
-  buyTokenIds: `${number}`[];
+  sellTokenIds: TokenIds;
+  buyTokenIds: TokenIds;
   network?: number;
 }) =>
   fetchQuote({

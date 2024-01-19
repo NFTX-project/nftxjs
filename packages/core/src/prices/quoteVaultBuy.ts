@@ -5,6 +5,7 @@ import type {
   MarketplaceQuote,
   Provider,
   TokenId,
+  TokenIds,
   Vault,
   VaultHolding,
 } from '@nftx/types';
@@ -106,7 +107,7 @@ export const makeQuoteVaultBuy =
     slippagePercentage,
   }: {
     vault: Pick<Vault, 'fees' | 'id' | 'vaultId' | 'is1155'>;
-    tokenIds: TokenId[] | [TokenId, number][];
+    tokenIds: TokenIds;
     network?: number;
     userAddress: Address;
     provider: Provider;

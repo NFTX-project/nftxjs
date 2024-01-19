@@ -2,7 +2,7 @@ import type {
   Address,
   MarketplacePrice,
   MarketplaceQuote,
-  TokenId,
+  TokenIds,
 } from '@nftx/types';
 import { queryApi } from '../utils';
 import config from '@nftx/config';
@@ -11,8 +11,8 @@ import { getTokenIdAmounts, getUniqueTokenIds } from '@nftx/utils';
 type CommonArgs = {
   type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem';
   vaultId: string;
-  buyTokenIds?: TokenId[] | [TokenId, number][];
-  sellTokenIds?: TokenId[] | [TokenId, number][];
+  buyTokenIds?: TokenIds;
+  sellTokenIds?: TokenIds;
   network?: number;
 };
 type PriceArgs = CommonArgs & {

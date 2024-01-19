@@ -30,7 +30,7 @@ const fetchErc1155sMainnet = async ({
         .first(1000)
         .orderBy('id')
         .orderDirection('asc')
-        .where((w) => [w.id.gt(lastId)])
+        .where((w) => [w.id.gt(lastId), w.balance.gt('0')])
         .select((s) => [
           s.id,
           s.balance,
@@ -82,7 +82,7 @@ const fetchErc1155sSepolia = async ({
         .first(1000)
         .orderBy('id')
         .orderDirection('asc')
-        .where((w) => [w.id.gt(lastId)])
+        .where((w) => [w.id.gt(lastId), w.balance.gt('0')])
         .select((s) => [
           s.id,
           s.balance,
@@ -169,6 +169,7 @@ const fetchErc1155sGoerli = async ({
       return {
         assetAddress: x.collection.id,
         tokenId: BigInt(x.tokenID).toString() as TokenId,
+        quantity: 1n,
       };
     });
   }

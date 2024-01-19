@@ -6,7 +6,7 @@ import {
 import type {
   MarketplacePrice,
   Provider,
-  TokenId,
+  TokenIds,
   Vault,
   VaultHolding,
 } from '@nftx/types';
@@ -26,7 +26,7 @@ const getIndexedPrice = ({
   network,
 }: {
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
-  tokenIds: TokenId[] | [TokenId, number][];
+  tokenIds: TokenIds;
   vault: Pick<Vault, 'prices' | 'vTokenToEth'>;
   now: number;
   network: number;
@@ -59,7 +59,7 @@ const getRoughPrice = ({
   network,
 }: {
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
-  buyTokenIds: TokenId[] | [TokenId, number][];
+  buyTokenIds: TokenIds;
   vault: Pick<Vault, 'fees' | 'vTokenToEth'>;
   now: number;
   network: number;
@@ -110,9 +110,9 @@ export const makePriceVaultSwap =
       Vault,
       'vTokenToEth' | 'prices' | 'fees' | 'is1155' | 'id' | 'vaultId' | 'asset'
     >;
-    sellTokenIds: TokenId[] | [TokenId, number][];
-    buyTokenIds: TokenId[] | [TokenId, number][];
-    holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId' | 'amount'>[];
+    sellTokenIds: TokenIds;
+    buyTokenIds: TokenIds;
+    holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId' | 'quantity'>[];
     bypassIndexedPrice?: boolean;
   }) => {
     const now = Math.floor(Date.now() / 1000);
@@ -141,7 +141,7 @@ export const makePriceVaultSwap =
       // We a) can't get a quote, and b) don't care about premiums
       if (holdings.length) {
         // If there aren't any holdings with more than 1 item then actually it doesn't matter
-        if (holdings.some((x) => x.amount > 1n)) {
+        if (holdings.some((x) => x.quantity > 1n)) {
           // For ERC1155s we don't have any way to determine the premium of an asset when
           // there are multiple items per token id.
           // The simplest solution is to instead fire off an on-chain quote.

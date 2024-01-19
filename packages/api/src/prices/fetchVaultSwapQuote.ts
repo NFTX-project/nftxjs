@@ -1,4 +1,4 @@
-import type { Address } from '@nftx/types';
+import type { Address, TokenIds } from '@nftx/types';
 import fetchQuote from './fetchQuote';
 
 const fetchVaultSwapQuote = ({
@@ -10,8 +10,8 @@ const fetchVaultSwapQuote = ({
   slippagePercentage,
 }: {
   vaultId: string;
-  sellTokenIds: `${number}`[];
-  buyTokenIds: `${number}`[];
+  sellTokenIds: TokenIds;
+  buyTokenIds: TokenIds;
   userAddress: Address;
   network?: number;
   slippagePercentage?: number;

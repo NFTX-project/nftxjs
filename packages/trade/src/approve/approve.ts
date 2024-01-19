@@ -10,6 +10,7 @@ import type {
   Provider,
   Signer,
   TokenId,
+  TokenIds,
   Transaction,
 } from '@nftx/types';
 import { MaxUint256, PERMIT2, Zero } from '@nftx/constants';
@@ -263,7 +264,7 @@ async function approve(args: {
   signer: Signer;
   tokenId?: TokenId;
   /** For ERC721/ERC1155, provide the token id or tokenIds */
-  tokenIds?: TokenId[] | [TokenId, number][];
+  tokenIds?: TokenIds;
   /** For ERC20, provide the amount the spender can spend - if omitted it defaults to the max amount */
   amount?: bigint;
   /** If the standard is omitted, we will infer either ERC721 or ERC20 based on amount/tokenId/tokenIds parameters */

@@ -19,6 +19,8 @@ export type BigIntish = bigint | BigIntString | number;
 
 export type TokenId = BigIntString;
 
+export type TokenIds = TokenId[] | [TokenId, number][];
+
 export type TransactionReceipt = ViemTrasnsactionReceipt & {
   permit2Signature?: Permit2Quote;
 };

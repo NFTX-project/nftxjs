@@ -1,6 +1,6 @@
 import { CreatePoolFeatures, CreatePoolFees } from './pools';
 import { ApproveContract } from './price';
-import { Address, TokenId } from './web3';
+import { Address, TokenId, TokenIds } from './web3';
 
 export type CreateVaultQuoteParams = {
   name: string;
@@ -62,7 +62,7 @@ export type CreateVaultQuote = {
 
 export type WithdrawLiquidityQuoteParams = {
   userAddress: Address;
-  tokenIds: TokenId[] | [TokenId, number][];
+  tokenIds: TokenIds;
   positionId: Address;
   percentageToWithdraw: number;
   slippagePercentage?: number;
@@ -89,7 +89,7 @@ export type WithdrawLiquidityQuote = {
 export type WithdrawInventoryQuoteParams = {
   positionId: Address;
   percentageToWithdraw: number;
-  tokenIds: TokenId[];
+  tokenIds: TokenIds;
   slippagePercentage?: number;
 };
 
@@ -110,7 +110,7 @@ export type CreateInventoryPositionQuoteParams = {
   userAddress: Address;
   vToken?: bigint;
   usePermit2?: boolean;
-  tokenIds?: [TokenId, number][] | TokenId[];
+  tokenIds?: TokenIds;
 };
 
 export type CreateInventoryPositionQuote = {
@@ -170,7 +170,7 @@ export type CreateLiquidityPositionQuote = {
 
 export type IncreaseLiquidityQuoteParams = {
   positionId: Address;
-  tokenIds: [TokenId, number][] | TokenId[];
+  tokenIds: TokenIds;
   slippagePercentage?: number;
   liquidity: {
     upperPrice: bigint;

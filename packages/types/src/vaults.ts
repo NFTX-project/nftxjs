@@ -19,7 +19,7 @@ export type VaultHolding = {
   id: string;
   assetAddress: Address;
   tokenId: TokenId;
-  amount: bigint;
+  quantity: bigint;
   dateAdded: number;
   vaultId: string;
 };

@@ -1,5 +1,5 @@
 import { fetchTokenSellPrice } from '@nftx/trade';
-import type { MarketplacePrice, TokenId, Vault } from '@nftx/types';
+import type { MarketplacePrice, TokenIds, Vault } from '@nftx/types';
 import { parseEther } from 'viem';
 import { calculateTotalFeePrice } from './common';
 import { Zero } from '@nftx/constants';
@@ -26,7 +26,7 @@ const getIndexedPrice = ({
   tokenIds,
   vault,
 }: {
-  tokenIds: TokenId[] | [TokenId, number][];
+  tokenIds: TokenIds;
   vault: Pick<Vault, 'prices'>;
 }) => {
   const totalTokenIds = getTotalTokenIds(tokenIds);
@@ -42,7 +42,7 @@ const getRoughPrice = async ({
   fetchTokenSellPrice,
 }: {
   network: number;
-  tokenIds: TokenId[] | [TokenId, number][];
+  tokenIds: TokenIds;
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'fees'>;
   fetchTokenSellPrice: FetchTokenSellPrice;
 }) => {
@@ -92,7 +92,7 @@ export const makePriceVaultSell =
     vault,
   }: {
     network: number;
-    tokenIds: TokenId[] | [TokenId, number][];
+    tokenIds: TokenIds;
     vault: Pick<Vault, 'id' | 'prices' | 'vTokenToEth' | 'fees'>;
     bypassIndexedPrice?: boolean;
   }) => {

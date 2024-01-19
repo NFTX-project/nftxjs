@@ -7,7 +7,7 @@ const transformVaultHolding = (
   return {
     id: holding.id,
     tokenId: holding.tokenId as `${number}`,
-    amount: BigInt(holding.amount),
+    quantity: BigInt(holding.amount),
     dateAdded: Number(holding.dateAdded),
     vaultId: holding.vault.vaultId,
     assetAddress: holding.vault.asset.id as Address,

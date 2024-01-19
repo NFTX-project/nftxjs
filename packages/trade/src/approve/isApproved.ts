@@ -1,7 +1,12 @@
 import { ERC20, ERC721, CryptoPunks } from '@nftx/abi';
 import { MaxUint256, Zero } from '@nftx/constants';
-import type { Address, Provider, TokenId } from '@nftx/types';
-import { addressEqual, getContract, isCryptoPunk } from '@nftx/utils';
+import type { Address, Provider, TokenId, TokenIds } from '@nftx/types';
+import {
+  addressEqual,
+  getContract,
+  getUniqueTokenIds,
+  isCryptoPunk,
+} from '@nftx/utils';
 
 const isPunkApproved = async ({
   provider,
@@ -131,7 +136,7 @@ const isApproved = async (args: {
   /** Optionally provide the tokenId. Certain contracts such as CryptoPunks need to approve individual tokens */
   tokenId?: TokenId;
   /** Optionally provide a list of tokenIds. Certain contracts such as CryptoPunks need to approve individual tokens */
-  tokenIds?: TokenId[];
+  tokenIds?: TokenIds;
   /** For ERC20 contracts, you can supply a specific amount to be approved. Defaults to the maximum amount */
   amount?: bigint;
   /** The token standard for tokenAddress */
@@ -168,7 +173,7 @@ const isApproved = async (args: {
         spenderAddress,
         tokenAddress,
         userAddress,
-        tokenIds,
+        tokenIds: getUniqueTokenIds(tokenIds),
       });
     }
     return isErc721Approved({

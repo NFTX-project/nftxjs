@@ -33,7 +33,7 @@ const reservoirTokenToAsset = ({
     rarity: token.rarityScore,
     rarityRank: token.rarityRank,
     animationUrl,
-    quantity: token.supply ? BigInt(token.supply) : undefined,
+    quantity: token.supply ? BigInt(token.supply) : 1n,
     traits: (token.attributes ?? []).reduce((acc, { key, value }) => {
       return { ...acc, [key]: value };
     }, {} as Record<string, string>),

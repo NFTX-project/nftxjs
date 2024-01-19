@@ -1,5 +1,5 @@
 import type { Token } from './tokens';
-import type { Address, TokenId } from './web3';
+import type { Address, TokenIds } from './web3';
 
 type PriceRoute = Array<{
   type: string;
@@ -40,7 +40,7 @@ export type ApproveContract = {
   /** The smart contract address that will be spending the token */
   spenderAddress: Address;
   /** For ERC721/ERC1155, provide the token id or tokenIds */
-  tokenIds?: TokenId[] | [TokenId, number][];
+  tokenIds?: TokenIds;
   /** For ERC20, provide the amount the spender can spend - if omitted it defaults to the max amount */
   amount?: bigint;
   /** If the standard is omitted, we will infer either ERC721 or ERC20 based on amount/tokenId/tokenIds parameters */

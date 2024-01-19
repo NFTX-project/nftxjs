@@ -76,6 +76,7 @@ export const makeFetchNonStandards =
       return {
         assetAddress,
         tokenId,
+        quantity: 1n,
       };
     });
 

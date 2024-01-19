@@ -8,7 +8,7 @@ import type {
   Address,
   MarketplaceQuote,
   Provider,
-  TokenId,
+  TokenIds,
   Vault,
 } from '@nftx/types';
 import quoteVaultSell from './quoteVaultSell';
@@ -25,7 +25,7 @@ const quoteVaultMint = async ({
   slippagePercentage,
 }: {
   network: number;
-  tokenIds: TokenId[] | [TokenId, number][];
+  tokenIds: TokenIds;
   userAddress: Address;
   vault: Pick<Vault, 'id' | 'vaultId' | 'fees' | 'is1155' | 'asset'>;
   provider: Provider;

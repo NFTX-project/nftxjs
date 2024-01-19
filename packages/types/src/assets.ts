@@ -8,7 +8,7 @@ export type Asset = {
   tokenId: TokenId;
   assetAddress: Address;
   vaultIds: string[];
-  quantity?: bigint;
+  quantity: bigint;
   name: string;
   traits: Record<string, string>;
   isFlagged: boolean;

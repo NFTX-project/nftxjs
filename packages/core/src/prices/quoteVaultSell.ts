@@ -4,7 +4,7 @@ import type {
   Address,
   MarketplaceQuote,
   Provider,
-  TokenId,
+  TokenIds,
   Vault,
 } from '@nftx/types';
 import { parseEther } from 'viem';
@@ -42,7 +42,7 @@ export const makeQuoteVaultSell =
   }: {
     vault: Pick<Vault, 'id' | 'fees' | 'asset' | 'vaultId' | 'is1155'>;
     network: number;
-    tokenIds: TokenId[] | [TokenId, number][];
+    tokenIds: TokenIds;
     userAddress: Address;
     provider: Provider;
     slippagePercentage?: number;
