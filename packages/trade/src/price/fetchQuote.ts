@@ -124,7 +124,10 @@ const fetchQuote = async (args: {
     searchParams.append('recipient', userAddress);
     searchParams.append('deadline', '300');
     searchParams.append('enableUniversalRouter', 'true');
-    searchParams.append('slippageTolerance', `${slippagePercentage ?? 0.01}`);
+    searchParams.append(
+      'slippageTolerance',
+      `${(slippagePercentage ?? 0.01) * 100}`
+    );
     searchParams.append('intent', 'swap');
   } else {
     searchParams.append('intent', 'quote');
