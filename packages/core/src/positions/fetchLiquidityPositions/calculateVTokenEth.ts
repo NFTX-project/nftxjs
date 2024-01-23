@@ -130,6 +130,7 @@ const calculateVTokenEth = ({
   eth: bigint;
   vToken: bigint;
   tickUpperPrice: bigint;
+  tickPrice: bigint;
   tickLowerPrice: bigint;
 } => {
   try {
@@ -163,12 +164,14 @@ const calculateVTokenEth = ({
     const vToken = isVToken0 ? amount0 : amount1;
 
     const tickLowerPrice = calculatePriceFromTick(Number(tickLower));
+    const tickPrice = calculatePriceFromTick(currentTick);
     const tickUpperPrice = calculatePriceFromTick(Number(tickUpper));
 
     return {
       eth,
       vToken,
       tickLowerPrice,
+      tickPrice,
       tickUpperPrice,
     };
   } catch (e) {
@@ -178,6 +181,7 @@ const calculateVTokenEth = ({
       eth: Zero,
       vToken: Zero,
       tickUpperPrice: Zero,
+      tickPrice: Zero,
       tickLowerPrice: Zero,
     };
   }
