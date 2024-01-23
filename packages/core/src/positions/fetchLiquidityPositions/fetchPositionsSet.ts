@@ -51,6 +51,7 @@ export const makeFetchPositionsSet =
     positionIds,
     userAddresses,
     provider,
+    tokenIds,
   }: {
     network: number;
     vaults: Pick<Vault, 'id' | 'vaultId' | 'vTokenToEth'>[];
@@ -59,6 +60,7 @@ export const makeFetchPositionsSet =
     poolIds?: Address[];
     positionIds?: Address[];
     userAddresses?: Address[];
+    tokenIds?: TokenId[];
   }) => {
     const data = await queryPositionData({
       lastId,
@@ -66,6 +68,7 @@ export const makeFetchPositionsSet =
       poolIds,
       positionIds,
       userAddresses,
+      tokenIds,
     });
 
     const positions = await Promise.all(

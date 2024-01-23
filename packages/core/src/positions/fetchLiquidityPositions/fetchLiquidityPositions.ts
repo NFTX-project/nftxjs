@@ -19,6 +19,7 @@ export const makeFetchLiquidityPositions =
     vaultIds,
     poolIds,
     positionIds,
+    tokenIds,
     network = config.network,
     vaults,
     provider,
@@ -27,6 +28,7 @@ export const makeFetchLiquidityPositions =
     vaultIds?: string[];
     poolIds?: Address[];
     positionIds?: Address[];
+    tokenIds?: TokenId[];
     network?: number;
     vaults: Pick<Vault, 'vaultId' | 'id' | 'vTokenToEth'>[];
     provider: Provider;
@@ -49,6 +51,7 @@ export const makeFetchLiquidityPositions =
         positionIds,
         userAddresses,
         provider,
+        tokenIds,
       });
 
       positions.push(...morePositions);

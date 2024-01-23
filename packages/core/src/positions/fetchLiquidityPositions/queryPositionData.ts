@@ -1,5 +1,5 @@
 import { createQuery, querySubgraph } from '@nftx/subgraph';
-import type { NftxV3Uniswap, Address } from '@nftx/types';
+import type { NftxV3Uniswap, Address, TokenId } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import config from '@nftx/config';
 
@@ -13,10 +13,12 @@ export const makeQueryPositionData =
     poolIds,
     positionIds,
     userAddresses,
+    tokenIds,
   }: {
     userAddresses?: Address[];
     poolIds?: Address[];
     positionIds?: Address[];
+    tokenIds?: TokenId[];
     lastId?: Address;
     network: number;
   }) => {
@@ -28,6 +30,7 @@ export const makeQueryPositionData =
         w.pool.in(poolIds),
         w.id.in(positionIds),
         w.id.gt(lastId),
+        w.tokenId.in(tokenIds),
       ])
       .select((s) => [
         s.id,
