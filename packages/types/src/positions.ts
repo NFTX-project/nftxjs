@@ -8,10 +8,15 @@ export type LiquidityPosition = {
   userAddress: Address;
   vaultId: string;
   vaultAddress: Address;
+  poolName: string;
   /** The upper boundary of the position range */
   tickUpper: bigint;
   /** The lower boundary of the position range */
   tickLower: bigint;
+  /** The current tick of the pool */
+  tick: bigint;
+  /** The current tick price */
+  tickValue: bigint;
   /** The upper tick in ETH */
   tickUpperValue: bigint;
   /** The lower tick in ETH */

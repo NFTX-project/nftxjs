@@ -40,15 +40,16 @@ const transformPosition = ({
     getChainConstant(WETH_TOKEN, network)
   );
 
-  const { eth, vToken, tickLowerPrice, tickUpperPrice } = calculateVTokenEth({
-    inputTokens: position.pool.inputTokens.map((t) => t.id as Address),
-    liquidity,
-    network,
-    tickLower,
-    tickUpper,
-    vTokenToEth: vault.vTokenToEth,
-    currentTick: tick,
-  });
+  const { eth, vToken, tickLowerPrice, tickPrice, tickUpperPrice } =
+    calculateVTokenEth({
+      inputTokens: position.pool.inputTokens.map((t) => t.id as Address),
+      liquidity,
+      network,
+      tickLower,
+      tickUpper,
+      vTokenToEth: vault.vTokenToEth,
+      currentTick: tick,
+    });
 
   const claimableEth = isWeth0 ? claimable0 : claimable1;
   const claimableVToken = isWeth0 ? claimable1 : claimable0;
@@ -58,6 +59,7 @@ const transformPosition = ({
   // This is ETH price at the upper and lower tick boundaries
   const tickUpperValue = normalizeTickPrice(tickUpperPrice);
   const tickLowerValue = normalizeTickPrice(tickLowerPrice);
+  const tickValue = normalizeTickPrice(tickPrice);
 
   const price = vault.vTokenToEth;
 
@@ -73,13 +75,16 @@ const transformPosition = ({
     id: position.id as Address,
     poolId: position.pool.id as Address,
     tokenId,
+    poolName: position.pool.name ?? '',
     liquidity,
     tickLower,
+    tick,
     tickUpper,
     userAddress: position.account.id as Address,
     inRange,
     eth,
     tickLowerValue,
+    tickValue,
     tickUpperValue,
     value,
     vToken,

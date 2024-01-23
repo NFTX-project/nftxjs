@@ -43,6 +43,7 @@ export const makeQueryPositionData =
         s.pool((pool) => [
           pool.id,
           pool.tick,
+          pool.name,
           pool.inputTokens((token) => [token.id]),
         ]),
         s.account((account) => [account.id]),
