@@ -1,10 +1,41 @@
 import config from '@nftx/config';
-import type { Address, LiquidityPosition, Provider, Vault } from '@nftx/types';
+import type {
+  Address,
+  LiquidityPosition,
+  Provider,
+  TokenId,
+  Vault,
+} from '@nftx/types';
 import fetchPoolIdsForVaultIds from './fetchPoolIdsForVaultIds';
 import fetchPositionsSet from './fetchPositionsSet';
+import { WeiPerEther, Zero } from '@nftx/constants';
 
 type FetchPoolIdsForVaultIds = typeof fetchPoolIdsForVaultIds;
 type FetchPositionsSet = typeof fetchPositionsSet;
+
+const updatePoolShares = (positions: LiquidityPosition[]) => {
+  const poolVTokens: Record<string, bigint> = {};
+  positions.forEach((position) => {
+    const { poolId, vToken } = position;
+    const current = poolVTokens[poolId] ?? Zero;
+    const updated = current + vToken;
+
+    poolVTokens[poolId] = updated;
+  });
+
+  positions.forEach((position) => {
+    const { vToken, poolId } = position;
+    const total = poolVTokens[poolId];
+
+    if (!total) {
+      return;
+    }
+
+    const share = (vToken * WeiPerEther) / total;
+
+    position.poolShare = share;
+  });
+};
 
 export const makeFetchLiquidityPositions =
   ({
@@ -56,6 +87,8 @@ export const makeFetchLiquidityPositions =
 
       positions.push(...morePositions);
     } while (lastId);
+
+    updatePoolShares(positions);
 
     return positions;
   };
