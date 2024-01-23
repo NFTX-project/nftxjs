@@ -20,6 +20,7 @@ import {
 } from '@nftx/utils';
 import { parseEther } from 'viem';
 import calculateAprs from './calculateAprs';
+import { calculatePriceFromTick } from '../../univ3-helpers';
 
 type Pool = LiquidityPoolsResponse['liquidityPools'][0];
 
@@ -57,6 +58,7 @@ const transformPool = (
   const activeLiquidity = BigInt(pool.activeLiquidity ?? '0');
   const totalLiquidity = BigInt(pool.totalLiquidity ?? '0');
   const tick = BigInt(pool.tick ?? '0');
+  const tickValue = calculatePriceFromTick(tick);
   const feePercentage = Number(
     pool.fees.find((fee) => fee.feeType === 'FIXED_TRADING_FEE')
       ?.feePercentage ?? 0
@@ -138,6 +140,7 @@ const transformPool = (
     name: pool.name ?? '',
     periodFees,
     tick,
+    tickValue,
     tokens,
     totalLiquidity,
     vaultAddress: vault.id,

@@ -75,6 +75,7 @@ const createStub = ({
     name: `${vault.token.symbol} ${feePercentage * 100}% Pool`,
     periodFees: { '1m': Zero, '24h': Zero, '7d': Zero, '1y': Zero },
     tick: Zero,
+    tickValue: Zero,
     tokens: [
       { ...vault.token, balance: Zero },
       { id: wethAddress, name: 'Wrapped Ether', symbol: 'WETH', balance: Zero },
