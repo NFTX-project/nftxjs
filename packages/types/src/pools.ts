@@ -22,6 +22,8 @@ export type LiquidityPool = {
   }[];
   /** The current tick that the pool is operating at */
   tick: bigint;
+  /** The current tick price */
+  tickValue: bigint;
   totalLiquidity: bigint;
   activeLiquidity: bigint;
   inRangeLiquidity: bigint;
