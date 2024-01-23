@@ -25,7 +25,7 @@ function updatePoolShares(positions: InventoryPosition[]) {
     const current = poolVTokens[poolId] ?? Zero;
     const updated = current + vToken;
 
-    poolVTokens[position.vaultId] = updated;
+    poolVTokens[poolId] = updated;
   });
   // Then we need to work out the share of each position
   positions.forEach((position) => {
