@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.2](https://github.com/NFTX-project/nftxjs/compare/v1.11.1...v1.11.2) (2024-01-24)
+
+
+### Bug Fixes
+
+* amm quotes should pass slippage tolerance as 0-100 not 0-1 scales ([6ad58f5](https://github.com/NFTX-project/nftxjs/commit/6ad58f5aa7dcdf39ec6af90165e1703866701038))
+
+
+
+
+
 ## [1.11.1](https://github.com/NFTX-project/nftxjs/compare/v1.11.0...v1.11.1) (2024-01-19)
 
 **Note:** Version bump only for package @nftx/trade
