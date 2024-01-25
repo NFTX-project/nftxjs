@@ -6,6 +6,7 @@ export type Signals = {
   'index-inactive-vaults': { network: number };
   'index-new-vaults': { network: number };
   'index-twap-vaults': { network: number };
+  'start-twap-watch': { network: number; vaultId: string };
 };
 
 type ListenerFn<T, S extends keyof T> = (signal: {
