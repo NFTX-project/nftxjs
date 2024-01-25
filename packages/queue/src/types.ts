@@ -5,7 +5,6 @@ export type Signals = {
   'index-vault': { network: number; vaultId: string };
   'index-inactive-vaults': { network: number };
   'index-new-vaults': { network: number };
-  'index-twap-vaults': { network: number };
   'start-twap-watch': { network: number; vaultId: string };
 };
 
@@ -18,7 +17,7 @@ export type SignalCallback = ListenerFn<Signals, 'index-vault'> &
   ListenerFn<Signals, 'index-collection'> &
   ListenerFn<Signals, 'index-inactive-vaults'> &
   ListenerFn<Signals, 'index-new-vaults'> &
-  ListenerFn<Signals, 'index-twap-vaults'>;
+  ListenerFn<Signals, 'start-twap-watch'>;
 
 export type Messages = {
   'collection-indexed': { collectionAddress: Address; network: number };
