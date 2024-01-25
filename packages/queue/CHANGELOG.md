@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/NFTX-project/nftxjs/compare/v1.11.2...v1.12.0) (2024-01-25)
+
+
+### Features
+
+* new queue signals ([0698950](https://github.com/NFTX-project/nftxjs/commit/0698950191e9edb6a37e0e6f07a60a146246ffe6))
+
+
+
+
+
 ## [1.11.2](https://github.com/NFTX-project/nftxjs/compare/v1.11.1...v1.11.2) (2024-01-24)
 
 
