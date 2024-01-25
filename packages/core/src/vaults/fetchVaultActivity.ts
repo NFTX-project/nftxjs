@@ -21,7 +21,9 @@ type Type =
   | 'VAULT_PUBLISHED'
   | 'VAULT_NAME_CHANGE'
   | 'VAULT_SHUTDOWN'
-  | 'VAULT_FEE_UPDATE';
+  | 'VAULT_FEE_UPDATE'
+  | 'INVENTORY_DEPOSIT'
+  | 'INVENTORY_DEPOSIT_WITH_NFT';
 
 type Response = NftxV3.Query & {
   activityEvents: NftxV3.ActivityEvent &
@@ -78,6 +80,8 @@ const getActivityType = (
     case 'SWAP':
       return 'swap';
     case 'DEPOSIT':
+    case 'INVENTORY_DEPOSIT':
+    case 'INVENTORY_DEPOSIT_WITH_NFT':
       switch (eventType) {
         case 'IncreaseLiquidity':
         case 'AddLiquidity':
