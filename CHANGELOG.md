@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/NFTX-project/nftxjs/compare/v1.12.0...v1.13.0) (2024-01-25)
+
+
+### Features
+
+* start-twap-watch signal ([21d1820](https://github.com/NFTX-project/nftxjs/commit/21d1820956972dcf779c7203db5eee01da0fd3ec))
+
+
+
+
+
 # [1.12.0](https://github.com/NFTX-project/nftxjs/compare/v1.11.2...v1.12.0) (2024-01-25)
 
 
