@@ -3,7 +3,9 @@ import { makeFetchLiquidityPositions } from '../fetchLiquidityPositions';
 import { makeFetchPositionsSet } from '../fetchPositionsSet';
 import { makeQueryPositionData } from '../queryPositionData';
 import { getChainConstant } from '@nftx/utils';
-import { WETH_TOKEN } from '@nftx/constants';
+import { MAX_TICK, MIN_TICK, WETH_TOKEN } from '@nftx/constants';
+import { MAX_PRICE } from '@nftx/constants';
+import { MIN_PRICE } from '@nftx/constants';
 
 let subggraphResponse: any;
 let querySubgraph: jest.Mock;
@@ -188,4 +190,28 @@ it('calculates eth and vToken and ETH values', async () => {
   expect(formatEther(positions[0].vToken)).toBe('0.741639611548487752');
   expect(formatEther(positions[0].vTokenValue)).toBe('0.065397553098123939');
   expect(formatEther(positions[0].value)).toBe('0.845620415180247906');
+});
+
+it('calculate the tick values', async () => {
+  const positions = await run();
+
+  expect(formatEther(positions[0].tickLowerValue)).toBe('0.024827205966373578');
+  expect(formatEther(positions[0].tickValue)).toBe('0.090728839371226339');
+  expect(formatEther(positions[0].tickUpperValue)).toBe('0.098678892777293698');
+  expect(positions[0].isFullRange).toBe(false);
+});
+
+describe('when position has an infinite range', () => {
+  beforeEach(() => {
+    subggraphResponse.positions[0].tickLower.index = `${MIN_TICK}`;
+    subggraphResponse.positions[0].tickUpper.index = `${MAX_TICK}`;
+  });
+
+  it('sets infiniteRange to true', async () => {
+    const positions = await run();
+
+    expect(positions[0].tickUpperValue >= MAX_PRICE).toBe(true);
+    expect(positions[0].tickLowerValue <= MIN_PRICE).toBe(true);
+    expect(positions[0].isFullRange).toBe(true);
+  });
 });

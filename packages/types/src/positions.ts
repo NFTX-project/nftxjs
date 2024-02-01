@@ -15,6 +15,8 @@ export type LiquidityPosition = {
   tickLower: bigint;
   /** The current tick of the pool */
   tick: bigint;
+  /** Whether the position is an infinite range */
+  isFullRange: boolean;
   /** The current tick price */
   tickValue: bigint;
   /** The upper tick in ETH */
