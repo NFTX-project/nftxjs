@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.1](https://github.com/NFTX-project/nftxjs/compare/v1.14.0...v1.14.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* add retry and error handling settings to queues ([03fe4d0](https://github.com/NFTX-project/nftxjs/commit/03fe4d0ebbe7deb58043e2822f0328d4221c5bd9))
+
+
+
+
+
 # [1.14.0](https://github.com/NFTX-project/nftxjs/compare/v1.13.2...v1.14.0) (2024-02-01)
 
 **Note:** Version bump only for package @nftx/queue
