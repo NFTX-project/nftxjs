@@ -23,7 +23,18 @@ export class NftxQueue extends Queue {
 const getQueue = (queueName: string) => {
   return (
     NftxQueue.queues[queueName] ||
-    new NftxQueue(queueName, { connection: getConnection(queueName) })
+    new NftxQueue(queueName, {
+      connection: getConnection(queueName),
+      defaultJobOptions: {
+        attempts: 5,
+        removeOnComplete: true,
+        removeOnFail: true,
+        backoff: {
+          type: 'exponential',
+          delay: 30000,
+        },
+      },
+    })
   );
 };
 

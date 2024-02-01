@@ -12,7 +12,7 @@ const onNetworkSignal = (network: number, callback: SignalCallback) => {
 
   return createWorker(queueName, (job) => {
     const { name, data } = job;
-    callback({ payload: data, type: name as any });
+    return callback({ payload: data, type: name as any });
   });
 };
 

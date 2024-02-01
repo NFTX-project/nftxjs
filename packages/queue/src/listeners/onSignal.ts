@@ -8,7 +8,7 @@ import { SignalCallback } from '../types';
 const onSignal = (callback: SignalCallback) => {
   return createWorker(SIGNAL_QUEUE_NAME, (job) => {
     const { name, data } = job;
-    callback({ type: name as any, payload: data });
+    return callback({ type: name as any, payload: data });
   });
 };
 
