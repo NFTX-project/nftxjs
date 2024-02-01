@@ -42,6 +42,9 @@ export type Select<Def> = SelectX<
 >;
 
 const stringify = (element: SelectFieldPrimitive): string => {
+  if ('toStringInner' in element) {
+    return (element as any).toStringInner();
+  }
   const output: string[] = [];
   const { $alias, $fields, $name, $on } = element;
   if ($name) {
