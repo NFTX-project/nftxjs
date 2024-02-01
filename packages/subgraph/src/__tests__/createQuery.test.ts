@@ -357,7 +357,6 @@ it('selects and filters child entities with a nested query assigned to another f
         .select((s) => [s.hourlyVolumeUSD, s.id])
     ),
   ]);
-
   const actual = query.toString();
   const expected = `{
       liquidityPools {
@@ -368,6 +367,40 @@ it('selects and filters child entities with a nested query assigned to another f
         ) {
           hourlyVolumeUSD
           id
+        }
+      }
+    }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('selects and filters child entities with a nested query assigned to an on... field', () => {
+  const q = createQuery<Query>();
+
+  const query = q.liquidityPools.select((s) => [
+    s.on('Foo', (s) => [
+      s.hourlySnapshots(
+        q.liquidityPoolHourlySnapshots
+          .first(24)
+          .orderBy('hour')
+          .orderDirection('desc')
+          .select((s) => [s.hourlyVolumeUSD, s.id])
+      ),
+    ]),
+  ]);
+
+  const actual = query.toString();
+  const expected = `{
+      liquidityPools {
+        ... on Foo {
+          hourlySnapshots(
+            first: 24
+            orderBy: hour
+            orderDirection: desc
+          ) {
+            hourlyVolumeUSD
+            id
+          }
         }
       }
     }`;
