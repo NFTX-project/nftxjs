@@ -1,4 +1,5 @@
 import config from '@nftx/config';
+import { NFTX_FEE_DISTRIBUTOR } from '@nftx/constants';
 import { Zero } from '@nftx/constants';
 import { querySubgraph, createQuery } from '@nftx/subgraph';
 import type {
@@ -267,10 +268,16 @@ export const makeFetchVaultActivity = ({
   }): Promise<VaultActivity[]> {
     let lastId: string | undefined;
     const activity: VaultActivity[] = [];
+    const feeDistributorAddress = getChainConstant(
+      NFTX_FEE_DISTRIBUTOR,
+      network
+    );
 
     do {
-      const query = createQuery<Response>()
-        .activityEvents.first(1000)
+      const q = createQuery<Response>();
+
+      const query = q.activityEvents
+        .first(1000)
         .orderBy('id')
         .where((w) => [
           w.id.gt(lastId),
@@ -287,17 +294,35 @@ export const makeFetchVaultActivity = ({
           s.vault((v) => [v.id, v.vaultId]),
           s.on<NftxV3.Mint>('Mint', (s) => [
             s.nftIds.as('mintIds'),
-            s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+            s.feeReceipt((r) => [
+              r.transfers(
+                q.feeTransfers
+                  .where((w) => [w.to.is(feeDistributorAddress)])
+                  .select((receipt) => [receipt.amount])
+              ),
+            ]),
           ]),
           s.on<NftxV3.Redeem>('Redeem', (s) => [
             s.targetCount,
             s.nftIds.as('redeemIds'),
-            s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+            s.feeReceipt((r) => [
+              r.transfers(
+                q.feeTransfers
+                  .where((w) => [w.to.is(feeDistributorAddress)])
+                  .select((receipt) => [receipt.amount])
+              ),
+            ]),
           ]),
           s.on<NftxV3.Swap>('Swap', (s) => [
             s.mintedIds.as('swapMintIds'),
             s.specificIds.as('swapRedeemIds'),
-            s.feeReceipt((r) => [r.transfers((t) => [t.amount])]),
+            s.feeReceipt((r) => [
+              r.transfers(
+                q.feeTransfers
+                  .where((w) => [w.to.is(feeDistributorAddress)])
+                  .select((receipt) => [receipt.amount])
+              ),
+            ]),
           ]),
         ]);
 
