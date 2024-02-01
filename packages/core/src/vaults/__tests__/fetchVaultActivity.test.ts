@@ -1,5 +1,6 @@
-import { formatJson } from '@nftx/utils';
+import { formatJson, getChainConstant } from '@nftx/utils';
 import { makeFetchVaultActivity } from '../fetchVaultActivity';
+import { NFTX_FEE_DISTRIBUTOR } from '@nftx/constants';
 
 let subgraphResponse: any;
 let querySubgraph: jest.Mock;
@@ -214,6 +215,17 @@ it('groups activity by transaction id', async () => {
   expect(result).toHaveLength(1);
   expect(result[0].type).toBe('stake');
   expect(result[0].eventType).toBe('AddLiquidity');
+});
+
+it('filters transfers by fee distrubtor', async () => {
+  await run();
+
+  const str = querySubgraph.mock.calls[0][0].query;
+  const address = getChainConstant(NFTX_FEE_DISTRIBUTOR, 1).toLowerCase();
+
+  expect(`${str}`.replace(/[ \n]/g, '')).toContain(
+    `transfers(where:{to:"${address}"})`
+  );
 });
 
 describe('when includeAllActivity is true', () => {

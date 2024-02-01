@@ -113,3 +113,10 @@ export const VAULT_FACTORY = {
   [Network.Goerli]: a('0x1d552A0e6c2f680872C4a88b1e7def05F1858dF0'),
   [Network.Sepolia]: a('0x31C56CaF49125043e80B4d3C7f8734f949d8178C'),
 };
+
+/** NftxFeeDistributorV3 */
+export const NFTX_FEE_DISTRIBUTOR = {
+  [Network.Mainnet]: a('0xF4d96C5094FCD9eC24E612585e723b58F89e21fe'),
+  [Network.Sepolia]: a('0x66EF5B4b6ee05639194844CE4867515665F14fED'),
+  [Network.Goerli]: a('0xA8076Ec5Dbb95165e14624Ff43dE2290e78A6905'),
+};
