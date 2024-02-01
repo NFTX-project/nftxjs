@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/NFTX-project/nftxjs/compare/v1.13.2...v1.14.0) (2024-02-01)
+
+
+### Bug Fixes
+
+* subgraphs with deeply nested subqueries were not resolving correctly ([08eeeee](https://github.com/NFTX-project/nftxjs/commit/08eeeeef1ba63a1af5dc6f62c6794095f870e2bb))
+
+
+
+
+
 ## [1.11.1](https://github.com/NFTX-project/nftxjs/compare/v1.11.0...v1.11.1) (2024-01-19)
 
 **Note:** Version bump only for package @nftx/subgraph

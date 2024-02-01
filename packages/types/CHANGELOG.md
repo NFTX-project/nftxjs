@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/NFTX-project/nftxjs/compare/v1.13.2...v1.14.0) (2024-02-01)
+
+
+### Features
+
+* add full range flag to positions ([c4e7fef](https://github.com/NFTX-project/nftxjs/commit/c4e7fef35607624a2fa6bfde6ddc918b08f511e6))
+* include poolName, tick, and tickValue in liquidity position ([ba6814c](https://github.com/NFTX-project/nftxjs/commit/ba6814c38dccffa7085c2ca8541671b9604da7bb))
+* include tickValue in liquidity pool - this is the eth price for the current tick ([0d44ee8](https://github.com/NFTX-project/nftxjs/commit/0d44ee8875f6ced71cd019c9ada7b0a914ffc60a))
+
+
+
+
+
 ## [1.11.1](https://github.com/NFTX-project/nftxjs/compare/v1.11.0...v1.11.1) (2024-01-19)
 
 **Note:** Version bump only for package @nftx/types

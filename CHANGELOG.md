@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/NFTX-project/nftxjs/compare/v1.13.2...v1.14.0) (2024-02-01)
+
+
+### Bug Fixes
+
+* filter fee receipts by fee distributor contract ([e844d0b](https://github.com/NFTX-project/nftxjs/commit/e844d0bb9147072be619dcb4b053478cb9c4f89e))
+* liquidity position poolShare was not being set ([6f1b417](https://github.com/NFTX-project/nftxjs/commit/6f1b417af974f7c98e8a0c103a15eb8b54b45125))
+* subgraphs with deeply nested subqueries were not resolving correctly ([08eeeee](https://github.com/NFTX-project/nftxjs/commit/08eeeeef1ba63a1af5dc6f62c6794095f870e2bb))
+
+
+### Features
+
+* add full range flag to positions ([c4e7fef](https://github.com/NFTX-project/nftxjs/commit/c4e7fef35607624a2fa6bfde6ddc918b08f511e6))
+* allow searching liquidity positions by token id ([7c1f1e5](https://github.com/NFTX-project/nftxjs/commit/7c1f1e5c703e6915be8e5d5ce985542e9fe1bc4a))
+* include poolName, tick, and tickValue in liquidity position ([ba6814c](https://github.com/NFTX-project/nftxjs/commit/ba6814c38dccffa7085c2ca8541671b9604da7bb))
+* include tickValue in liquidity pool - this is the eth price for the current tick ([0d44ee8](https://github.com/NFTX-project/nftxjs/commit/0d44ee8875f6ced71cd019c9ada7b0a914ffc60a))
+
+
+
+
+
 ## [1.13.2](https://github.com/NFTX-project/nftxjs/compare/v1.13.1...v1.13.2) (2024-01-26)
 
 

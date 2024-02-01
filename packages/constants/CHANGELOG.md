@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/NFTX-project/nftxjs/compare/v1.13.2...v1.14.0) (2024-02-01)
+
+
+### Bug Fixes
+
+* filter fee receipts by fee distributor contract ([e844d0b](https://github.com/NFTX-project/nftxjs/commit/e844d0bb9147072be619dcb4b053478cb9c4f89e))
+
+
+### Features
+
+* add full range flag to positions ([c4e7fef](https://github.com/NFTX-project/nftxjs/commit/c4e7fef35607624a2fa6bfde6ddc918b08f511e6))
+
+
+
+
+
 ## [1.11.1](https://github.com/NFTX-project/nftxjs/compare/v1.11.0...v1.11.1) (2024-01-19)
 
 
