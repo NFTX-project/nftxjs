@@ -1,6 +1,12 @@
 import type { Address, LiquidityPosition, TokenId, Vault } from '@nftx/types';
 import type { PositionsResponse } from './types';
-import { WETH_TOKEN, WeiPerEther, Zero } from '@nftx/constants';
+import {
+  WETH_TOKEN,
+  WeiPerEther,
+  Zero,
+  RFBR_MIN_PRICE,
+  RFBR_MAX_PRICE,
+} from '@nftx/constants';
 import calculateVTokenEth from './calculateVTokenEth';
 import { addressEqual, getChainConstant } from '@nftx/utils';
 import getManager from './getManager';
@@ -33,6 +39,7 @@ const transformPosition = ({
   const tickLower = BigInt(position.tickLower?.index ?? '0');
   const tickUpper = BigInt(position.tickUpper?.index ?? '0');
   const inRange = tick >= tickLower && tick <= tickUpper;
+
   const liquidity = BigInt(position.liquidity);
   const lockedUntil = Number(position.lockedUntil);
   const isWeth0 = addressEqual(
@@ -61,6 +68,10 @@ const transformPosition = ({
   const tickLowerValue = normalizeTickPrice(tickLowerPrice);
   const tickValue = normalizeTickPrice(tickPrice);
 
+  const minPrice = getChainConstant(RFBR_MIN_PRICE, network);
+  const maxPrice = getChainConstant(RFBR_MAX_PRICE, network);
+  const isFullRange = tickLowerValue <= minPrice && tickUpperValue >= maxPrice;
+
   const price = vault.vTokenToEth;
 
   const vTokenValue = (price * vToken) / WeiPerEther;
@@ -79,6 +90,7 @@ const transformPosition = ({
     liquidity,
     tickLower,
     tick,
+    isFullRange,
     tickUpper,
     userAddress: position.account.id as Address,
     inRange,

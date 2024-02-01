@@ -1,10 +1,11 @@
 import {
   Zero,
   type FeeTickSpacing,
-  MaxUint256,
   MIN_TICK,
   MAX_TICK,
   TICK_PRICE_BASE,
+  MIN_PRICE,
+  MAX_PRICE,
 } from '@nftx/constants';
 import { TickMath } from '@uniswap/v3-sdk';
 import { Decimal } from 'decimal.js';
@@ -77,9 +78,9 @@ export const calculatePriceFromTick = (tick: number | bigint): bigint => {
   const tickNum = Number(tick);
 
   if (tickNum <= MIN_TICK) {
-    return BigInt(0);
+    return MIN_PRICE;
   } else if (tickNum >= MAX_TICK) {
-    return MaxUint256;
+    return MAX_PRICE;
   } else {
     return decimalToEthers(new Decimal(TICK_PRICE_BASE).pow(tickNum));
   }
