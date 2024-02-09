@@ -52,7 +52,6 @@ export const makeFetchLiquidityPools =
     });
     const premiumPaids = await fetchPremiumPaids({
       network,
-      vaultAddresses: allVaultAddresses,
     });
 
     const pools: LiquidityPool[] = [];

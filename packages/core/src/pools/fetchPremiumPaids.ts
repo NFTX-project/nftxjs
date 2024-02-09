@@ -39,7 +39,7 @@ export const makeFetchPremiumPaids =
           s.amount,
           s.date,
           s.id,
-          s.to((to) => [to.id]),
+          // s.to((to) => [to.id]),
           s.vault((vault) => [vault.id, vault.vaultId]),
         ]);
       const data = await querySubgraph({
@@ -53,7 +53,9 @@ export const makeFetchPremiumPaids =
             date: Number(p.date),
             amount: BigInt(p.amount),
             vaultId: p.vault.vaultId,
-            to: p.to.id as Address,
+            // FIXME: restore when the subgraph fixes this field
+            // to: p.to.id as Address,
+            to: undefined as unknown as Address,
             vaultAddress: p.vault.id as Address,
           };
         })
