@@ -1,3 +1,4 @@
+import { formatJson } from '@nftx/utils';
 import { makeFetchPremiumPaids } from '../fetchPremiumPaids';
 
 let queryResponse: any;
@@ -36,11 +37,11 @@ beforeEach(() => {
 it('fetches premium paids', async () => {
   const result = await run();
 
-  expect(result).toEqual([
+  expect(formatJson(result)).toEqual([
     {
-      amount: BigInt('100000000000000000000'),
+      amount: '100000000000000000000',
       date: 1629830400,
-      to: '0x0',
+      // to: '0x0',
       vaultAddress: '0x0',
       vaultId: '0',
     },
@@ -57,6 +58,6 @@ describe('when there are more than 1000 premium paids', () => {
   it('recusrively fetches all premium paids', async () => {
     const result = await run();
 
-    expect(result).toHaveLength(1001);
+    expect(formatJson(result)).toHaveLength(1001);
   });
 });
