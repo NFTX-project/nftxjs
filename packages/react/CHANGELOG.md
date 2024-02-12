@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/NFTX-project/nftxjs/compare/v1.14.2...v1.15.0) (2024-02-12)
+
+
+### Features
+
+* improve live/api mode logic ([c6f5253](https://github.com/NFTX-project/nftxjs/commit/c6f5253229daad59ab63f0517a6483a9342fef1a))
+
+
+
+
+
 # [1.14.0](https://github.com/NFTX-project/nftxjs/compare/v1.13.2...v1.14.0) (2024-02-01)
 
 **Note:** Version bump only for package @nftx/react

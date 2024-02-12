@@ -1,6 +1,6 @@
 {
   "name": "@nftx/utils",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -30,7 +30,7 @@
   "sideEffects": false,
   "dependencies": {
     "@nftx/abi": "^1.1.2",
-    "@nftx/config": "^1.14.0",
+    "@nftx/config": "^1.15.0",
     "@nftx/constants": "^1.14.0",
     "@nftx/errors": "^1.6.0",
     "@nftx/types": "^1.14.0",
