@@ -47,6 +47,20 @@ export const getBlockBuffer = () => {
   return config.internal.blockBuffer;
 };
 
+/** Get the block number that the api is currently on */
+export const fetchApiBlock = async (network: number = config.network) => {
+  const response = await query<{ block: number }>({
+    url: `${config.urls.NFTX_API_URL}/${network}/block`,
+    query: { source: 'live', ebn: 'true' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: config.keys.NFTX_API,
+    },
+  });
+  const block = response?.block ?? 0;
+  return block;
+};
+
 // Checks whether the required block number is ahead of the api block number
 const isApiBehind = ({
   network,
@@ -66,15 +80,7 @@ const isApiBehind = ({
 
 const updateLastIndexedBlock = async ({ network }: { network: number }) => {
   // Get the last indexed block on the api
-  const response = await query<{ block: number }>({
-    url: `/${network}/block`,
-    query: { source: 'live', ebn: 'true' },
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: config.keys.NFTX_API,
-    },
-  });
-  const block = response?.block ?? 0;
+  const block = await fetchApiBlock(network);
   // Save it (writes to local storage)
   config.internal.apiBlockNumber[network] = block;
 };
