@@ -52,7 +52,6 @@ export interface Config {
   keys: {
     /** Your specific nftx.js API key, this must be provided in order to use @nftx/api methods */
     NFTX_API: string;
-    ALCHEMY: Record<string, string>;
     RESERVOIR: Record<string, string>;
   };
   /** Internal config settings managed by nftx.js */
@@ -60,6 +59,8 @@ export interface Config {
     source: 'api' | 'live';
     requiredBlockNumber: Record<string, number>;
     apiBlockNumber: Record<string, number>;
+    /** The number of blocks to buffer when syncing data from the api */
+    blockBuffer: number;
   };
 }
 
@@ -130,7 +131,6 @@ const defaultConfig: Config = {
 
   keys: {
     NFTX_API: null as unknown as string,
-    ALCHEMY: {},
     RESERVOIR: {},
   },
 
@@ -146,6 +146,7 @@ const defaultConfig: Config = {
       [Network.Goerli]: 0,
       [Network.Sepolia]: 0,
     },
+    blockBuffer: 10,
   },
 };
 

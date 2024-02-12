@@ -1,17 +1,11 @@
 import config from '@nftx/config';
-import queryApi from './queryApi';
-
-const isApiBehind = () => {
-  const { network, internal } = config;
-  const apiBlockNumber = internal.apiBlockNumber[network];
-  const requiredBlockNumber = internal.requiredBlockNumber[network];
-
-  return apiBlockNumber < requiredBlockNumber;
-};
+import { query } from '@nftx/utils';
 
 // Wraps an async function.
 // While the promise is unresolved, all subsequent calls will receive the same promise
-const throttleFn = <F extends (...args: any[]) => Promise<any>>(fn: F): F => {
+const throttleAsyncFn = <F extends (...args: any[]) => Promise<any>>(
+  fn: F
+): F => {
   let p: Promise<any> | undefined;
   return ((...args: Parameters<F>) => {
     if (p) {
@@ -31,65 +25,93 @@ const throttleFn = <F extends (...args: any[]) => Promise<any>>(fn: F): F => {
   }) as any as F;
 };
 
-const fetchLastIndexedBlock = throttleFn(async () => {
-  const url = `/${config.network}/block`;
-  type Response = { block: number };
-  const response = await queryApi<Response>({
-    url,
-    query: { source: 'live' },
-  });
-  return response?.block;
-});
-
-const updateApiBlock = ({ source }: { source: 'live' | 'api' }) => {
-  // Switch to live mode
-  if (source !== 'live') {
-    config.internal.source = 'live';
-  }
-  // Wait a few seconds before polling the api again
-  setTimeout(async () => {
-    // Get the last indexed block on the api
-    config.internal.apiBlockNumber[config.network] =
-      await fetchLastIndexedBlock();
-    // Run this fn again until we're up to date...
-    checkApiBlock();
-  }, 5000);
+/** Gets the required block number */
+export const getRequiredBlockNumber = (network = config.network) => {
+  return config.internal.requiredBlockNumber[network] ?? 0;
 };
 
-const resetRequiredBlock = () => {
-  // Reset the required block number
-  config.internal.requiredBlockNumber[config.network] = 0;
+/** Sets the required block number */
+export const setRequiredBlockNumber = (
+  value: number,
+  network: number = config.network
+) => {
+  config.internal.requiredBlockNumber[network] = value;
+};
+
+/** Gets the current block number from the api */
+export const getApiBlockNumber = (network = config.network) => {
+  return config.internal.apiBlockNumber[network] ?? 0;
+};
+
+export const getBlockBuffer = () => {
+  return config.internal.blockBuffer;
+};
+
+// Checks whether the required block number is ahead of the api block number
+const isApiBehind = ({
+  network,
+  requiredBlockNumber,
+}: {
+  network: number;
+  requiredBlockNumber: number;
+}) => {
+  if (!requiredBlockNumber) {
+    // No required block number so we don't need to worry about the api
+    return false;
+  }
+  const apiBlockNumber = getApiBlockNumber(network);
+
+  return apiBlockNumber < requiredBlockNumber;
+};
+
+const updateLastIndexedBlock = async ({ network }: { network: number }) => {
+  // Get the last indexed block on the api
+  const response = await query<{ block: number }>({
+    url: `/${network}/block`,
+    query: { source: 'live', ebn: 'true' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: config.keys.NFTX_API,
+    },
+  });
+  const block = response?.block ?? 0;
+  // Save it (writes to local storage)
+  config.internal.apiBlockNumber[network] = block;
+};
+
+const resetRequiredBlock = ({ network }: { network: number }) => {
+  // reset the required block number
+  setRequiredBlockNumber(0, network);
   // Switch back to using the api as the SoT
   config.internal.source = 'api';
 };
 
-const checkApiBlock = (): void => {
-  const requiredBlockNumber =
-    config.internal.requiredBlockNumber[config.network];
+/** Checks if the api is behind the latest block.
+ * If it is behind, it will switch to live mode and continue checking the api until it has caught up
+ **/
+export const syncApiBlock = throttleAsyncFn(
+  async (network: number = config.network) => {
+    // We throttle this method so even if 1k requests are made in quick succession,
+    // we'll only attempt to sync the api one time
 
-  // We don't need to worry about syncing if there's no required block number
-  if (!requiredBlockNumber) {
-    return;
+    // Keep looping while the api is behind the current block
+    while (
+      isApiBehind({
+        network,
+        requiredBlockNumber: getRequiredBlockNumber(network),
+      })
+    ) {
+      if (config.internal.source !== 'live') {
+        // Switch to live mode
+        config.internal.source = 'live';
+      }
+      // Wait 5s before polling again
+      await new Promise<void>((res) => setTimeout(res, 5000));
+      // Fetch the latest block from the api
+      await updateLastIndexedBlock({ network });
+    }
+
+    // The api has caught up and we no longer need to be in live mode
+    resetRequiredBlock({ network });
   }
-
-  const { source } = config.internal;
-
-  // The API is behind the required block
-  if (isApiBehind()) {
-    // Switch to live mode and start polling the api to see what the last-indexed block is
-    updateApiBlock({ source });
-  } else if (source === 'live') {
-    // Api has caught up so we no longer need to be in live mode
-    resetRequiredBlock();
-  }
-};
-
-/** Wrap another function so that when it gets called, we first check the last-indexed block from the api */
-const nsync = <F extends (...args: any[]) => any>(f: F): F => {
-  return ((...args: any[]) => {
-    checkApiBlock();
-    return f(...args);
-  }) as F;
-};
-
-export default nsync;
+);

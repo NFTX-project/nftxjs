@@ -1,4 +1,2 @@
-import queryApiBase from './queryApi';
-import nsync from './nsync';
-
-export const queryApi = nsync(queryApiBase);
+export { default as queryApi } from './queryApi';
+export * as nsync from './nsync';

@@ -1,11 +1,12 @@
 import { useNftx } from '../contexts/nftx';
 import { t } from '../utils';
 import { useAddEvent } from '../contexts/events';
-import { config, Transaction } from 'nftx.js';
 import {
+  Transaction,
   TransactionExceptionError,
   TransactionFailedError,
-} from '@nftx/errors';
+  nsync,
+} from 'nftx.js';
 
 type Fn = (...args: any) => Promise<Transaction>;
 
@@ -113,9 +114,14 @@ export default function useWrapTransaction<F extends Fn>(
           description,
         });
 
-        config.internal.requiredBlockNumber[network] = Number(
-          receipt.blockNumber
-        );
+        // We ideally want data to be up to the block for this transaction
+        // So we store the block number and any subsequent api calls will
+        // be made with "live mode" enabled until the api has caught up
+        const txnBlock = Number(receipt.blockNumber);
+        // For a bit of leeway we add a buffer to the required block number
+        // so the api must be at least this far ahead before we switch back to "api mode"
+        const buffer = nsync.getBlockBuffer();
+        nsync.setRequiredBlockNumber(txnBlock + buffer);
 
         return receipt;
       },
