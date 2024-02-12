@@ -8,7 +8,6 @@ import type {
 import queryPositionData from './queryPositionData';
 import { addressEqual } from '@nftx/utils';
 import transformPosition from './transformPosition';
-import { NotFoundError } from '@nftx/errors';
 import fetchClaimableAmount from './fetchClaimableAmount';
 
 type QueryPositionData = typeof queryPositionData;
@@ -17,22 +16,16 @@ import getManager from './getManager';
 
 const getVaultByTokens = <V extends Pick<Vault, 'id'>>({
   inputTokens,
-  position,
   vaults,
 }: {
   vaults: V[];
   inputTokens: { id: string }[];
-  position: { id: string };
 }) => {
-  const vault = vaults.find((vault) => {
+  return vaults.find((vault) => {
     return inputTokens.some((inputToken) => {
       return addressEqual(inputToken.id, vault.id);
     });
   });
-  if (vault == null) {
-    throw new NotFoundError('vault for position', position.id);
-  }
-  return vault;
 };
 
 export const makeFetchPositionsSet =
@@ -71,25 +64,31 @@ export const makeFetchPositionsSet =
       tokenIds,
     });
 
-    const positions = await Promise.all(
-      data.positions.map(async (position): Promise<LiquidityPosition> => {
+    const positions: LiquidityPosition[] = [];
+
+    await Promise.all(
+      data.positions.map(async (position) => {
         const vault = getVaultByTokens({
           inputTokens: position.pool.inputTokens,
-          position,
           vaults,
         });
+        if (!vault) {
+          return;
+        }
         const [claimable0, claimable1] = await fetchClaimableAmount({
           tokenId: position.tokenId as TokenId,
           provider,
           manager: getManager(network, position).manager,
         });
-        return transformPosition({
-          network,
-          position,
-          vault,
-          claimable0,
-          claimable1,
-        });
+        positions.push(
+          transformPosition({
+            network,
+            position,
+            vault,
+            claimable0,
+            claimable1,
+          })
+        );
       })
     );
 
