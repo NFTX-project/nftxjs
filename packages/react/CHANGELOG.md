@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.3](https://github.com/NFTX-project/nftxjs/compare/v1.15.2...v1.15.3) (2024-02-14)
+
+**Note:** Version bump only for package @nftx/react
+
+
+
+
+
 ## [1.15.1](https://github.com/NFTX-project/nftxjs/compare/v1.15.0...v1.15.1) (2024-02-12)
 
 **Note:** Version bump only for package @nftx/react

@@ -1,6 +1,6 @@
 {
   "name": "nftx.js",
-  "version": "1.15.1",
+  "version": "1.15.3",
   "author": "Jack Ellis <jack.m.ellis@hotmail.co.uk>",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -27,7 +27,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@nftx/api": "^1.15.1",
+    "@nftx/api": "^1.15.3",
     "@nftx/config": "^1.15.0",
     "@nftx/constants": "^1.14.0",
     "@nftx/errors": "^1.6.0",
