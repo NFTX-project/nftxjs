@@ -100,6 +100,7 @@ export const syncApiBlock = throttleAsyncFn(
     // We throttle this method so even if 1k requests are made in quick succession,
     // we'll only attempt to sync the api one time
 
+    let wasBehind = false;
     // Keep looping while the api is behind the current block
     while (
       isApiBehind({
@@ -107,6 +108,7 @@ export const syncApiBlock = throttleAsyncFn(
         requiredBlockNumber: getRequiredBlockNumber(network),
       })
     ) {
+      wasBehind = true;
       if (config.internal.source !== 'live') {
         // Switch to live mode
         config.internal.source = 'live';
@@ -117,7 +119,9 @@ export const syncApiBlock = throttleAsyncFn(
       await updateLastIndexedBlock({ network });
     }
 
-    // The api has caught up and we no longer need to be in live mode
-    resetRequiredBlock({ network });
+    if (wasBehind) {
+      // The api has caught up and we no longer need to be in live mode
+      resetRequiredBlock({ network });
+    }
   }
 );
