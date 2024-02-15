@@ -65,7 +65,6 @@ export const makeQueryPoolData =
         s.inputTokens((token) => [token.id, token.symbol, token.name]),
         s.hourlySnapshots(
           q.liquidityPoolHourlySnapshots
-            .where((w) => [w.timestamp.gte(`${oneDayAgo}`)])
             .first(1000)
             .orderBy('hour')
             .orderDirection('desc')
@@ -79,7 +78,6 @@ export const makeQueryPoolData =
         ),
         s.dailySnapshots(
           q.liquidityPoolDailySnapshots
-            .where((w) => [w.timestamp.gte(`${oneWeekAgo}`)])
             .first(1000)
             .orderBy('day')
             .orderDirection('desc')

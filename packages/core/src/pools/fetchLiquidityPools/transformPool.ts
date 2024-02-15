@@ -77,28 +77,35 @@ const transformPool = (
 
   const periodFees = calculatePoolPeriodFees(receipts);
 
-  const dailyVolume = pool.hourlySnapshots.reduce((total, snapshot) => {
-    const value = BigInt(
-      snapshot.hourlyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
-    );
-    return total + value;
-  }, Zero);
-
-  const weeklyVolume = pool.dailySnapshots.reduce((total, snapshot) => {
-    const value = BigInt(
-      snapshot.dailyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
-    );
-    return total + value;
-  }, Zero);
-
   const now = Math.floor(Date.now() / 1000);
   const oneDayAgo = now - 60 * 60 * 24;
   const oneWeekAgo = now - 60 * 60 * 24 * 7;
+
+  const dailyVolume = pool.hourlySnapshots.reduce((total, snapshot) => {
+    if (Number(snapshot.timestamp) >= oneDayAgo) {
+      const value = BigInt(
+        snapshot.hourlyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
+      );
+      return total + value;
+    }
+    return total;
+  }, Zero);
+
+  const weeklyVolume = pool.dailySnapshots.reduce((total, snapshot) => {
+    if (Number(snapshot.timestamp) >= oneWeekAgo) {
+      const value = BigInt(
+        snapshot.dailyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
+      );
+      return total + value;
+    }
+    return total;
+  }, Zero);
+
   let dailyRevenue = Zero;
   let weeklyRevenue = Zero;
 
-  // Only the 0.3% pool gets vault fees
   if (feeTier === VAULT_FEE_TIER) {
+    // Only the 0.3% pool gets vault fees
     dailyRevenue = [...receipts, ...premiumPaids].reduce((total, receipt) => {
       if (receipt.date >= oneDayAgo) {
         return total + receipt.amount;
@@ -111,12 +118,18 @@ const transformPool = (
       }
       return total;
     }, Zero);
-    // All other pools only get the AMM fees
   } else {
+    // All other pools only get the AMM fees
     dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
-      return total + parseEther(snapshot.hourlyTotalRevenueETH ?? '0');
+      if (Number(snapshot.timestamp) >= oneDayAgo) {
+        return total + parseEther(snapshot.hourlyTotalRevenueETH ?? '0');
+      }
+      return total;
     }, Zero);
     weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
+      if (Number(snapshot.timestamp) >= oneWeekAgo) {
+        return total + parseEther(snapshot.dailyTotalRevenueETH ?? '0');
+      }
       return total + parseEther(snapshot.dailyTotalRevenueETH ?? '0');
     }, Zero);
   }
