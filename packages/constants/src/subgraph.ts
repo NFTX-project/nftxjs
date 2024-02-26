@@ -37,7 +37,7 @@ export const ERC1155_SUBGRAPH = {
 
 export const NFTX_SUBGRAPH = {
   [Network.Mainnet]:
-    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-mainnet',
+    'https://graph-proxy.nftx.xyz/nftx-indexer/subgraphs/id/QmS4j7Vah7YGHh4pjnedbbafFkKqx5zC4nkcAhP5Ws5ud3',
   [Network.Arbitrum]: `${SHARED_ROOT}/nftx-project/nftx-v2-arbitrum`,
   [Network.Goerli]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-goerli',
@@ -47,7 +47,7 @@ export const NFTX_SUBGRAPH = {
 
 export const NFTX_UNISWAP_SUBGRAPH = {
   [Network.Mainnet]:
-    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-mainnet',
+    'https://graph-proxy.nftx.xyz/nftx-indexer/subgraphs/id/QmTqJsUzqsmSzkvDeSGDmGYCcVu8v3Tr3j3MqNsTZvVCMm',
   [Network.Goerli]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-goerli',
   [Network.Sepolia]:
