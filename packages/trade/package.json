@@ -1,6 +1,6 @@
 {
   "name": "@nftx/trade",
-  "version": "1.15.0",
+  "version": "1.15.4",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "@nftx/abi": "^1.1.2",
-    "@nftx/config": "^1.15.0",
-    "@nftx/constants": "^1.14.0",
+    "@nftx/config": "^1.15.4",
+    "@nftx/constants": "^1.15.4",
     "@nftx/errors": "^1.6.0",
-    "@nftx/types": "^1.14.0",
-    "@nftx/utils": "^1.15.0",
+    "@nftx/types": "^1.15.4",
+    "@nftx/utils": "^1.15.4",
     "viem": "^1.16.6"
   },
   "bugs": {
