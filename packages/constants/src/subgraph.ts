@@ -37,7 +37,7 @@ export const ERC1155_SUBGRAPH = {
 
 export const NFTX_SUBGRAPH = {
   [Network.Mainnet]:
-    'https://graph-proxy.nftx.xyz/nftx-indexer/subgraphs/id/QmS4j7Vah7YGHh4pjnedbbafFkKqx5zC4nkcAhP5Ws5ud3',
+    'https://graph-proxy.nftx.xyz/nftx-indexer/subgraphs/id/QmTzyQKcTsLq1jLXM4gcEyu9XkRLX7wbJJ5mY4SCHRXgii',
   [Network.Arbitrum]: `${SHARED_ROOT}/nftx-project/nftx-v2-arbitrum`,
   [Network.Goerli]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-goerli',
