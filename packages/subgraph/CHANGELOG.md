@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.6](https://github.com/NFTX-project/nftxjs/compare/v1.15.5...v1.15.6) (2024-03-18)
+
+**Note:** Version bump only for package @nftx/subgraph
+
+
+
+
+
 ## [1.15.5](https://github.com/NFTX-project/nftxjs/compare/v1.15.4...v1.15.5) (2024-03-08)
 
 **Note:** Version bump only for package @nftx/subgraph

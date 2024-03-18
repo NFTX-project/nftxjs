@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.6](https://github.com/NFTX-project/nftxjs/compare/v1.15.5...v1.15.6) (2024-03-18)
+
+
+### Bug Fixes
+
+* **@nftx/core:** AMM apr logic requires all historical snapshots to work ([860a9aa](https://github.com/NFTX-project/nftxjs/commit/860a9aa9186b61d14911be1ab0f44a05e788b54b))
+
+
+
+
+
 ## [1.15.5](https://github.com/NFTX-project/nftxjs/compare/v1.15.4...v1.15.5) (2024-03-08)
 
 **Note:** Version bump only for package nftxjs
