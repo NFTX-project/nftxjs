@@ -24,7 +24,7 @@ export interface Config {
    * @example
    * ERC721_SUBGRAPH: {
    *  [Network.Mainnet]: 'https://my-subgraph-url.com',
-   *  [Network.Goerli]: ['https://try-me-first.com', 'https://try-me-second.com']
+   *  [Network.Sepolia]: ['https://try-me-first.com', 'https://try-me-second.com']
    * }
    */
   subgraph: {
@@ -124,7 +124,6 @@ const defaultConfig: Config = {
   },
   contracts: {
     ethPrice: {
-      [Network.Goerli]: '2500000000', // $2.5k
       [Network.Sepolia]: '2000000000', // $2k
     },
   },
@@ -138,13 +137,11 @@ const defaultConfig: Config = {
     source: 'api',
     requiredBlockNumber: {
       [Network.Mainnet]: 0,
-      [Network.Goerli]: 0,
       [Network.Sepolia]: 0,
       [Network.Arbitrum]: 0,
     },
     apiBlockNumber: {
       [Network.Mainnet]: 0,
-      [Network.Goerli]: 0,
       [Network.Sepolia]: 0,
       [Network.Arbitrum]: 0,
     },

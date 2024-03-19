@@ -62,75 +62,6 @@ const fetchErc1155sMainnet = async ({
 
 const fetchErc1155sSepolia = fetchErc1155sMainnet;
 
-const fetchErc1155sGoerli = async ({
-  lastId,
-  network,
-  userAddress,
-  querySubgraph,
-}: {
-  network: number;
-  lastId: string;
-  userAddress: Address;
-  querySubgraph: QuerySubgraph;
-}) => {
-  let holdings: Array<Holding> = [];
-  let nextId: string | undefined;
-  type Response = {
-    owners: {
-      id: Address;
-      totalTokens: string;
-      tokens: {
-        tokenID: `${number}`;
-        collection: { id: Address };
-      }[];
-    }[];
-  };
-
-  const query = gql<Response>`{
-    owners(
-      where: {
-        id: "${userAddress}"
-      }
-    ) {
-      id
-      totalTokens
-      tokens(
-        first: 1000
-        orderBy: tokenID
-        where: {
-          tokenID_gt: "${lastId}"
-        }
-      ) {
-        tokenID
-        collection {
-          id
-        }
-      }
-    }
-  }`;
-
-  const data = await querySubgraph({
-    url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
-    query,
-  });
-
-  if (data?.owners?.[0]?.tokens?.length) {
-    holdings = data.owners[0].tokens.map((x) => {
-      return {
-        assetAddress: x.collection.id,
-        tokenId: BigInt(x.tokenID).toString() as TokenId,
-        quantity: 1n,
-      };
-    });
-  }
-  if (data?.owners?.[0]?.tokens?.length === 1000) {
-    nextId =
-      data.owners?.[0].tokens[data.owners?.[0].tokens.length - 1].tokenID;
-  }
-
-  return [holdings, nextId] as const;
-};
-
 const fetchErc1155sArbitrum = fetchErc1155sMainnet;
 
 export const makeFetchErc1155s =
@@ -154,14 +85,6 @@ export const makeFetchErc1155s =
     switch (network) {
       case Network.Mainnet:
         [holdings, nextId] = await fetchErc1155sMainnet({
-          lastId,
-          network,
-          userAddress,
-          querySubgraph,
-        });
-        break;
-      case Network.Goerli:
-        [holdings, nextId] = await fetchErc1155sGoerli({
           lastId,
           network,
           userAddress,
