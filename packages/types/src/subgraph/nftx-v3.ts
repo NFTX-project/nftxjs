@@ -413,6 +413,11 @@ export enum AddLiquidity_OrderBy {
   VaultVaultId = 'vault__vaultId'
 }
 
+export enum Aggregation_Interval {
+  Day = 'day',
+  Hour = 'hour'
+}
+
 export type Asset = {
   __typename?: 'Asset';
   id: Scalars['ID']['output'];
@@ -4271,7 +4276,8 @@ export type Query = {
   holdings: Array<Holding>;
   increaseLiquidities: Array<IncreaseLiquidity>;
   increaseLiquidity?: Maybe<IncreaseLiquidity>;
-  inventoryCombinePositions: Array<InventoryCombinePositions>;
+  inventoryCombinePositions?: Maybe<InventoryCombinePositions>;
+  inventoryCombinePositions_collection: Array<InventoryCombinePositions>;
   inventoryDeposit?: Maybe<InventoryDeposit>;
   inventoryDepositWithNFT?: Maybe<InventoryDepositWithNft>;
   inventoryDepositWithNFTs: Array<InventoryDepositWithNft>;
@@ -4745,6 +4751,13 @@ export type QueryIncreaseLiquidityArgs = {
 
 
 export type QueryInventoryCombinePositionsArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryInventoryCombinePositions_CollectionArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<InventoryCombinePositions_OrderBy>;
@@ -5868,7 +5881,8 @@ export type Subscription = {
   holdings: Array<Holding>;
   increaseLiquidities: Array<IncreaseLiquidity>;
   increaseLiquidity?: Maybe<IncreaseLiquidity>;
-  inventoryCombinePositions: Array<InventoryCombinePositions>;
+  inventoryCombinePositions?: Maybe<InventoryCombinePositions>;
+  inventoryCombinePositions_collection: Array<InventoryCombinePositions>;
   inventoryDeposit?: Maybe<InventoryDeposit>;
   inventoryDepositWithNFT?: Maybe<InventoryDepositWithNft>;
   inventoryDepositWithNFTs: Array<InventoryDepositWithNft>;
@@ -6342,6 +6356,13 @@ export type SubscriptionIncreaseLiquidityArgs = {
 
 
 export type SubscriptionInventoryCombinePositionsArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionInventoryCombinePositions_CollectionArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<InventoryCombinePositions_OrderBy>;
@@ -9046,6 +9067,8 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']['output']>;
   /** The block number */
   number: Scalars['Int']['output'];
+  /** The hash of the parent block */
+  parentHash?: Maybe<Scalars['Bytes']['output']>;
   /** Integer representation of the timestamp stored in blocks for the chain */
   timestamp?: Maybe<Scalars['Int']['output']>;
 };

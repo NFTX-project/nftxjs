@@ -1,6 +1,7 @@
-schema: https://api.thegraph.com/subgraphs/name/nftx-project/1155-sepolia-data-nexus
+# schema: https://gateway-arbitrum.network.thegraph.com/api/49f332ad234c93d2f07d2c085f1ca6d6/subgraphs/id/CBf1FtUKFnipwKVm36mHyeMtkuhjmh4KHzY3uWNNq5ow
+schema: https://api.thegraph.com/subgraphs/name/nftx-project/721-sepolia-data-nexus
 generates:
-  ./src/subgraph/1155-sepolia.ts:
+  ./src/subgraph/721.ts:
     config:
       useTypeImports: true
       strictScalars: true

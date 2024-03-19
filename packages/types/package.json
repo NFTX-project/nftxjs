@@ -19,7 +19,11 @@
   "scripts": {
     "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
     "test": "echo \"no tests\"",
-    "codegen": "graphql-codegen -c nftx-v3.codegen.yml && graphql-codegen -c nftx-v3-uniswap.codegen.yml && graphql-codegen -c 721-sepolia.codegen.yml && graphql-codegen -c 1155-sepolia.codegen.yml && graphql-codegen -c 721-mainnet.codegen.yml && graphql-codegen -c 1155-mainnet.codegen.yml",
+    "codegen-nftx-v3": "graphql-codegen -c nftx-v3.codegen.yml",
+    "codegen-amm": "graphql-codegen -c nftx-v3-uniswap.codegen.yml",
+    "codegen-721": "graphql-codegen -c 721.codegen.yml",
+    "codegen-1155": "graphql-codegen -c 1155.codegen.yml",
+    "codegen": "yarn codegen-nftx-v3 && yarn codegen-amm && yarn codegen-721 && yarn codegen-1155",
     "build": "rm -rf dist && tsc -d --outDir dist/ts --emitDeclarationOnly && mkdir dist/cjs && echo \"module.exports = {}\" > dist/cjs/index.js",
     "prepublishOnly": "yarn codegen && yarn build"
   },
