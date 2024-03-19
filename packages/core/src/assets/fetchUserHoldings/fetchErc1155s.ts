@@ -1,6 +1,6 @@
 import config from '@nftx/config';
 import { createQuery, gql, querySubgraph } from '@nftx/subgraph';
-import type { Address, ERC1155Sepolia, TokenId } from '@nftx/types';
+import type { Address, ERC1155, TokenId } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { createCursor, parseCursor } from './cursor';
 import type { Holding } from './types';
@@ -22,7 +22,7 @@ const fetchErc1155sMainnet = async ({
   let holdings: Array<Holding> = [];
   let nextId: string | undefined;
 
-  const q = createQuery<ERC1155Sepolia.Query>();
+  const q = createQuery<ERC1155.Query>();
 
   const query = q.account.id(userAddress).select((s) => [
     s.holdings(
@@ -60,57 +60,7 @@ const fetchErc1155sMainnet = async ({
   return [holdings, nextId] as const;
 };
 
-const fetchErc1155sSepolia = async ({
-  lastId,
-  network,
-  userAddress,
-  querySubgraph,
-}: {
-  network: number;
-  lastId: string;
-  userAddress: Address;
-  querySubgraph: QuerySubgraph;
-}) => {
-  let holdings: Array<Holding> = [];
-  let nextId: string | undefined;
-
-  const q = createQuery<ERC1155Sepolia.Query>();
-
-  const query = q.account.id(userAddress).select((s) => [
-    s.holdings(
-      q.holdings
-        .first(1000)
-        .orderBy('id')
-        .orderDirection('asc')
-        .where((w) => [w.id.gt(lastId), w.balance.gt('0')])
-        .select((s) => [
-          s.id,
-          s.balance,
-          s.token((t) => [t.identifier, t.collection((c) => [c.id])]),
-        ])
-    ),
-  ]);
-
-  const data = await querySubgraph({
-    url: getChainConstant(config.subgraph.ERC1155_SUBGRAPH, network),
-    query,
-  });
-
-  if (data?.account?.holdings?.length) {
-    holdings = data.account.holdings.map((x) => {
-      return {
-        assetAddress: x.token.collection.id as Address,
-        tokenId: BigInt(x.token.identifier).toString() as TokenId,
-        quantity: BigInt(x.balance || '1'),
-      };
-    });
-  }
-  if (data?.account?.holdings?.length === 1000) {
-    nextId = data.account.holdings[data.account.holdings.length - 1].id;
-  }
-
-  return [holdings, nextId] as const;
-};
+const fetchErc1155sSepolia = fetchErc1155sMainnet;
 
 const fetchErc1155sGoerli = async ({
   lastId,

@@ -4,6 +4,7 @@ export const NFTX_ROUTER_URL = {
   [Network.Mainnet]: 'https://api.nftx.xyz/v3/eth-mainnet/quote',
   [Network.Goerli]: 'https://api.nftx.xyz/v3/eth-goerli/quote',
   [Network.Sepolia]: 'https://api.nftx.xyz/v3/eth-sepolia/quote',
+  [Network.Arbitrum]: 'https://api.nftx.xyz/v3/arbitrum-one/quote',
 };
 
 export const NFTX_APR_URL = {

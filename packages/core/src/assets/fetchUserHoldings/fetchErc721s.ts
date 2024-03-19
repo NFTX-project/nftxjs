@@ -1,4 +1,4 @@
-import { Address, ERC721Mainnet, ERC721Sepolia, TokenId } from '@nftx/types';
+import { Address, ERC721, TokenId } from '@nftx/types';
 import { createCursor, parseCursor } from './cursor';
 import { Network } from '@nftx/constants';
 import { createQuery, gql, querySubgraph } from '@nftx/subgraph';
@@ -22,7 +22,7 @@ const fetchErc721sMainnet = async ({
   let holdings: Holding[] = [];
   let nextId: string | undefined;
 
-  const query = createQuery<ERC721Mainnet.Query>()
+  const query = createQuery<ERC721.Query>()
     .tokens.where((w) => [w.owner.is(userAddress), w.id.gt(lastId)])
     .orderBy('id')
     .orderDirection('asc')
@@ -50,47 +50,7 @@ const fetchErc721sMainnet = async ({
   return [holdings, nextId] as const;
 };
 
-const fetchErc721sSepolia = async ({
-  network,
-  lastId,
-  userAddress,
-  querySubgraph,
-}: {
-  network: number;
-  lastId: string;
-  userAddress: Address;
-  querySubgraph: QuerySubgraph;
-}) => {
-  let holdings: Holding[] = [];
-  let nextId: string | undefined;
-
-  const query = createQuery<ERC721Sepolia.Query>()
-    .tokens.where((w) => [w.owner.is(userAddress), w.id.gt(lastId)])
-    .orderBy('id')
-    .orderDirection('asc')
-    .first(1000)
-    .select((s) => [s.id, s.collection((c) => [c.id]), s.identifier]);
-
-  const data = await querySubgraph({
-    url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
-    query,
-  });
-
-  if (data?.tokens?.length) {
-    holdings = data.tokens.map((x) => {
-      return {
-        assetAddress: x.collection.id as Address,
-        tokenId: BigInt(x.identifier).toString() as TokenId,
-        quantity: 1n,
-      };
-    });
-  }
-  if (data?.tokens?.length === 1000) {
-    nextId = data.tokens[data.tokens.length - 1].id;
-  }
-
-  return [holdings, nextId] as const;
-};
+const fetchErc721sSepolia = fetchErc721sMainnet;
 
 const fetchErc721sGoerli = async ({
   lastId,
@@ -161,71 +121,7 @@ const fetchErc721sGoerli = async ({
   return [holdings, nextId] as const;
 };
 
-const fetchErc721sArbitrum = async ({
-  network,
-  lastId,
-  userAddress,
-  querySubgraph,
-}: {
-  network: number;
-  lastId: string;
-  userAddress: Address;
-  querySubgraph: QuerySubgraph;
-}) => {
-  let holdings: Array<Holding> = [];
-  let nextId: string | undefined;
-
-  type Response = {
-    account: {
-      id: Address;
-      tokens: Array<{
-        id: Address;
-        identifier: `${number}`;
-        contract: { id: Address };
-      }>;
-    };
-  };
-  type Params = { userAddress: Address; lastId: string };
-
-  const query = gql<Response, Params>`
-    {
-      account(id: $userAddress) {
-        id
-        tokens: ERC721tokens(
-          first: 1000
-          where: { identifier_gt: $lastId }
-          orderBy: identifier
-          orderDirection: asc
-        ) {
-          id
-          identifier
-          contract {
-            id
-          }
-        }
-      }
-    }
-  `;
-
-  const data = await querySubgraph({
-    url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
-    query,
-    variables: { lastId, userAddress },
-  });
-
-  if (data?.account?.tokens?.length) {
-    holdings = data.account.tokens.map((x) => ({
-      assetAddress: x.contract.id,
-      tokenId: BigInt(x.identifier).toString() as TokenId,
-      quantity: 1n,
-    }));
-  }
-  if (data?.account?.tokens?.length === 1000) {
-    nextId = data.account.tokens[data.account.tokens.length - 1].identifier;
-  }
-
-  return [holdings, nextId] as const;
-};
+const fetchErc721sArbitrum = fetchErc721sMainnet;
 
 export const makeFetchErc721s =
   ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
