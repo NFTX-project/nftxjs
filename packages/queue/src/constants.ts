@@ -8,7 +8,6 @@ if (!BULLMQ_REDIS_URI) {
 
 export const NETWORK_QUEUE_NAMES = {
   [Network.Mainnet]: 'indexer-workers-mainnet',
-  [Network.Goerli]: 'indexer-workers-goerli',
   [Network.Sepolia]: 'indexer-workers-sepolia',
   [Network.Arbitrum]: 'indexer-workers-arbitrum',
 };

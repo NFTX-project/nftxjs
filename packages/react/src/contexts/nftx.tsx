@@ -9,15 +9,13 @@ import * as core from 'nftx.js';
 import { EventsProvider } from './events';
 import { Network, Provider, Signer } from 'nftx.js';
 import { createPublicClient, http } from 'viem';
-import { arbitrum, mainnet, goerli, sepolia } from 'viem/chains';
+import { arbitrum, mainnet, sepolia } from 'viem/chains';
 
 const getDefaultProvider = (network: number) => {
   const chain = (() => {
     switch (network) {
       case Network.Arbitrum:
         return arbitrum;
-      case Network.Goerli:
-        return goerli;
       case Network.Sepolia:
         return sepolia;
       case Network.Mainnet:

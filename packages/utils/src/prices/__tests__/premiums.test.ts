@@ -17,7 +17,7 @@ beforeEach(() => {
       holding,
       vTokenToEth,
       now,
-      network: Network.Goerli,
+      network: Network.Sepolia,
     });
 });
 
