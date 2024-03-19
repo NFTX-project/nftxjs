@@ -7,6 +7,7 @@ export const MaxUint256 =
 
 export const PREMIUM_DURATION = {
   [Network.Mainnet]: 36000, // 10 hours
+  [Network.Arbitrum]: 36000, // 10 hours
   [Network.Goerli]: 36000, // 10 hours
   [Network.Sepolia]: 3600, // 1 hour
 };

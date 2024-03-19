@@ -20,10 +20,18 @@ const getPoolRouterAddress = (network: number, managerAddress: Address) => {
   );
 };
 
-const getManager = (network: number, position: { nfpmAddress: string }) => {
-  const manager =
+const getManagerAddress = (
+  network: number,
+  position: { nfpmAddress: string }
+) => {
+  return (
     (position.nfpmAddress as Address) ||
-    getChainConstant(NONFUNGIBLE_POSITION_MANAGER, network);
+    getChainConstant(NONFUNGIBLE_POSITION_MANAGER, network)
+  );
+};
+
+const getManager = (network: number, position: { nfpmAddress: string }) => {
+  const manager = getManagerAddress(network, position);
   const poolRouter = getPoolRouterAddress(network, manager);
   return { manager, poolRouter };
 };

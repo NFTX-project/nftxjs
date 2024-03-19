@@ -48,6 +48,7 @@ export const CREATE_VAULT_ZAP = {
   [Network.Mainnet]: a('0x56dab32697B4A313f353DA0CE42B5113eD8E6f74'),
   [Network.Goerli]: a('0xc6464CC63bC20b64e1633A0293C2C9b202F4f1b6'),
   [Network.Sepolia]: a('0xD80b916470F8e79FD8d09874cb159CbB8D13d8da'),
+  [Network.Arbitrum]: a('0xF9E891AB1ECa89B7A4B3cBD45aEBFDF3Ec38946F'),
 };
 
 /** Perform buy/sell/swaps - MarketplaceUniversalRouterZap */
@@ -55,6 +56,7 @@ export const MARKETPLACE_ZAP = {
   [Network.Mainnet]: a('0x293A0c49c85F1D8851C665Ac3cE1f1DC2a79bE3d'),
   [Network.Goerli]: a('0x0be2D766Eef4b6a72F1fAe2e49619F013d647B8A'),
   [Network.Sepolia]: a('0xd88a3B9D0Fb2d39ec8394CfFD983aFBB2D4a6410'),
+  [Network.Arbitrum]: a('0xf56296B3010a59Ef7F0915569DD44E1302b9Ca40'),
 };
 
 /** Stake NFTs or vTokens for xNFTs - NFTXInventoryStakingV3Upgradable */
@@ -62,6 +64,7 @@ export const INVENTORY_STAKING = {
   [Network.Mainnet]: a('0x889f313e2a3FDC1c9a45bC6020A8a18749CD6152'),
   [Network.Goerli]: a('0xEf771a17e6970d8B4b208a76e94F175277554230'),
   [Network.Sepolia]: a('0xfBFf0635f7c5327FD138E1EBa72BD9877A6a7C1C'),
+  [Network.Arbitrum]: a('0xe39a7E67d3E3b6eAF58BC02C4E80C3688847d155'),
 };
 
 /** AMM Router - nftxUniversalRouter */
@@ -69,6 +72,7 @@ export const NFTX_ROUTER = {
   [Network.Mainnet]: a('0x250d62a67254A46c0De472d2c9215E1d890cC90f'),
   [Network.Goerli]: a('0xF7c4FC5C2e30258e1E4d1197fc63aeDE371508f3'),
   [Network.Sepolia]: a('0x12156cCA1958B6591CC49EaE03a5553458a4b424'),
+  [Network.Arbitrum]: a('0x4529ad73b2cc8d4db0b0deba90de165e35c4b628'),
 };
 
 /** Staking  / Liquidity / Pools - NftxRouter */
@@ -76,6 +80,7 @@ export const POOL_ROUTER = {
   [Network.Mainnet]: a('0x70A741A12262d4b5Ff45C0179c783a380EebE42a'),
   [Network.Goerli]: a('0x8E16cdd0D9A15d2d0EFeA531660e8DbD0F6eE12D'),
   [Network.Sepolia]: a('0x441b7DE4340AAa5aA86dB4DA43d9Badf7B2DAA66'),
+  [Network.Arbitrum]: a('0x52731751Dede22827ad47109f5e9697d75a3ef4d'),
 };
 
 /** NonfungiblePositionManager */
@@ -83,6 +88,7 @@ export const NONFUNGIBLE_POSITION_MANAGER = {
   [Network.Mainnet]: a('0x26387fcA3692FCac1C1e8E4E2B22A6CF0d4b71bF'),
   [Network.Goerli]: a('0xDa9411C5455a1bfDb527d0988c0A2764E2a104be'),
   [Network.Sepolia]: a('0xA9bCC1e29d3460177875f68fDCC0264D22c40BF0'),
+  [Network.Arbitrum]: a('0x8AD238377531547838370B9C4aC346b9Ed5466Ea'),
 };
 
 /** The permit2 contract, needs an approval signature because the UniversalRouter only transfers tokens from user via Permit2 */
@@ -90,6 +96,7 @@ export const PERMIT2 = {
   [Network.Mainnet]: a('0x000000000022d473030f116ddee9f6b43ac78ba3'),
   [Network.Goerli]: a('0x000000000022d473030f116ddee9f6b43ac78ba3'),
   [Network.Sepolia]: a('0x000000000022d473030f116ddee9f6b43ac78ba3'),
+  [Network.Arbitrum]: a('0x000000000022d473030f116ddee9f6b43ac78ba3'),
 };
 
 /** ENS Address */
@@ -105,13 +112,15 @@ export const AMM_FACTORY = {
   [Network.Mainnet]: a('0xa70e10beB02fF9a44007D9D3695d4b96003db101'),
   [Network.Goerli]: a('0xf25081B098c5929A26F562aa2502795fE89BC73f'),
   [Network.Sepolia]: a('0xDD2dce9C403f93c10af1846543870D065419E70b'),
+  [Network.Arbitrum]: a('0xF4D0512FB47319B0CE9144EF582862e2921CaBF8'),
 };
 
-/** NFTXVaultFactoryUpgradableV2 */
+/** NFTXVaultFactoryUpgradableV3 */
 export const VAULT_FACTORY = {
   [Network.Mainnet]: a('0xC255335bc5aBd6928063F5788a5E420554858f01'),
   [Network.Goerli]: a('0x1d552A0e6c2f680872C4a88b1e7def05F1858dF0'),
   [Network.Sepolia]: a('0x31C56CaF49125043e80B4d3C7f8734f949d8178C'),
+  [Network.Arbitrum]: a('0x4dEeb9D2Bff2e9C35ce1f013DcC4582F891cb711'),
 };
 
 /** NftxFeeDistributorV3 */
@@ -119,4 +128,5 @@ export const NFTX_FEE_DISTRIBUTOR = {
   [Network.Mainnet]: a('0xF4d96C5094FCD9eC24E612585e723b58F89e21fe'),
   [Network.Sepolia]: a('0x66EF5B4b6ee05639194844CE4867515665F14fED'),
   [Network.Goerli]: a('0xA8076Ec5Dbb95165e14624Ff43dE2290e78A6905'),
+  [Network.Arbitrum]: a('0x0d50970C7848ebbE52661e70057D7D063B7de886'),
 };
