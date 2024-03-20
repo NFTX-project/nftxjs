@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/NFTX-project/nftxjs/compare/v1.15.6...v2.0.0) (2024-03-20)
+
+
+### Code Refactoring
+
+* remove goerli ([72c021d](https://github.com/NFTX-project/nftxjs/commit/72c021df66b614bbbf979a94c3956225f9c9c9c0))
+
+
+### BREAKING CHANGES
+
+* all references to goerli have been removed
+
+
+
+
+
 ## [1.15.6](https://github.com/NFTX-project/nftxjs/compare/v1.15.5...v1.15.6) (2024-03-18)
 
 **Note:** Version bump only for package @nftx/react

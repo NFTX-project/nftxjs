@@ -1,6 +1,6 @@
 {
   "name": "@nftx/queue",
-  "version": "1.15.6",
+  "version": "2.0.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -29,8 +29,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@nftx/constants": "^1.15.5",
-    "@nftx/types": "^1.15.6",
+    "@nftx/constants": "^2.0.0",
+    "@nftx/types": "^2.0.0",
     "bullmq": "^4.6.0",
     "ioredis": "^5.3.2"
   }

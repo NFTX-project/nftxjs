@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/NFTX-project/nftxjs/compare/v1.15.6...v2.0.0) (2024-03-20)
+
+
+### Code Refactoring
+
+* combine cross-chain types for the 721 and 1155 subgraphs ([1bfad43](https://github.com/NFTX-project/nftxjs/commit/1bfad43deb72a7776392d420abf5026c70311c10))
+* remove goerli ([72c021d](https://github.com/NFTX-project/nftxjs/commit/72c021df66b614bbbf979a94c3956225f9c9c9c0))
+
+
+### Features
+
+* support arbitrum ([bc356ad](https://github.com/NFTX-project/nftxjs/commit/bc356addf39e5a69e3b47c3f64d77a574348a03f))
+
+
+### BREAKING CHANGES
+
+* all references to goerli have been removed
+* any imports of the 721 or 1155 subgraph schemas will need to be updated
+
+
+
+
+
 ## [1.15.6](https://github.com/NFTX-project/nftxjs/compare/v1.15.5...v1.15.6) (2024-03-18)
 
 

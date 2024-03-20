@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/NFTX-project/nftxjs/compare/v1.15.6...v2.0.0) (2024-03-20)
+
+
+### Code Refactoring
+
+* remove goerli ([72c021d](https://github.com/NFTX-project/nftxjs/commit/72c021df66b614bbbf979a94c3956225f9c9c9c0))
+
+
+### Features
+
+* support arbitrum ([bc356ad](https://github.com/NFTX-project/nftxjs/commit/bc356addf39e5a69e3b47c3f64d77a574348a03f))
+
+
+### BREAKING CHANGES
+
+* all references to goerli have been removed
+
+
+
+
+
 ## [1.15.5](https://github.com/NFTX-project/nftxjs/compare/v1.15.4...v1.15.5) (2024-03-08)
 
 **Note:** Version bump only for package @nftx/constants

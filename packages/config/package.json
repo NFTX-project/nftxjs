@@ -1,6 +1,6 @@
 {
   "name": "@nftx/config",
-  "version": "1.15.5",
+  "version": "2.0.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -29,7 +29,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@nftx/constants": "^1.15.5",
+    "@nftx/constants": "^2.0.0",
     "deepmerge": "^4.2.2"
   }
 }
