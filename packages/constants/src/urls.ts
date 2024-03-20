@@ -3,7 +3,7 @@ import { Network } from './networks';
 export const NFTX_ROUTER_URL = {
   [Network.Mainnet]: 'https://api.nftx.xyz/v3/eth-mainnet/quote',
   [Network.Sepolia]: 'https://api.nftx.xyz/v3/eth-sepolia/quote',
-  [Network.Arbitrum]: 'https://api.nftx.xyz/v3/arbitrum-one/quote',
+  [Network.Arbitrum]: 'https://api.nftx.xyz/v3/arb-mainnet/quote',
 };
 
 export const NFTX_APR_URL = {
