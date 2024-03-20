@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.2](https://github.com/NFTX-project/nftxjs/compare/v2.0.1...v2.0.2) (2024-03-20)
+
+
+### Bug Fixes
+
+* incorrect amm router url ([4271e52](https://github.com/NFTX-project/nftxjs/commit/4271e5242690def3bfb2f0fe7020fed291f88de5))
+
+
+
+
+
 ## [2.0.1](https://github.com/NFTX-project/nftxjs/compare/v2.0.0...v2.0.1) (2024-03-20)
 
 
