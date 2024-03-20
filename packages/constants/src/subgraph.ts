@@ -19,7 +19,7 @@ export const ERC721_SUBGRAPH = {
   [Network.Mainnet]:
     'https://gateway-arbitrum.network.thegraph.com/api/49f332ad234c93d2f07d2c085f1ca6d6/subgraphs/id/CBf1FtUKFnipwKVm36mHyeMtkuhjmh4KHzY3uWNNq5ow',
   [Network.Arbitrum]:
-    'https://api.thegraph.com/subgraphs/name/nftx-project/721-arbitrum-data-nexus',
+    'https://gateway-arbitrum.network.thegraph.com/api/49f332ad234c93d2f07d2c085f1ca6d6/subgraphs/id/5A1TN7amJEcStLt1UtYZfNhUhDTNL7qkMMRmokZvvLgW',
   [Network.Sepolia]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/721-sepolia-data-nexus',
 };
@@ -28,7 +28,7 @@ export const ERC1155_SUBGRAPH = {
   [Network.Mainnet]:
     'https://gateway-arbitrum.network.thegraph.com/api/49f332ad234c93d2f07d2c085f1ca6d6/subgraphs/id/5C6JRVzKcE9AVbT7S71EycV8eEGcfkJB9gGsyTbHMVmN',
   [Network.Arbitrum]:
-    'https://api.thegraph.com/subgraphs/name/nftx-project/1155-arbitrum-data-nexus',
+    'https://gateway-arbitrum.network.thegraph.com/api/49f332ad234c93d2f07d2c085f1ca6d6/subgraphs/id/Gtkb9LdjxZR99YfaxHtZDi6j5fbCho1gypSKuN4zEWym',
   [Network.Sepolia]:
     'https://api.thegraph.com/subgraphs/name/nftx-project/1155-sepolia-data-nexus',
 };
