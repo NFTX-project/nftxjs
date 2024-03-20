@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/NFTX-project/nftxjs/compare/v2.0.0...v2.0.1) (2024-03-20)
+
+
+### Bug Fixes
+
+* incorrect 721 & 1155 subgraph urls for arbitrum ([9f882f8](https://github.com/NFTX-project/nftxjs/commit/9f882f88f3a20eb6fbcaded04d591ca77cbbed81))
+
+
+
+
+
 # [2.0.0](https://github.com/NFTX-project/nftxjs/compare/v1.15.6...v2.0.0) (2024-03-20)
 
 
