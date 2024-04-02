@@ -4,6 +4,9 @@ import { addressEqual, getChainConstant } from '@nftx/utils';
 import { RESERVOIR_URL } from '@nftx/constants';
 import fetchUserCollectionsReservoir from './reservoir';
 import fetchSubgraphVaults from '../../vaults/fetchSubgraphVaults';
+import { Collection } from '@nftx/types';
+import Addresses from '../utils/phishing/json/Addresses.json';
+import Domains from '../utils/phishing/json/Domains.json';
 
 type FetchUserCollectionsReservoir = typeof fetchUserCollectionsReservoir;
 
@@ -31,11 +34,16 @@ export const makeFetchUserCollections =
       return [];
     }
 
-    const allCollections = await fetchUserCollectionsReservoir({
+    const unfilteredCollections = await fetchUserCollectionsReservoir({
       network,
       offset: 0,
       userAddress,
     });
+
+    // Filter out phishing addresses and names as per: https://github.com/scamsniffer/scam-database/
+    const allCollections = unfilteredCollections.filter((c: Collection) => 
+      !Addresses.includes(c.address) &&
+      !Domains.includes(c.name))
 
     if (mintable) {
       const vaults =
