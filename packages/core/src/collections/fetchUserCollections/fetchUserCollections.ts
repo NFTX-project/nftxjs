@@ -5,8 +5,8 @@ import { RESERVOIR_URL } from '@nftx/constants';
 import fetchUserCollectionsReservoir from './reservoir';
 import fetchSubgraphVaults from '../../vaults/fetchSubgraphVaults';
 import { Collection } from '@nftx/types';
-import Addresses from '../utils/phishing/json/Addresses.json';
-import Domains from '../utils/phishing/json/Domains.json';
+import { Addresses } from '../utils/phishing/json/Addresses';
+import { Domains } from '../utils/phishing/json/Domains';
 
 type FetchUserCollectionsReservoir = typeof fetchUserCollectionsReservoir;
 
