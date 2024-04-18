@@ -22,7 +22,7 @@ import { parseEther } from 'viem';
 import calculateAprs from './calculateAprs';
 import { calculatePriceFromTick } from '../../univ3-helpers';
 
-type Pool = LiquidityPoolsResponse['liquidityPools'][0];
+type Pool = LiquidityPoolsResponse['pools'][0];
 
 const transformFees = (fees: Pool['fees']): LiquidityPool['fees'] => {
   return fees.map((fee): LiquidityPool['fees'][0] => {
@@ -47,15 +47,23 @@ const transformPool = (
   premiumPaids: { amount: bigint; date: number }[]
 ): LiquidityPool => {
   const fees = transformFees(pool.fees);
-  const tokens = pool.inputTokens.map(({ id, symbol, name }, i) => ({
-    id: id as Address,
-    symbol,
-    name,
-    balance: BigInt(pool.inputTokenBalances[i] ?? '0'),
-  }));
+  const tokens = [
+    {
+      id: pool.token0.id as Address,
+      symbol: pool.token0.symbol,
+      name: pool.token0.name,
+      balance: parseEther(pool.totalValueLockedToken0),
+    },
+    {
+      id: pool.token1.id as Address,
+      symbol: pool.token1.symbol,
+      name: pool.token1.name,
+      balance: parseEther(pool.totalValueLockedToken1),
+    },
+  ];
   const wethToken = getChainConstant(WETH_TOKEN, network);
   const isWeth0 = addressEqual(tokens[0].id, wethToken);
-  const activeLiquidity = BigInt(pool.activeLiquidity ?? '0');
+  const activeLiquidity = BigInt(pool.liquidity ?? '0');
   const totalLiquidity = BigInt(pool.totalLiquidity ?? '0');
   const tick = BigInt(pool.tick ?? '0');
   const tickValue = calculatePriceFromTick(tick);
@@ -81,20 +89,20 @@ const transformPool = (
   const oneDayAgo = now - 60 * 60 * 24;
   const oneWeekAgo = now - 60 * 60 * 24 * 7;
 
-  const dailyVolume = pool.hourlySnapshots.reduce((total, snapshot) => {
-    if (Number(snapshot.timestamp) >= oneDayAgo) {
-      const value = BigInt(
-        snapshot.hourlyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
+  const dailyVolume = pool.poolHourData.reduce((total, snapshot) => {
+    if (Number(snapshot.periodStartUnix) >= oneDayAgo) {
+      const value = parseEther(
+        (isWeth0 ? snapshot.volumeToken0 : snapshot.volumeToken1) || '0'
       );
       return total + value;
     }
     return total;
   }, Zero);
 
-  const weeklyVolume = pool.dailySnapshots.reduce((total, snapshot) => {
-    if (Number(snapshot.timestamp) >= oneWeekAgo) {
-      const value = BigInt(
-        snapshot.dailyVolumeByTokenAmount[isWeth0 ? 0 : 1] ?? '0'
+  const weeklyVolume = pool.poolDayData.reduce((total, snapshot) => {
+    if (Number(snapshot.date) >= oneWeekAgo) {
+      const value = parseEther(
+        (isWeth0 ? snapshot.volumeToken0 : snapshot.volumeToken1) || '0'
       );
       return total + value;
     }
@@ -118,25 +126,25 @@ const transformPool = (
       }
       return total;
     }, Zero);
-  } else {
-    // All other pools only get the AMM fees
-    dailyRevenue = pool.hourlySnapshots.reduce((total, snapshot) => {
-      if (Number(snapshot.timestamp) >= oneDayAgo) {
-        return total + parseEther(snapshot.hourlyTotalRevenueETH ?? '0');
-      }
-      return total;
-    }, Zero);
-    weeklyRevenue = pool.dailySnapshots.reduce((total, snapshot) => {
-      if (Number(snapshot.timestamp) >= oneWeekAgo) {
-        return total + parseEther(snapshot.dailyTotalRevenueETH ?? '0');
-      }
-      return total + parseEther(snapshot.dailyTotalRevenueETH ?? '0');
-    }, Zero);
   }
 
+  // All other pools only get the AMM fees
+  dailyRevenue += pool.poolHourData.reduce((total, snapshot) => {
+    if (Number(snapshot.periodStartUnix) >= oneDayAgo) {
+      return total + parseEther(snapshot.feesETH ?? '0');
+    }
+    return total;
+  }, Zero);
+  weeklyRevenue += pool.poolDayData.reduce((total, snapshot) => {
+    if (Number(snapshot.date) >= oneWeekAgo) {
+      return total + parseEther(snapshot.feesETH ?? '0');
+    }
+    return total + parseEther(snapshot.feesETH ?? '0');
+  }, Zero);
+
   const apr = calculateAprs({
-    createdAt: Number(pool.createdTimestamp),
-    dailySnapshots: pool.dailySnapshots,
+    createdAt: Number(pool.createdAtTimestamp),
+    dailySnapshots: pool.poolDayData,
     isWeth0,
     vaultFeeReceipts: receipts,
     vTokenToEth: vault.vTokenToEth,

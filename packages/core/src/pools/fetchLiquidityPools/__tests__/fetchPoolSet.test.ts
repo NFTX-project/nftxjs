@@ -1,75 +1,90 @@
 import { WETH_TOKEN, WeiPerEther } from '@nftx/constants';
 import { makeFetchPoolsSet } from '../fetchPoolsSet';
 import { getChainConstant } from '@nftx/utils';
+import { NftxV3Uniswap } from '@nftx/types';
 import { formatEther } from 'viem';
 
-let poolData: any;
+let poolData: { pools: NftxV3Uniswap.Pool[] };
 let queryPoolData: jest.Mock;
 let fetchPoolsSet: ReturnType<typeof makeFetchPoolsSet>;
 let args: Parameters<typeof fetchPoolsSet>[0];
 let run: () => ReturnType<typeof fetchPoolsSet>;
 
 beforeEach(() => {
+  const _pool = {} as NftxV3Uniswap.Pool;
+  const _token = {} as NftxV3Uniswap.Token;
+  const _poolHourData = {} as NftxV3Uniswap.PoolHourData;
+  const _poolDayData = {} as NftxV3Uniswap.PoolDayData;
+
   poolData = {
-    liquidityPools: [
+    pools: [
       {
+        ..._pool,
         id: '0x',
         name: '0x',
-        tick: 0,
+        tick: '0',
         totalLiquidity: `${WeiPerEther * 3n}`,
-        activeLiquidity: `${WeiPerEther * 2n}`,
-        inputTokenBalances: [
-          WeiPerEther.toString(),
-          (WeiPerEther * 2n).toString(),
-        ],
+        liquidity: `${WeiPerEther * 2n}`,
+        totalValueLockedToken0: '1',
+        totalValueLockedToken1: '2',
         totalValueLockedETH: '0',
         openPositionCount: 0,
-        createdTimestamp: 0,
+        createdAtTimestamp: '0',
         fees: [
           {
             id: '0x',
-            feePercentage: 0,
-            feeType: 'FIXED_LP_FEE',
+            feePercentage: '0',
+            feeType: 'FIXED_LP_FEE' as NftxV3Uniswap.PoolFeeType,
           },
           {
             id: '0x',
-            feePercentage: 0,
-            feeType: 'FIXED_PROTOCOL_FEE',
+            feePercentage: '0',
+            feeType: 'FIXED_PROTOCOL_FEE' as NftxV3Uniswap.PoolFeeType,
           },
           {
             id: '0x',
-            feePercentage: 0.3,
-            feeType: 'FIXED_TRADING_FEE',
+            feePercentage: '0.3',
+            feeType: 'FIXED_TRADING_FEE' as NftxV3Uniswap.PoolFeeType,
           },
         ],
+        token0: { ..._token, id: '0x', symbol: '0x', name: '0x' },
+        token1: {
+          ..._token,
+          id: getChainConstant(WETH_TOKEN, 1),
+          symbol: 'WETH',
+          name: 'Wrapped Ether',
+        },
         inputTokens: [
+          { ..._token, id: '0x', symbol: '0x', name: '0x' },
           {
-            id: '0x',
-            symbol: '0x',
-            name: '0x',
-          },
-          {
+            ..._token,
             id: getChainConstant(WETH_TOKEN, 1),
             symbol: 'WETH',
             name: 'Wrapped Ether',
           },
         ],
-        hourlySnapshots: [
+        poolHourData: [
           {
-            hourlyVolumeByTokenAmount: ['0', '0'],
-            hourlyTotalRevenueETH: '0',
+            ..._poolHourData,
+            volumeToken0: '0',
+            volumeToken1: '0',
+            totalValueLockedToken0: '0',
+            totalValueLockedToken1: '0',
+            feesETH: '0',
             id: '0x',
-            inputTokenBalances: ['0', '0'],
-            timestamp: 0,
+            periodStartUnix: 0,
           },
         ],
-        dailySnapshots: [
+        poolDayData: [
           {
-            dailyVolumeByTokenAmount: ['0', '0'],
-            dailyTotalRevenueETH: '0.001',
+            ..._poolDayData,
+            volumeToken0: '0',
+            volumeToken1: '1',
+            feesETH: '0.001',
             id: '0x',
-            inputTokenBalances: ['0', '0'],
-            timestamp: 0,
+            totalValueLockedToken0: '0',
+            totalValueLockedToken1: '0',
+            date: 0,
           },
         ],
       },
@@ -172,20 +187,20 @@ it('calculates the APRs', async () => {
 
 describe('when pool is a 0.3% tier', () => {
   beforeEach(() => {
-    poolData.liquidityPools[0].fees[2].feePercentage = 0.3;
+    poolData.pools[0].fees[2].feePercentage = '0.3';
   });
 
   it('calculates the daily and weekly revenue from the vault fee receipts', async () => {
     const [[pool]] = await run();
 
     expect(formatEther(pool.dailyRevenue)).toEqual('0');
-    expect(formatEther(pool.weeklyRevenue)).toEqual('1.4');
+    expect(formatEther(pool.weeklyRevenue)).toEqual('1.401');
   });
 });
 
 describe('when pool is a 1% tier', () => {
   beforeEach(() => {
-    poolData.liquidityPools[0].fees[2].feePercentage = 1;
+    poolData.pools[0].fees[2].feePercentage = '1';
   });
 
   it('calculates the daily and weekly revenue from the AMM fees', async () => {
@@ -198,8 +213,8 @@ describe('when pool is a 1% tier', () => {
 
 describe('when there are more than 1000 pools', () => {
   beforeEach(() => {
-    poolData.liquidityPools = Array.from({ length: 1000 }).fill(
-      poolData.liquidityPools[0]
+    poolData.pools = Array.from<NftxV3Uniswap.Pool>({ length: 1000 }).fill(
+      poolData.pools[0]
     );
   });
 

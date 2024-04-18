@@ -36,8 +36,8 @@ const transformPosition = ({
 }): LiquidityPosition => {
   const tokenId = position.tokenId as TokenId;
   const tick = BigInt(position.pool.tick ?? '0');
-  const tickLower = BigInt(position.tickLower?.index ?? '0');
-  const tickUpper = BigInt(position.tickUpper?.index ?? '0');
+  const tickLower = BigInt(position.tickLower ?? '0');
+  const tickUpper = BigInt(position.tickUpper ?? '0');
   const inRange = tick >= tickLower && tick <= tickUpper;
 
   const liquidity = BigInt(position.liquidity);
@@ -92,7 +92,7 @@ const transformPosition = ({
     tick,
     isFullRange,
     tickUpper,
-    userAddress: position.account.id as Address,
+    userAddress: position.owner.id as Address,
     inRange,
     eth,
     tickLowerValue,

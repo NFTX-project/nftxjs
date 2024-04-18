@@ -26,7 +26,7 @@ export const makeQueryPositionData =
       .positions.first(1000)
       .orderBy('id')
       .where((w) => [
-        w.account.in(userAddresses),
+        w.owner.in(userAddresses),
         w.pool.in(poolIds),
         w.id.in(positionIds),
         w.id.gt(lastId),
@@ -36,20 +36,21 @@ export const makeQueryPositionData =
         s.id,
         s.tokenId,
         s.liquidity,
-        s.cumulativeDepositTokenAmounts,
-        s.cumulativeWithdrawTokenAmounts,
+        s.depositedToken0,
+        s.depositedToken1,
+        s.withdrawnToken0,
+        s.withdrawnToken1,
         s.lockedUntil,
-        s.timestampOpened,
         s.nfpmAddress,
-        s.tickUpper((tick) => [tick.index]),
-        s.tickLower((tick) => [tick.index]),
+        s.tickUpper,
+        s.tickLower,
         s.pool((pool) => [
           pool.id,
           pool.tick,
           pool.name,
           pool.inputTokens((token) => [token.id]),
         ]),
-        s.account((account) => [account.id]),
+        s.owner((account) => [account.id]),
       ]);
 
     return querySubgraph({

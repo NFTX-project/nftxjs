@@ -17,7 +17,7 @@ const fetchPoolIdsNextSet = async ({
   querySubgraph: QuerySubgraph;
 }) => {
   const query = createQuery<NftxV3Uniswap.Query>()
-    .liquidityPools.first(1000)
+    .pools.first(1000)
     .orderBy('id')
     .where((w) => [
       w.inputTokens((token) => [token.id.in(addresses), token.id.gt(lastId)]),
@@ -29,11 +29,11 @@ const fetchPoolIdsNextSet = async ({
     query,
   });
 
-  const poolIds = data.liquidityPools.map((pool) => pool.id as Address);
+  const poolIds = data.pools.map((pool) => pool.id as Address);
   let nextId: Address | undefined;
 
-  if (data.liquidityPools.length === 1000) {
-    nextId = data.liquidityPools.pop()?.id as Address;
+  if (data.pools.length === 1000) {
+    nextId = data.pools.pop()?.id as Address;
   }
 
   return [poolIds, nextId] as const;

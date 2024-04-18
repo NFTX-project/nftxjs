@@ -25,20 +25,16 @@ beforeEach(() => {
   createdAt = oneMonthAgo;
   dailySnapshots = [
     {
-      dailyTotalRevenueETH: '0.01',
-      inputTokenBalances: [
-        parseEther('10').toString(),
-        parseEther('5').toString(),
-      ],
-      timestamp: `${now - ONE_DAY * 2}`,
+      feesETH: '0.01',
+      totalValueLockedToken0: '10',
+      totalValueLockedToken1: '5',
+      date: now - ONE_DAY * 2,
     },
     {
-      dailyTotalRevenueETH: '0.02',
-      inputTokenBalances: [
-        parseEther('10').toString(),
-        parseEther('5').toString(),
-      ],
-      timestamp: `${now - ONE_DAY * 3}`,
+      feesETH: '0.02',
+      totalValueLockedToken0: '10',
+      totalValueLockedToken1: '5',
+      date: now - ONE_DAY * 3,
     },
   ];
   vaultFeeReceipts = [

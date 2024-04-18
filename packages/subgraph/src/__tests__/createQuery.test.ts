@@ -9,13 +9,13 @@ const ignoreWs = (str: string) => str.replace(/ /g, '').replace(/\n/g, '');
 
 it('handles a single entity', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPool
+  const query = g.pool
     .id('0x1768ccc3fc3a40522fcd3296633ae8c00434b3b6')
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPool(id: "0x1768ccc3fc3a40522fcd3296633ae8c00434b3b6") {
+    pool(id: "0x1768ccc3fc3a40522fcd3296633ae8c00434b3b6") {
       id
     }
   }`;
@@ -25,11 +25,11 @@ it('handles a single entity', () => {
 
 it('handles a list entity', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select((s) => [s.id]);
+  const query = g.pools.select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
+    pools {
       id
     }
   }`;
@@ -39,11 +39,11 @@ it('handles a list entity', () => {
 
 it('aliases the collection name', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.as('foo').select((s) => [s.id]);
+  const query = g.pools.as('foo').select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    foo: liquidityPools {
+    foo: pools {
       id
     }
   }`;
@@ -53,17 +53,17 @@ it('aliases the collection name', () => {
 
 it('adds filters', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools
+  const query = g.pools
     .first(10)
-    .orderBy('activeLiquidity')
+    .orderBy('liquidity')
     .orderDirection('desc')
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools(
+    pools(
       first: 10
-      orderBy: activeLiquidity
+      orderBy: liquidity
       orderDirection: desc
     ) {
       id
@@ -76,15 +76,15 @@ it('adds filters', () => {
 it('searches by primitive values', () => {
   const g = createQuery<Query>();
 
-  const query = g.liquidityPools
-    .where((w) => [w.createdTimestamp('0')])
+  const query = g.pools
+    .where((w) => [w.createdAtTimestamp('0')])
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools(
+    pools(
       where: {
-        createdTimestamp: "0"
+        createdAtTimestamp: "0"
       }
     ) {
       id
@@ -97,18 +97,21 @@ it('searches by primitive values', () => {
 it('strips out nullish values', () => {
   const g = createQuery<Query>();
 
-  const query = g.liquidityPools
+  const query = g.pools
     .where((w) => [
-      w.createdTimestamp(undefined),
-      w.totalLiquidity(null),
-      w.activeLiquidity.in(undefined),
-      w.protocol((w) => [w.id.in(null), w.pools((w) => [w.id.is(undefined)])]),
+      w.createdAtTimestamp(undefined),
+      w.liquidity(null),
+      w.balanceOfBlock.in(undefined),
+      w.collects((collect) => [
+        collect.id.in(null),
+        collect.owner((owner) => [owner.id.is(undefined)]),
+      ]),
     ])
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-      liquidityPools {
+      pools {
         id
       }
     }`;
@@ -118,15 +121,15 @@ it('strips out nullish values', () => {
 
 it('filters with a contains query', () => {
   const q = createQuery<Query>();
-  const query = q.withdraws
-    .where((w) => [w.inputTokens.contains(['0x1234'])])
+  const query = q.pools
+    .where((w) => [w.burns.contains(['0x1234'])])
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    withdraws(
+    pools(
       where: {
-        inputTokens_contains: ["0x1234"]
+        burns_contains: ["0x1234"]
       }
     ) {
       id
@@ -136,36 +139,37 @@ it('filters with a contains query', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
-it('filters by an exact array match', () => {
-  const q = createQuery<Query>();
-  const query = q.withdraws
-    .where((w) => [w.inputTokenAmounts.isNot(['0', '0'])])
-    .select((s) => [s.id]);
+// Pretty sure we no longer have a use case for this in our schemas
+// it('filters by an exact array match', () => {
+//   const q = createQuery<Query>();
+//   const query = q.pools
+//     .where((w) => [w.feesUSD.isNot(['0', '0'])])
+//     .select((s) => [s.id]);
 
-  const actual = query.toString();
-  const expected = `{
-    withdraws(
-      where: {
-        inputTokenAmounts_not: ["0", "0"]
-      }
-    ) {
-      id
-    }
-  }`;
+//   const actual = query.toString();
+//   const expected = `{
+//     withdraws(
+//       where: {
+//         inputTokenAmounts_not: ["0", "0"]
+//       }
+//     ) {
+//       id
+//     }
+//   }`;
 
-  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
-});
+//   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+// });
 
 // For now we're just saying bigint fields should be stringified
 // it('handles a bigint value', () => {
 //   const g = createQuery<Query>();
-//   const query = g.liquidityPools
+//   const query = g.pools
 //     .where((w) => w.activeLiquidity.is(0n))
 //     .select((s) => [s.id]);
 
 //   const actual = query.toString();
 //   const expected = `{
-//     liquidityPools(
+//     pools(
 //       where: {
 //         activeLiquidity: 0
 //       }
@@ -179,25 +183,25 @@ it('filters by an exact array match', () => {
 
 it('searches by lt/lte/gt/gte/ne', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools
+  const query = g.pools
     .where((w) => [
-      w.activeLiquidity.gt('0'),
-      w.activeLiquidity.gte('1'),
-      w.activeLiquidity.isNot('2'),
-      w.activeLiquidity.lt('100000000000'),
-      w.activeLiquidity.lte('9999999999'),
+      w.liquidity.gt('0'),
+      w.liquidity.gte('1'),
+      w.liquidity.isNot('2'),
+      w.liquidity.lt('100000000000'),
+      w.liquidity.lte('9999999999'),
     ])
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools(
+    pools(
       where: {
-        activeLiquidity_gt: "0",
-        activeLiquidity_gte: "1",
-        activeLiquidity_ne: "2",
-        activeLiquidity_lt: "100000000000",
-        activeLiquidity_lte: "9999999999"
+        liquidity_gt: "0",
+        liquidity_gte: "1",
+        liquidity_ne: "2",
+        liquidity_lt: "100000000000",
+        liquidity_lte: "9999999999"
       }
     ) {
       id
@@ -210,16 +214,19 @@ it('searches by lt/lte/gt/gte/ne', () => {
 it('searches on nested fields', () => {
   const g = createQuery<Query>();
 
-  const query = g.liquidityPools
-    .where((w) => [w.inputTokens((w) => [w.id('0x00000'), w.decimals(18)])])
+  const query = g.pools
+    // .where((w) => [w.inputTokens((w) => [w.id('0x00000'), w.decimals(18)])])
+    .where((w) => [
+      w.fees((fee) => [fee.id('0x00000'), fee.feePercentage('0.01')]),
+    ])
     .select((s) => [s.id]);
   const actual = query.toString();
   const expected = `{
-    liquidityPools(
+    pools(
       where: {
-        inputTokens_: {
+        fees_: {
           id: "0x00000",
-          decimals: 18
+          feePercentage: "0.01"
         }
       }
     ) {
@@ -230,18 +237,20 @@ it('searches on nested fields', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
+it.todo('allows for OR queries');
+
 it("searches by a child entity's ID", () => {
   const g = createQuery<Query>();
 
-  const query = g.liquidityPools
-    .where((w) => w.protocol.is('0x000'))
+  const query = g.pools
+    .where((w) => w.token1.is('0x000'))
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools(
+    pools(
       where: {
-        protocol: "0x000"
+        token1: "0x000"
       }
     ) {
       id
@@ -253,18 +262,18 @@ it("searches by a child entity's ID", () => {
 
 it('selects primitive fields', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select((s) => [
+  const query = g.pools.select((s) => [
     s.id,
-    s.activeLiquidity,
-    s.createdTimestamp,
+    s.liquidity,
+    s.createdAtTimestamp,
   ]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
+    pools {
       id
-      activeLiquidity
-      createdTimestamp
+      liquidity
+      createdAtTimestamp
     }
   }`;
 
@@ -273,12 +282,13 @@ it('selects primitive fields', () => {
 
 it('selects nested primitive fields', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select((s) => [s.positions((s) => [s.id])]);
+  // const query = g.pools.select((s) => [s.positions((s) => [s.id])]);
+  const query = g.positions.select((s) => [s.pool((pool) => [pool.id])]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
-      positions {
+    positions {
+      pool {
         id
       }
     }
@@ -289,15 +299,15 @@ it('selects nested primitive fields', () => {
 
 it('selects deeply-nested primitive fields', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select((s) => [
-    s.positions((s) => [s.pool((s) => [s.id])]),
+  const query = g.positions.select((s) => [
+    s.pool((pool) => [pool.mints((mint) => [mint.id])]),
   ]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
-      positions {
-        pool {
+    positions {
+      pool {
+        mints {
           id
         }
       }
@@ -309,11 +319,11 @@ it('selects deeply-nested primitive fields', () => {
 
 it('selects primitives with object-syntax', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select((s) => [s.id]);
+  const query = g.pools.select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
+    pools {
       id
     }
   }`;
@@ -323,21 +333,19 @@ it('selects primitives with object-syntax', () => {
 
 it('selects and filters child entities with a nested query', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select(() => [
-    g.positions
-      .where((w) => w.account.is('0x0'))
-      .select((s) => [s.depositCount]),
+  const query = g.pools.select(() => [
+    g.positions.where((w) => w.owner.is('0x0')).select((s) => [s.nfpmAddress]),
   ]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
+    pools {
       positions(
         where: {
-          account: "0x0"
+          owner: "0x0"
         }
       ) {
-        depositCount
+        nfpmAddress
       }
     }
   }`;
@@ -348,24 +356,25 @@ it('selects and filters child entities with a nested query', () => {
 it('selects and filters child entities with a nested query assigned to another field', () => {
   const q = createQuery<Query>();
 
-  const query = q.liquidityPools.select((s) => [
-    s.hourlySnapshots(
-      q.liquidityPoolHourlySnapshots
+  const query = q.pools.select((s) => [
+    s.poolHourData(
+      q.poolHourDatas
         .first(24)
-        .orderBy('hour')
+        .orderBy('periodStartUnix')
         .orderDirection('desc')
-        .select((s) => [s.hourlyVolumeUSD, s.id])
+        .select((s) => [s.volumeUSD, s.id])
     ),
   ]);
+
   const actual = query.toString();
   const expected = `{
-      liquidityPools {
-        hourlySnapshots(
+      pools {
+        poolHourData(
           first: 24
-          orderBy: hour
+          orderBy: periodStartUnix
           orderDirection: desc
         ) {
-          hourlyVolumeUSD
+          volumeUSD
           id
         }
       }
@@ -377,28 +386,28 @@ it('selects and filters child entities with a nested query assigned to another f
 it('selects and filters child entities with a nested query assigned to an on... field', () => {
   const q = createQuery<Query>();
 
-  const query = q.liquidityPools.select((s) => [
+  const query = q.pools.select((s) => [
     s.on('Foo', (s) => [
-      s.hourlySnapshots(
-        q.liquidityPoolHourlySnapshots
+      s.poolHourData(
+        q.poolHourDatas
           .first(24)
-          .orderBy('hour')
+          .orderBy('periodStartUnix')
           .orderDirection('desc')
-          .select((s) => [s.hourlyVolumeUSD, s.id])
+          .select((s) => [s.volumeUSD, s.id])
       ),
     ]),
   ]);
 
   const actual = query.toString();
   const expected = `{
-      liquidityPools {
+      pools {
         ... on Foo {
-          hourlySnapshots(
+          poolHourData(
             first: 24
-            orderBy: hour
+            orderBy: periodStartUnix
             orderDirection: desc
           ) {
-            hourlyVolumeUSD
+            volumeUSD
             id
           }
         }
@@ -426,30 +435,27 @@ it('works with optional fields', () => {
 
 it('works with implicit stringify', () => {
   const g = createQuery<Query>();
-  const query = g.liquidityPools
-    .where((w) => [
-      w.activeLiquidity.gt('0'),
-      w.inputTokens((w) => [w.id('0xAB')]),
-    ])
+  const query = g.pools
+    .where((w) => [w.liquidity.gt('0'), w.token0((w) => [w.id('0xAB')])])
     .select((s) => [
-      s.activeLiquidity,
+      s.liquidity,
       s.fees((s) => [s.id, s.feeType, s.feePercentage]),
       g.positions
-        .where((w) => [w.account.is('0x0')])
-        .select((s) => [s.id, s.account((s) => [s.id])]),
+        .where((w) => [w.owner.is('0x0')])
+        .select((s) => [s.id, s.owner((s) => [s.id])]),
     ]);
 
   const actual = `${query}`;
   const expected = `{
-    liquidityPools(
+    pools(
       where: {
-        activeLiquidity_gt: "0",
-        inputTokens_: {
+        liquidity_gt: "0",
+        token0_: {
           id: "0xab"
         }
       }
     ) {
-      activeLiquidity
+      liquidity
       fees {
         id
         feeType
@@ -457,11 +463,11 @@ it('works with implicit stringify', () => {
       }
       positions(
         where: {
-          account: "0x0"
+          owner: "0x0"
         }
       ) {
         id
-        account {
+        owner {
           id
         }
       }
@@ -472,21 +478,21 @@ it('works with implicit stringify', () => {
 });
 
 it('aliases fields', () => {
-  const query = createQuery<Query>().liquidityPools.select((s) => [
-    s.activeLiquidity.as('liquidityActive'),
-    s.deposits((s) => [s.blockNumber]).as('x'),
-    s.positions((s) => [s.withdrawCount.as('totalWithdrawals')]).as('y'),
+  const query = createQuery<Query>().pools.select((s) => [
+    s.liquidity.as('w'),
+    s.mints((s) => [s.timestamp]).as('x'),
+    s.burns((s) => [s.timestamp.as('z')]).as('y'),
   ]);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
-      liquidityActive: activeLiquidity
-      x: deposits {
-        blockNumber
+    pools {
+      w: liquidity
+      x: mints {
+        timestamp
       }
-      y: positions {
-        totalWithdrawals: withdrawCount
+      y: burns {
+        z: timestamp
       }
     }
   }`;
@@ -536,14 +542,14 @@ it('creates "... on" selectors', () => {
 describe('when select has not been set', () => {
   it('throws an error', () => {
     const g = createQuery<Query>();
-    const query = g.liquidityPools;
+    const query = g.pools;
 
     expect(() => query.toString()).toThrow();
   });
 });
 
 it('sends a query to the subgraph', async () => {
-  const response = { data: { liquidityPools: [] } };
+  const response = { data: { pools: [] } };
   const fetch = jest.fn().mockResolvedValue({
     ok: true,
     status: 200,
@@ -551,7 +557,7 @@ it('sends a query to the subgraph', async () => {
     text: async () => JSON.stringify(response),
   });
   const g = createQuery<Query>();
-  const query = g.liquidityPools.select((s) => [s.id]).first(1);
+  const query = g.pools.select((s) => [s.id]).first(1);
 
   const result = await querySubgraph({
     url: 'https://example.com',
@@ -560,14 +566,14 @@ it('sends a query to the subgraph', async () => {
   });
 
   expect(fetch).toBeCalled();
-  expect(fetch.mock.calls[0][1].body).toContain('liquidityPools');
+  expect(fetch.mock.calls[0][1].body).toContain('pools');
   expect(fetch.mock.calls[0][1].body).toContain('first: 1');
   expect(fetch.mock.calls[0][1].body).toContain('id');
   expect(result).toEqual(response.data);
 });
 
 it('combines multiple queries into a single query request', async () => {
-  const response = { data: { liquidityPools: [] } };
+  const response = { data: { pools: [] } };
   const fetch = jest.fn().mockResolvedValue({
     ok: true,
     status: 200,
@@ -575,14 +581,14 @@ it('combines multiple queries into a single query request', async () => {
     text: async () => JSON.stringify(response),
   });
   const g = createQuery<Query>();
-  const q1 = g.liquidityPools.select((s) => [s.id]);
+  const q1 = g.pools.select((s) => [s.id]);
   const q2 = g.positions.select((s) => [s.id]);
   const q3 = g.accounts.select((s) => [s.id]);
   const query = q1.combine(q2).combine(q3);
 
   const actual = query.toString();
   const expected = `{
-    liquidityPools {
+    pools {
       id
     }
     positions {
@@ -600,6 +606,6 @@ it('combines multiple queries into a single query request', async () => {
   });
 
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
-  expect(fetch.mock.calls[0][1].body).toContain('liquidityPools');
+  expect(fetch.mock.calls[0][1].body).toContain('pools');
   expect(fetch.mock.calls[0][1].body).toContain('positions');
 });

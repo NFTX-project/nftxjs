@@ -6,8 +6,9 @@ import { getChainConstant } from '@nftx/utils';
 import { MAX_TICK, MIN_TICK, WETH_TOKEN } from '@nftx/constants';
 import { MAX_PRICE } from '@nftx/constants';
 import { MIN_PRICE } from '@nftx/constants';
+import { NftxV3Uniswap } from '@nftx/types';
 
-let subggraphResponse: any;
+let subggraphResponse: { positions: NftxV3Uniswap.Position[] };
 let querySubgraph: jest.Mock;
 let queryPositionData: ReturnType<typeof makeQueryPositionData>;
 let fetchClaimableAmount: jest.Mock;
@@ -18,26 +19,35 @@ let args: Parameters<typeof fetchLiquidityPositions>[0];
 let run: () => ReturnType<typeof fetchLiquidityPositions>;
 
 beforeEach(() => {
+  const _token = {} as NftxV3Uniswap.Token;
+  const _pool = {} as NftxV3Uniswap.Pool;
+  const _owner = {} as NftxV3Uniswap.Account;
+  const _position = {} as NftxV3Uniswap.Position;
+
   subggraphResponse = {
     positions: [
       {
+        ..._position,
         id: '0x1',
         tokenId: '1',
         liquidity: '5431575616225859850',
-        cumulativeDepositTokenAmounts: ['100', '100'],
-        cumulativeWithdrawTokenAmounts: ['100', '100'],
+        depositedToken0: '100',
+        depositedToken1: '100',
+        withdrawnToken0: '100',
+        withdrawnToken1: '100',
         lockedUntil: '0',
-        tickUpper: { index: '-23160' },
-        tickLower: { index: '-36960' },
+        tickUpper: -23160,
+        tickLower: -36960,
         pool: {
+          ..._pool,
           id: '0x2',
           tick: '-24000',
           inputTokens: [
-            { id: '0xe770493b2663004b356d3374ec23ea52f6c82ca6' },
-            { id: getChainConstant(WETH_TOKEN, 1) },
+            { ..._token, id: '0xe770493b2663004b356d3374ec23ea52f6c82ca6' },
+            { ..._token, id: getChainConstant(WETH_TOKEN, 1) },
           ],
         },
-        account: { id: '0x4' },
+        owner: { ..._owner, id: '0x4' },
       },
     ],
   };
@@ -141,7 +151,7 @@ describe('when userAddresses are provided', () => {
 
     const query = querySubgraph.mock.calls[0][0].query.toString();
 
-    expect(query).toContain('account_in: ["0x4"]');
+    expect(query).toContain('owner_in: ["0x4"]');
   });
 });
 
@@ -203,8 +213,8 @@ it('calculate the tick values', async () => {
 
 describe('when position has an infinite range', () => {
   beforeEach(() => {
-    subggraphResponse.positions[0].tickLower.index = `${MIN_TICK}`;
-    subggraphResponse.positions[0].tickUpper.index = `${MAX_TICK}`;
+    subggraphResponse.positions[0].tickLower = MIN_TICK;
+    subggraphResponse.positions[0].tickUpper = MAX_TICK;
   });
 
   it('sets infiniteRange to true', async () => {

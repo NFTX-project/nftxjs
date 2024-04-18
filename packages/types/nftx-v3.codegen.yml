@@ -15,5 +15,6 @@ generates:
           input: string
           output: string
         Int8: string|number
+        Timestamp: string
     plugins:
       - typescript

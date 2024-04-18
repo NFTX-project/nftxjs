@@ -20,11 +20,25 @@ const calculatePoolValue = ({
   isWeth0: boolean;
   vTokenToEth: bigint;
 }) => {
-  const eth = BigInt(balances?.[isWeth0 ? 0 : 1] ?? '0');
-  const vToken = BigInt(balances?.[isWeth0 ? 1 : 0] ?? '0');
+  const eth = parseEther(balances?.[isWeth0 ? 0 : 1] ?? '0');
+  const vToken = parseEther(balances?.[isWeth0 ? 1 : 0] ?? '0');
   const vTokenValue = (vToken * vTokenToEth) / WeiPerEther;
   const poolValue = eth + vTokenValue;
   return poolValue;
+};
+
+const snapshotToBalances = (
+  snapshot:
+    | Pick<
+        NftxV3Uniswap.PoolDayData,
+        'totalValueLockedToken0' | 'totalValueLockedToken1'
+      >
+    | undefined
+) => {
+  if (!snapshot) {
+    return undefined;
+  }
+  return [snapshot.totalValueLockedToken0, snapshot.totalValueLockedToken1];
 };
 
 const calculateAMMApr = ({
@@ -36,8 +50,8 @@ const calculateAMMApr = ({
   vTokenToEth,
 }: {
   dailySnapshots: Pick<
-    NftxV3Uniswap.LiquidityPoolDailySnapshot,
-    'timestamp' | 'inputTokenBalances' | 'dailyTotalRevenueETH'
+    NftxV3Uniswap.PoolDayData,
+    'date' | 'totalValueLockedToken0' | 'totalValueLockedToken1' | 'feesETH'
   >[];
   isWeth0: boolean;
   periodStart: number;
@@ -50,17 +64,17 @@ const calculateAMMApr = ({
   let start = periodStart > createdAt ? periodStart : createdAt;
   let end = start + 86400;
   const initialSnapshot = dailySnapshots.findLast(
-    (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+    (s) => Number(s.date) >= start && Number(s.date) <= end
   );
   let lastPoolValue = calculatePoolValue({
     isWeth0,
-    balances: initialSnapshot?.inputTokenBalances,
+    balances: snapshotToBalances(initialSnapshot),
     vTokenToEth,
   });
 
   while (end <= periodEnd) {
     const dailySnapshot = dailySnapshots.find(
-      (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+      (s) => Number(s.date) >= start && Number(s.date) <= end
     );
     let apr = 0n;
 
@@ -68,11 +82,11 @@ const calculateAMMApr = ({
       lastPoolValue = calculatePoolValue({
         isWeth0,
         vTokenToEth,
-        balances: dailySnapshot.inputTokenBalances,
+        balances: snapshotToBalances(dailySnapshot),
       });
 
       const poolValue = lastPoolValue;
-      const periodFees = parseEther(dailySnapshot.dailyTotalRevenueETH);
+      const periodFees = parseEther(dailySnapshot.feesETH);
       if (periodFees && poolValue) {
         apr = (periodFees * WeiPerEther * 365n) / poolValue;
         if (apr < 0n) {
@@ -108,8 +122,8 @@ const calculateVaultFeeApr = ({
   periodStart: number;
   periodEnd: number;
   dailySnapshots: Pick<
-    NftxV3Uniswap.LiquidityPoolDailySnapshot,
-    'timestamp' | 'inputTokenBalances'
+    NftxV3Uniswap.PoolDayData,
+    'date' | 'totalValueLockedToken0' | 'totalValueLockedToken1'
   >[];
   vaultFeeReceipts: Pick<VaultFeeReceipt, 'date' | 'amount'>[];
   vTokenToEth: bigint;
@@ -121,17 +135,17 @@ const calculateVaultFeeApr = ({
   let start = periodStart > createdAt ? periodStart : createdAt;
   let end = start + 86400;
   const initialSnapshot = dailySnapshots.findLast(
-    (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+    (s) => Number(s.date) >= start && Number(s.date) <= end
   );
   let lastPoolValue = calculatePoolValue({
     isWeth0,
-    balances: initialSnapshot?.inputTokenBalances,
+    balances: snapshotToBalances(initialSnapshot),
     vTokenToEth,
   });
 
   while (end <= periodEnd) {
     const dailySnapshot = dailySnapshots.find(
-      (s) => Number(s.timestamp) >= start && Number(s.timestamp) <= end
+      (s) => Number(s.date) >= start && Number(s.date) <= end
     );
     const vaultFeeReceipt = vaultFeeReceipts.find(
       (r) => r.date >= start && r.date <= end
@@ -142,7 +156,7 @@ const calculateVaultFeeApr = ({
       lastPoolValue = calculatePoolValue({
         isWeth0,
         vTokenToEth,
-        balances: dailySnapshot.inputTokenBalances,
+        balances: snapshotToBalances(dailySnapshot),
       });
     }
     const poolValue = lastPoolValue;
@@ -179,8 +193,8 @@ export default ({
 }: {
   createdAt: number;
   dailySnapshots: Pick<
-    NftxV3Uniswap.LiquidityPoolDailySnapshot,
-    'timestamp' | 'dailyTotalRevenueETH' | 'inputTokenBalances'
+    NftxV3Uniswap.PoolDayData,
+    'date' | 'totalValueLockedToken0' | 'totalValueLockedToken1' | 'feesETH'
   >[];
   vaultFeeReceipts: VaultFeeReceipt[];
   vTokenToEth: bigint;

@@ -1,5 +1,8 @@
 import config from '@nftx/config';
-import { NFTX_FEE_DISTRIBUTOR } from '@nftx/constants';
+import {
+  NFTX_FEE_DISTRIBUTOR,
+  NFTX_FEE_DISTRIBUTOR_LEGACY,
+} from '@nftx/constants';
 import { Zero } from '@nftx/constants';
 import { querySubgraph, createQuery } from '@nftx/subgraph';
 import type {
@@ -268,10 +271,10 @@ export const makeFetchVaultActivity = ({
   }): Promise<VaultActivity[]> {
     let lastId: string | undefined;
     const activity: VaultActivity[] = [];
-    const feeDistributorAddress = getChainConstant(
-      NFTX_FEE_DISTRIBUTOR,
-      network
-    );
+    const feeDistributorAddresses = [
+      getChainConstant(NFTX_FEE_DISTRIBUTOR, network),
+      ...getChainConstant(NFTX_FEE_DISTRIBUTOR_LEGACY, network),
+    ];
 
     do {
       const q = createQuery<Response>();
@@ -297,7 +300,7 @@ export const makeFetchVaultActivity = ({
             s.feeReceipt((r) => [
               r.transfers(
                 q.feeTransfers
-                  .where((w) => [w.to.is(feeDistributorAddress)])
+                  .where((w) => [w.to.in(feeDistributorAddresses)])
                   .select((receipt) => [receipt.amount])
               ),
             ]),
@@ -308,7 +311,7 @@ export const makeFetchVaultActivity = ({
             s.feeReceipt((r) => [
               r.transfers(
                 q.feeTransfers
-                  .where((w) => [w.to.is(feeDistributorAddress)])
+                  .where((w) => [w.to.in(feeDistributorAddresses)])
                   .select((receipt) => [receipt.amount])
               ),
             ]),
@@ -319,7 +322,7 @@ export const makeFetchVaultActivity = ({
             s.feeReceipt((r) => [
               r.transfers(
                 q.feeTransfers
-                  .where((w) => [w.to.is(feeDistributorAddress)])
+                  .where((w) => [w.to.in(feeDistributorAddresses)])
                   .select((receipt) => [receipt.amount])
               ),
             ]),

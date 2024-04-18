@@ -1,18 +1,7 @@
 import { Network } from './networks';
 
-const SHARED_PATH = 'subgraphs/name';
-
-const SHARED_HOST = 'https://api.thegraph.com';
-const PROXY_HOST = 'https://graph-proxy.nftx.xyz';
-
-const SHARED_PROXY_NAME = 'shared';
-
-const SHARED_ROOT = `${SHARED_HOST}/${SHARED_PATH}`;
-
-const SHARED_PROXY_ROOT = `${PROXY_HOST}/${SHARED_PROXY_NAME}/${SHARED_PATH}`;
-
 export const NON_STANDARD_SUBGRAPH = {
-  [Network.Mainnet]: `${SHARED_PROXY_ROOT}/0xorg/non-standard-nfts`,
+  [Network.Mainnet]: `https://graph-proxy.nftx.xyz/shared/subgraphs/name/0xorg/non-standard-nfts`,
 };
 
 export const ERC721_SUBGRAPH = {
@@ -44,9 +33,9 @@ export const NFTX_SUBGRAPH = {
 
 export const NFTX_UNISWAP_SUBGRAPH = {
   [Network.Mainnet]:
-    'https://graph-proxy.nftx.xyz/nftx-indexer/subgraphs/id/QmTqJsUzqsmSzkvDeSGDmGYCcVu8v3Tr3j3MqNsTZvVCMm',
+    'https://query.graph.nftx.xyz/subgraphs/id/QmXavb61qVUrfYe7daW47n77LhinFgSoMhWVkMfgEdUspS',
   [Network.Sepolia]:
-    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-sepolia',
+    'https://api.thegraph.com/subgraphs/name/gundamdweeb/nftx-univ3-sepolia',
   [Network.Arbitrum]:
-    'https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-arbitrum',
+    'https://query.graph.nftx.xyz/subgraphs/id/QmaTrSbtkkCeJW5fhbsm1BoEZm31zEE9HtCP5BEjfeGLMT',
 };

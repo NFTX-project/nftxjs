@@ -51,7 +51,7 @@ export const makeFetchPoolsSet =
       vaultIds,
     });
 
-    const pools = data.liquidityPools.reduce((acc, pool) => {
+    const pools = data.pools.reduce((acc, pool) => {
       const vault = getVaultByTokens({
         inputTokens: pool.inputTokens,
         vaults,
@@ -77,8 +77,8 @@ export const makeFetchPoolsSet =
     }, [] as LiquidityPool[]);
 
     let nextId: Address | undefined;
-    if (data.liquidityPools.length === 1000) {
-      nextId = data.liquidityPools.pop()?.id as Address;
+    if (data.pools.length === 1000) {
+      nextId = data.pools.pop()?.id as Address;
     }
 
     return [pools, nextId] as const;
