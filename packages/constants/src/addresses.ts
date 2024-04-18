@@ -117,3 +117,10 @@ export const NFTX_FEE_DISTRIBUTOR = {
   [Network.Sepolia]: a('0x66EF5B4b6ee05639194844CE4867515665F14fED'),
   [Network.Arbitrum]: a('0x0d50970C7848ebbE52661e70057D7D063B7de886'),
 };
+
+/** A list of old fee distributors that are no longer active (but useful for historical data) */
+export const NFTX_FEE_DISTRIBUTOR_LEGACY = {
+  [Network.Mainnet]: [a('0x6845fF5f102bEF9D785468F0bEb535b4687406E7')],
+  [Network.Sepolia]: <Address[]>[],
+  [Network.Arbitrum]: <Address[]>[],
+};

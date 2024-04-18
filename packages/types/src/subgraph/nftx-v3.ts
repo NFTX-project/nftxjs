@@ -16,6 +16,7 @@ export type Scalars = {
   BigInt: { input: string; output: string; }
   Bytes: { input: string; output: string; }
   Int8: { input: string|number; output: string|number; }
+  Timestamp: { input: string; output: string; }
 };
 
 export type Account = {

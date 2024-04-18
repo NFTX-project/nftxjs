@@ -1,4 +1,4 @@
-schema: https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-amm-sepolia
+schema: https://query.graph.nftx.xyz/subgraphs/id/QmXavb61qVUrfYe7daW47n77LhinFgSoMhWVkMfgEdUspS
 generates:
   ./src/subgraph/nftx-v3-uniswap.ts:
     config:
@@ -15,5 +15,6 @@ generates:
           input: string
           output: string
         Int8: string|number
+        Timestamp: string
     plugins:
       - typescript

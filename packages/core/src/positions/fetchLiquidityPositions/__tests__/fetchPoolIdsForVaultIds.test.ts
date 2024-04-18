@@ -1,25 +1,31 @@
+import { NftxV3Uniswap } from '@nftx/types';
 import { makeFetchPoolIdsForVaultIds } from '../fetchPoolIdsForVaultIds';
 
 const trim = (s: string) => {
   return s.replace(/[\s\n]/g, '');
 };
 
-let subgraphResponse: any;
+let subgraphResponse: Pick<NftxV3Uniswap.Query, 'pools'>;
 let querySubgraph: jest.Mock;
 let fetchPoolIdsForVaultIds: ReturnType<typeof makeFetchPoolIdsForVaultIds>;
 let run: () => ReturnType<typeof fetchPoolIdsForVaultIds>;
 let args: Parameters<typeof fetchPoolIdsForVaultIds>[0];
 
 beforeEach(() => {
+  const _pool = {} as NftxV3Uniswap.Pool;
+
   subgraphResponse = {
-    liquidityPools: [
+    pools: [
       {
+        ..._pool,
         id: '0x3',
       },
       {
+        ..._pool,
         id: '0x4',
       },
       {
+        ..._pool,
         id: '0x5',
       },
     ],
@@ -75,7 +81,7 @@ it('uses the the vault addresses to match up with pool input tokens', async () =
 describe('when there are more than 1000 pools', () => {
   beforeEach(() => {
     querySubgraph.mockResolvedValueOnce({
-      liquidityPools: Array(1000).fill({ id: '0x3' }),
+      pools: Array(1000).fill({ id: '0x3' }),
     });
   });
 

@@ -5,9 +5,6 @@ import type { NftxV3Uniswap, Address, Vault } from '@nftx/types';
 
 type QuerySubgraph = typeof querySubgraph;
 
-const ONE_DAY = 60 * 60 * 24;
-const ONE_WEEK = ONE_DAY * 7;
-
 const getAddressesForVaultIds = (
   vaultIds: string[],
   vaults: Pick<Vault, 'id' | 'vaultId'>[]
@@ -39,12 +36,8 @@ export const makeQueryPoolData =
       vaultAddresses = getAddressesForVaultIds(vaultIds, vaults);
     }
 
-    const now = Math.floor(Date.now() / 1000);
-    const oneDayAgo = now - ONE_DAY;
-    const oneWeekAgo = now - ONE_WEEK;
-
     const q = createQuery<NftxV3Uniswap.Query>();
-    const query = q.liquidityPools
+    const query = q.pools
       .first(1000)
       .orderBy('id')
       .where((w) => [
@@ -55,39 +48,45 @@ export const makeQueryPoolData =
         s.id,
         s.name,
         s.tick,
+        s.liquidity,
         s.totalLiquidity,
-        s.activeLiquidity,
-        s.inputTokenBalances,
+        s.totalValueLockedToken0,
+        s.totalValueLockedToken1,
         s.totalValueLockedETH,
         s.openPositionCount,
-        s.createdTimestamp,
+        s.createdAtTimestamp,
+        s.token0((token0) => [token0.id, token0.symbol, token0.name]),
+        s.token1((token1) => [token1.id, token1.symbol, token1.name]),
         s.fees((fee) => [fee.id, fee.feePercentage, fee.feeType]),
         s.inputTokens((token) => [token.id, token.symbol, token.name]),
-        s.hourlySnapshots(
-          q.liquidityPoolHourlySnapshots
+        s.poolHourData(
+          q.poolHourDatas
             .first(1000)
-            .orderBy('hour')
+            .orderBy('periodStartUnix')
             .orderDirection('desc')
             .select((s) => [
-              s.hourlyVolumeByTokenAmount,
-              s.hourlyTotalRevenueETH,
+              s.volumeToken0,
+              s.volumeToken1,
+              s.feesETH,
               s.id,
-              s.inputTokenBalances,
-              s.timestamp,
+              s.totalValueLockedToken0,
+              s.totalValueLockedToken1,
+              s.periodStartUnix,
             ])
         ),
-        s.dailySnapshots(
-          q.liquidityPoolDailySnapshots
+        s.poolDayData(
+          q.poolDayDatas
             .first(1000)
-            .orderBy('day')
+            .orderBy('date')
             .orderDirection('desc')
             .select((s) => [
               s.id,
-              s.day,
-              s.dailyVolumeByTokenAmount,
-              s.dailyTotalRevenueETH,
-              s.inputTokenBalances,
-              s.timestamp,
+              s.date,
+              s.volumeToken0,
+              s.volumeToken1,
+              s.feesETH,
+              s.totalValueLockedToken0,
+              s.totalValueLockedToken1,
             ])
         ),
       ]);
