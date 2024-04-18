@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/NFTX-project/nftxjs/compare/v2.0.2...v2.1.0) (2024-04-18)
+
+
+### Features
+
+* upgrade nftx amm subgraph to the new uniswap subgraph ([a9912b3](https://github.com/NFTX-project/nftxjs/commit/a9912b3ab61b317f0162838da5b86f01be26107d))
+
+
+
+
+
 ## [2.0.2](https://github.com/NFTX-project/nftxjs/compare/v2.0.1...v2.0.2) (2024-03-20)
 
 **Note:** Version bump only for package @nftx/subgraph
