@@ -7,7 +7,7 @@ import { createQuery, querySubgraph } from '@nftx/subgraph';
 import type { NftxV3 } from '@nftx/types';
 import { Network, NFTX_SUBGRAPH } from '@nftx/constants';
 
-const query = createQuery<NftxV3>()
+const query = createQuery<NftxV3.Query>()
   .vaults.first(1000)
   .where((w) => [w.vaultId.is('0'), w.shutdownDate.is(0)])
   .select((vault) => [

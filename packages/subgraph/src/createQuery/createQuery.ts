@@ -168,6 +168,41 @@ const combineQueries = (q1: any, q2: any) => {
   return combined;
 };
 
+const prettyFormat = (str: string) => {
+  let indent = 0;
+  const lines = str.split('\n').filter(Boolean);
+
+  const text = lines
+    .map((line) => {
+      if (line.includes('}')) {
+        indent -= 2;
+      }
+      if (line.includes(')')) {
+        indent -= 2;
+      }
+      if (line.includes(']')) {
+        indent -= 2;
+      }
+
+      const newline = ' '.repeat(indent) + line;
+
+      if (line.includes('{')) {
+        indent += 2;
+      }
+      if (line.includes('(')) {
+        indent += 2;
+      }
+      if (line.includes('[')) {
+        indent += 2;
+      }
+
+      return newline;
+    })
+    .join('\n');
+
+  return text;
+};
+
 const createQueryObj = (args: {
   name: string;
   alias?: string;
@@ -195,7 +230,7 @@ const createQueryObj = (args: {
       return createQueryObj({ ...args, id });
     },
     where: (cb: (w: Where<any>) => WhereStatements) => {
-      const whereApi = createWhere();
+      const whereApi = createWhere<any>();
       let where = cb(whereApi);
       if (!Array.isArray(where[0])) {
         where = [where];
@@ -226,7 +261,9 @@ const createQueryObj = (args: {
       return stringify(args);
     },
     toString: () => {
-      return ['{\n', query.toStringInner(), '\n}'].join('');
+      const str = query.toStringInner();
+      const wrapped = ['{', str, '}'].join('\n');
+      return prettyFormat(wrapped);
     },
     combine: (q: any) => {
       return combineQueries(query, q);

@@ -10,6 +10,7 @@
     "lint": "lerna run lint",
     "test": "lerna run test",
     "build": "lerna run build",
+    "codegen": "lerna run codegen",
     "yalc": "lerna exec yalc publish",
     "docs": "npx markdown-cli-compiler -i docs && typedoc --out docs/api --name nftx.js --entryPointStrategy packages .",
     "ci": "yarn install && yarn lint && yarn test"
