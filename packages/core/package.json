@@ -1,6 +1,6 @@
 {
   "name": "@nftx/core",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "@nftx/config": "^2.1.0",
     "@nftx/constants": "^2.1.0",
     "@nftx/errors": "^2.0.0",
-    "@nftx/subgraph": "^2.1.0",
+    "@nftx/subgraph": "^2.2.0",
     "@nftx/trade": "^2.1.0",
     "@nftx/types": "^2.1.0",
     "@nftx/utils": "^2.1.0",

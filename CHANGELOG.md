@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/NFTX-project/nftxjs/compare/v2.1.0...v2.2.0) (2024-04-19)
+
+
+### Features
+
+* **@nftx/subgraph:** support OR and AND clauses ([0049a10](https://github.com/NFTX-project/nftxjs/commit/0049a1014792d43637da111da26009912d96fb80))
+
+
+
+
+
 # [2.1.0](https://github.com/NFTX-project/nftxjs/compare/v2.0.2...v2.1.0) (2024-04-18)
 
 
