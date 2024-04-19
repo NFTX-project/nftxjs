@@ -139,26 +139,33 @@ it('filters with a contains query', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
-// Pretty sure we no longer have a use case for this in our schemas
-// it('filters by an exact array match', () => {
-//   const q = createQuery<Query>();
-//   const query = q.pools
-//     .where((w) => [w.feesUSD.isNot(['0', '0'])])
-//     .select((s) => [s.id]);
+it('filters by an exact array match', () => {
+  // Pretty sure we no longer have a use case for this in our schemas so we'll create a dummy schema for it
+  type Query = {
+    pools: {
+      id: string;
+      inputTokenAmounts: [string, string];
+    }[];
+  };
 
-//   const actual = query.toString();
-//   const expected = `{
-//     withdraws(
-//       where: {
-//         inputTokenAmounts_not: ["0", "0"]
-//       }
-//     ) {
-//       id
-//     }
-//   }`;
+  const q = createQuery<Query>();
+  const query = q.pools
+    .where((w) => [w.inputTokenAmounts.isNot(['0', '0'])])
+    .select((s) => [s.id]);
 
-//   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
-// });
+  const actual = query.toString();
+  const expected = `{
+    pools(
+      where: {
+        inputTokenAmounts_ne: ["0", "0"]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
 
 // For now we're just saying bigint fields should be stringified
 // it('handles a bigint value', () => {
@@ -237,7 +244,255 @@ it('searches on nested fields', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
-it.todo('allows for OR queries');
+it('allows for AND queries', () => {
+  const g = createQuery<Query>();
+
+  const query = g.pools
+    .where((w) => [
+      w.and(w.liquidity.gt('100'), w.liquidity.lt('200'), w.token0.is('0x000')),
+    ])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    pools(
+      where: {
+        and: [
+          {
+            liquidity_gt: "100",
+            liquidity_lt: "200",
+            token0: "0x000"
+          }
+        ]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('intelligently separates AND queries to avoid duplicate keys', () => {
+  const g = createQuery<Query>();
+
+  const query = g.pools
+    .where((w) => [
+      w.and(
+        w.liquidity.gt('100'),
+        w.liquidity.gt('200'),
+        w.token0.is('0x000'),
+        w.token0.is('0x001'),
+        w.token1((token1) => [token1.id('0x000')])
+      ),
+    ])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    pools(
+      where: {
+        and: [
+          {
+            liquidity_gt: "100",
+            token0: "0x000",
+            token1_: {
+              id: "0x000"
+            }
+          },
+          {
+            liquidity_gt: "200"
+          },
+          {
+            token0: "0x001"
+          }
+        ]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('treats duplicate-keyed where statements as AND queries', () => {
+  const g = createQuery<Query>();
+
+  const query = g.pools
+    .where((w) => [
+      w.liquidity.gt('100'),
+      w.liquidity.gt('200'),
+      w.token0.is('0x000'),
+      w.token0.is('0x001'),
+      w.token1('0x000'),
+    ])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    pools(
+      where: {
+        and: [
+          {
+            liquidity_gt: "100",
+            token0: "0x000",
+            token1: "0x000"
+          },
+          {
+            liquidity_gt: "200"
+          },
+          {
+            token0: "0x001"
+          }
+        ]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('allows for simple OR queries', () => {
+  const g = createQuery<Query>();
+
+  const query = g.pools
+    .where((w) => [w.or(w.liquidity.gt('100000'), w.liquidity.is('0'))])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    pools(
+      where: {
+        or: [
+          {
+            liquidity_gt: "100000"
+          },
+          {
+            liquidity: "0"
+          }
+        ]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('allows for complex OR/AND queries', () => {
+  const g = createQuery<Query>();
+
+  const query = g.positions
+    .where((w) => [
+      w.liquidity.gt('0'),
+      w.or(
+        w.tickLower.gt(0),
+        w.tickUpper.lt(999999999999),
+        w.and(
+          w.token0.is('0x000'),
+          w.token1((token1) => [token1.id('0x001')]),
+          w.or(w.owner.is('0x000'))
+        ),
+        w.pool((pool) => [
+          pool.name('foo'),
+          pool.name('bar'),
+          pool.or(pool.token0.is('0x000'), pool.token1.is('0x001')),
+        ])
+      ),
+    ])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    positions(
+      where: {
+        liquidity_gt: "0",
+        or: [
+          {
+            tickLower_gt: 0
+          },
+          {
+            tickUpper_lt: 999999999999
+          },
+          {
+            and: [
+              {
+                token0: "0x000",
+                token1_: {
+                  id: "0x001"
+                },
+                or: [
+                  {
+                    owner: "0x000"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            pool_: {
+              and: [
+                {
+                  name: "foo",
+                  or: [
+                    {
+                      token0: "0x000"
+                    },
+                    {
+                      token1: "0x001"
+                    }
+                  ]
+                },
+                {
+                  name: "bar"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
+it('ignores nullish AND/OR values', () => {
+  const g = createQuery<Query>();
+
+  const query = g.positions
+    .where((w) => [
+      w.liquidity.gt(null),
+      w.or(
+        w.tickLower.gt(null),
+        w.tickUpper.lt(null),
+        w.and(
+          w.token0.is(null),
+          w.token1((token1) => [token1.id(null)]),
+          w.or(w.owner.is(null))
+        ),
+        w.pool((pool) => [
+          pool.name(null),
+          pool.name(null),
+          pool.or(pool.token0.is(null), pool.token1.is(null)),
+        ])
+      ),
+    ])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    positions { id }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
 
 it("searches by a child entity's ID", () => {
   const g = createQuery<Query>();
@@ -608,4 +863,71 @@ it('combines multiple queries into a single query request', async () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
   expect(fetch.mock.calls[0][1].body).toContain('pools');
   expect(fetch.mock.calls[0][1].body).toContain('positions');
+});
+
+it('prettifies the result', () => {
+  const g = createQuery<Query>();
+  const query = g.pools
+    .first(100)
+    .orderBy('liquidity')
+    .orderDirection('desc')
+    .where((w) => [
+      w.createdAtTimestamp.gt('0'),
+      w.positions((position) => [
+        position.tickLower.gt(0),
+        position.tickUpper.lt(100000),
+      ]),
+      w.or(
+        w.liquidity.gt('0'),
+        w.and(w.liquidity.gt('100'), w.liquidity.lt('200'))
+      ),
+    ])
+    .select((s) => [
+      s.id,
+      s.createdAtTimestamp,
+      s.positions((position) => [position.tickLower, position.tickUpper]),
+      s.on('Foo', (s) => [s.name]),
+    ]);
+
+  const actual = query.toString();
+
+  const expected = `{
+  pools (
+    first: 100
+    orderBy: liquidity
+    orderDirection: desc
+    where: {
+      createdAtTimestamp_gt: "0",
+      positions_: {
+        tickLower_gt: 0,
+        tickUpper_lt: 100000
+      },
+      or: [
+        {
+          liquidity_gt: "0"
+        },
+        {
+          and: [
+            {
+              liquidity_gt: "100",
+              liquidity_lt: "200"
+            }
+          ]
+        }
+      ]
+    }
+  ){
+    id
+    createdAtTimestamp
+    positions{
+      tickLower
+      tickUpper
+    }
+    ... on Foo {
+      name
+    }
+  }
+}`;
+
+  expect(actual).toBe(expected);
 });
