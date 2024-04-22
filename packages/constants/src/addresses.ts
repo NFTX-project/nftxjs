@@ -66,7 +66,7 @@ export const INVENTORY_STAKING = {
 export const NFTX_ROUTER = {
   [Network.Mainnet]: a('0x250d62a67254A46c0De472d2c9215E1d890cC90f'),
   [Network.Sepolia]: a('0x12156cCA1958B6591CC49EaE03a5553458a4b424'),
-  [Network.Arbitrum]: a('0x4529ad73b2cc8d4db0b0deba90de165e35c4b628'),
+  [Network.Arbitrum]: a('0x0DA69287B4C1B28181E5d155dDDda7Fa5C32E5Ad'),
 };
 
 /** Staking  / Liquidity / Pools - NftxRouter */
