@@ -59,6 +59,7 @@ type QuoteArgs = {
   permit2?: Permit2Quote;
 };
 
+/** Returns an on-chain quote for a transaction. The response object can be passed into @nftx/trade's fulfill method to execute the quote */
 function fetchQuote(args: BuyArgs & PriceArgs): Promise<MarketplacePrice>;
 function fetchQuote(args: BuyArgs & QuoteArgs): Promise<MarketplaceQuote>;
 function fetchQuote(args: SellArgs & PriceArgs): Promise<MarketplacePrice>;
@@ -122,10 +123,12 @@ function fetchQuote(args: any) {
     ? MarketplacePrice
     : MarketplaceQuote;
 
+  const method = quoteType === 'price' ? 'GET' : 'POST';
+
   return queryApi<QuoteType>({
     url,
     query,
-    method: quoteType === 'price' ? 'GET' : 'POST',
+    method,
   });
 }
 

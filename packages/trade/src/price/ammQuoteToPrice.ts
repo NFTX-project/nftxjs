@@ -63,22 +63,24 @@ const ammQuoteToPrice = (quote: NftxQuote) => {
     );
   }
 
-  const methodParameters: MarketplaceQuote['methodParameters'] | undefined =
-    quote.methodParameters
-      ? {
-          amountsIn: [],
-          amountsOut: [],
-          premiumLimit: '',
-          standard: 'ERC20',
-          tokenIdsIn: [],
-          tokenIdsOut: [],
-          vaultAddress: '0x',
-          vaultId: '',
-          executeCalldata: quote.methodParameters.calldata,
-          to: quote.methodParameters.to,
-          value: quote.methodParameters.value,
-        }
-      : undefined;
+  let methodParameters =
+    undefined as any as MarketplaceQuote['methodParameters'];
+
+  if (quote.methodParameters) {
+    methodParameters = {
+      amountsIn: [],
+      amountsOut: [],
+      premiumLimit: '',
+      standard: 'ERC20',
+      tokenIdsIn: [],
+      tokenIdsOut: [],
+      vaultAddress: '0x',
+      vaultId: '',
+      executeCalldata: quote.methodParameters.calldata,
+      to: quote.methodParameters.to,
+      value: quote.methodParameters.value,
+    };
+  }
 
   const price: MarketplaceQuote = {
     approveContracts,
@@ -91,7 +93,7 @@ const ammQuoteToPrice = (quote: NftxQuote) => {
     type: 'erc20',
     vTokenPrice: BigInt(quote.quote),
     routeString: quote.routeString,
-    methodParameters: methodParameters as MarketplaceQuote['methodParameters'],
+    methodParameters: methodParameters,
   };
 
   return price;
