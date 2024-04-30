@@ -2,7 +2,7 @@ import { WeiPerEther, Zero } from '@nftx/constants';
 import { makeQuoteVaultBuy } from '../quoteVaultBuy';
 import { formatEther, parseEther } from 'viem';
 
-let fetchTokenBuyPrice: jest.Mock;
+let fetchAmmQuote: jest.Mock;
 let fetchVTokenToEth: jest.Mock;
 let fetchPremiumPrice: jest.Mock;
 let quoteVaultBuy: ReturnType<typeof makeQuoteVaultBuy>;
@@ -17,9 +17,9 @@ let holdings: Args['holdings'];
 let slippagePercentage: Args['slippagePercentage'];
 
 beforeEach(() => {
-  fetchTokenBuyPrice = jest.fn(async ({ amount }) => ({
-    price: amount,
-    methodParameters: { calldata: '0x9' },
+  fetchAmmQuote = jest.fn(async ({ buyAmount }) => ({
+    price: buyAmount,
+    methodParameters: { executeCalldata: '0x9' },
   }));
   fetchVTokenToEth = jest.fn().mockResolvedValue(WeiPerEther / 2n);
   fetchPremiumPrice = jest.fn().mockResolvedValue([Zero, Zero]);
@@ -46,7 +46,7 @@ beforeEach(() => {
 
   quoteVaultBuy = makeQuoteVaultBuy({
     fetchPremiumPrice,
-    fetchTokenBuyPrice,
+    fetchAmmQuote,
     fetchVTokenToEth,
   });
   run = () =>

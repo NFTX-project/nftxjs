@@ -1,11 +1,11 @@
-import type { Price } from '@nftx/types';
-import type { NftxQuote } from './fetchQuote';
+import type { ApproveContract, MarketplaceQuote } from '@nftx/types';
 import { NFTX_ROUTER, WeiPerEther, Zero } from '@nftx/constants';
 import { formatEther } from 'viem';
 import { getChainConstant } from '@nftx/utils';
 import { getApproveContracts } from '../approve';
+import { NftxQuote } from './types';
 
-const nftxQuoteToPrice = (quote: NftxQuote) => {
+const ammQuoteToPrice = (quote: NftxQuote) => {
   const { network, sellToken } = quote;
   const isEth = `${sellToken}` === 'ETH';
 
@@ -13,7 +13,7 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     return total + BigInt(r[0].amountIn);
   }, Zero);
 
-  const route: Price['route'] = quote.route.map((route) => {
+  const route: MarketplaceQuote['route'] = quote.route.map((route) => {
     const type = route[0].type;
     const amountIn = BigInt(route[0].amountIn);
     const amountOut = BigInt(route[route.length - 1].amountOut);
@@ -46,7 +46,7 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     };
   });
 
-  const approveContracts: Price['approveContracts'] = [];
+  const approveContracts: ApproveContract[] = [];
 
   // If you're paying ETH we don't need any approvals
   if (!isEth) {
@@ -63,19 +63,38 @@ const nftxQuoteToPrice = (quote: NftxQuote) => {
     );
   }
 
-  const price: Price = {
-    price: BigInt(quote.quote),
-    estimatedGas: BigInt(quote.gasUseEstimate),
-    gasPrice: BigInt(quote.gasPriceWei),
-    methodParameters: {
-      ...quote.methodParameters,
-    },
+  const methodParameters: MarketplaceQuote['methodParameters'] | undefined =
+    quote.methodParameters
+      ? {
+          amountsIn: [],
+          amountsOut: [],
+          premiumLimit: '',
+          standard: 'ERC20',
+          tokenIdsIn: [],
+          tokenIdsOut: [],
+          vaultAddress: '0x',
+          vaultId: '',
+          executeCalldata: quote.methodParameters.calldata,
+          to: quote.methodParameters.to,
+          value: quote.methodParameters.value,
+        }
+      : undefined;
+
+  const price: MarketplaceQuote = {
     approveContracts,
+    estimatedGas: BigInt(quote.gasUseEstimate),
+    feePrice: Zero,
+    items: [],
+    premiumPrice: Zero,
+    price: BigInt(quote.quote),
     route,
+    type: 'erc20',
+    vTokenPrice: BigInt(quote.quote),
     routeString: quote.routeString,
+    methodParameters: methodParameters as MarketplaceQuote['methodParameters'],
   };
 
   return price;
 };
 
-export default nftxQuoteToPrice;
+export default ammQuoteToPrice;

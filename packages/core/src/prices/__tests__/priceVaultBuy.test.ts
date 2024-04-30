@@ -6,15 +6,15 @@ type PriceVaultBuy = ReturnType<typeof makePriceVaultBuy>;
 let priceVaultBuy: PriceVaultBuy;
 let run: () => ReturnType<PriceVaultBuy>;
 
-let fetchTokenBuyPrice: jest.Mock;
+let fetchAmmQuote: jest.Mock;
 let quoteVaultBuy: jest.Mock;
 let tokenIds: `${number}`[];
 let vault: Parameters<PriceVaultBuy>[0]['vault'];
 let holdings: Parameters<PriceVaultBuy>[0]['holdings'];
 
 beforeEach(() => {
-  fetchTokenBuyPrice = jest.fn(({ amount }: { amount: bigint }) => ({
-    price: amount,
+  fetchAmmQuote = jest.fn(({ buyAmount }: { buyAmount: bigint }) => ({
+    price: buyAmount,
   }));
   quoteVaultBuy = jest.fn().mockResolvedValue({ vTokenPrice: 0.6 });
   tokenIds = ['0', '1'];
@@ -66,7 +66,7 @@ beforeEach(() => {
     },
   ];
 
-  priceVaultBuy = makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });
+  priceVaultBuy = makePriceVaultBuy({ fetchAmmQuote, quoteVaultBuy });
   run = () =>
     priceVaultBuy({
       holdings,
@@ -92,9 +92,9 @@ describe('when there are more than 5 token ids', () => {
   it('fetches the price of buying the required vToken', async () => {
     const result = await run();
 
-    expect(fetchTokenBuyPrice).toBeCalled();
-    expect(fetchTokenBuyPrice.mock.calls[0][0].tokenAddress).toBe('0x01');
-    expect(fetchTokenBuyPrice.mock.calls[0][0].amount).toBe(WeiPerEther * 6n);
+    expect(fetchAmmQuote).toBeCalled();
+    expect(fetchAmmQuote.mock.calls[0][0].buyToken).toBe('0x01');
+    expect(fetchAmmQuote.mock.calls[0][0].buyAmount).toBe(WeiPerEther * 6n);
     expect(result.vTokenPrice).toBe(parseEther('6'));
   });
   it('gets the vault fee price for buying n items', async () => {
@@ -141,7 +141,7 @@ describe('when there are 5 or less token ids', () => {
   it('does not fetch any prices', async () => {
     await run();
 
-    expect(fetchTokenBuyPrice).not.toBeCalled();
+    expect(fetchAmmQuote).not.toBeCalled();
   });
   it('uses the price stored on the vault', async () => {
     const result = await run();
@@ -185,6 +185,6 @@ describe('when vault is an 1155', () => {
   it('does not fetch any prices', async () => {
     await run();
 
-    expect(fetchTokenBuyPrice).not.toBeCalled();
+    expect(fetchAmmQuote).not.toBeCalled();
   });
 });

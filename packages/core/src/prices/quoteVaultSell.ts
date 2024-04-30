@@ -1,5 +1,5 @@
 import { MARKETPLACE_ZAP, WeiPerEther, Zero } from '@nftx/constants';
-import { fetchTokenSellPrice, getApproveContracts } from '@nftx/trade';
+import { fetchAmmQuote, getApproveContracts } from '@nftx/trade';
 import type {
   Address,
   MarketplaceQuote,
@@ -21,16 +21,16 @@ import { calculateFeePricePerItem, calculateTotalFeePrice } from './common';
 import { MintFeeExceedsValueError, ValidationError } from '@nftx/errors';
 import { MarketplaceZap } from '@nftx/abi';
 
-type FetchTokenSellPrice = typeof fetchTokenSellPrice;
+type FetchAmmQuote = typeof fetchAmmQuote;
 type FetchVTokenToEth = typeof fetchVTokenToEth;
 
 export const makeQuoteVaultSell =
   ({
-    fetchTokenSellPrice,
+    fetchAmmQuote,
     fetchVTokenToEth,
   }: {
     fetchVTokenToEth: FetchVTokenToEth;
-    fetchTokenSellPrice: FetchTokenSellPrice;
+    fetchAmmQuote: FetchAmmQuote;
   }) =>
   async ({
     network,
@@ -66,13 +66,13 @@ export const makeQuoteVaultSell =
       price: vTokenPrice,
       route,
       routeString,
-      methodParameters: { calldata: executeCalldata },
-    } = await fetchTokenSellPrice({
-      tokenAddress: vault.id,
-      amount: sellAmount,
+      methodParameters: { executeCalldata },
+    } = await fetchAmmQuote({
+      sellToken: vault.id,
+      sellAmount,
+      buyToken: 'WETH',
       network,
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
-      quote: 'WETH',
       slippagePercentage,
     });
     const vTokenPricePerItem = (vTokenPrice * WeiPerEther) / sellAmount;
@@ -184,7 +184,7 @@ export const makeQuoteVaultSell =
   };
 
 const quoteVaultSell = makeQuoteVaultSell({
-  fetchTokenSellPrice,
+  fetchAmmQuote,
   fetchVTokenToEth,
 });
 

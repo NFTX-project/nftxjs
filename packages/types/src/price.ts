@@ -15,22 +15,6 @@ type PriceRoute = Array<{
   }>;
 }>;
 
-/** A price object returned by all pricing methods (@nftx/trade) */
-export type Price = {
-  price: bigint;
-  estimatedGas?: bigint;
-  gasPrice?: bigint;
-  /**
-   * A list of sources providing liquidity for the given price
-   */
-  sources?: Array<{ name: string; proportion: string }>;
-  route?: PriceRoute;
-  routeString?: string;
-  priceImpact?: number;
-  methodParameters: { calldata: Address; value: Address; to: Address };
-  approveContracts: ApproveContract[];
-};
-
 export type ApproveContract = {
   label: string;
   /** The approval type */
@@ -47,9 +31,9 @@ export type ApproveContract = {
   standard?: 'ERC721' | 'ERC1155' | 'ERC20';
 };
 
-/** A price object for buying/selling/swapping an NFT through the marketplace zap */
+/** A price object for buying/selling/swapping an NFT through the marketplace zap or trading an ERC20 through our AMM */
 export type MarketplacePrice = {
-  type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem';
+  type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'erc20';
   /** The total price in ETH */
   price: bigint;
   /** The ETH price of the vToken being bought/sold */
@@ -60,6 +44,8 @@ export type MarketplacePrice = {
   premiumPrice: bigint;
   route?: PriceRoute;
   routeString?: string;
+  /** A list of sources providing liquidity for the price */
+  sources?: Array<{ name: string; proportion: string }>;
 };
 
 type MarketplaceParameters = {
@@ -100,3 +86,6 @@ export type MarketplaceQuote = MarketplacePrice & {
   methodParameters: MarketplaceParameters;
   approveContracts: ApproveContract[];
 };
+
+/** Acceptable tokens / currencies you can get quotes in */
+export type QuoteToken = Address | 'ETH' | 'USDC' | 'WETH';

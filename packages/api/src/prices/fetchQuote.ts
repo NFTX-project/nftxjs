@@ -1,82 +1,131 @@
 import type {
   Address,
+  BigIntish,
   MarketplacePrice,
   MarketplaceQuote,
+  Permit2Quote,
   TokenIds,
+  QuoteToken,
 } from '@nftx/types';
 import { queryApi } from '../utils';
 import config from '@nftx/config';
 import { getTokenIdAmounts, getUniqueTokenIds } from '@nftx/utils';
 
-type CommonArgs = {
-  type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem';
-  vaultId: string;
-  buyTokenIds?: TokenIds;
-  sellTokenIds?: TokenIds;
+export type BuyArgs = {
   network?: number;
+  type: 'buy';
+  vaultId: string;
+  tokenIds: TokenIds;
 };
-type PriceArgs = CommonArgs & {
-  quoteType: 'price';
+export type SellArgs = {
+  network?: number;
+  type: 'sell';
+  vaultId: string;
+  tokenIds: TokenIds;
 };
-type QuoteArgs = CommonArgs & {
-  quoteType: 'quote';
+export type SwapArgs = {
+  network?: number;
+  type: 'swap';
+  vaultId: string;
+  mintTokenIds: TokenIds;
+  redeemTokenIds: TokenIds;
+};
+export type MintArgs = {
+  network?: number;
+  type: 'mint';
+  vaultId: string;
+  tokenIds: TokenIds;
+};
+export type RedeemArgs = {
+  network?: number;
+  type: 'redeem';
+  vaultId: string;
+  tokenIds: TokenIds;
+};
+export type TokenArgs = {
+  network?: number;
+  type: 'erc20';
+  buyToken: QuoteToken;
+  sellToken: QuoteToken;
+  buyAmount?: BigIntish;
+  sellAmount?: BigIntish;
+};
+
+type PriceArgs = { quoteType: 'price' };
+type QuoteArgs = {
+  quoteType?: 'quote';
   userAddress: Address;
   slippagePercentage?: number;
+  permit2?: Permit2Quote;
 };
 
-function fetchQuote(args: PriceArgs): Promise<MarketplacePrice>;
-function fetchQuote(args: QuoteArgs): Promise<MarketplaceQuote>;
-function fetchQuote(args: PriceArgs | QuoteArgs) {
+function fetchQuote(args: BuyArgs & PriceArgs): Promise<MarketplacePrice>;
+function fetchQuote(args: BuyArgs & QuoteArgs): Promise<MarketplaceQuote>;
+function fetchQuote(args: SellArgs & PriceArgs): Promise<MarketplacePrice>;
+function fetchQuote(args: SellArgs & QuoteArgs): Promise<MarketplaceQuote>;
+function fetchQuote(args: SwapArgs & PriceArgs): Promise<MarketplacePrice>;
+function fetchQuote(args: SwapArgs & QuoteArgs): Promise<MarketplaceQuote>;
+function fetchQuote(args: MintArgs & PriceArgs): Promise<MarketplacePrice>;
+function fetchQuote(args: MintArgs & QuoteArgs): Promise<MarketplaceQuote>;
+function fetchQuote(args: RedeemArgs & PriceArgs): Promise<MarketplacePrice>;
+function fetchQuote(args: RedeemArgs & QuoteArgs): Promise<MarketplaceQuote>;
+function fetchQuote(args: TokenArgs & PriceArgs): Promise<MarketplacePrice>;
+function fetchQuote(args: TokenArgs & QuoteArgs): Promise<MarketplaceQuote>;
+function fetchQuote(args: any) {
   const {
-    quoteType,
     type,
-    vaultId,
-    buyTokenIds: buyTokensAndAmounts,
+    quoteType = 'quote',
     network = config.network,
-    sellTokenIds: sellTokensAndAmounts,
+    vaultId,
+    userAddress,
+    slippagePercentage,
   } = args;
 
-  const buyTokenIds = buyTokensAndAmounts
-    ? getUniqueTokenIds(buyTokensAndAmounts)
-    : undefined;
-  const buyAmounts = buyTokensAndAmounts
-    ? getTokenIdAmounts(buyTokensAndAmounts)
-    : undefined;
-  const sellTokenIds = sellTokensAndAmounts
-    ? getUniqueTokenIds(sellTokensAndAmounts)
-    : undefined;
-  const sellAmounts = sellTokensAndAmounts
-    ? getTokenIdAmounts(sellTokensAndAmounts)
-    : undefined;
+  const url = `/${network}/quote/${type}`;
 
-  if (quoteType === 'price') {
-    return queryApi<MarketplacePrice>({
-      url: `/${network}/price`,
-      query: {
-        type,
-        vaultId,
-        buyTokenIds,
-        buyAmounts,
-        sellTokenIds,
-        sellAmounts,
-      },
-    });
+  const query: Record<string, any> = {
+    vaultId,
+    userAddress,
+    slippagePercentage,
+  };
+
+  switch (type) {
+    case 'buy':
+    case 'redeem':
+      query.buyTokenIds = getUniqueTokenIds(args.tokenIds);
+      query.buyAmounts = getTokenIdAmounts(args.tokenIds);
+      break;
+    case 'sell':
+    case 'mint':
+      query.sellTokenIds = getUniqueTokenIds(args.tokenIds);
+      query.sellAmounts = getTokenIdAmounts(args.tokenIds);
+      break;
+    case 'swap':
+      query.sellTokenIds = getUniqueTokenIds(args.mintTokenIds);
+      query.sellAmounts = getTokenIdAmounts(args.mintTokenIds);
+      query.buyTokenIds = getUniqueTokenIds(args.redeemTokenIds);
+      query.buyAmounts = getTokenIdAmounts(args.redeemTokenIds);
+      break;
+    case 'erc20':
+      query.sellToken = args.sellToken;
+      query.sellAmount = args.sellAmount;
+      query.buyToken = args.buyToken;
+      query.buyAmount = args.buyAmount;
+      break;
   }
 
-  const { userAddress, slippagePercentage } = args;
+  if (args.permit2 && quoteType === 'quote') {
+    query.permit2 = args.permit2;
+  }
 
-  return queryApi<MarketplaceQuote>({
-    url: `/${network}/quote`,
-    query: {
-      type,
-      vaultId,
-      buyTokenIds,
-      buyAmounts,
-      sellTokenIds,
-      sellAmounts,
-      userAddress,
-      slippagePercentage,
-    },
+  type QuoteType = typeof quoteType extends 'price'
+    ? MarketplacePrice
+    : MarketplaceQuote;
+
+  return queryApi<QuoteType>({
+    url,
+    query,
+    method: quoteType === 'price' ? 'GET' : 'POST',
   });
 }
 

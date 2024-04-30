@@ -1,5 +1,5 @@
 import config from '@nftx/config';
-import type { Price, Provider, Signer } from '@nftx/types';
+import type { MarketplaceQuote, Provider, Signer } from '@nftx/types';
 
 const tradeErc20 = async ({
   provider,
@@ -9,20 +9,20 @@ const tradeErc20 = async ({
   provider: Provider;
   signer: Signer;
   network?: number;
-  quote: Pick<Price, 'methodParameters'>;
+  quote: Pick<MarketplaceQuote, 'methodParameters'>;
 }) => {
   const [address] = await signer.getAddresses();
   const account = address;
 
   const {
-    methodParameters: { calldata, to, value },
+    methodParameters: { executeCalldata, to, value },
   } = quote;
 
   if (config.debug) {
     console.debug({
       method: 'tradeErc20',
       to,
-      data: calldata,
+      data: executeCalldata,
       value: BigInt(value),
       account,
     });
@@ -30,7 +30,7 @@ const tradeErc20 = async ({
 
   const hash = await signer.sendTransaction({
     to,
-    data: calldata,
+    data: executeCalldata,
     value: BigInt(value),
     account,
     chain: provider.chain,

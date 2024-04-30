@@ -1,5 +1,10 @@
-import type { Address, BigIntish, Permit2Quote } from '@nftx/types';
-import type { QuoteToken } from './types';
+import type {
+  Address,
+  BigIntish,
+  MarketplaceQuote,
+  Permit2Quote,
+  QuoteToken,
+} from '@nftx/types';
 import config from '@nftx/config';
 import { NFTX_ROUTER, WeiPerEther } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
@@ -9,66 +14,10 @@ import {
   QuoteSlippageError,
   ValidationError,
 } from '@nftx/errors';
+import { NftxQuote } from './types';
+import ammQuoteToPrice from './ammQuoteToPrice';
 
-type RouteToken = {
-  chainId: number;
-  decimals: string;
-  address: Address;
-  symbol: string;
-};
-
-type RouteElV3 = {
-  type: 'v3-pool';
-  address: Address;
-  tokenIn: RouteToken;
-  tokenOut: RouteToken;
-  fee: `${number}`;
-  liquidity: `${number}`;
-  sqrtRatioX96: `${number}`;
-  tickCurrent: `${number}`;
-  amountIn: `${number}`;
-  amountOut: `${number}`;
-};
-type RouteElV2 = {
-  type: 'v2-pool';
-  address: Address;
-  tokenIn: RouteToken;
-  tokenOut: RouteToken;
-  reserve0: { token: RouteToken; quotient: `${number}` };
-  reserve1: { token: RouteToken; quotient: `${number}` };
-  amountIn: `${number}`;
-  amountOut: `${number}`;
-};
-
-type RouteEl = RouteElV3 | RouteElV2;
-
-export type NftxQuote = {
-  network: number;
-  sellToken: Address;
-  buyToken: Address;
-  methodParameters: {
-    calldata: Address;
-    value: Address;
-    to: Address;
-  };
-  blockNumber: `${number}`;
-  amount: `${number}`;
-  amountDecimals: `${number}`;
-  quote: `${number}`;
-  quoteDecimals: `${number}`;
-  quoteGasAdjusted: `${number}`;
-  quoteGasAdjustedDecimals: `${number}`;
-  gasUseEstimate: `${number}`;
-  gasUseEstimateUSD: `${number}`;
-  simulationStatus: string;
-  simulationError: boolean;
-  gasPriceWei: `${number}`;
-  route: RouteEl[][];
-  routeString: string;
-  quoteId: string;
-};
-
-const fetchQuote = async (args: {
+const fetchAmmQuote = async (args: {
   network?: number;
   buyToken: QuoteToken;
   buyAmount?: BigIntish;
@@ -77,7 +26,7 @@ const fetchQuote = async (args: {
   slippagePercentage?: number;
   userAddress?: Address;
   permit2?: Permit2Quote;
-}): Promise<NftxQuote> => {
+}): Promise<MarketplaceQuote> => {
   const {
     network = config.network,
     buyAmount,
@@ -109,6 +58,7 @@ const fetchQuote = async (args: {
   searchParams.append('tokenInChainId', `${network}`);
   searchParams.append('tokenOutAddress', buyToken);
   searchParams.append('tokenOutChainId', `${network}`);
+
   if (buyAmount) {
     searchParams.append('amount', BigInt(buyAmount).toString());
     searchParams.append('type', 'exactOut');
@@ -120,6 +70,7 @@ const fetchQuote = async (args: {
     searchParams.append('buyAmount', WeiPerEther.toString());
     searchParams.append('type', 'exactOut');
   }
+
   if (userAddress) {
     searchParams.append('recipient', userAddress);
     searchParams.append('deadline', '300');
@@ -132,7 +83,9 @@ const fetchQuote = async (args: {
   } else {
     searchParams.append('intent', 'quote');
   }
+
   searchParams.append('protocols', 'v3');
+
   if (permit2) {
     searchParams.append('permitSignature', permit2.signature);
     searchParams.append('permitAmount', permit2.amount.toString());
@@ -164,12 +117,12 @@ const fetchQuote = async (args: {
     data.methodParameters.to = getChainConstant(NFTX_ROUTER, network);
   }
 
-  return {
+  return ammQuoteToPrice({
     ...data,
     network,
     sellToken,
     buyToken,
-  };
+  });
 };
 
-export default fetchQuote;
+export default fetchAmmQuote;

@@ -1,7 +1,6 @@
 import { USDC, WETH_TOKEN } from '@nftx/constants';
-import type { QuoteToken } from './types';
 import { getChainConstant } from '@nftx/utils';
-import type { Address } from '@nftx/types';
+import type { Address, QuoteToken } from '@nftx/types';
 
 const parseQuoteToken = (address: QuoteToken, network: number) => {
   switch (address) {
