@@ -31,7 +31,7 @@ export type ApproveContract = {
   standard?: 'ERC721' | 'ERC1155' | 'ERC20';
 };
 
-/** A price object for buying/selling/swapping an NFT through the marketplace zap or trading an ERC20 through our AMM */
+/** A price object for buying/selling/swapping an NFT through the marketplace zap or trading an ERC20 through NFTX's AMM */
 export type MarketplacePrice = {
   type: 'buy' | 'sell' | 'swap' | 'mint' | 'redeem' | 'erc20';
   /** The total price in ETH */

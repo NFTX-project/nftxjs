@@ -8,6 +8,7 @@ import fetchQuote, {
   SwapArgs,
 } from './fetchQuote';
 
+/** Returns an off-chain price for a transaction */
 function fetchPrice(args: BuyArgs): Promise<MarketplacePrice>;
 function fetchPrice(args: SellArgs): Promise<MarketplacePrice>;
 function fetchPrice(args: SwapArgs): Promise<MarketplacePrice>;

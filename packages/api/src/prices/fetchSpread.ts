@@ -2,6 +2,7 @@ import { WeiPerEther, Zero } from '@nftx/constants';
 import { QuoteToken } from '@nftx/types';
 import fetchPrice from './fetchPrice';
 
+/** Returns the difference between a buy and sell of a single token */
 const fetchSpread = async ({
   tokenAddress,
   network,
