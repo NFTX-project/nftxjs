@@ -1,4 +1,4 @@
-import { fetchTokenBuyPrice } from '@nftx/trade';
+import { fetchAmmQuote } from '@nftx/trade';
 import type {
   MarketplacePrice,
   Provider,
@@ -16,7 +16,7 @@ import {
 } from '@nftx/utils';
 import { InsufficientLiquidityError, ValidationError } from '@nftx/errors';
 
-type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
+type FetchAmmQuote = typeof fetchAmmQuote;
 type QuoteVaultBuy = typeof quoteVaultBuy;
 
 const checkLiquidity = <P extends { vTokenPrice: bigint }>(price: P) => {
@@ -68,14 +68,14 @@ const getRoughPrice = async ({
   network,
   tokenIds,
   vault,
-  fetchTokenBuyPrice,
+  fetchAmmQuote,
   now,
 }: {
   tokenIds: TokenIds;
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   vault: Pick<Vault, 'vTokenToEth' | 'fees' | 'id'>;
   network: number;
-  fetchTokenBuyPrice: FetchTokenBuyPrice;
+  fetchAmmQuote: FetchAmmQuote;
   now: number;
 }) => {
   // Calculate the price manually
@@ -89,10 +89,11 @@ const getRoughPrice = async ({
     price: vTokenPrice,
     route,
     routeString,
-  } = await fetchTokenBuyPrice({
+  } = await fetchAmmQuote({
     network,
-    tokenAddress: vault.id,
-    amount: buyAmount,
+    buyToken: vault.id,
+    buyAmount,
+    sellToken: 'ETH',
   });
   const feePrice = calculateTotalFeePrice(
     vault.fees.redeemFee,
@@ -128,10 +129,10 @@ const getRoughPrice = async ({
 
 export const makePriceVaultBuy =
   ({
-    fetchTokenBuyPrice,
+    fetchAmmQuote,
     quoteVaultBuy,
   }: {
-    fetchTokenBuyPrice: FetchTokenBuyPrice;
+    fetchAmmQuote: FetchAmmQuote;
     quoteVaultBuy: QuoteVaultBuy;
   }) =>
   async ({
@@ -202,11 +203,14 @@ export const makePriceVaultBuy =
       network,
       tokenIds,
       vault,
-      fetchTokenBuyPrice,
+      fetchAmmQuote: fetchAmmQuote,
       now,
     }).then(checkLiquidity);
   };
 
-const priceVaultBuy = makePriceVaultBuy({ fetchTokenBuyPrice, quoteVaultBuy });
+const priceVaultBuy = makePriceVaultBuy({
+  fetchAmmQuote,
+  quoteVaultBuy,
+});
 
 export default priceVaultBuy;

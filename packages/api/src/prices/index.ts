@@ -1,10 +1,2 @@
-export { default as fetchVaultBuyPrice } from './fetchVaultBuyPrice';
-export { default as fetchVaultBuyQuote } from './fetchVaultBuyQuote';
-export { default as fetchVaultSellPrice } from './fetchVaultSellPrice';
-export { default as fetchVaultSellQuote } from './fetchVaultSellQuote';
-export { default as fetchVaultSwapPrice } from './fetchVaultSwapPrice';
-export { default as fetchVaultSwapQuote } from './fetchVaultSwapQuote';
-export { default as fetchVaultMintPrice } from './fetchVaultMintPrice';
-export { default as fetchVaultMintQuote } from './fetchVaultMintQuote';
-export { default as fetchVaultRedeemPrice } from './fetchVaultRedeemPrice';
-export { default as fetchVaultRedeemQuote } from './fetchVaultRedeemQuote';
+export { default as fetchQuote } from './fetchQuote';
+export { default as fetchPrice } from './fetchPrice';

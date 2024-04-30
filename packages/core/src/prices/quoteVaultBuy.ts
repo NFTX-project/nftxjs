@@ -1,5 +1,5 @@
 import { MARKETPLACE_ZAP, WeiPerEther, Zero } from '@nftx/constants';
-import { fetchTokenBuyPrice } from '@nftx/trade';
+import { fetchAmmQuote } from '@nftx/trade';
 import type {
   Address,
   MarketplaceQuote,
@@ -32,7 +32,7 @@ import {
 import { ValidationError } from '@nftx/errors';
 import { MarketplaceZap } from '@nftx/abi';
 
-type FetchTokenBuyPrice = typeof fetchTokenBuyPrice;
+type FetchAmmQuote = typeof fetchAmmQuote;
 type FetchVTokenToEth = typeof fetchVTokenToEth;
 type FetchPremiumPrice = typeof fetchPremiumPrice;
 
@@ -90,11 +90,11 @@ const transformItem = async ({
 export const makeQuoteVaultBuy =
   ({
     fetchPremiumPrice,
-    fetchTokenBuyPrice,
+    fetchAmmQuote,
     fetchVTokenToEth,
   }: {
     fetchVTokenToEth: FetchVTokenToEth;
-    fetchTokenBuyPrice: FetchTokenBuyPrice;
+    fetchAmmQuote: FetchAmmQuote;
     fetchPremiumPrice: FetchPremiumPrice;
   }) =>
   async ({
@@ -135,13 +135,13 @@ export const makeQuoteVaultBuy =
       price: vTokenPrice,
       route,
       routeString,
-      methodParameters: { calldata: executeCalldata },
-    } = await fetchTokenBuyPrice({
+      methodParameters: { executeCalldata },
+    } = await fetchAmmQuote({
       network,
-      tokenAddress: vault.id,
-      amount: buyAmount,
+      buyToken: vault.id,
+      buyAmount,
+      sellToken: 'WETH',
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
-      quote: 'WETH',
       slippagePercentage,
     });
 
@@ -225,7 +225,7 @@ export const makeQuoteVaultBuy =
 
 const quoteVaultBuy = makeQuoteVaultBuy({
   fetchPremiumPrice,
-  fetchTokenBuyPrice,
+  fetchAmmQuote,
   fetchVTokenToEth,
 });
 

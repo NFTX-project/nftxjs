@@ -6,13 +6,13 @@ type PriceVaultSell = ReturnType<typeof makePriceVaultSell>;
 let priceVaultSell: PriceVaultSell;
 let run: () => ReturnType<PriceVaultSell>;
 
-let fetchTokenSellPrice: jest.Mock;
+let fetchAmmQuote: jest.Mock;
 let tokenIds: `${number}`[];
 let vault: Parameters<PriceVaultSell>[0]['vault'];
 
 beforeEach(() => {
-  fetchTokenSellPrice = jest.fn(({ amount }: { amount: bigint }) => ({
-    price: amount,
+  fetchAmmQuote = jest.fn(({ sellAmount }: { sellAmount: bigint }) => ({
+    price: sellAmount,
   }));
   tokenIds = ['0', '1'];
   vault = {
@@ -49,7 +49,7 @@ beforeEach(() => {
     ] as any,
   };
 
-  priceVaultSell = makePriceVaultSell({ fetchTokenSellPrice });
+  priceVaultSell = makePriceVaultSell({ fetchAmmQuote });
   run = () => priceVaultSell({ network: 1, tokenIds, vault });
 });
 
@@ -68,9 +68,9 @@ describe('when there are more than 5 token ids', () => {
   it('fetches the price of selling the required vToken', async () => {
     const result = await run();
 
-    expect(fetchTokenSellPrice).toBeCalled();
-    expect(fetchTokenSellPrice.mock.calls[0][0].tokenAddress).toBe('0x01');
-    expect(fetchTokenSellPrice.mock.calls[0][0].amount).toBe(WeiPerEther * 6n);
+    expect(fetchAmmQuote).toBeCalled();
+    expect(fetchAmmQuote.mock.calls[0][0].sellToken).toBe('0x01');
+    expect(fetchAmmQuote.mock.calls[0][0].sellAmount).toBe(WeiPerEther * 6n);
     expect(result.vTokenPrice).toBe(parseEther('6'));
   });
   it('gets the vault fee price for buying n items', async () => {
@@ -92,7 +92,7 @@ describe('when there are 5 or less token ids', () => {
   it('does not fetch any prices', async () => {
     await run();
 
-    expect(fetchTokenSellPrice).not.toBeCalled();
+    expect(fetchAmmQuote).not.toBeCalled();
   });
   it('uses the price stored on the vault', async () => {
     const result = await run();
