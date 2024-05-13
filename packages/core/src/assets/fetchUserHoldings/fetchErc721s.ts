@@ -1,14 +1,13 @@
 import { Address, ERC721, TokenId } from '@nftx/types';
 import { createCursor, parseCursor } from './cursor';
-import { Network } from '@nftx/constants';
-import { createQuery, gql, querySubgraph } from '@nftx/subgraph';
+import { createQuery, querySubgraph } from '@nftx/subgraph';
 import { getChainConstant } from '@nftx/utils';
 import config from '@nftx/config';
 import type { Holding } from './types';
 
 type QuerySubgraph = typeof querySubgraph;
 
-const fetchErc721sMainnet = async ({
+const fetchErc721s = async ({
   lastId,
   network,
   userAddress,
@@ -50,10 +49,6 @@ const fetchErc721sMainnet = async ({
   return [holdings, nextId] as const;
 };
 
-const fetchErc721sSepolia = fetchErc721sMainnet;
-
-const fetchErc721sArbitrum = fetchErc721sMainnet;
-
 export const makeFetchErc721s =
   ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
   async ({
@@ -69,37 +64,13 @@ export const makeFetchErc721s =
     cursor?: string;
   }> => {
     const { lastId } = parseCursor('721', cursor);
-    let holdings: Array<Holding> = [];
-    let nextId: string | undefined;
 
-    switch (network) {
-      case Network.Mainnet:
-        [holdings, nextId] = await fetchErc721sMainnet({
-          lastId,
-          network,
-          userAddress,
-          querySubgraph,
-        });
-        break;
-      case Network.Sepolia:
-        [holdings, nextId] = await fetchErc721sSepolia({
-          lastId,
-          network,
-          userAddress,
-          querySubgraph,
-        });
-        break;
-      case Network.Arbitrum:
-        [holdings, nextId] = await fetchErc721sArbitrum({
-          lastId,
-          network,
-          userAddress,
-          querySubgraph,
-        });
-        break;
-      default:
-        break;
-    }
+    const [holdings, nextId] = await fetchErc721s({
+      lastId,
+      network,
+      querySubgraph,
+      userAddress,
+    });
 
     return {
       holdings,
