@@ -9,4 +9,5 @@ export const PREMIUM_DURATION = {
   [Network.Mainnet]: 36000, // 10 hours
   [Network.Arbitrum]: 36000, // 10 hours
   [Network.Sepolia]: 36000, // 1 hour
+  [Network.Base]: 36000, // 10 hours
 };
