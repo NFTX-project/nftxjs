@@ -10,6 +10,7 @@ export const NETWORK_QUEUE_NAMES = {
   [Network.Mainnet]: 'indexer-workers-mainnet',
   [Network.Sepolia]: 'indexer-workers-sepolia',
   [Network.Arbitrum]: 'indexer-workers-arbitrum',
+  [Network.Base]: 'indexer-workers-base',
 };
 
 export const SIGNAL_QUEUE_NAME = 'indexer-signals';
