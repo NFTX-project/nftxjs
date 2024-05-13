@@ -1,4 +1,4 @@
-schema: https://api.thegraph.com/subgraphs/name/nftx-project/nftx-v3-vaults-sepolia
+schema: https://g.nftx.xyz/nftx-v3-vaults/eth-mainnet
 generates:
   ./src/subgraph/nftx-v3.ts:
     config:

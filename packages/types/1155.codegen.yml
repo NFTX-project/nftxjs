@@ -1,5 +1,4 @@
-# schema: https://gateway-arbitrum.network.thegraph.com/api/49f332ad234c93d2f07d2c085f1ca6d6/subgraphs/id/5C6JRVzKcE9AVbT7S71EycV8eEGcfkJB9gGsyTbHMVmN
-schema: https://api.thegraph.com/subgraphs/name/nftx-project/1155-sepolia-data-nexus
+schema: https://g.nftx.xyz/erc1155/eth-mainnet
 generates:
   ./src/subgraph/1155.ts:
     config:

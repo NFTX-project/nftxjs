@@ -1,4 +1,4 @@
-schema: https://query.graph.nftx.xyz/subgraphs/id/QmXavb61qVUrfYe7daW47n77LhinFgSoMhWVkMfgEdUspS
+schema: https://g.nftx.xyz/nftx-v3-amm/eth-mainnet
 generates:
   ./src/subgraph/nftx-v3-uniswap.ts:
     config:

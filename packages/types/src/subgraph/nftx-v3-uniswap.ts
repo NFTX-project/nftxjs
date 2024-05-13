@@ -16,6 +16,7 @@ export type Scalars = {
   BigInt: { input: string; output: string; }
   Bytes: { input: string; output: string; }
   Int8: { input: string|number; output: string|number; }
+  Timestamp: { input: string; output: string; }
 };
 
 export type Account = {
@@ -95,6 +96,11 @@ export enum Account_OrderBy {
   Mints = 'mints',
   Positions = 'positions',
   Swaps = 'swaps'
+}
+
+export enum Aggregation_Interval {
+  Day = 'day',
+  Hour = 'hour'
 }
 
 export type BlockChangedFilter = {
@@ -4410,6 +4416,8 @@ export type Swap = Event & {
   timestamp: Scalars['BigInt']['output'];
   token0: Token;
   token1: Token;
+  tokenIn: Token;
+  tokenOut: Token;
   transaction: Transaction;
 };
 
@@ -4608,6 +4616,48 @@ export type Swap_Filter = {
   token1_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   token1_starts_with?: InputMaybe<Scalars['String']['input']>;
   token1_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenIn?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_?: InputMaybe<Token_Filter>;
+  tokenIn_contains?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_ends_with?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_gt?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_gte?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  tokenIn_lt?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_lte?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_not?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_not_contains?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  tokenIn_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_starts_with?: InputMaybe<Scalars['String']['input']>;
+  tokenIn_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenOut?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_?: InputMaybe<Token_Filter>;
+  tokenOut_contains?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_ends_with?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_gt?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_gte?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  tokenOut_lt?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_lte?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_not?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_not_contains?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  tokenOut_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_starts_with?: InputMaybe<Scalars['String']['input']>;
+  tokenOut_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   transaction?: InputMaybe<Scalars['String']['input']>;
   transaction_?: InputMaybe<Transaction_Filter>;
   transaction_contains?: InputMaybe<Scalars['String']['input']>;
@@ -4715,6 +4765,40 @@ export enum Swap_OrderBy {
   Token1UntrackedVolumeUsd = 'token1__untrackedVolumeUSD',
   Token1Volume = 'token1__volume',
   Token1VolumeUsd = 'token1__volumeUSD',
+  TokenIn = 'tokenIn',
+  TokenInDecimals = 'tokenIn__decimals',
+  TokenInDerivedEth = 'tokenIn__derivedETH',
+  TokenInDerivedUsd = 'tokenIn__derivedUSD',
+  TokenInFeesUsd = 'tokenIn__feesUSD',
+  TokenInId = 'tokenIn__id',
+  TokenInName = 'tokenIn__name',
+  TokenInPoolCount = 'tokenIn__poolCount',
+  TokenInSymbol = 'tokenIn__symbol',
+  TokenInTotalSupply = 'tokenIn__totalSupply',
+  TokenInTotalValueLocked = 'tokenIn__totalValueLocked',
+  TokenInTotalValueLockedUsd = 'tokenIn__totalValueLockedUSD',
+  TokenInTotalValueLockedUsdUntracked = 'tokenIn__totalValueLockedUSDUntracked',
+  TokenInTxCount = 'tokenIn__txCount',
+  TokenInUntrackedVolumeUsd = 'tokenIn__untrackedVolumeUSD',
+  TokenInVolume = 'tokenIn__volume',
+  TokenInVolumeUsd = 'tokenIn__volumeUSD',
+  TokenOut = 'tokenOut',
+  TokenOutDecimals = 'tokenOut__decimals',
+  TokenOutDerivedEth = 'tokenOut__derivedETH',
+  TokenOutDerivedUsd = 'tokenOut__derivedUSD',
+  TokenOutFeesUsd = 'tokenOut__feesUSD',
+  TokenOutId = 'tokenOut__id',
+  TokenOutName = 'tokenOut__name',
+  TokenOutPoolCount = 'tokenOut__poolCount',
+  TokenOutSymbol = 'tokenOut__symbol',
+  TokenOutTotalSupply = 'tokenOut__totalSupply',
+  TokenOutTotalValueLocked = 'tokenOut__totalValueLocked',
+  TokenOutTotalValueLockedUsd = 'tokenOut__totalValueLockedUSD',
+  TokenOutTotalValueLockedUsdUntracked = 'tokenOut__totalValueLockedUSDUntracked',
+  TokenOutTxCount = 'tokenOut__txCount',
+  TokenOutUntrackedVolumeUsd = 'tokenOut__untrackedVolumeUSD',
+  TokenOutVolume = 'tokenOut__volume',
+  TokenOutVolumeUsd = 'tokenOut__volumeUSD',
   Transaction = 'transaction',
   TransactionBlockNumber = 'transaction__blockNumber',
   TransactionGasPrice = 'transaction__gasPrice',
@@ -6433,6 +6517,8 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']['output']>;
   /** The block number */
   number: Scalars['Int']['output'];
+  /** The hash of the parent block */
+  parentHash?: Maybe<Scalars['Bytes']['output']>;
   /** Integer representation of the timestamp stored in blocks for the chain */
   timestamp?: Maybe<Scalars['Int']['output']>;
 };

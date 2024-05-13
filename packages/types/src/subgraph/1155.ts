@@ -287,6 +287,56 @@ export enum Collection_OrderBy {
   Tokens = 'tokens'
 }
 
+export type Contract = {
+  __typename?: 'Contract';
+  asERC1155?: Maybe<Collection>;
+  id: Scalars['ID']['output'];
+};
+
+export type Contract_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Contract_Filter>>>;
+  asERC1155?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_?: InputMaybe<Collection_Filter>;
+  asERC1155_contains?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_ends_with?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_gt?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_gte?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  asERC1155_lt?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_lte?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_not?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_not_contains?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  asERC1155_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_starts_with?: InputMaybe<Scalars['String']['input']>;
+  asERC1155_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<Contract_Filter>>>;
+};
+
+export enum Contract_OrderBy {
+  AsErc1155 = 'asERC1155',
+  AsErc1155Id = 'asERC1155__id',
+  AsErc1155Name = 'asERC1155__name',
+  AsErc1155Symbol = 'asERC1155__symbol',
+  Id = 'id'
+}
+
 /**  Account level holding for an NFT  */
 export type Holding = {
   __typename?: 'Holding';
@@ -392,6 +442,8 @@ export type Query = {
   collectionHolding?: Maybe<CollectionHolding>;
   collectionHoldings: Array<CollectionHolding>;
   collections: Array<Collection>;
+  contract?: Maybe<Contract>;
+  contracts: Array<Contract>;
   holding?: Maybe<Holding>;
   holdings: Array<Holding>;
   token?: Maybe<Token>;
@@ -460,6 +512,24 @@ export type QueryCollectionsArgs = {
 };
 
 
+export type QueryContractArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryContractsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Contract_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Contract_Filter>;
+};
+
+
 export type QueryHoldingArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
@@ -523,6 +593,8 @@ export type Subscription = {
   collectionHolding?: Maybe<CollectionHolding>;
   collectionHoldings: Array<CollectionHolding>;
   collections: Array<Collection>;
+  contract?: Maybe<Contract>;
+  contracts: Array<Contract>;
   holding?: Maybe<Holding>;
   holdings: Array<Holding>;
   token?: Maybe<Token>;
@@ -588,6 +660,24 @@ export type SubscriptionCollectionsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Collection_Filter>;
+};
+
+
+export type SubscriptionContractArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionContractsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Contract_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Contract_Filter>;
 };
 
 
