@@ -121,6 +121,12 @@ export const NFTX_FEE_DISTRIBUTOR = {
 /** A list of old fee distributors that are no longer active (but useful for historical data) */
 export const NFTX_FEE_DISTRIBUTOR_LEGACY = {
   [Network.Mainnet]: [a('0x6845fF5f102bEF9D785468F0bEb535b4687406E7')],
-  [Network.Sepolia]: <Address[]>[],
-  [Network.Arbitrum]: <Address[]>[],
+};
+
+/** A list of old pool routers that are no longer active but are still used to compute older positions based on the nfpm address */
+export const POOL_ROUTER_LEGACY: Record<number, Record<string, Address>> = {
+  [Network.Sepolia]: {
+    '0x55bdc76262b1e6e791d0636a0bc61cee23cdfa87':
+      '0xd36ece08f76c50ec3f01db65bbc5ef5aa5fbe849',
+  },
 };

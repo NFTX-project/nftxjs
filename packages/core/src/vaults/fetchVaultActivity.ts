@@ -273,7 +273,7 @@ export const makeFetchVaultActivity = ({
     const activity: VaultActivity[] = [];
     const feeDistributorAddresses = [
       getChainConstant(NFTX_FEE_DISTRIBUTOR, network),
-      ...getChainConstant(NFTX_FEE_DISTRIBUTOR_LEGACY, network),
+      ...getChainConstant(NFTX_FEE_DISTRIBUTOR_LEGACY, network, []),
     ];
 
     do {
