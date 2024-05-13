@@ -1,23 +1,15 @@
 import {
   NONFUNGIBLE_POSITION_MANAGER,
-  Network,
   POOL_ROUTER,
+  POOL_ROUTER_LEGACY,
 } from '@nftx/constants';
 import { Address } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 
-const poolRouterAddresses: Record<string, Record<string, Address>> = {
-  [Network.Sepolia]: {
-    '0x55bdc76262b1e6e791d0636a0bc61cee23cdfa87':
-      '0xd36ece08f76c50ec3f01db65bbc5ef5aa5fbe849',
-  },
-};
-
 const getPoolRouterAddress = (network: number, managerAddress: Address) => {
-  return (
-    poolRouterAddresses[network]?.[managerAddress.toLowerCase()] ??
-    getChainConstant(POOL_ROUTER, network)
-  );
+  const legacyAddresses = getChainConstant(POOL_ROUTER_LEGACY, network, {});
+  const address = legacyAddresses[managerAddress.toLowerCase()];
+  return address || getChainConstant(POOL_ROUTER, network);
 };
 
 const getManagerAddress = (
