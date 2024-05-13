@@ -139,11 +139,13 @@ const defaultConfig: Config = {
       [Network.Mainnet]: 0,
       [Network.Sepolia]: 0,
       [Network.Arbitrum]: 0,
+      [Network.Base]: 0,
     },
     apiBlockNumber: {
       [Network.Mainnet]: 0,
       [Network.Sepolia]: 0,
       [Network.Arbitrum]: 0,
+      [Network.Base]: 0,
     },
     blockBuffer: 10,
   },
