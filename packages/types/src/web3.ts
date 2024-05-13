@@ -1,14 +1,14 @@
 import type {
-  createPublicClient,
   createWalletClient,
   TransactionReceipt as ViemTrasnsactionReceipt,
   GetFunctionArgs,
   ContractFunctionResult,
+  PublicClient,
 } from 'viem';
 import type { Abi, ExtractAbiFunctionNames } from 'abitype';
 import { Permit2Quote } from './price';
 
-export type Provider = ReturnType<typeof createPublicClient>;
+export type Provider = PublicClient<any, any>;
 export type Signer = ReturnType<typeof createWalletClient>;
 
 export type Address = `0x${string}`;
