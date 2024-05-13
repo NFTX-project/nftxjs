@@ -1,66 +1,5 @@
-import type { QueryBase } from './createQuery';
-
-type WithoutNull<T> = {
-  [K in keyof T]: Exclude<T[K], null>;
-};
-type Defined<T> = WithoutNull<Required<T>>;
-
-export type SelectFieldPrimitive = {
-  $name: string;
-  $fields: SelectFieldPrimitive[];
-  $alias: string;
-  $on: string;
-  as: (alias: string) => SelectFieldPrimitive;
-};
-
-export type SelectFieldPrimitives = Array<
-  SelectFieldPrimitive | SelectFieldPrimitives | QueryBase<any, any>
->;
-
-type SelectFieldObjectFn<Def> = (
-  select: ((s: Select<Def>) => SelectFieldPrimitives) | QueryBase<any, any>
-) => SelectFieldPrimitive;
-
-type SelectFieldObject<Field> = Field extends Array<string | number | bigint>
-  ? SelectFieldPrimitive
-  : SelectFieldObjectFn<Field> & Select<Field>;
-
-type SelectField<Field> = Field extends object
-  ? SelectFieldObject<Field>
-  : SelectFieldPrimitive;
-
-type SelectX<Def> = {
-  [K in keyof Def]: SelectField<Def[K]>;
-} & {
-  on: <T = Def>(
-    type: string,
-    cb: (s: Select<Defined<T>>) => SelectFieldPrimitives
-  ) => SelectFieldPrimitives;
-};
-export type Select<Def> = SelectX<
-  Defined<Def extends Array<any> ? Def[0] : Def>
->;
-
-const stringify = (element: SelectFieldPrimitive): string => {
-  if ('toStringInner' in element) {
-    return (element as any).toStringInner();
-  }
-  const output: string[] = [];
-  const { $alias, $fields, $name, $on } = element;
-  if ($name) {
-    if ($alias) {
-      output.push($alias, ': ');
-    }
-    output.push($name);
-  }
-  if ($on) {
-    output.push('... on ', $on, ' ');
-  }
-  if ($fields) {
-    output.push('{\n', $fields.map(stringify).join('\n'), '\n}');
-  }
-  return output.join('');
-};
+import type { QueryBase } from './queryTypes';
+import type { Select, SelectFieldPrimitives } from './selectTypes';
 
 const createSelect = <Def>({
   alias,
@@ -93,8 +32,6 @@ const createSelect = <Def>({
   const proxy: any = new Proxy(fn, {
     get(_, fieldName) {
       switch (fieldName) {
-        case 'toString':
-          return () => stringify(proxy);
         case 'as':
           return (v: string) => {
             return createSelect({ name, fields, alias: v });
@@ -104,6 +41,8 @@ const createSelect = <Def>({
             const fields = cb(proxy);
             return createSelect({ name, fields, alias, on: v });
           };
+        case '$type':
+          return 'select';
         case '$on':
           return on;
         case '$alias':

@@ -383,6 +383,41 @@ it('allows for simple OR queries', () => {
   expect(ignoreWs(actual)).toBe(ignoreWs(expected));
 });
 
+it('wraps OR queries in an AND query if necessary', () => {
+  const g = createQuery<Query>();
+
+  const query = g.positions
+    .where((w) => [w.liquidity('0'), w.or(w.token0('0x0'), w.token1('0x0'))])
+    .select((s) => [s.id]);
+
+  const actual = query.toString();
+  const expected = `{
+    positions(
+      where: {
+        and: [
+          {
+            liquidity: "0"
+          },
+          {
+            or: [
+              {
+                token0: "0x0"
+              },
+              {
+                token1: "0x0"
+              }
+            ]
+          }
+        ]
+      }
+    ) {
+      id
+    }
+  }`;
+
+  expect(ignoreWs(actual)).toBe(ignoreWs(expected));
+});
+
 it('allows for complex OR/AND queries', () => {
   const g = createQuery<Query>();
 
@@ -410,48 +445,58 @@ it('allows for complex OR/AND queries', () => {
   const expected = `{
     positions(
       where: {
-        liquidity_gt: "0",
-        or: [
+        and: [
           {
-            tickLower_gt: 0
+            liquidity_gt: "0"
           },
           {
-            tickUpper_lt: 999999999999
-          },
-          {
-            and: [
+            or: [
               {
-                token0: "0x000",
-                token1_: {
-                  id: "0x001"
-                },
-                or: [
+                tickLower_gt: 0
+              },
+              {
+                tickUpper_lt: 999999999999
+              },
+              {
+                and: [
                   {
-                    owner: "0x000"
+                    token0: "0x000",
+                    token1_: {
+                      id: "0x001"
+                    }
+                  },
+                  {
+                    or: [
+                      {
+                        owner: "0x000"
+                      }
+                    ]
                   }
                 ]
-              }
-            ]
-          },
-          {
-            pool_: {
-              and: [
-                {
-                  name: "foo",
-                  or: [
+              },
+              {
+                pool_: {
+                  and: [
                     {
-                      token0: "0x000"
+                      name: "foo"
                     },
                     {
-                      token1: "0x001"
+                      name: "bar"
+                    },
+                    {
+                      or: [
+                        {
+                          token0: "0x000"
+                        },
+                        {
+                          token1: "0x001"
+                        }
+                      ]
                     }
                   ]
-                },
-                {
-                  name: "bar"
                 }
-              ]
-            }
+              }
+            ]
           }
         ]
       }
@@ -897,20 +942,26 @@ it('prettifies the result', () => {
     orderBy: liquidity
     orderDirection: desc
     where: {
-      createdAtTimestamp_gt: "0",
-      positions_: {
-        tickLower_gt: 0,
-        tickUpper_lt: 100000
-      },
-      or: [
+      and: [
         {
-          liquidity_gt: "0"
+          createdAtTimestamp_gt: "0",
+          positions_: {
+            tickLower_gt: 0,
+            tickUpper_lt: 100000
+          }
         },
         {
-          and: [
+          or: [
             {
-              liquidity_gt: "100",
-              liquidity_lt: "200"
+              liquidity_gt: "0"
+            },
+            {
+              and: [
+                {
+                  liquidity_gt: "100",
+                  liquidity_lt: "200"
+                }
+              ]
             }
           ]
         }
