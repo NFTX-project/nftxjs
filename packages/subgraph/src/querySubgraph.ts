@@ -1,7 +1,7 @@
 import { type GraphQueryString, interpolateQuery } from './utils';
 import { query as sendQuery } from '@nftx/utils';
 import { UnknownError } from '@nftx/errors';
-import type { QueryBase } from './createQuery/createQuery';
+import type { QueryBase } from './createQuery';
 
 type Fetch = typeof fetch;
 const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
