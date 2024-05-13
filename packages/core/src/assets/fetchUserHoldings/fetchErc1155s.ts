@@ -1,14 +1,13 @@
 import config from '@nftx/config';
-import { createQuery, gql, querySubgraph } from '@nftx/subgraph';
+import { createQuery, querySubgraph } from '@nftx/subgraph';
 import type { Address, ERC1155, TokenId } from '@nftx/types';
 import { getChainConstant } from '@nftx/utils';
 import { createCursor, parseCursor } from './cursor';
 import type { Holding } from './types';
-import { Network } from '@nftx/constants';
 
 type QuerySubgraph = typeof querySubgraph;
 
-const fetchErc1155sMainnet = async ({
+const fetchErc1155s = async ({
   userAddress,
   lastId,
   network,
@@ -60,10 +59,6 @@ const fetchErc1155sMainnet = async ({
   return [holdings, nextId] as const;
 };
 
-const fetchErc1155sSepolia = fetchErc1155sMainnet;
-
-const fetchErc1155sArbitrum = fetchErc1155sMainnet;
-
 export const makeFetchErc1155s =
   ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
   async ({
@@ -79,37 +74,13 @@ export const makeFetchErc1155s =
     cursor?: string;
   }> => {
     const { lastId } = parseCursor('1155', cursor);
-    let holdings: Array<Holding> = [];
-    let nextId: string | undefined;
 
-    switch (network) {
-      case Network.Mainnet:
-        [holdings, nextId] = await fetchErc1155sMainnet({
-          lastId,
-          network,
-          userAddress,
-          querySubgraph,
-        });
-        break;
-      case Network.Sepolia:
-        [holdings, nextId] = await fetchErc1155sSepolia({
-          lastId,
-          network,
-          userAddress,
-          querySubgraph,
-        });
-        break;
-      case Network.Arbitrum:
-        [holdings, nextId] = await fetchErc1155sArbitrum({
-          lastId,
-          network,
-          userAddress,
-          querySubgraph,
-        });
-        break;
-      default:
-        break;
-    }
+    const [holdings, nextId] = await fetchErc1155s({
+      lastId,
+      network,
+      querySubgraph,
+      userAddress,
+    });
 
     return {
       holdings,
