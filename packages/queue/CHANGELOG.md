@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/NFTX-project/nftxjs/compare/v2.2.1...v2.3.0) (2024-05-13)
+
+
+### Features
+
+* **@nftx/queue:** support base ([ddbe202](https://github.com/NFTX-project/nftxjs/commit/ddbe202ca87f06fa85f447e34cddf8467cced308))
+
+
+
+
+
 ## [2.2.1](https://github.com/NFTX-project/nftxjs/compare/v2.2.0...v2.2.1) (2024-04-22)
 
 **Note:** Version bump only for package @nftx/queue

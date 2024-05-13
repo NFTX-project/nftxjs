@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/NFTX-project/nftxjs/compare/v2.2.1...v2.3.0) (2024-05-13)
+
+
+### Features
+
+* **@nftx/react:** support base ([83609b0](https://github.com/NFTX-project/nftxjs/commit/83609b06e1c249ed84f932f93530e0d567fdca42))
+
+
+
+
+
 ## [2.2.1](https://github.com/NFTX-project/nftxjs/compare/v2.2.0...v2.2.1) (2024-04-22)
 
 **Note:** Version bump only for package @nftx/react

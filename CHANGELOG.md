@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/NFTX-project/nftxjs/compare/v2.2.1...v2.3.0) (2024-05-13)
+
+
+### Bug Fixes
+
+* **@nftx/subgraph:** rework and/or operators to work together nicely ([143e76f](https://github.com/NFTX-project/nftxjs/commit/143e76f3422c07e71eeaafa146a3fa34de73a93a))
+
+
+### Features
+
+* **@nftx/config:** support base ([78ecf6e](https://github.com/NFTX-project/nftxjs/commit/78ecf6e137bc684689064469c7672249f1e3699f))
+* **@nftx/constants:** support base ([349bf16](https://github.com/NFTX-project/nftxjs/commit/349bf16aab04429d68f36e3c272638af4c28caae))
+* **@nftx/core:** support base ([42d8bd7](https://github.com/NFTX-project/nftxjs/commit/42d8bd7a4165e224fd4bc72c81b2947d7277aad9))
+* **@nftx/queue:** support base ([ddbe202](https://github.com/NFTX-project/nftxjs/commit/ddbe202ca87f06fa85f447e34cddf8467cced308))
+* **@nftx/react:** support base ([83609b0](https://github.com/NFTX-project/nftxjs/commit/83609b06e1c249ed84f932f93530e0d567fdca42))
+* **@nftx/types:** update subgraph schema types ([2c87c8f](https://github.com/NFTX-project/nftxjs/commit/2c87c8fbaf346dd95cd844b23233f8bce7e96ffe))
+
+
+
+
+
 ## [2.2.1](https://github.com/NFTX-project/nftxjs/compare/v2.2.0...v2.2.1) (2024-04-22)
 
 **Note:** Version bump only for package nftxjs

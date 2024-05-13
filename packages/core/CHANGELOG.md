@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/NFTX-project/nftxjs/compare/v2.2.1...v2.3.0) (2024-05-13)
+
+
+### Features
+
+* **@nftx/core:** support base ([42d8bd7](https://github.com/NFTX-project/nftxjs/commit/42d8bd7a4165e224fd4bc72c81b2947d7277aad9))
+
+
+
+
+
 ## [2.2.1](https://github.com/NFTX-project/nftxjs/compare/v2.2.0...v2.2.1) (2024-04-22)
 
 **Note:** Version bump only for package @nftx/core
