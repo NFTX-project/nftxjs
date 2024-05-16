@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/NFTX-project/nftxjs/compare/v2.3.0...v2.3.1) (2024-05-16)
+
+
+### Bug Fixes
+
+* **@nftx/react:** improve error handling of useTransaction ([94d5e1c](https://github.com/NFTX-project/nftxjs/commit/94d5e1c01b36af4c09bb377b5b3f5e765b884a17))
+
+
+
+
+
 # [2.3.0](https://github.com/NFTX-project/nftxjs/compare/v2.2.1...v2.3.0) (2024-05-13)
 
 
