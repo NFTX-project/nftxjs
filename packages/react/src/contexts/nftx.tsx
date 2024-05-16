@@ -31,39 +31,44 @@ const getDefaultProvider = (network: number) => {
 
 type Core = typeof core;
 
-export type INftxContext = {
+type PublicContext = {
   core: Core;
   network: number;
   provider: Provider;
   signer: Signer;
 };
+type InternalContext = { onError: (e: any) => any };
+
+type Context = PublicContext & InternalContext;
 
 const { config } = core;
 
-const defaultContext: INftxContext = {
+const defaultContext: Context = {
   core,
   network: 1,
   provider: null as any,
   signer: null as any,
+  onError: () => void 0,
 };
 
-export const nftxContext = createContext<INftxContext>(defaultContext);
+export const NftxContext = createContext<Context>(defaultContext);
 
 export const NftxProvider = ({
   children,
   network,
   provider,
-  signer,
+  signer = defaultContext.signer,
+  onError = defaultContext.onError,
 }: {
   children: ReactNode;
   network: number;
   provider: Provider;
-  signer: Signer;
+  signer?: Signer;
+  onError?: (e: any) => any;
 }) => {
-  const value = useMemo(
-    () => ({ network, provider, signer, core }),
-    [network, provider, signer]
-  );
+  const value = useMemo(() => {
+    return { network, provider, signer, core, onError };
+  }, [network, provider, signer, onError]);
 
   useEffect(() => {
     if (network != null && network != config.network) {
@@ -72,14 +77,14 @@ export const NftxProvider = ({
   }, [network]);
 
   return (
-    <nftxContext.Provider value={value}>
+    <NftxContext.Provider value={value}>
       <EventsProvider>{children}</EventsProvider>
-    </nftxContext.Provider>
+    </NftxContext.Provider>
   );
 };
 
-export const useNftx = (): INftxContext => {
-  const ctx = useContext(nftxContext);
+export const useNftx = (): PublicContext => {
+  const ctx = useContext(NftxContext);
 
   const network = ctx.network ?? config.network;
   const provider = ctx.provider ?? getDefaultProvider(network);

@@ -1,8 +1,10 @@
-const path = require("path");
+const path = require('path');
 
-const parts = path.resolve(".").split("/");
+const parts = path.resolve('.').split('/');
 const package = parts[parts.length - 1];
 
 module.exports = {
   testMatch: [`<rootDir>/packages/${package}/src/**/*.test.{ts,tsx}`],
+  testEnvironment: 'jsdom',
+  setupFiles: ['./test-setup.js'],
 };

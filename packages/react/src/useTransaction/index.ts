@@ -1,1 +1,5 @@
-export { default, UseTransactionOptions } from './useTransaction';
+export {
+  default,
+  UseTransactionOptions,
+  UseTransactionMeta,
+} from './useTransaction';
