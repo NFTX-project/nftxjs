@@ -13,3 +13,6 @@ export const t = <T>(p: Promise<T>): Promise<[any, T]> => {
     }
   );
 };
+
+/** Wraps a variable in a promise. If the variable is already a promise, it is left as-is */
+export const toPromise = async <T>(t: T | Promise<T>) => t;
