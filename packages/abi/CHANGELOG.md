@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/NFTX-project/nftxjs/compare/v2.3.1...v2.4.0) (2024-05-17)
+
+
+### Features
+
+* **@nftx/abi:** add Pool ABI for liquidity pool contracts ([d545562](https://github.com/NFTX-project/nftxjs/commit/d5455621946593106d198c6ab40e019d7b3fd3f6))
+
+
+
+
+
 # [2.0.0](https://github.com/NFTX-project/nftxjs/compare/v1.15.6...v2.0.0) (2024-03-20)
 
 **Note:** Version bump only for package @nftx/abi
