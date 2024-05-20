@@ -11,7 +11,9 @@
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "tag": "nftx-v2"
   },
   "repository": {
     "type": "git",

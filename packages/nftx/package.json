@@ -12,7 +12,8 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "tag": "nftx-v2"
   },
   "repository": {
     "type": "git",
