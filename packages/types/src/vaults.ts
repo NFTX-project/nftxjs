@@ -72,6 +72,12 @@ export type Vault = {
     };
   };
   shutdownDate: number;
+  prices: {
+    mint: BigNumber;
+    swap: BigNumber;
+    redeem: BigNumber;
+    spot: BigNumber;
+  };
   // feeReceipts: Pick<VaultFeeReceipt, 'amount' | 'date' | 'transfers'>[];
   // activity: Pick<VaultActivity, 'vaultAddress' | 'vaultId'>;
 };
