@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/NFTX-project/nftxjs/compare/v2.4.0...v3.0.0) (2024-05-23)
+
+
+### Features
+
+* **@nftx/trade:** add fulfill function ([7ec4899](https://github.com/NFTX-project/nftxjs/commit/7ec4899d630cfc0e3141b7231d6b669ce1b52d04))
+* ERC20 quotes can now be obtained via the nftx api ([cbd2bc1](https://github.com/NFTX-project/nftxjs/commit/cbd2bc1875de5a5666eda536a9b06b02900a9f92))
+
+
+### BREAKING CHANGES
+
+* price methods have been removed in favour of fetchPrice and fetchQuote
+* tradeErc20 method now takes a quote object (obtained from fetchQuote) instead of a price object (from fetchTokenBuyPrice)
+* fetchTokenBuyPrice has been replaced with fetchAmmQuote - though fetchQuote/fetchPrice should be preferred
+
+
+
+
+
 # [2.3.0](https://github.com/NFTX-project/nftxjs/compare/v2.2.1...v2.3.0) (2024-05-13)
 
 

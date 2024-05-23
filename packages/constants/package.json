@@ -1,6 +1,6 @@
 {
   "name": "@nftx/constants",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "",
   "main": "dist/cjs/constants.js",
   "module": "dist/es/constants.js",
@@ -27,6 +27,6 @@
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
   "dependencies": {
-    "@nftx/errors": "^2.0.0"
+    "@nftx/errors": "^3.0.0"
   }
 }
