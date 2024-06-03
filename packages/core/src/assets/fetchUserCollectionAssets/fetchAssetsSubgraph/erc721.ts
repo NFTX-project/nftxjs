@@ -1,4 +1,3 @@
-import { Network } from '@nftx/constants';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import config from '@nftx/config';
 import { getChainConstant } from '@nftx/utils';
@@ -28,110 +27,49 @@ const erc721 = async ({
   }
 
   try {
-    if (network === Network.Mainnet || network === Network.Goerli) {
-      type Response = {
-        account: {
-          id: string;
-          tokens: Array<{
-            id: string;
-            identifier: string;
-            contract: {
-              id: string;
-            };
-          }>;
-        };
-      };
+    type Response = {
+      tokens: {
+        id: string;
+        identifier: string;
+        collection: { id: string };
+      }[];
+    };
 
-      const query = gql<Response>`{
-      account(id: $userAddress) {
-        id
-        tokens: ERC721tokens(
-          first: ${LIMIT},
-          where: {
-            identifier_gt: ${lastId}
-          },
-          orderBy: identifier,
-          orderDirection: asc
-        ) {
-          id
-          identifier
-          contract {
-            id
-          }
-        }
-      }
-    }`;
-      const data = await querySubgraph({
-        url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
-        query,
-        variables: {
-          userAddress,
-        },
+    const query = gql<Response>`{
+  tokens(
+    first: ${LIMIT}
+    orderBy: id
+    orderDirection: asc
+    where: {
+      owner: $userAddress,
+      id_gt: $lastId,
+    }
+  ) {
+    id
+    identifier
+    collection {
+      id
+    }
+  }
+}`;
+
+    const data = await querySubgraph({
+      url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
+      query,
+      variables: {
+        userAddress,
+        lastId,
+      },
+    });
+    if (data?.tokens?.length) {
+      nextId = data.tokens[data.tokens.length - 1].id;
+      assets = await processAssetItems({
+        network,
+        items: data.tokens.map((x) => ({
+          assetAddress: x.collection.id,
+          tokenId: x.identifier,
+        })),
       });
-      if (data?.account?.tokens?.length) {
-        nextId = data.account.tokens[data.account.tokens.length - 1].identifier;
-        assets = await processAssetItems({
-          network,
-          items: data.account.tokens.map((x) => ({
-            assetAddress: x.contract.id,
-            tokenId: x.identifier,
-          })),
-        });
-      }
-    } else if (network === Network.Arbitrum) {
-      type Response = {
-        account: {
-          id: string;
-          tokens: Array<{
-            id: string;
-            identifier: string;
-            contract: {
-              id: string;
-            };
-          }>;
-        };
-      };
-
-      const query = gql<Response>`{
-      account(id: $userAddress) {
-        id
-        tokens: ERC721tokens(
-          first: ${LIMIT},
-          where: {
-            identifier_gt: ${lastId}
-          },
-          orderBy: identifier,
-          orderDirection: asc
-        ) {
-          id
-          identifier
-          contract {
-            id
-          }
-        }
-      }
-    }`;
-      const data = await querySubgraph({
-        url: getChainConstant(config.subgraph.ERC721_SUBGRAPH, network),
-        query,
-        variables: {
-          userAddress,
-        },
-      });
-      if (data?.account?.tokens?.length) {
-        nextId = data.account.tokens[data.account.tokens.length - 1].identifier;
-        assets = await processAssetItems({
-          network,
-          items: data.account.tokens.map((x) => {
-            const [assetAddress] = x.id.split('/');
-            const tokenId = x.identifier;
-
-            return { assetAddress, tokenId };
-          }),
-        });
-      }
-    } else {
-      throw new Error(`Unsupported network ${network}`);
     }
   } catch (e) {
     if (retryCount < 3) {
