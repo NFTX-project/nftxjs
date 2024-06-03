@@ -74,14 +74,14 @@ const transformVaultReserves = (reserves: TokenReserve) => {
   const sellPrice = calcSellPrice(reserves, '0.25');
 
   // only show price if 10% spread or less
-  const enoughLiquidity =
-    buyPrice && sellPrice
-      ? buyPrice
-          .sub(sellPrice)
-          .mul(WeiPerEther)
-          .div(buyPrice)
-          .lte(parseEther('0.1'))
-      : false;
+  let enoughLiquidity = false;
+  if (buyPrice && buyPrice.gt(0) && sellPrice && sellPrice.gt(0)) {
+    enoughLiquidity = buyPrice
+      .sub(sellPrice)
+      .mul(WeiPerEther)
+      .div(buyPrice)
+      .lte(parseEther('0.1'));
+  }
 
   if (midPrice?.gt(0)) {
     return {
