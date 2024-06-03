@@ -1,5 +1,4 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Asset } from '@nftx/types';
@@ -10,15 +9,11 @@ const LIMIT = 1000;
 
 type Response = {
   account: {
-    id: string;
-    balances: Array<{
+    holdings: {
       id: string;
-      contract: { id: string };
-      token: {
-        identifier: string;
-      };
-      value: string;
-    }>;
+      balance: string;
+      token: { identifier: string; collection: { id: string } };
+    }[];
   };
 };
 
@@ -43,23 +38,23 @@ const erc1155 = async ({
 
   const query = gql<Response>`{
     account(id: $userAddress) {
-      id
-      balances: ERC1155balances(
+      holdings(
         first: ${LIMIT},
+        orderBy: id,
+        orderDirection: asc,
         where: {
-          value_gt: $lastId,
-        },
-        orderBy: value,
-        orderDirection: asc
+          id_gt: $lastId,
+          balance_gt: 0
+        }
       ) {
         id
-        contract {
-          id
-        }
+        balance
         token {
           identifier
+          collection {
+            id
+          }
         }
-        value
       }
     }
   }`;
@@ -88,20 +83,18 @@ const erc1155 = async ({
   const assets = await processAssetItems({
     network,
     items:
-      data?.account?.balances?.map((x) => {
-        const assetAddress = x.contract.id;
+      data?.account?.holdings?.map((x) => {
+        const assetAddress = x.token.collection.id;
         const tokenId = BigNumber.from(x.token.identifier).toString();
-        const quantity =
-          Number(x.value) < 1 ? parseEther(x.value) : BigNumber.from(x.value);
+        const quantity = BigNumber.from(x.balance);
 
         return { assetAddress, tokenId, quantity };
       }) ?? [],
   });
 
-  if (data?.account?.balances?.length === LIMIT) {
-    const lastValue =
-      data.account.balances[data.account.balances.length - 1].value;
-    nextId = lastValue;
+  if (data?.account?.holdings?.length === LIMIT) {
+    const lastId = data.account.holdings[data.account.holdings.length - 1].id;
+    nextId = lastId;
   }
 
   return { assets, nextId };
