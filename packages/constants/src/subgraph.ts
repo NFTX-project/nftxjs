@@ -34,28 +34,13 @@ export const NON_STANDARD_SUBGRAPH = {
 };
 
 export const ERC721_SUBGRAPH = {
-  [Network.Mainnet]: [
-    // Gateway + Proxy + Cache
-    `${GATEWAY_PROXY_ROOT}/AVZ1dGwmRGKsbDAbwvxNmXzeEkD48voB3LfGqj5w7FUS`,
-    // Indexer + Proxy
-    `${INDEXER_PROXY_ROOT}/QmaaDA7XVVktfxCLMgfwG1z3KM8DSMoLkbemkTt9mQT8Qf`,
-    // Gateway
-    `${GATEWAY_ROOT}/AVZ1dGwmRGKsbDAbwvxNmXzeEkD48voB3LfGqj5w7FUS`,
-    // Indexer
-    `${INDEXER_ROOT}/QmaaDA7XVVktfxCLMgfwG1z3KM8DSMoLkbemkTt9mQT8Qf`,
-    // Shared + Proxy
-    `${SHARED_PROXY_ROOT}/amxx/eip721-subgraph`,
-    // Shared
-    `${SHARED_ROOT}/amxx/eip721-subgraph`,
-  ],
-  [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip721-subgraph-arbitrum`,
-  [Network.Goerli]: `${SHARED_PROXY_ROOT}/nftx-project/eip721-goerli`,
+  [Network.Mainnet]: 'https://g.nftx.xyz/erc721/eth-mainnet',
+  [Network.Arbitrum]: 'https://g.nftx.xyz/erc721/arbitrum-mainnet',
 };
 
 export const ERC1155_SUBGRAPH = {
-  [Network.Mainnet]: `${GATEWAY_PROXY_ROOT}/GCQVLurkeZrdMf4t5v5NyeWJY8pHhfE9sinjFMjLYd9C`,
-  [Network.Arbitrum]: `${SHARED_PROXY_ROOT}/quantumlyy/eip1155-subgraph-arbitrum`,
-  [Network.Goerli]: `${SHARED_PROXY_ROOT}/odyssy-automaton/erc1155-goerli-subgraph`,
+  [Network.Mainnet]: 'https://g.nftx.xyz/erc1155/eth-mainnet',
+  [Network.Arbitrum]: 'https://g.nftx.xyz/erc1155/arbitrum-mainnet',
 };
 
 export const SUSHI_SUBGRAPH = {
