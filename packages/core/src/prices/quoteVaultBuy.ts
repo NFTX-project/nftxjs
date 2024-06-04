@@ -105,6 +105,7 @@ export const makeQuoteVaultBuy =
     vault,
     holdings: allHoldings,
     slippagePercentage,
+    bypassLiquidityCheck,
   }: {
     vault: Pick<Vault, 'fees' | 'id' | 'vaultId' | 'is1155'>;
     tokenIds: TokenIds;
@@ -113,6 +114,7 @@ export const makeQuoteVaultBuy =
     provider: Provider;
     holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
     slippagePercentage?: number;
+    bypassLiquidityCheck?: boolean;
   }) => {
     const totalTokenIds = getTotalTokenIds(tokenIds);
     const buyAmount = parseEther(`${totalTokenIds}`);
@@ -143,6 +145,7 @@ export const makeQuoteVaultBuy =
       sellToken: 'WETH',
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
       slippagePercentage,
+      throwOnError: !bypassLiquidityCheck,
     });
 
     const items = await Promise.all(

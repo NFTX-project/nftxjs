@@ -53,6 +53,7 @@ export const makeQuoteVaultSwap =
     buyTokenIds: TokenIds;
     holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
     slippagePercentage?: number;
+    bypassLiquidityCheck?: boolean;
   }) => {
     const tokenIdsIn = getUniqueTokenIds(sellTokenIds);
     const amountsIn = getTokenIdAmounts(sellTokenIds);

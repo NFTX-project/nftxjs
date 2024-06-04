@@ -1,6 +1,7 @@
 import { formatEther, parseEther } from 'viem';
 import { makePriceVaultBuy } from '../priceVaultBuy';
 import { WeiPerEther, Zero } from '@nftx/constants';
+import { InsufficientLiquidityError } from '@nftx/errors';
 
 type PriceVaultBuy = ReturnType<typeof makePriceVaultBuy>;
 let priceVaultBuy: PriceVaultBuy;
@@ -11,6 +12,7 @@ let quoteVaultBuy: jest.Mock;
 let tokenIds: `${number}`[];
 let vault: Parameters<PriceVaultBuy>[0]['vault'];
 let holdings: Parameters<PriceVaultBuy>[0]['holdings'];
+let bypassLiquidityCheck: boolean;
 
 beforeEach(() => {
   fetchAmmQuote = jest.fn(({ buyAmount }: { buyAmount: bigint }) => ({
@@ -65,6 +67,7 @@ beforeEach(() => {
       quantity: 1n,
     },
   ];
+  bypassLiquidityCheck = false;
 
   priceVaultBuy = makePriceVaultBuy({ fetchAmmQuote, quoteVaultBuy });
   run = () =>
@@ -74,6 +77,7 @@ beforeEach(() => {
       tokenIds,
       vault,
       provider: null as any,
+      bypassLiquidityCheck,
     });
 });
 
@@ -129,6 +133,35 @@ describe('when there are more than 5 token ids', () => {
       expect(Number(formatEther(result.price))).toBeLessThan(20);
     });
   });
+
+  describe('when there is no price', () => {
+    beforeEach(() => {
+      fetchAmmQuote.mockResolvedValue({ price: 0n });
+    });
+
+    it('throw an insufficient liquidity error', async () => {
+      const promise = run();
+
+      await expect(promise).rejects.toThrow(InsufficientLiquidityError);
+    });
+
+    describe('when bypassLiquidityCheck is true', () => {
+      beforeEach(() => {
+        bypassLiquidityCheck = true;
+      });
+
+      it('returns a zero value price', async () => {
+        const promise = run();
+
+        await expect(promise).resolves.toBeTruthy();
+
+        const result = await promise;
+
+        expect(`${result.price}`).toBe('150000000000000000');
+        expect(`${result.vTokenPrice}`).toBe('0');
+      });
+    });
+  });
 });
 
 describe('when there are 5 or less token ids', () => {
@@ -166,6 +199,51 @@ describe('when there are 5 or less token ids', () => {
 
       expect(Number(formatEther(result.price))).toBeGreaterThan(2.1);
       expect(Number(formatEther(result.price))).toBeLessThan(7.1);
+    });
+  });
+
+  describe('when there is no price stored on the vault', () => {
+    beforeEach(() => {
+      vault.prices = undefined as any;
+    });
+
+    it('returns a rough price estimate', async () => {
+      const result = await run();
+
+      expect(`${result.price}`).toBe('2050000000000000000');
+      expect(fetchAmmQuote).toBeCalled();
+    });
+  });
+
+  describe('when there is no price', () => {
+    beforeEach(() => {
+      vault.prices[1].redeem.price = Zero;
+      vault.prices[1].redeem.vTokenPrice = Zero;
+      vault.prices[1].redeem.feePrice = Zero;
+      vault.prices[1].redeem.premiumPrice = Zero;
+    });
+
+    it('throws an insufficient liquidity error', async () => {
+      const promise = run();
+
+      await expect(promise).rejects.toThrow(InsufficientLiquidityError);
+    });
+
+    describe('when bypassLiquidityCheck is true', () => {
+      beforeEach(() => {
+        bypassLiquidityCheck = true;
+      });
+
+      it('returns a zero value price', async () => {
+        const promise = run();
+
+        await expect(promise).resolves.toBeTruthy();
+
+        const result = await promise;
+
+        expect(`${result.price}`).toBe('0');
+        expect(`${result.vTokenPrice}`).toBe('0');
+      });
     });
   });
 });

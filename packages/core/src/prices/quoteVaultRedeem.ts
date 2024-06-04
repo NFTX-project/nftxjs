@@ -28,6 +28,7 @@ const quoteVaultRedeem = async ({
   userAddress,
   vault,
   slippagePercentage,
+  bypassLiquidityCheck,
 }: {
   network: number;
   provider: Provider;
@@ -36,6 +37,7 @@ const quoteVaultRedeem = async ({
   tokenIds: TokenIds;
   holdings: VaultHolding[];
   slippagePercentage?: number;
+  bypassLiquidityCheck?: boolean;
 }) => {
   const standard = vault.is1155 ? 'ERC1155' : 'ERC721';
   const totalTokenIds = getTotalTokenIds(tokenIds);
@@ -62,6 +64,7 @@ const quoteVaultRedeem = async ({
     vault,
     network,
     slippagePercentage,
+    bypassLiquidityCheck,
   });
 
   const value = increaseByPercentage(

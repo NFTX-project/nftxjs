@@ -23,7 +23,6 @@ const checkLiquidity = <P extends { vTokenPrice: bigint }>(price: P) => {
   if (!price.vTokenPrice) {
     throw new InsufficientLiquidityError();
   }
-  return price;
 };
 
 const getIndexedPrice = ({
@@ -32,19 +31,21 @@ const getIndexedPrice = ({
   vault,
   now,
   network,
+  bypassLiquidityCheck,
 }: {
   vault: Pick<Vault, 'vTokenToEth' | 'prices'>;
   tokenIds: TokenIds;
   holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId'>[];
   now: number;
   network: number;
+  bypassLiquidityCheck: boolean | undefined;
 }) => {
   // We store the prices for buying up to 5 NFTs
   // so we can save ourselves from having to make additional calls/calculations
   // We just pull out the stored price, and add a premium if necessary
   const totalTokenIds = getTotalTokenIds(tokenIds);
   const { vTokenToEth } = vault;
-  const price = vault.prices?.[totalTokenIds - 1]?.redeem;
+  let price = vault.prices?.[totalTokenIds - 1]?.redeem;
   if (!price) {
     return;
   }
@@ -56,11 +57,17 @@ const getIndexedPrice = ({
     network,
   });
 
-  return {
+  price = {
     ...price,
     premiumPrice,
     price: price.price + premiumPrice,
   };
+
+  if (!bypassLiquidityCheck) {
+    checkLiquidity(price);
+  }
+
+  return price;
 };
 
 const getRoughPrice = async ({
@@ -68,6 +75,7 @@ const getRoughPrice = async ({
   network,
   tokenIds,
   vault,
+  bypassLiquidityCheck,
   fetchAmmQuote,
   now,
 }: {
@@ -75,6 +83,7 @@ const getRoughPrice = async ({
   holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded'>[];
   vault: Pick<Vault, 'vTokenToEth' | 'fees' | 'id'>;
   network: number;
+  bypassLiquidityCheck: boolean | undefined;
   fetchAmmQuote: FetchAmmQuote;
   now: number;
 }) => {
@@ -94,6 +103,7 @@ const getRoughPrice = async ({
     buyToken: vault.id,
     buyAmount,
     sellToken: 'ETH',
+    throwOnError: !bypassLiquidityCheck,
   });
   const feePrice = calculateTotalFeePrice(
     vault.fees.redeemFee,
@@ -124,6 +134,10 @@ const getRoughPrice = async ({
     routeString,
   };
 
+  if (!bypassLiquidityCheck) {
+    checkLiquidity(result);
+  }
+
   return result;
 };
 
@@ -142,6 +156,7 @@ export const makePriceVaultBuy =
     bypassIndexedPrice,
     holdings: allHoldings,
     provider,
+    bypassLiquidityCheck,
   }: {
     network: number;
     tokenIds: TokenIds;
@@ -152,6 +167,7 @@ export const makePriceVaultBuy =
     bypassIndexedPrice?: boolean;
     holdings: Pick<VaultHolding, 'tokenId' | 'dateAdded' | 'quantity'>[];
     provider: Provider;
+    bypassLiquidityCheck?: boolean;
   }): Promise<MarketplacePrice> => {
     const now = Math.floor(Date.now() / 1000);
     const totalTokenIds = getTotalTokenIds(tokenIds);
@@ -180,7 +196,8 @@ export const makePriceVaultBuy =
             userAddress: '0x',
             vault,
             network,
-          }).then(checkLiquidity);
+            bypassLiquidityCheck,
+          });
         }
       }
     }
@@ -192,9 +209,10 @@ export const makePriceVaultBuy =
         vault,
         now,
         network,
+        bypassLiquidityCheck,
       });
       if (result) {
-        return checkLiquidity(result);
+        return result;
       }
     }
 
@@ -205,7 +223,8 @@ export const makePriceVaultBuy =
       vault,
       fetchAmmQuote: fetchAmmQuote,
       now,
-    }).then(checkLiquidity);
+      bypassLiquidityCheck,
+    });
   };
 
 const priceVaultBuy = makePriceVaultBuy({

@@ -23,6 +23,7 @@ const quoteVaultMint = async ({
   userAddress,
   vault,
   slippagePercentage,
+  bypassLiquidityCheck,
 }: {
   network: number;
   tokenIds: TokenIds;
@@ -30,6 +31,7 @@ const quoteVaultMint = async ({
   vault: Pick<Vault, 'id' | 'vaultId' | 'fees' | 'is1155' | 'asset'>;
   provider: Provider;
   slippagePercentage?: number;
+  bypassLiquidityCheck?: boolean;
 }) => {
   const { feePrice, items, premiumPrice, price, vTokenPrice } =
     await quoteVaultSell({
@@ -39,6 +41,7 @@ const quoteVaultMint = async ({
       userAddress,
       vault,
       slippagePercentage,
+      bypassLiquidityCheck,
     });
 
   const tokenIdsIn = getUniqueTokenIds(tokenIds);

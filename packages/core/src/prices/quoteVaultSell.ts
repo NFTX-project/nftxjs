@@ -39,6 +39,7 @@ export const makeQuoteVaultSell =
     userAddress,
     vault,
     slippagePercentage,
+    bypassLiquidityCheck,
   }: {
     vault: Pick<Vault, 'id' | 'fees' | 'asset' | 'vaultId' | 'is1155'>;
     network: number;
@@ -46,6 +47,7 @@ export const makeQuoteVaultSell =
     userAddress: Address;
     provider: Provider;
     slippagePercentage?: number;
+    bypassLiquidityCheck?: boolean;
   }) => {
     const totalTokenIds = getTotalTokenIds(tokenIds);
     const sellAmount = parseEther(`${totalTokenIds}`);
@@ -74,6 +76,7 @@ export const makeQuoteVaultSell =
       network,
       userAddress: getChainConstant(MARKETPLACE_ZAP, network),
       slippagePercentage,
+      throwOnError: !bypassLiquidityCheck,
     });
     const vTokenPricePerItem = (vTokenPrice * WeiPerEther) / sellAmount;
 
