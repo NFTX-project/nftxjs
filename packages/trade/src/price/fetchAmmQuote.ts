@@ -22,7 +22,7 @@ const fallbackQuote = {
   estimatedGas: Zero,
   feePrice: Zero,
   items: [],
-  methodParameters: undefined as any,
+  methodParameters: {} as any,
   premiumPrice: Zero,
   price: Zero,
   vTokenPrice: Zero,
