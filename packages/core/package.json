@@ -1,6 +1,6 @@
 {
   "name": "@nftx/core",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "@nftx/constants": "^3.0.0",
     "@nftx/errors": "^3.0.0",
     "@nftx/subgraph": "^3.1.0",
-    "@nftx/trade": "^3.0.0",
+    "@nftx/trade": "^3.2.0",
     "@nftx/types": "^3.0.0",
     "@nftx/utils": "^3.0.0",
     "@uniswap/sdk-core": "^4.0.0",

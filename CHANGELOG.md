@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/NFTX-project/nftxjs/compare/v3.1.0...v3.2.0) (2024-06-04)
+
+
+### Features
+
+* **@nftx/core:** bypass liquidity check for vault buy/sell/swap ([a739fe6](https://github.com/NFTX-project/nftxjs/commit/a739fe6fdb71b8be544a15dad3e18801e39fda53))
+* **@nftx/trade:** add option to soft fail out of amm quotes ([5bab97a](https://github.com/NFTX-project/nftxjs/commit/5bab97a4f25746baf8e9b0d953ac23e7c44900c0))
+
+
+
+
+
 # [3.1.0](https://github.com/NFTX-project/nftxjs/compare/v3.0.0...v3.1.0) (2024-05-30)
 
 

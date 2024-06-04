@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/NFTX-project/nftxjs/compare/v3.1.0...v3.2.0) (2024-06-04)
+
+
+### Features
+
+* **@nftx/trade:** add option to soft fail out of amm quotes ([5bab97a](https://github.com/NFTX-project/nftxjs/commit/5bab97a4f25746baf8e9b0d953ac23e7c44900c0))
+
+
+
+
+
 # [3.0.0](https://github.com/NFTX-project/nftxjs/compare/v2.4.0...v3.0.0) (2024-05-23)
 
 
