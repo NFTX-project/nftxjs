@@ -19,19 +19,24 @@ const checkLiquidity = (price: MarketplacePrice) => {
   if (price.price < Zero) {
     throw new MintFeeExceedsValueError();
   }
-  return price;
 };
 
 const getIndexedPrice = ({
   tokenIds,
   vault,
+  bypassLiquidityCheck,
 }: {
   tokenIds: TokenIds;
   vault: Pick<Vault, 'prices'>;
+  bypassLiquidityCheck: boolean | undefined;
 }) => {
   const totalTokenIds = getTotalTokenIds(tokenIds);
   const price = vault.prices?.[totalTokenIds - 1]?.mint;
   // We don't need to worry about premium pricing on sells
+  // Check the price has enough liquidity
+  if (price && !bypassLiquidityCheck) {
+    checkLiquidity(price);
+  }
   return price;
 };
 
@@ -39,11 +44,13 @@ const getRoughPrice = async ({
   network,
   tokenIds,
   vault,
+  bypassLiquidityCheck,
   fetchAmmQuote,
 }: {
   network: number;
   tokenIds: TokenIds;
   vault: Pick<Vault, 'vTokenToEth' | 'id' | 'fees'>;
+  bypassLiquidityCheck: boolean | undefined;
   fetchAmmQuote: FetchAmmQuote;
 }) => {
   const totalTokenIds = getTotalTokenIds(tokenIds);
@@ -59,6 +66,7 @@ const getRoughPrice = async ({
     sellAmount,
     buyToken: 'ETH',
     network,
+    throwOnError: !bypassLiquidityCheck,
   });
   const feePrice = calculateTotalFeePrice(
     vault.fees.mintFee,
@@ -81,6 +89,11 @@ const getRoughPrice = async ({
     routeString,
   };
 
+  // Check the price has enough liquidity
+  if (!bypassLiquidityCheck) {
+    checkLiquidity(result);
+  }
+
   return result;
 };
 
@@ -91,11 +104,13 @@ export const makePriceVaultSell =
     network,
     tokenIds,
     vault,
+    bypassLiquidityCheck,
   }: {
     network: number;
     tokenIds: TokenIds;
     vault: Pick<Vault, 'id' | 'prices' | 'vTokenToEth' | 'fees'>;
     bypassIndexedPrice?: boolean;
+    bypassLiquidityCheck?: boolean;
   }) => {
     const totalTokenIds = getTotalTokenIds(tokenIds);
 
@@ -104,9 +119,9 @@ export const makePriceVaultSell =
     });
 
     if (bypassIndexedPrice !== true && totalTokenIds <= 5) {
-      const result = getIndexedPrice({ tokenIds, vault });
+      const result = getIndexedPrice({ tokenIds, vault, bypassLiquidityCheck });
       if (result) {
-        return checkLiquidity(result);
+        return result;
       }
     }
 
@@ -115,7 +130,8 @@ export const makePriceVaultSell =
       tokenIds,
       vault,
       fetchAmmQuote,
-    }).then(checkLiquidity);
+      bypassLiquidityCheck,
+    });
   };
 
 export default makePriceVaultSell({ fetchAmmQuote });

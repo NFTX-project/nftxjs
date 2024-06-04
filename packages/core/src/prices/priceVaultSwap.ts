@@ -103,6 +103,7 @@ export const makePriceVaultSwap =
     holdings: allHoldings,
     vault,
     bypassIndexedPrice,
+    bypassLiquidityCheck,
   }: {
     network: number;
     provider: Provider;
@@ -114,6 +115,7 @@ export const makePriceVaultSwap =
     buyTokenIds: TokenIds;
     holdings: Pick<VaultHolding, 'dateAdded' | 'tokenId' | 'quantity'>[];
     bypassIndexedPrice?: boolean;
+    bypassLiquidityCheck?: boolean;
   }) => {
     const now = Math.floor(Date.now() / 1000);
     const totalIn = getTotalTokenIds(sellTokenIds);
@@ -153,6 +155,7 @@ export const makePriceVaultSwap =
             sellTokenIds,
             userAddress: '0x',
             vault,
+            bypassLiquidityCheck,
           });
         }
       }
