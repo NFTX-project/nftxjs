@@ -33,11 +33,11 @@
     "ethers": "^5.6.2"
   },
   "dependencies": {
-    "@nftx/config": "^0.9.5",
-    "@nftx/constants": "^0.9.5",
-    "@nftx/subgraph": "^0.9.5",
+    "@nftx/config": "^0.10.0",
+    "@nftx/constants": "^0.10.0",
+    "@nftx/subgraph": "^0.10.0",
     "@nftx/types": "^0.9.7",
-    "@nftx/utils": "^0.9.7"
+    "@nftx/utils": "^0.10.0"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.6.0",
