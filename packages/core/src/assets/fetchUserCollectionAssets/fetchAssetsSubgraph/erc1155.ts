@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import config from '@nftx/config';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import type { Asset } from '@nftx/types';
-import { getChainConstant } from '@nftx/utils';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 import { processAssetItems } from '../utils';
 
 const LIMIT = 1000;
@@ -83,13 +83,17 @@ const erc1155 = async ({
   const assets = await processAssetItems({
     network,
     items:
-      data?.account?.holdings?.map((x) => {
-        const assetAddress = x.token.collection.id;
-        const tokenId = BigNumber.from(x.token.identifier).toString();
-        const quantity = BigNumber.from(x.balance);
+      data?.account?.holdings
+        ?.filter((x) =>
+          assetAddresses.some((y) => addressEqual(x.token.collection.id, y))
+        )
+        .map((x) => {
+          const assetAddress = x.token.collection.id;
+          const tokenId = BigNumber.from(x.token.identifier).toString();
+          const quantity = BigNumber.from(x.balance);
 
-        return { assetAddress, tokenId, quantity };
-      }) ?? [],
+          return { assetAddress, tokenId, quantity };
+        }) ?? [],
   });
 
   if (data?.account?.holdings?.length === LIMIT) {

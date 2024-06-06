@@ -1,6 +1,6 @@
 import { gql, querySubgraph } from '@nftx/subgraph';
 import config from '@nftx/config';
-import { getChainConstant } from '@nftx/utils';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 import type { Asset } from '@nftx/types';
 import { processAssetItems } from '../utils';
 
@@ -65,10 +65,14 @@ const erc721 = async ({
       nextId = data.tokens[data.tokens.length - 1].id;
       assets = await processAssetItems({
         network,
-        items: data.tokens.map((x) => ({
-          assetAddress: x.collection.id,
-          tokenId: x.identifier,
-        })),
+        items: data.tokens
+          .filter((x) =>
+            assetAddresses.some((y) => addressEqual(x.collection.id, y))
+          )
+          .map((x) => ({
+            assetAddress: x.collection.id,
+            tokenId: x.identifier,
+          })),
       });
     }
   } catch (e) {

@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { gql, querySubgraph } from '@nftx/subgraph';
 import config from '@nftx/config';
-import { getChainConstant } from '@nftx/utils';
+import { addressEqual, getChainConstant } from '@nftx/utils';
 import type { Asset } from '@nftx/types';
 import { processAssetItems } from '../utils';
 
@@ -80,11 +80,15 @@ const nonstandard = async ({
   const assets = await processAssetItems({
     network,
     items:
-      data?.account?.tokens?.map((x) => {
-        const [assetAddress] = x.id.split('-');
-        const tokenId = BigNumber.from(x.identifier).toString();
-        return { assetAddress, tokenId };
-      }) ?? [],
+      data?.account?.tokens
+        ?.map((x) => {
+          const [assetAddress] = x.id.split('-');
+          const tokenId = BigNumber.from(x.identifier).toString();
+          return { assetAddress, tokenId };
+        })
+        .filter((x) =>
+          assetAddresses.some((y) => addressEqual(x.assetAddress, y))
+        ) ?? [],
   });
 
   if (assets?.length === LIMIT) {
