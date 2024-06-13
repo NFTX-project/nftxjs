@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/NFTX-project/nftxjs/compare/v3.3.0...v3.4.0) (2024-06-13)
+
+
+### Features
+
+* add initial support for base sepolia requests ([93aa840](https://github.com/NFTX-project/nftxjs/commit/93aa8407e47ebbb790b9a7840872432fee4a7286))
+
+
+
+
+
 # [3.3.0](https://github.com/NFTX-project/nftxjs/compare/v3.2.1...v3.3.0) (2024-06-13)
 
 
