@@ -47,6 +47,7 @@ const artblockCollection: Collection = {
   standard: 'ERC721',
   floorPrice: undefined as any,
   tokenCount: 0,
+  ownedTokenCount: 0,
 };
 
 const fetchCollection = async ({
@@ -55,6 +56,7 @@ const fetchCollection = async ({
 }: {
   network?: number;
   assetAddress: Address;
+  userAddress?: Address;
 }): Promise<Collection> => {
   if (ARTBLOCK_COLLECTIONS.some((x) => addressEqual(x, assetAddress))) {
     // Reservoir can't fetch the entire artblocks collection,
@@ -89,6 +91,7 @@ const fetchCollection = async ({
       standard: x.contractKind.toUpperCase() as 'ERC721',
       floorPrice: BigInt(x.floorAsk?.price?.amount?.raw ?? '0'),
       tokenCount: Number(x.tokenCount),
+      ownedTokenCount: 0,
     };
   })[0];
 

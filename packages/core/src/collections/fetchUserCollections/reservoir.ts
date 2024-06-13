@@ -74,6 +74,7 @@ export const makeFetchUserCollectionsReservoir = ({
         standard: x.collection.contractKind.toUpperCase() as 'ERC721',
         floorPrice: BigInt(x.collection.floorAsk?.price?.amount?.raw ?? '0'),
         tokenCount: Number(x.collection.tokenCount),
+        ownedTokenCount: Number(x.ownership.tokenCount || 0),
       };
     });
 

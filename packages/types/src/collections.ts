@@ -14,4 +14,5 @@ export type Collection = {
   floorPrice: bigint;
   standard: 'ERC721' | 'ERC1155';
   tokenCount: number;
+  ownedTokenCount: number;
 };

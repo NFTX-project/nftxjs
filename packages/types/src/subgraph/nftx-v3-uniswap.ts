@@ -16,7 +16,6 @@ export type Scalars = {
   BigInt: { input: string; output: string; }
   Bytes: { input: string; output: string; }
   Int8: { input: string|number; output: string|number; }
-  Timestamp: { input: string; output: string; }
 };
 
 export type Account = {
@@ -96,11 +95,6 @@ export enum Account_OrderBy {
   Mints = 'mints',
   Positions = 'positions',
   Swaps = 'swaps'
-}
-
-export enum Aggregation_Interval {
-  Day = 'day',
-  Hour = 'hour'
 }
 
 export type BlockChangedFilter = {
@@ -2745,6 +2739,54 @@ export type Position = {
   withdrawnToken1: Scalars['BigDecimal']['output'];
 };
 
+export type PositionOwner = {
+  __typename?: 'PositionOwner';
+  id: Scalars['ID']['output'];
+  owner: Account;
+};
+
+export type PositionOwner_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<PositionOwner_Filter>>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<PositionOwner_Filter>>>;
+  owner?: InputMaybe<Scalars['String']['input']>;
+  owner_?: InputMaybe<Account_Filter>;
+  owner_contains?: InputMaybe<Scalars['String']['input']>;
+  owner_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  owner_ends_with?: InputMaybe<Scalars['String']['input']>;
+  owner_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  owner_gt?: InputMaybe<Scalars['String']['input']>;
+  owner_gte?: InputMaybe<Scalars['String']['input']>;
+  owner_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  owner_lt?: InputMaybe<Scalars['String']['input']>;
+  owner_lte?: InputMaybe<Scalars['String']['input']>;
+  owner_not?: InputMaybe<Scalars['String']['input']>;
+  owner_not_contains?: InputMaybe<Scalars['String']['input']>;
+  owner_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  owner_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  owner_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  owner_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  owner_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  owner_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  owner_starts_with?: InputMaybe<Scalars['String']['input']>;
+  owner_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum PositionOwner_OrderBy {
+  Id = 'id',
+  Owner = 'owner',
+  OwnerId = 'owner__id'
+}
+
 export type PositionSnapshot = {
   __typename?: 'PositionSnapshot';
   blockNumber: Scalars['BigInt']['output'];
@@ -3437,6 +3479,8 @@ export type Query = {
   poolHourDatas: Array<PoolHourData>;
   pools: Array<Pool>;
   position?: Maybe<Position>;
+  positionOwner?: Maybe<PositionOwner>;
+  positionOwners: Array<PositionOwner>;
   positionSnapshot?: Maybe<PositionSnapshot>;
   positionSnapshots: Array<PositionSnapshot>;
   positions: Array<Position>;
@@ -3701,6 +3745,24 @@ export type QueryPositionArgs = {
 };
 
 
+export type QueryPositionOwnerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryPositionOwnersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PositionOwner_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<PositionOwner_Filter>;
+};
+
+
 export type QueryPositionSnapshotArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
@@ -3938,6 +4000,8 @@ export type Subscription = {
   poolHourDatas: Array<PoolHourData>;
   pools: Array<Pool>;
   position?: Maybe<Position>;
+  positionOwner?: Maybe<PositionOwner>;
+  positionOwners: Array<PositionOwner>;
   positionSnapshot?: Maybe<PositionSnapshot>;
   positionSnapshots: Array<PositionSnapshot>;
   positions: Array<Position>;
@@ -4189,6 +4253,24 @@ export type SubscriptionPositionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionPositionOwnerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionPositionOwnersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<PositionOwner_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<PositionOwner_Filter>;
 };
 
 
@@ -6517,8 +6599,6 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']['output']>;
   /** The block number */
   number: Scalars['Int']['output'];
-  /** The hash of the parent block */
-  parentHash?: Maybe<Scalars['Bytes']['output']>;
   /** Integer representation of the timestamp stored in blocks for the chain */
   timestamp?: Maybe<Scalars['Int']['output']>;
 };

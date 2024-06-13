@@ -16,7 +16,6 @@ export type Scalars = {
   BigInt: { input: string; output: string; }
   Bytes: { input: string; output: string; }
   Int8: { input: string|number; output: string|number; }
-  Timestamp: { input: string; output: string; }
 };
 
 export type Account = {
@@ -81,11 +80,6 @@ export enum Account_OrderBy {
   Id = 'id',
   TransfersFrom = 'transfersFrom',
   TransfersTo = 'transfersTo'
-}
-
-export enum Aggregation_Interval {
-  Day = 'day',
-  Hour = 'hour'
 }
 
 export type BlockChangedFilter = {
@@ -1004,8 +998,6 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']['output']>;
   /** The block number */
   number: Scalars['Int']['output'];
-  /** The hash of the parent block */
-  parentHash?: Maybe<Scalars['Bytes']['output']>;
   /** Integer representation of the timestamp stored in blocks for the chain */
   timestamp?: Maybe<Scalars['Int']['output']>;
 };
