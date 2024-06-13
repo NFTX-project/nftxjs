@@ -14,7 +14,7 @@ const createNftxGraphs = (name: string) => {
     [Network.Arbitrum]: `${ROOT}/${name}/${CHAINS[Network.Arbitrum]}`,
     [Network.Sepolia]: `${ROOT}/${name}/${CHAINS[Network.Sepolia]}`,
     [Network.Base]: `${ROOT}/${name}/${CHAINS[Network.Base]}`,
-    '1789': `${ROOT}/${name}/base-sepolia`,
+    '84532': `${ROOT}/${name}/base-sepolia`,
   };
 };
 

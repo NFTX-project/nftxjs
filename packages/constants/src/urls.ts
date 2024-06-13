@@ -19,5 +19,5 @@ export const RESERVOIR_URL = {
   [Network.Arbitrum]: 'https://api-arbitrum.reservoir.tools',
   [Network.Sepolia]: 'https://api-sepolia.reservoir.tools',
   [Network.Base]: 'https://api-base.reservoir.tools',
-  ['1789']: 'https://api-base-sepolia.reservoir.tools',
+  ['178845329']: 'https://api-base-sepolia.reservoir.tools',
 };
