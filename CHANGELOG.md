@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/NFTX-project/nftxjs/compare/v3.4.0...v3.4.1) (2024-06-13)
+
+
+### Bug Fixes
+
+* incorrect chain id for base sepolia ([c66e000](https://github.com/NFTX-project/nftxjs/commit/c66e0004cd9f6cff52086b0459dbba5ba0582088))
+
+
+
+
+
 # [3.4.0](https://github.com/NFTX-project/nftxjs/compare/v3.3.0...v3.4.0) (2024-06-13)
 
 
