@@ -1,6 +1,6 @@
 {
   "name": "@nftx/trade",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -28,8 +28,8 @@
     "@nftx/config": "^3.0.0",
     "@nftx/constants": "^3.0.0",
     "@nftx/errors": "^3.0.0",
-    "@nftx/types": "^3.0.0",
-    "@nftx/utils": "^3.0.0",
+    "@nftx/types": "^3.3.0",
+    "@nftx/utils": "^3.3.0",
     "viem": "^1.16.6"
   },
   "bugs": {
