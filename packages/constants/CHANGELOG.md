@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.2](https://github.com/NFTX-project/nftxjs/compare/v3.4.1...v3.4.2) (2024-06-20)
+
+
+### Bug Fixes
+
+* Update urls.ts for base sepolia ([#33](https://github.com/NFTX-project/nftxjs/issues/33)) ([4485617](https://github.com/NFTX-project/nftxjs/commit/4485617e9e889bca55612ebe194503c12004f44c))
+
+
+
+
+
 ## [3.4.1](https://github.com/NFTX-project/nftxjs/compare/v3.4.0...v3.4.1) (2024-06-13)
 
 
