@@ -19,7 +19,7 @@ const createNftxGraphs = (name: string) => {
 };
 
 export const NON_STANDARD_SUBGRAPH = {
-  [Network.Mainnet]: `https://graph-proxy.nftx.xyz/shared/subgraphs/name/0xorg/non-standard-nfts`,
+  [Network.Mainnet]: 'https://g.nftx.xyz/non-standard-nfts/eth-mainnet',
 };
 
 export const ERC721_SUBGRAPH = createNftxGraphs('erc721');
