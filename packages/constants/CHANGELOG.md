@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.3](https://github.com/NFTX-project/nftxjs/compare/v3.4.2...v3.4.3) (2024-07-11)
+
+
+### Bug Fixes
+
+* move non-standard subgraph to g.nftx.xyz ([d867099](https://github.com/NFTX-project/nftxjs/commit/d8670992b577487bc72426550e073aa3b70a120b))
+
+
+
+
+
 ## [3.4.2](https://github.com/NFTX-project/nftxjs/compare/v3.4.1...v3.4.2) (2024-06-20)
 
 
