@@ -34,6 +34,7 @@
     "@nftx/constants": "^3.4.3",
     "@nftx/errors": "^3.0.0",
     "@nftx/types": "^3.4.3",
+    "@nftx/query": "^3.0.0",
     "abitype": "0.9.8",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.32",

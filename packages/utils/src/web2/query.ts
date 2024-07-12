@@ -1,8 +1,8 @@
-import { UnknownError, hydrateResponse } from '@nftx/errors';
+import { hydrate, hydrateResponse } from '@nftx/errors';
 import { parseJson, stringifyJson } from './json';
+import { query as sendQuery } from '@nftx/query';
 
 type Fetch = typeof fetch;
-const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
 
 type Args = {
   url: string;
@@ -10,77 +10,38 @@ type Args = {
   headers?: Record<string, string>;
   cache?: RequestCache;
   method?: string;
-  retries?: number;
   fetch?: Fetch;
+  data?: any;
 };
 
 const query = async <T>(args: Args): Promise<T> => {
   const {
     url,
-    query: queryData = {},
+    data: _data,
+    query: queryData = _data,
     headers = {},
     method = 'GET',
     cache,
-    retries = 0,
-    fetch = globalFetch,
+    fetch,
   } = args;
 
-  if (fetch == null) {
-    throw new UnknownError(
-      'Could not find fetch api. You may need to import a polyfill'
-    );
-  }
-
-  const uri = new URL(url);
-
-  if (method === 'GET') {
-    Object.entries(queryData).forEach(([key, value]) => {
-      if (value == null) {
-        return;
-      }
-      if (Array.isArray(value)) {
-        value.forEach((v) => {
-          if (v == null) {
-            return;
-          }
-          uri.searchParams.append(key, v);
-        });
-      } else {
-        uri.searchParams.set(key, value);
-      }
+  try {
+    return await sendQuery<T>({
+      url,
+      cache,
+      method,
+      fetch,
+      headers,
+      data: queryData,
+      stringify: (value) => stringifyJson(value, true),
+      parse: parseJson,
     });
+  } catch (e: any) {
+    if (e.response) {
+      throw hydrateResponse({ status: e.response.status, body: e.data });
+    }
+    throw hydrate(e);
   }
-  const body = method === 'GET' ? undefined : stringifyJson(queryData, true);
-
-  const response = await fetch(uri.toString(), {
-    method,
-    headers,
-    body,
-    cache,
-  });
-  // If we get a 5xx response we want to retry the request 3 times
-  if (response.status >= 500 && response.status <= 599 && retries < 3) {
-    await new Promise((res) => setTimeout(res, 1000));
-    return query({ ...args, retries: retries + 1 });
-  }
-  if (!response.ok) {
-    const json = await response.json();
-    const err = hydrateResponse({ status: response.status, body: json });
-    throw err;
-  }
-
-  // Get the text response as we need to manually parse big numbers
-  const text = await response.text();
-  const contentType = response.headers.get('Content-Type');
-  // We should always be receiving a json response, if not then something's gone wrong
-  if (!contentType?.includes('application/json')) {
-    throw new UnknownError(
-      `Incorrect response type. Expected application/json but received ${contentType}`
-    );
-  }
-  const data = parseJson(text);
-
-  return data as T;
 };
 
 export default query;
