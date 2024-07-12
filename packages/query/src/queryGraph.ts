@@ -113,7 +113,7 @@ async function queryGraph<Q extends QueryBase<any, any>>(
     query: Q;
     sendQuery?: Query;
   }
-): Promise<unknown>;
+): Promise<Q['__r']>;
 async function queryGraph<T>(
   args: SendQueryArgs & {
     url: string | string[];
