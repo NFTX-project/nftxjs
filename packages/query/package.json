@@ -1,6 +1,6 @@
 {
   "name": "@nftx/query",
-  "version": "3.4.2",
+  "version": "3.5.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -27,6 +27,5 @@
   "bugs": {
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
-  "sideEffects": false,
-  "dependencies": {}
+  "sideEffects": false
 }
