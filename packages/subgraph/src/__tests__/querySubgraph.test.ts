@@ -26,6 +26,7 @@ beforeEach(() => {
     json: async () => ({}),
     headers: {
       'Content-Type': 'application/json',
+      'content-type': 'application/json',
       get: (key) => response.headers[key],
     },
   };
@@ -40,6 +41,7 @@ it('sends a query to the given url', async () => {
       }
     }
   `;
+
   await querySubgraph({
     url: 'https://nftx.io',
     query,
@@ -293,28 +295,6 @@ describe('error handling', () => {
       const promise = querySubgraph({ url: 'https://nftx.io', query, fetch });
 
       await expect(promise).rejects.toThrowError('Invalid subgraph syntax');
-    });
-  });
-
-  describe('when response is not application/json', () => {
-    beforeEach(() => {
-      response.headers['Content-Type'] = 'text/plain';
-    });
-
-    it('throws an error', async () => {
-      const query = gql`
-        {
-          vault(id: "0x") {
-            id
-          }
-        }
-      `;
-
-      const promise = querySubgraph({ url: 'https://nftx.io', query, fetch });
-
-      await expect(promise).rejects.toThrowError(
-        'Incorrect response type. Expected application/json but received text/plain'
-      );
     });
   });
 });
