@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.1](https://github.com/NFTX-project/nftxjs/compare/v3.6.0...v3.6.1) (2024-07-12)
+
+
+### Bug Fixes
+
+* missing return type ([e655d64](https://github.com/NFTX-project/nftxjs/commit/e655d641afc39b8b60be3776f2b44d7599d9d5e8))
+
+
+
+
+
 # [3.6.0](https://github.com/NFTX-project/nftxjs/compare/v3.5.0...v3.6.0) (2024-07-12)
 
 
