@@ -1,0 +1,32 @@
+{
+  "name": "@nftx/query",
+  "version": "3.4.2",
+  "description": "",
+  "homepage": "https://github.com/NFTX-project/nftxjs",
+  "license": "MIT",
+  "main": "dist/cjs/query.js",
+  "module": "dist/es/query.js",
+  "types": "dist/ts/index.d.ts",
+  "typedoc": {
+    "entryPoint": "src/index.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NFTX-project/nftxjs.git"
+  },
+  "scripts": {
+    "lint": "eslint --fix -c ../../.eslintrc.js --ext ts,tsx src && tsc --noEmit",
+    "test": "jest --config ../../jest.config.js --passWithNoTests",
+    "build": "rm -rf dist && rollup -c && tsc -d --outDir dist/ts --emitDeclarationOnly",
+    "prepublishOnly": "yarn build",
+    "docs": "typedoc src/index.ts"
+  },
+  "bugs": {
+    "url": "https://github.com/NFTX-project/nftxjs/issues"
+  },
+  "sideEffects": false,
+  "dependencies": {}
+}
