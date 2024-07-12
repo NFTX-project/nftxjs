@@ -1,6 +1,6 @@
 # `@nftx/subgraph`
 
-This package contains utilities for interacting with subgraphs
+This package contains utilities for interacting with subgraphs, built on top of `@nftx/query`
 
 ```ts
 import { createQuery, querySubgraph } from '@nftx/subgraph';

@@ -8,7 +8,7 @@ This library offers some simple, standalone, methods for querying both restful e
 <T>(args: {
   url: string,
   data?: Record<string, any> | string,
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
 }): Promise<T>
 ```
 
