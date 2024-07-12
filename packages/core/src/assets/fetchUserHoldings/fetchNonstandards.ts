@@ -15,7 +15,6 @@ type Response = {
     }>;
   };
 };
-type Params = { userAddress: Address; lastId: string };
 
 export const makeFetchNonStandards =
   ({ querySubgraph }: { querySubgraph: QuerySubgraph }) =>
@@ -44,7 +43,7 @@ export const makeFetchNonStandards =
       return { holdings: [], cursor: createCursor('nonstandard', undefined) };
     }
 
-    const query = gql<Response, Params>`
+    const query = gql`
       {
         account(id: $userAddress) {
           id
@@ -61,7 +60,7 @@ export const makeFetchNonStandards =
       }
     `;
 
-    const data = await querySubgraph({
+    const data = await querySubgraph<Response>({
       url,
       query,
       variables: { lastId, userAddress },
