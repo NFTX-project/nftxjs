@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.2](https://github.com/NFTX-project/nftxjs/compare/v3.6.1...v3.6.2) (2024-07-16)
+
+
+### Bug Fixes
+
+* **@nftx/queue:** generate custom job ids ([3e0e1dc](https://github.com/NFTX-project/nftxjs/commit/3e0e1dce47dbd4049ca47398eea6463b902233fa))
+
+
+
+
+
 ## [3.6.1](https://github.com/NFTX-project/nftxjs/compare/v3.6.0...v3.6.1) (2024-07-12)
 
 
