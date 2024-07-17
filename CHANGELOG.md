@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/NFTX-project/nftxjs/compare/v3.6.2...v3.7.0) (2024-07-17)
+
+
+### Features
+
+* query now accepts array of urls ([c6ad594](https://github.com/NFTX-project/nftxjs/commit/c6ad59419db3dadbf426e1080b9bc083c0236203))
+
+
+
+
+
 ## [3.6.2](https://github.com/NFTX-project/nftxjs/compare/v3.6.1...v3.6.2) (2024-07-16)
 
 
