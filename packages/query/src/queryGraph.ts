@@ -5,7 +5,7 @@ import { normalizeIfAddress } from './utils';
 type Query = typeof sendQuery;
 const defaultSendQuery = sendQuery;
 
-type SendQueryArgs = Omit<Parameters<Query>[0], 'url' | 'data'>;
+type SendQueryArgs = Omit<Parameters<Query>[0], 'data'>;
 
 const interpolateQuery = (query: string, variables: Record<string, any>) => {
   return Object.entries(variables).reduce((query, [key, value]) => {
@@ -51,7 +51,7 @@ const sendGraphQuery = async ({
   sendQuery,
   headers = {},
   ...rest
-}: SendQueryArgs & { url: string; query: string; sendQuery: Query }) => {
+}: SendQueryArgs & { query: string; sendQuery: Query }) => {
   const { data, errors } = await sendQuery<{
     errors: { message: string }[] & { message: string };
     data: any;
@@ -67,44 +67,6 @@ const sendGraphQuery = async ({
   handleErrors(errors);
 
   return data;
-};
-
-const queryUrls = async ({
-  baseUrl,
-  query,
-  ...rest
-}: Omit<SendQueryArgs, 'url'> & {
-  baseUrl: string | string[];
-  query: string;
-  sendQuery: Query;
-}) => {
-  // We can be passed a single url or an array of urls
-  // If we have an array, we'll try them in order until we get a successful response
-  const urls = [baseUrl].flat();
-
-  while (urls.length) {
-    try {
-      const url = urls.shift();
-      // Ignore empty urls (baseUrl could be undefined, or an array could've been built with missing content)
-      if (url == null) {
-        continue;
-      }
-
-      const data = await sendGraphQuery({
-        query,
-        url,
-        ...rest,
-      });
-
-      return data;
-    } catch (e) {
-      // If there's been an error, we'll try the next url
-      // if we've exhausted all urls, throw the most recent error
-      if (!urls.length) {
-        throw e;
-      }
-    }
-  }
 };
 
 async function queryGraph<Q extends QueryBase<any, any>>(
@@ -140,8 +102,8 @@ async function queryGraph({
     );
   }
 
-  return queryUrls({
-    baseUrl: url,
+  return sendGraphQuery({
+    url,
     query: formatQuery({ query, variables }),
     fetch,
     sendQuery,

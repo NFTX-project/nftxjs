@@ -5,7 +5,7 @@ import { query as sendQuery } from '@nftx/query';
 type Fetch = typeof fetch;
 
 type Args = {
-  url: string;
+  url: string | string[];
   query?: Record<string, any>;
   headers?: Record<string, string>;
   cache?: RequestCache;
