@@ -48,9 +48,12 @@ const query = async <T>(args: Args): Promise<T> => {
 
   while (urls.length) {
     try {
-      const url = urls.shift();
+      let url = urls.shift();
       if (!url) {
         continue;
+      }
+      if (url.startsWith('/') && typeof window !== 'undefined') {
+        url = `${window.location.origin}${url}`;
       }
       const uri = new URL(url);
 
