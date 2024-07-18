@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.1](https://github.com/NFTX-project/nftxjs/compare/v3.7.0...v3.7.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* support relative urls ([520d794](https://github.com/NFTX-project/nftxjs/commit/520d794407e179efdc7c2eb810e9b05f0677480c))
+
+
+
+
+
 # [3.7.0](https://github.com/NFTX-project/nftxjs/compare/v3.6.2...v3.7.0) (2024-07-17)
 
 
