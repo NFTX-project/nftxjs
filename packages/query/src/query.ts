@@ -26,6 +26,69 @@ type Args = Omit<RequestInit, 'headers' | 'method' | 'body'> & {
   parse?: Parse;
 };
 
+const getBody = ({
+  method,
+  sourceData,
+  stringify,
+}: {
+  method: string;
+  sourceData: unknown;
+  stringify: Stringify;
+}) => {
+  if (method === 'GET') {
+    return undefined;
+  }
+  if (sourceData instanceof FormData) {
+    return sourceData;
+  }
+  if (typeof sourceData === 'string') {
+    return sourceData;
+  }
+  return stringify(sourceData);
+};
+
+const getSearchParams = (method: string, sourceData: unknown) => {
+  let searchParams = new URLSearchParams();
+
+  if (method === 'GET') {
+    if (typeof sourceData === 'string' && sourceData) {
+      if (sourceData.startsWith('?')) {
+        searchParams = new URLSearchParams(sourceData);
+      } else {
+        searchParams = new URLSearchParams('?' + sourceData);
+      }
+    } else if (sourceData) {
+      Object.entries(sourceData).forEach(([key, value]) => {
+        if (value == null) {
+          return;
+        }
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            if (v == null) {
+              return;
+            }
+            searchParams.append(key, v);
+          });
+        } else {
+          searchParams.set(key, value);
+        }
+      });
+    }
+  }
+
+  return searchParams;
+};
+
+const resolveUrl = (url: string | undefined) => {
+  if (!url) {
+    return;
+  }
+  if (url.startsWith('/') && typeof window !== 'undefined') {
+    return new URL(`${window.location.origin}${url}`);
+  }
+  return new URL(url);
+};
+
 const query = async <T>(args: Args): Promise<T> => {
   const {
     url: baseUrl,
@@ -53,47 +116,14 @@ const query = async <T>(args: Args): Promise<T> => {
 
   while (urls.length) {
     try {
-      let url = urls.shift();
-      if (!url) {
+      const uri = resolveUrl(urls.shift());
+      if (!uri) {
         continue;
       }
-      if (url.startsWith('/') && typeof window !== 'undefined') {
-        url = `${window.location.origin}${url}`;
-      }
-      const uri = new URL(url);
 
-      if (method === 'GET') {
-        if (typeof sourceData === 'string' && sourceData) {
-          if (sourceData.startsWith('?')) {
-            uri.search = sourceData;
-          } else {
-            uri.search = '?' + sourceData;
-          }
-        } else if (sourceData) {
-          Object.entries(sourceData).forEach(([key, value]) => {
-            if (value == null) {
-              return;
-            }
-            if (Array.isArray(value)) {
-              value.forEach((v) => {
-                if (v == null) {
-                  return;
-                }
-                uri.searchParams.append(key, v);
-              });
-            } else {
-              uri.searchParams.set(key, value);
-            }
-          });
-        }
-      }
+      uri.search = getSearchParams(method, sourceData).toString();
 
-      const body =
-        method === 'GET'
-          ? undefined
-          : typeof sourceData === 'string'
-          ? sourceData
-          : stringify(sourceData);
+      const body = getBody({ method, sourceData, stringify });
 
       if (method !== 'GET' && typeof sourceData === 'object') {
         headers['Content-Type'] = 'application/json';
@@ -123,7 +153,7 @@ const query = async <T>(args: Args): Promise<T> => {
             response,
             response.status,
             json,
-            `Error fetching ${url}`
+            `Error fetching ${uri}`
           );
         } else {
           const text = await response.text();
