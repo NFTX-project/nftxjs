@@ -125,8 +125,12 @@ const query = async <T>(args: Args): Promise<T> => {
 
       const body = getBody({ method, sourceData, stringify });
 
-      if (method !== 'GET' && typeof sourceData === 'object') {
-        headers['Content-Type'] = 'application/json';
+      if (!headers['Content-Type'] && method !== 'GET') {
+        if (sourceData instanceof FormData) {
+          headers['Content-Type'] = 'multipart/form-data';
+        } else if (sourceData && typeof sourceData === 'object') {
+          headers['Content-Type'] = 'application/json';
+        }
       }
 
       const response = await fetch(uri.toString(), {
