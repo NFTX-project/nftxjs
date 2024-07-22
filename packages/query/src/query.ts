@@ -3,8 +3,13 @@ const globalFetch = typeof fetch === 'undefined' ? undefined : fetch;
 type Stringify = typeof JSON.stringify;
 type Parse = typeof JSON.parse;
 
-class QueryError extends Error {
-  constructor(public response: Response, public data: any, message: string) {
+export class QueryError extends Error {
+  constructor(
+    public response: Response,
+    public status: number,
+    public data: any,
+    message: string
+  ) {
     super(message);
   }
 }
@@ -114,10 +119,15 @@ const query = async <T>(args: Args): Promise<T> => {
       if (!response.ok) {
         if (contentType?.includes('application/json')) {
           const json = await response.json();
-          throw new QueryError(response, json, `Error fetching ${url}`);
+          throw new QueryError(
+            response,
+            response.status,
+            json,
+            `Error fetching ${url}`
+          );
         } else {
           const text = await response.text();
-          throw new QueryError(response, {}, text);
+          throw new QueryError(response, response.status, {}, text);
         }
       }
 
