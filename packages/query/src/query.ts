@@ -127,7 +127,8 @@ const query = async <T>(args: Args): Promise<T> => {
 
       if (!headers['Content-Type'] && method !== 'GET') {
         if (sourceData instanceof FormData) {
-          headers['Content-Type'] = 'multipart/form-data';
+          // Don't need to set the content type for a raw FormData instance
+          // headers['Content-Type'] = 'multipart/form-data';
         } else if (sourceData && typeof sourceData === 'object') {
           headers['Content-Type'] = 'application/json';
         }
