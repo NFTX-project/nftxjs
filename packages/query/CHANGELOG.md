@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.2](https://github.com/NFTX-project/nftxjs/compare/v3.7.1...v3.7.2) (2024-07-22)
+
+
+### Bug Fixes
+
+* export QueryErrorClass ([77731fc](https://github.com/NFTX-project/nftxjs/commit/77731fc21f9270ebaf0abbbd5d95fe0c8e918dbb))
+* support  formdata ([0cf5025](https://github.com/NFTX-project/nftxjs/commit/0cf5025c9a594a96a76edd10f24b4c72f9d4659e))
+
+
+
+
+
 ## [3.7.1](https://github.com/NFTX-project/nftxjs/compare/v3.7.0...v3.7.1) (2024-07-18)
 
 
