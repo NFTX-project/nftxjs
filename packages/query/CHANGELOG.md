@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.3](https://github.com/NFTX-project/nftxjs/compare/v3.7.2...v3.7.3) (2024-07-22)
+
+
+### Bug Fixes
+
+* incorrect content type being set ([60befc6](https://github.com/NFTX-project/nftxjs/commit/60befc69912be900941dbd7be7b2be04c2b7df64))
+
+
+
+
+
 ## [3.7.2](https://github.com/NFTX-project/nftxjs/compare/v3.7.1...v3.7.2) (2024-07-22)
 
 
