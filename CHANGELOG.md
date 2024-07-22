@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.4](https://github.com/NFTX-project/nftxjs/compare/v3.7.3...v3.7.4) (2024-07-22)
+
+
+### Bug Fixes
+
+* dont force multpart/form-data ([652cca0](https://github.com/NFTX-project/nftxjs/commit/652cca0bac5bb2fd993ae488b25a4206017017cf))
+
+
+
+
+
 ## [3.7.3](https://github.com/NFTX-project/nftxjs/compare/v3.7.2...v3.7.3) (2024-07-22)
 
 
