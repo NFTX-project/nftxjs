@@ -62,12 +62,6 @@ export const NFTX_MARKETPLACE_ZAP = {
   [Network.Goerli]: '0x528bDBe1DB8452bD4643F85695eE0628D900C195',
 };
 
-export const NFTX_MARKETPLACE_0X_ZAP = {
-  [Network.Mainnet]: '0x941A6d105802CCCaa06DE58a13a6F49ebDCD481C',
-  [Network.Arbitrum]: '0x3BD7512966CbC3406962f8877edbE80aea8A2904',
-  [Network.Goerli]: '0x177246Adb119ed83f982d1e3c4859F354578D5eF',
-};
-
 export const NFTX_VAULT_FACTORY = {
   [Network.Mainnet]: '0xBE86f647b167567525cCAAfcd6f881F1Ee558216',
   [Network.Arbitrum]: '0xE77b89FEc41A7b7dC74eb33602e82F0672FbB33C',

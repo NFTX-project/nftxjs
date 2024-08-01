@@ -6,7 +6,6 @@ Nftx.js is fairly configurable out of the box:
 
 - set the default network for all requests
 - set custom urls for 3rd party resources
-- enable and disable multicall contracts and 0x pricing
 - set api keys
 
 ## Configure
@@ -26,7 +25,6 @@ config.configure({
   },
   contracts: {
     multicall: false,
-    use0xApi: false,
   },
 });
 ```
