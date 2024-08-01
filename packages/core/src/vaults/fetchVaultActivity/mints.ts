@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { NFTX_MARKETPLACE_0X_ZAP, NFTX_STAKING_ZAP } from '@nftx/constants';
+import { NFTX_MARKETPLACE_ZAP, NFTX_STAKING_ZAP } from '@nftx/constants';
 import { buildWhere, gql, querySubgraph } from '@nftx/subgraph';
 import { transformFeeReceipt } from './common';
 import config from '@nftx/config';
@@ -89,10 +89,7 @@ const isStakeOrMint = (
 
   if (
     mint.zapAction ||
-    addressEqual(
-      mint.user?.id,
-      getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network)
-    )
+    addressEqual(mint.user?.id, getChainConstant(NFTX_MARKETPLACE_ZAP, network))
   ) {
     return ['sell', undefined];
   }
