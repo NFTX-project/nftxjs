@@ -7,7 +7,6 @@ export type Price = {
   gasPrice?: BigNumber;
   /**
    * A list of sources providing liquidity for the given price
-   * This will only be provided if 0x pricing is enabled
    */
   sources?: Array<{ name: string; proportion: string }>;
   priceImpact?: number;
