@@ -13,15 +13,8 @@ const fetchSpread = async (args: {
   provider: Provider;
   tokenAddress: string;
   quote?: 'ETH';
-  critical?: boolean;
 }): Promise<BigNumber> => {
-  const {
-    network = config.network,
-    provider,
-    tokenAddress,
-    quote,
-    critical,
-  } = args;
+  const { network = config.network, provider, tokenAddress, quote } = args;
 
   try {
     const { price: buyPrice } = await fetchBuyPrice({
@@ -29,14 +22,12 @@ const fetchSpread = async (args: {
       provider,
       tokenAddress,
       quote,
-      critical,
     });
     const { price: sellPrice } = await fetchSellPrice({
       network,
       provider,
       tokenAddress,
       quote,
-      critical,
     });
 
     return buyPrice.sub(sellPrice);

@@ -5,19 +5,6 @@ import config from '@nftx/config';
 import { UNISWAP_QUOTER, USDC, WETH_TOKEN } from '@nftx/constants';
 import abi from '@nftx/constants/abis/UniswapQuoter.json';
 import { getChainConstant, getContract } from '@nftx/utils';
-import doesNetworkSupport0x from './doesNetworkSupport0x';
-import fetch0xPrice from './fetch0xPrice';
-
-const fetchEthPriceFromApi = async ({ network }: { network: number }) => {
-  const { sellAmount } = await fetch0xPrice({
-    network,
-    buyToken: 'ETH',
-    sellToken: 'USDC',
-    buyAmount: WeiPerEther,
-  });
-
-  return BigNumber.from(sellAmount);
-};
 
 const fetchEthPriceFromWeb3 = async ({
   network,
@@ -59,10 +46,6 @@ const fetchEthPrice = (args: { network?: number; provider: Provider }) => {
     return BigNumber.from(hardcodedPrice);
   }
 
-  const apiSupported = doesNetworkSupport0x(network);
-  if (apiSupported) {
-    return fetchEthPriceFromApi({ network });
-  }
   return fetchEthPriceFromWeb3({ network, provider });
 };
 

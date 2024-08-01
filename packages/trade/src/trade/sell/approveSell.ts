@@ -1,8 +1,7 @@
 import config from '@nftx/config';
-import { NFTX_MARKETPLACE_0X_ZAP, NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
+import { NFTX_MARKETPLACE_ZAP } from '@nftx/constants';
 import { getChainConstant } from '@nftx/utils';
 import type { Signer } from 'ethers';
-import { doesNetworkSupport0x } from '../../price';
 import approve from '../approve';
 
 /**
@@ -18,8 +17,7 @@ const approveSell = (_args: {
 }) => {
   const { network = config.network, assetAddress, ...args } = _args;
 
-  const supports0x = doesNetworkSupport0x(network);
-  const zap = supports0x ? NFTX_MARKETPLACE_0X_ZAP : NFTX_MARKETPLACE_ZAP;
+  const zap = NFTX_MARKETPLACE_ZAP;
   const spenderAddress = getChainConstant(zap, network);
 
   return approve({

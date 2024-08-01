@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
+import type { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { WeiPerEther } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import config from '@nftx/config';
@@ -6,41 +6,6 @@ import { SUSHISWAP_ROUTER, WETH_TOKEN } from '@nftx/constants';
 import routerAbi from '@nftx/constants/abis/UniswapV2Router.json';
 import type { Price } from '@nftx/types';
 import { getChainConstant, getContract } from '@nftx/utils';
-import doesNetworkSupport0x from './doesNetworkSupport0x';
-import fetch0xPrice from './fetch0xPrice';
-
-const fetchSellPriceFromApi = async ({
-  network,
-  tokenAddress,
-  amount,
-  quote,
-  critical,
-}: {
-  network: number;
-  tokenAddress: string;
-  amount: BigNumberish;
-  quote: 'ETH';
-  critical: boolean;
-}) => {
-  const { buyAmount, estimatedGas, gasPrice, sources, estimatedPriceImpact } =
-    await fetch0xPrice({
-      network,
-      sellAmount: amount,
-      sellToken: tokenAddress,
-      buyToken: quote,
-      critical,
-    });
-
-  const price: Price = {
-    price: BigNumber.from(buyAmount),
-    estimatedGas: BigNumber.from(estimatedGas),
-    gasPrice: BigNumber.from(gasPrice),
-    sources,
-    priceImpact: Number(estimatedPriceImpact) / 100,
-  };
-
-  return price;
-};
 
 const fetchSellPriceFromWeb3 = async ({
   network,
@@ -77,7 +42,6 @@ const fetchSellPriceFromWeb3 = async ({
 };
 
 /** Fetches a sell price for a given token.
- * If possible, the price is fetched from the 0x api, otherwise it uses sushiswap.
  * If you're looking to sell an item into a vault, use fetchVaultSellPrice.
  */
 const fetchSellPrice = (args: {
@@ -86,7 +50,6 @@ const fetchSellPrice = (args: {
   tokenAddress: string;
   amount?: BigNumberish;
   quote?: 'ETH';
-  critical?: boolean;
 }) => {
   const {
     network = config.network,
@@ -94,19 +57,8 @@ const fetchSellPrice = (args: {
     tokenAddress,
     amount = WeiPerEther,
     quote = 'ETH',
-    critical,
   } = args;
 
-  const apiSupported = doesNetworkSupport0x(network);
-  if (apiSupported) {
-    return fetchSellPriceFromApi({
-      network,
-      tokenAddress,
-      amount,
-      quote,
-      critical,
-    });
-  }
   return fetchSellPriceFromWeb3({
     network,
     tokenAddress,

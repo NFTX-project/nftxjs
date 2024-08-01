@@ -1,24 +1,14 @@
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { ContractTransaction } from '@ethersproject/contracts';
 import NFTXMarketplaceZap from '@nftx/constants/abis/NFTXMarketplaceZap.json';
-import NftxMarketplace0xZap from '@nftx/constants/abis/NFTXMarketplace0xZap.json';
-import {
-  NFTX_MARKETPLACE_0X_ZAP,
-  NFTX_MARKETPLACE_ZAP,
-  WETH_TOKEN,
-} from '@nftx/constants';
+import { NFTX_MARKETPLACE_ZAP, WETH_TOKEN } from '@nftx/constants';
 import { getExactTokenIds, getTotalTokenIds } from '../utils';
 import estimateGasAndFees from '../estimateGasAndFees';
 import { omitNil } from '../../utils';
 import increaseGasLimit from '../increaseGasLimit';
 import type { Signer } from 'ethers';
 import config from '@nftx/config';
-import {
-  doesNetworkSupport0x,
-  fetch0xQuote,
-  fetchVaultBuyPrice,
-} from '../../price';
-import calculateBuyFee from '../../price/calculateBuyFee';
+import { fetchVaultBuyPrice } from '../../price';
 import { WeiPerEther } from '@ethersproject/constants';
 import { parseEther } from '@ethersproject/units';
 import type { Vault } from '@nftx/types';
@@ -97,105 +87,13 @@ const buyErc721 = async ({
   return contract.buyAndRedeem(...args, overrides);
 };
 
-const buy0xErc721 = async ({
-  network,
-  signer,
-  tokenIds,
-  userAddress,
-  randomBuys,
-  vault,
-  slippage,
-}: {
-  network: number;
-  signer: Signer;
-  userAddress: string;
-  vault: BuyVault;
-  tokenIds: string[] | [string, number][];
-  randomBuys: number;
-  slippage: number;
-}) => {
-  const address = getChainConstant(NFTX_MARKETPLACE_0X_ZAP, network);
-  const { vaultId, id: vaultAddress } = vault;
-  const contract = getContract({
-    abi: NftxMarketplace0xZap,
-    address,
-    network,
-    signer,
-  });
-
-  const specificIds = getExactTokenIds(tokenIds);
-  const targetBuys = getTotalTokenIds(tokenIds);
-  const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
-  const amount = targetBuys + randomBuys;
-  const buyAmount = fee.add(WeiPerEther.mul(amount));
-
-  const { data, guaranteedPrice } = await fetch0xQuote({
-    type: 'quote',
-    network,
-    buyToken: vaultAddress,
-    buyAmount,
-    sellToken: getChainConstant(WETH_TOKEN, network),
-    slippagePercentage: slippage,
-  });
-
-  const args = [vaultId, amount, specificIds, data, userAddress];
-  const slippageMultiplier = parseEther(`${slippage || 0}`).add(WeiPerEther);
-  const value = parseEther(guaranteedPrice)
-    .mul(buyAmount)
-    .div(WeiPerEther)
-    .mul(slippageMultiplier)
-    .div(WeiPerEther);
-
-  const { gasEstimate, maxFeePerGas, maxPriorityFeePerGas } =
-    await estimateGasAndFees({
-      contract,
-      method: 'buyAndRedeem',
-      args: args,
-      overrides: omitNil({ value }),
-    });
-
-  const gasLimit = increaseGasLimit({ estimate: gasEstimate, amount: 7 });
-
-  const overrides = omitNil({
-    value,
-    gasLimit,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-  });
-
-  console.debug(address, 'buyAndRedeem', ...args, overrides);
-
-  // try {
-  return contract.buyAndRedeem(...args, overrides);
-  // } catch (e) {
-  //   if (e?.code === 4001) {
-  //     throw e;
-  //   }
-  //   if (Number(estimatedPriceImpact) > 20) {
-  //     // This most likely means there's not enough liquidity and we need a higher slippage rate
-  //     console.error(e);
-  //     throw new Error(
-  //       'Price impact was too high, you may need to increase your slippage tolerance to complete the transaction'
-  //     );
-  //   }
-  //   throw e;
-  // }
-};
-
 const buyErc1155 = buyErc721;
-
-const buy0xErc1155 = buy0xErc721;
 
 const matrix = {
   ETH: {
-    ERC721: {
-      true: buy0xErc721,
-      false: buyErc721,
-    },
-    ERC1155: {
-      true: buy0xErc1155,
-      false: buyErc1155,
-    },
+    ERC721: buyErc721,
+
+    ERC1155: buyErc1155,
   },
 };
 
@@ -233,9 +131,7 @@ const buy = async (args: {
     quote = 'ETH',
   } = args;
 
-  const supports0x = doesNetworkSupport0x(network);
-
-  const fn = matrix[quote]?.[standard]?.[`${supports0x}`];
+  const fn = matrix[quote]?.[standard];
 
   if (!fn) {
     throw new Error(`buyFromVault is not supported for ${standard} / ${quote}`);

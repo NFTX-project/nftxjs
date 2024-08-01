@@ -15,7 +15,6 @@ const fetchVaultSwapPrice = async (args: {
   };
   targetSwaps?: number;
   randomSwaps?: number;
-  critical?: boolean;
 }): Promise<Price> => {
   const {
     network = config.network,
@@ -23,7 +22,6 @@ const fetchVaultSwapPrice = async (args: {
     vault,
     targetSwaps,
     randomSwaps,
-    critical,
   } = args;
 
   /** For swaps the price is purely for the swap fee
@@ -42,7 +40,6 @@ const fetchVaultSwapPrice = async (args: {
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,
-    critical,
   });
 };
 

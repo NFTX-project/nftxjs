@@ -1,4 +1,4 @@
-import { WeiPerEther, Zero } from '@ethersproject/constants';
+import { WeiPerEther } from '@ethersproject/constants';
 import type { Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 import config from '@nftx/config';
@@ -23,7 +23,6 @@ const fetchVaultBuyPrice = async (args: {
   targetBuys?: number;
   /** The number of random buys we are doing */
   randomBuys?: number;
-  critical?: boolean;
 }): Promise<Price> => {
   const {
     vault,
@@ -31,7 +30,6 @@ const fetchVaultBuyPrice = async (args: {
     provider,
     targetBuys,
     randomBuys,
-    critical,
   } = args;
 
   const fee = calculateBuyFee({ vault, randomBuys, targetBuys });
@@ -55,7 +53,6 @@ const fetchVaultBuyPrice = async (args: {
     tokenAddress: vault.id,
     quote: 'ETH',
     amount,
-    critical,
   });
 };
 
