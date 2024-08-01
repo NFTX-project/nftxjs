@@ -6,8 +6,6 @@ import {
   NON_STANDARD_SUBGRAPH,
   NFTX_TOKEN_BALANCE_SUBGRAPH,
   PUBLIC_GRAPH_API_KEY,
-  ZEROX_PRICE_URL,
-  ZEROX_QUOTE_URL,
   NFTX_APR_URL,
   Network,
   NFTX_FEE_TRACKER_SUBGRAPH,
@@ -45,8 +43,6 @@ export interface Config {
    * Each item should be an object keyed by network
    */
   urls: {
-    ZEROX_PRICE_URL: Record<string, string>;
-    ZEROX_QUOTE_URL: Record<string, string>;
     NFTX_APR_URL: Record<string, string>;
     ALCHEMY_URL: Record<string, string>;
     NFTX_API_URL: string;
@@ -55,8 +51,6 @@ export interface Config {
   contracts: {
     /** Whether to batch read calls together to reduce the number of network requests */
     multicall: boolean;
-    /** Whether to use 0x for pricing and transactions */
-    use0xApi: boolean;
     /** It's necessary to hardcode the price of ETH on some test networks */
     ethPrice: Record<string, string>;
   };
@@ -81,15 +75,12 @@ const defaultConfig: Config = {
     NFTX_FEE_TRACKER_SUBGRAPH,
   },
   urls: {
-    ZEROX_PRICE_URL,
-    ZEROX_QUOTE_URL,
     NFTX_APR_URL,
     ALCHEMY_URL,
     NFTX_API_URL,
   },
   contracts: {
     multicall: true,
-    use0xApi: true,
     ethPrice: {
       [Network.Rinkeby]: '2500000000', // $2.5k
     },
