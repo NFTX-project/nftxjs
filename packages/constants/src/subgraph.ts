@@ -30,7 +30,7 @@ const GATEWAY_PROXY_ROOT = `${PROXY_HOST}/${GATEWAY_PROXY_NAME}/${GATEWAY_PATH}`
 const GATEWAY_CACHE_PROXY_ROOT = `${CACHE_PROXY_HOST}/${GATEWAY_PROXY_NAME}/${GATEWAY_PATH}`;
 
 export const NON_STANDARD_SUBGRAPH = {
-  [Network.Mainnet]: `${SHARED_PROXY_ROOT}/0xorg/non-standard-nfts`,
+  [Network.Mainnet]: 'https://g.nftx.xyz/non-standard-nfts/eth-mainnet',
 };
 
 export const ERC721_SUBGRAPH = {
@@ -44,16 +44,10 @@ export const ERC1155_SUBGRAPH = {
 };
 
 export const SUSHI_SUBGRAPH = {
-  [Network.Mainnet]: `${GATEWAY_CACHE_PROXY_ROOT}/D7azkFFPFT5H8i32ApXLr34UQyBfxDAfKoCEK4M832M6`,
-  [Network.Arbitrum]: `${GATEWAY_CACHE_PROXY_ROOT}/8nFDCAhdnJQEhQF3ZRnfWkJ6FkRsfAiiVabVn4eGoAZH`,
+  [Network.Mainnet]: 'https://g.nftx.xyz/sushi-v2-amm/eth-mainnet',
+  [Network.Arbitrum]: 'https://g.nftx.xyz/sushi-v2-amm/arbitrum-mainnet',
 };
 
-export const NFTX_SUBGRAPH_MAINNET_URLS = {
-  GATEWAY_PROXY: `${GATEWAY_CACHE_PROXY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
-  GATEWAY: `${GATEWAY_ROOT}/4gZf3atMXjYDh4g48Zr83NFX3rkvZED86VqMNhgEXgLc`,
-  INDEXER_PROXY: `${INDEXER_PROXY_ROOT}/Qme1KgfjpTF58zkPnVEYrit6ve1TtZ7hhMbmnXzGMLqyjg`,
-  INDEXER: `${INDEXER_ROOT}/Qme1KgfjpTF58zkPnVEYrit6ve1TtZ7hhMbmnXzGMLqyjg`,
-};
 export const NFTX_SUBGRAPH = {
   [Network.Mainnet]: 'https://g.nftx.xyz/nftx-v2-vaults/eth-mainnet',
   [Network.Arbitrum]: 'https://g.nftx.xyz/nftx-v2-vaults/arbitrum-mainnet',
