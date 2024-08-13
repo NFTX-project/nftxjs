@@ -1,6 +1,6 @@
 {
   "name": "@nftx/utils",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -49,9 +49,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@nftx/config": "^0.10.2",
-    "@nftx/constants": "^0.10.2",
-    "@nftx/subgraph": "^0.10.2",
+    "@nftx/config": "^0.10.3",
+    "@nftx/constants": "^0.10.3",
+    "@nftx/subgraph": "^0.10.3",
     "@nftx/types": "^0.10.2",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.32"
