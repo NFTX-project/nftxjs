@@ -47,8 +47,12 @@ const getBody = ({
   return stringify(sourceData);
 };
 
-const getSearchParams = (method: string, sourceData: unknown) => {
-  let searchParams = new URLSearchParams();
+const getSearchParams = (
+  method: string,
+  sourceData: unknown,
+  search: string
+) => {
+  let searchParams = new URLSearchParams(search);
 
   if (method === 'GET') {
     if (typeof sourceData === 'string' && sourceData) {
@@ -121,7 +125,7 @@ const query = async <T>(args: Args): Promise<T> => {
         continue;
       }
 
-      uri.search = getSearchParams(method, sourceData).toString();
+      uri.search = getSearchParams(method, sourceData, uri.search).toString();
 
       const body = getBody({ method, sourceData, stringify });
 
