@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.5](https://github.com/NFTX-project/nftxjs/compare/v3.7.4...v3.7.5) (2024-08-23)
+
+**Note:** Version bump only for package @nftx/utils
+
+
+
+
+
 ## [3.7.4](https://github.com/NFTX-project/nftxjs/compare/v3.7.3...v3.7.4) (2024-07-22)
 
 **Note:** Version bump only for package @nftx/utils
