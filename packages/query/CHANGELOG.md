@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.6](https://github.com/NFTX-project/nftxjs/compare/v3.7.5...v3.7.6) (2024-09-02)
+
+
+### Bug Fixes
+
+* **@nftx/query:** allow both data and query params in post requests ([3db0246](https://github.com/NFTX-project/nftxjs/commit/3db02463b671a7d4d4892928ce243c52d2ffa35b))
+
+
+
+
+
 ## [3.7.5](https://github.com/NFTX-project/nftxjs/compare/v3.7.4...v3.7.5) (2024-08-23)
 
 
