@@ -2,10 +2,13 @@ import { QueryBase } from './createQuery';
 import sendQuery from './query';
 import { normalizeIfAddress } from './utils';
 
-type Query = typeof sendQuery;
 const defaultSendQuery = sendQuery;
 
-type SendQueryArgs = Omit<Parameters<Query>[0], 'data'>;
+type SendQueryArgs = Omit<Parameters<typeof sendQuery>[0], 'query'>;
+type BaseArgs = Omit<SendQueryArgs, 'data'>;
+type Query = <T>(
+  args: Omit<Parameters<typeof sendQuery>[0], 'query'>
+) => Promise<T>;
 
 const interpolateQuery = (query: string, variables: Record<string, any>) => {
   return Object.entries(variables).reduce((query, [key, value]) => {
@@ -51,7 +54,7 @@ const sendGraphQuery = async ({
   sendQuery,
   headers = {},
   ...rest
-}: SendQueryArgs & { query: string; sendQuery: Query }) => {
+}: BaseArgs & { query: string; sendQuery: Query }) => {
   const { data, errors } = await sendQuery<{
     errors: { message: string }[] & { message: string };
     data: any;
@@ -70,14 +73,14 @@ const sendGraphQuery = async ({
 };
 
 async function queryGraph<Q extends QueryBase<any, any>>(
-  args: SendQueryArgs & {
+  args: BaseArgs & {
     url: string | string[];
     query: Q;
     sendQuery?: Query;
   }
 ): Promise<Q['__r']>;
 async function queryGraph<T>(
-  args: SendQueryArgs & {
+  args: BaseArgs & {
     url: string | string[];
     query: string;
     variables?: Record<string, any>;
@@ -90,7 +93,7 @@ async function queryGraph({
   sendQuery = defaultSendQuery,
   variables,
   ...rest
-}: SendQueryArgs & {
+}: BaseArgs & {
   url: string | string[];
   query: any;
   variables?: Record<string, any>;

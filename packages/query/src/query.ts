@@ -16,6 +16,7 @@ export class QueryError extends Error {
 
 type Args = Omit<RequestInit, 'headers' | 'method' | 'body'> & {
   url: string | string[];
+  query?: Record<string, any> | string;
   data?: Record<string, any> | string;
   headers?: Record<string, string>;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | string;
@@ -27,15 +28,13 @@ type Args = Omit<RequestInit, 'headers' | 'method' | 'body'> & {
 };
 
 const getBody = ({
-  method,
   sourceData,
   stringify,
 }: {
-  method: string;
   sourceData: unknown;
   stringify: Stringify;
 }) => {
-  if (method === 'GET') {
+  if (sourceData == null) {
     return undefined;
   }
   if (sourceData instanceof FormData) {
@@ -47,37 +46,37 @@ const getBody = ({
   return stringify(sourceData);
 };
 
-const getSearchParams = (
-  method: string,
-  sourceData: unknown,
-  search: string
-) => {
+const getSearchParams = ({
+  search,
+  query: sourceData,
+}: {
+  query: unknown;
+  search: string;
+}) => {
   let searchParams = new URLSearchParams(search);
 
-  if (method === 'GET') {
-    if (typeof sourceData === 'string' && sourceData) {
-      if (sourceData.startsWith('?')) {
-        searchParams = new URLSearchParams(sourceData);
-      } else {
-        searchParams = new URLSearchParams('?' + sourceData);
-      }
-    } else if (sourceData) {
-      Object.entries(sourceData).forEach(([key, value]) => {
-        if (value == null) {
-          return;
-        }
-        if (Array.isArray(value)) {
-          value.forEach((v) => {
-            if (v == null) {
-              return;
-            }
-            searchParams.append(key, v);
-          });
-        } else {
-          searchParams.set(key, value);
-        }
-      });
+  if (typeof sourceData === 'string' && sourceData) {
+    if (sourceData.startsWith('?')) {
+      searchParams = new URLSearchParams(sourceData);
+    } else {
+      searchParams = new URLSearchParams('?' + sourceData);
     }
+  } else if (sourceData) {
+    Object.entries(sourceData).forEach(([key, value]) => {
+      if (value == null) {
+        return;
+      }
+      if (Array.isArray(value)) {
+        value.forEach((v) => {
+          if (v == null) {
+            return;
+          }
+          searchParams.append(key, v);
+        });
+      } else {
+        searchParams.set(key, value);
+      }
+    });
   }
 
   return searchParams;
@@ -96,16 +95,20 @@ const resolveUrl = (url: string | undefined) => {
 const query = async <T>(args: Args): Promise<T> => {
   const {
     url: baseUrl,
-    data: sourceData,
     headers = {},
     method = 'GET',
     maxAttempts = 3,
-    attempt = 0,
+    attempt = 1,
     fetch = globalFetch,
     parse = JSON.parse,
     stringify = JSON.stringify,
+    data: _data,
+    query: _query,
     ...requestInit
   } = args;
+
+  const sourceData = method === 'GET' ? undefined : _data;
+  const sourceQuery = method === 'GET' ? _query || _data : _query;
 
   if (fetch == null) {
     throw new Error(
@@ -125,9 +128,12 @@ const query = async <T>(args: Args): Promise<T> => {
         continue;
       }
 
-      uri.search = getSearchParams(method, sourceData, uri.search).toString();
+      uri.search = getSearchParams({
+        query: sourceQuery,
+        search: uri.search,
+      }).toString();
 
-      const body = getBody({ method, sourceData, stringify });
+      const body = getBody({ sourceData, stringify });
 
       if (!headers['Content-Type'] && method !== 'GET') {
         if (sourceData instanceof FormData) {
@@ -156,8 +162,9 @@ const query = async <T>(args: Args): Promise<T> => {
       const contentType = response.headers.get('content-type');
 
       if (!response.ok) {
+        const text = await response.text();
         if (contentType?.includes('application/json')) {
-          const json = await response.json();
+          const json = parse(text);
           throw new QueryError(
             response,
             response.status,
@@ -165,7 +172,6 @@ const query = async <T>(args: Args): Promise<T> => {
             `Error fetching ${uri}`
           );
         } else {
-          const text = await response.text();
           throw new QueryError(response, response.status, {}, text);
         }
       }
