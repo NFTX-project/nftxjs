@@ -11,12 +11,15 @@ const createWhereField = (fieldName: string) => {
     };
   const whereField: any = createOperator('is');
   whereField.is = whereField;
-  whereField.isNot = createOperator('isNot');
+  whereField.ne = createOperator('ne');
+  whereField.not = createOperator('not');
   whereField.gt = createOperator('gt');
   whereField.gte = createOperator('gte');
   whereField.lt = createOperator('lt');
   whereField.lte = createOperator('lte');
   whereField.in = createOperator('in');
+  whereField.nin = createOperator('nin');
+  whereField.notIn = createOperator('notIn');
   whereField.contains = createOperator('contains');
 
   return whereField;

@@ -29,10 +29,16 @@ const stringifyStatementKey = (statement: WhereStatement | WhereStatements) => {
         return `${field}_`;
       }
       return `${field}`;
-    case 'isNot':
+    case 'ne':
       return `${field}_ne`;
+    case 'not':
+      return `${field}_not`;
     case 'in':
       return `${field}_in`;
+    case 'nin':
+      return `${field}_nin`;
+    case 'notIn':
+      return `${field}_not_in`;
     case 'conj':
       return `${field}`;
     case 'gt':

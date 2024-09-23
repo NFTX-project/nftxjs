@@ -7,12 +7,15 @@ type WhereOperator<T> = (value: T | null | undefined) => WhereStatement;
 
 type WherePrimitive<Field> = {
   is: WhereOperator<Field>;
-  isNot: WhereOperator<Field>;
+  ne: WhereOperator<Field>;
+  not: WhereOperator<Field>;
   gt: WhereOperator<Field>;
   gte: WhereOperator<Field>;
   lt: WhereOperator<Field>;
   lte: WhereOperator<Field>;
   in: WhereOperator<Field[]>;
+  nin: WhereOperator<Field[]>;
+  notIn: WhereOperator<Field[]>;
   contains: WhereOperator<Field[]>;
 } & WhereOperator<Field>;
 
