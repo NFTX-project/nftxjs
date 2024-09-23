@@ -1,6 +1,6 @@
 {
   "name": "@nftx/api",
-  "version": "3.7.6",
+  "version": "4.0.0",
   "description": "",
   "homepage": "https://github.com/NFTX-project/nftxjs",
   "license": "MIT",
@@ -24,10 +24,10 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@nftx/config": "^3.4.3",
-    "@nftx/errors": "^3.0.0",
-    "@nftx/types": "^3.4.3",
-    "@nftx/utils": "^3.7.6",
+    "@nftx/config": "^4.0.0",
+    "@nftx/errors": "^4.0.0",
+    "@nftx/types": "^4.0.0",
+    "@nftx/utils": "^4.0.0",
     "viem": "^1.16.6"
   },
   "bugs": {

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/NFTX-project/nftxjs/compare/v3.7.6...v4.0.0) (2024-09-23)
+
+
+### Bug Fixes
+
+* add missing operators and remove isNot ([b7ba416](https://github.com/NFTX-project/nftxjs/commit/b7ba416cfdf3fa1470f1988f33713d19819c5ce2))
+
+
+### BREAKING CHANGES
+
+* isNot operator has been renamed to ne
+
+
+
+
+
 ## [3.7.6](https://github.com/NFTX-project/nftxjs/compare/v3.7.5...v3.7.6) (2024-09-02)
 
 

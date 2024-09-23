@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/NFTX-project/nftxjs/compare/v3.7.6...v4.0.0) (2024-09-23)
+
+**Note:** Version bump only for package @nftx/abi
+
+
+
+
+
 # [3.0.0](https://github.com/NFTX-project/nftxjs/compare/v2.4.0...v3.0.0) (2024-05-23)
 
 **Note:** Version bump only for package @nftx/abi

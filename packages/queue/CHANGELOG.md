@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/NFTX-project/nftxjs/compare/v3.7.6...v4.0.0) (2024-09-23)
+
+**Note:** Version bump only for package @nftx/queue
+
+
+
+
+
 ## [3.6.2](https://github.com/NFTX-project/nftxjs/compare/v3.6.1...v3.6.2) (2024-07-16)
 
 
