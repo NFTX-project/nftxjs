@@ -77,14 +77,30 @@ it('searches by primitive values', () => {
   const g = createQuery<Query>();
 
   const query = g.pools
-    .where((w) => [w.createdAtTimestamp('0')])
+    .where((w) => [
+      w.createdAtTimestamp('0'),
+      w.burns.is('0'),
+      w.balanceOfBlock.gt('0'),
+      w.closedPositionCount.ne(0),
+      w.name.not('foo'),
+      w.liquidity.in(['0', '1']),
+      w.createdAtTimestamp.nin(['0', '1']),
+      w.closedPositionCount.notIn([0, 1]),
+    ])
     .select((s) => [s.id]);
 
   const actual = query.toString();
   const expected = `{
     pools(
       where: {
-        createdAtTimestamp: "0"
+        createdAtTimestamp: "0",
+        burns: "0",
+        balanceOfBlock_gt: "0",
+        closedPositionCount_ne: 0,
+        name_not: "foo",
+        liquidity_in: ["0", "1"],
+        createdAtTimestamp_nin: ["0", "1"],
+        closedPositionCount_not_in: [0, 1]
       }
     ) {
       id
@@ -150,7 +166,7 @@ it('filters by an exact array match', () => {
 
   const q = createQuery<Query>();
   const query = q.pools
-    .where((w) => [w.inputTokenAmounts.isNot(['0', '0'])])
+    .where((w) => [w.inputTokenAmounts.ne(['0', '0'])])
     .select((s) => [s.id]);
 
   const actual = query.toString();
@@ -194,7 +210,7 @@ it('searches by lt/lte/gt/gte/ne', () => {
     .where((w) => [
       w.liquidity.gt('0'),
       w.liquidity.gte('1'),
-      w.liquidity.isNot('2'),
+      w.liquidity.ne('2'),
       w.liquidity.lt('100000000000'),
       w.liquidity.lte('9999999999'),
     ])
