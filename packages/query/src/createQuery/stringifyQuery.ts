@@ -8,6 +8,7 @@ const stringifyQuery = (args: {
   name: string;
   alias?: string;
   first?: number;
+  skip?: number;
   orderBy?: string;
   orderDirection?: string;
   where?: WhereStatements;
@@ -27,10 +28,20 @@ const stringifyQuery = (args: {
   output.push(args.name, ' ');
   const w = args.where && stringifyWhere(args.where);
   // Filters
-  if (args.first || args.orderBy || args.orderDirection || w || args.id) {
+  if (
+    args.first ||
+    args.skip ||
+    args.orderBy ||
+    args.orderDirection ||
+    w ||
+    args.id
+  ) {
     output.push('(\n');
     if (args.first) {
       output.push('first: ', `${args.first}`, '\n');
+    }
+    if (args.skip) {
+      output.push('skip: ', `${args.skip}`, '\n');
     }
     if (args.orderBy) {
       output.push('orderBy: ', args.orderBy, '\n');

@@ -930,6 +930,7 @@ it('prettifies the result', () => {
   const g = createQuery<Query>();
   const query = g.pools
     .first(100)
+    .skip(100)
     .orderBy('liquidity')
     .orderDirection('desc')
     .where((w) => [
@@ -955,6 +956,7 @@ it('prettifies the result', () => {
   const expected = `{
   pools (
     first: 100
+    skip: 100
     orderBy: liquidity
     orderDirection: desc
     where: {

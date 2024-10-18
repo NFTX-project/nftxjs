@@ -34,6 +34,7 @@ type QuerySingle<QName extends Index<QDef>, QDef> = {
 
 type QueryList<QName extends Index<QDef>, QDef extends Array<any>> = {
   first(limit: number): Query<QName, QDef>;
+  skip(limit: number): Query<QName, QDef>;
   orderBy<K extends keyof QDef[0]>(field: K): Query<QName, QDef>;
   orderDirection(direction: 'asc' | 'desc'): Query<QName, QDef>;
 } & QueryCommon<QName, QDef, QDef[0]>;

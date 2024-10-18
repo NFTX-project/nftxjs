@@ -32,6 +32,7 @@ const createQueryObj = (args: {
   name: string;
   alias?: string;
   first?: number;
+  skip?: number;
   orderBy?: string;
   orderDirection?: string;
   where?: WhereStatements;
@@ -43,6 +44,12 @@ const createQueryObj = (args: {
       return createQueryObj({
         ...args,
         first: limit,
+      });
+    },
+    skip: (limit: number) => {
+      return createQueryObj({
+        ...args,
+        skip: limit,
       });
     },
     orderBy: (field: any) => {
