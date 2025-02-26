@@ -51,10 +51,15 @@ const handleErrors = (errors: any) => {
 const sendGraphQuery = async ({
   url,
   query,
+  args: variables,
   sendQuery,
   headers = {},
   ...rest
-}: BaseArgs & { query: string; sendQuery: Query }) => {
+}: BaseArgs & {
+  query: string;
+  args: Record<string, any> | undefined;
+  sendQuery: Query;
+}) => {
   const { data, errors } = await sendQuery<{
     errors: { message: string }[] & { message: string };
     data: any;
@@ -63,7 +68,7 @@ const sendGraphQuery = async ({
     cache: 'no-cache',
     headers: { 'Content-Type': 'application/json', ...headers },
     method: 'POST',
-    data: { query },
+    data: { query, variables },
     ...rest,
   });
 
@@ -84,6 +89,7 @@ async function queryGraph<T>(
     url: string | string[];
     query: string;
     variables?: Record<string, any>;
+    args?: Record<string, any>;
     sendQuery?: Query;
   }
 ): Promise<T>;
@@ -92,11 +98,13 @@ async function queryGraph({
   url,
   sendQuery = defaultSendQuery,
   variables,
+  args,
   ...rest
 }: BaseArgs & {
   url: string | string[];
   query: any;
   variables?: Record<string, any>;
+  args?: Record<string, any>;
   sendQuery?: Query;
 }) {
   if (!fetch) {
@@ -110,6 +118,7 @@ async function queryGraph({
     query: formatQuery({ query, variables }),
     fetch,
     sendQuery,
+    args,
     ...rest,
   });
 }
