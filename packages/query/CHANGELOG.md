@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/NFTX-project/nftxjs/compare/v4.0.1...v4.1.0) (2025-02-26)
+
+
+### Features
+
+* **@nftx/query:** support graphql variables ([2be4660](https://github.com/NFTX-project/nftxjs/commit/2be466096cbd109149095451cbd7d28593c838e2))
+
+
+
+
+
 ## [4.0.1](https://github.com/NFTX-project/nftxjs/compare/v4.0.0...v4.0.1) (2024-10-18)
 
 
