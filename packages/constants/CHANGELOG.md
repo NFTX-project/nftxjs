@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/NFTX-project/nftxjs/compare/v4.1.0...v4.1.1) (2025-07-22)
+
+**Note:** Version bump only for package @nftx/constants
+
+
+
+
+
 # [4.0.0](https://github.com/NFTX-project/nftxjs/compare/v3.7.6...v4.0.0) (2024-09-23)
 
 **Note:** Version bump only for package @nftx/constants

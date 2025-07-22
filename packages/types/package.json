@@ -1,6 +1,6 @@
 {
   "name": "@nftx/types",
-  "version": "4.0.0",
+  "version": "4.1.1",
   "description": " ",
   "homepage": "https://github.com/NFTX-project/nftxjs#readme",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "url": "https://github.com/NFTX-project/nftxjs/issues"
   },
   "dependencies": {
-    "@nftx/constants": "^4.0.0",
+    "@nftx/constants": "^4.1.1",
     "abitype": "0.9.8",
     "viem": "^1.16.6"
   },
