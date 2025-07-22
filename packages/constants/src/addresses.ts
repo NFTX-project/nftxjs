@@ -77,7 +77,7 @@ export const NFTX_ROUTER = {
 
 /** Staking  / Liquidity / Pools - NftxRouter */
 export const POOL_ROUTER = {
-  [Network.Mainnet]: a('0x70A741A12262d4b5Ff45C0179c783a380EebE42a'),
+  [Network.Mainnet]: a('0x3b3e4e76cac64eb29c399dcad1f3c401d2254f5f'),
   [Network.Sepolia]: a('0x441b7DE4340AAa5aA86dB4DA43d9Badf7B2DAA66'),
   [Network.Arbitrum]: a('0x52731751Dede22827ad47109f5e9697d75a3ef4d'),
   [Network.Base]: a('0x590F8679964D4dEfB54DCD307b2941B053eb1821'),
