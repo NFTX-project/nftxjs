@@ -90,8 +90,6 @@ export const makeFetchVaults =
       vaultIds: vaultData.map((v) => v.vaultId),
     });
 
-    const collections: Record<string, Collection> = {};
-
     const vaultPromises =
       vaultData.map(async (x) => {
         const merkleData = {
@@ -110,20 +108,11 @@ export const makeFetchVaults =
           vaultAddress: x.id as Address,
         });
 
-        let collection = collections[x.asset.id];
-        if (!collection) {
-          collection = collections[x.asset.id] = await fetchCollection({
-            network,
-            assetAddress: x.asset.id as Address,
-          });
-        }
-
         const vault = transformVault({
           globalFees,
           vault: x,
           merkleReference,
           vTokenToEth,
-          collection,
         });
 
         const holdings = allHoldings.filter((h) => h.vaultId === x.vaultId);
