@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/NFTX-project/nftxjs/compare/v4.1.1...v4.1.2) (2026-01-21)
+
+
+### Bug Fixes
+
+* deprecate reservoir ([192cd25](https://github.com/NFTX-project/nftxjs/commit/192cd25ccdb7c89b7e198008c3bb8961dab7a230))
+
+
+
+
+
 ## [4.1.1](https://github.com/NFTX-project/nftxjs/compare/v4.1.0...v4.1.1) (2025-07-22)
 
 **Note:** Version bump only for package @nftx/core
